@@ -2,3 +2,5 @@ node_modules
 dist
 .env
 *.log
+cloudflared.exe
+server_db.json
