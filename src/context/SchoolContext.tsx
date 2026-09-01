@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserRole, Student, SchoolClass, NotificationItem, DailyReportData, AttendanceStatus, BehaviorPoint } from '../types';
-import { db } from '../services/db';
+import { db, SEED_STUDENTS, SEED_CLASSES, SEED_NOTIFICATIONS, SEED_DAILY_REPORT } from '../services/db';
 import { sound } from '../utils/soundEffects';
 import { triggerConfetti } from '../utils/confetti';
 
@@ -58,12 +58,51 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isOnlineSynced, setIsOnlineSynced] = useState(true);
 
-  // Persistent State Loaded from DB
-  const [students, setStudents] = useState<Student[]>(() => db.getStudents());
-  const [selectedStudent, setSelectedStudent] = useState<Student>(() => students[0] || db.getStudents()[0]);
-  const [classes, setClasses] = useState<SchoolClass[]>(() => db.getClasses());
-  const [notifications, setNotifications] = useState<NotificationItem[]>(() => db.getNotifications());
-  const [dailyReport, setDailyReport] = useState<DailyReportData>(() => db.getDailyReport());
+  // Persistent State Loaded safely from DB
+  const [students, setStudents] = useState<Student[]>(() => {
+    try {
+      const data = db.getStudents();
+      return (data && data.length > 0) ? data : SEED_STUDENTS;
+    } catch {
+      return SEED_STUDENTS;
+    }
+  });
+
+  const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
+    try {
+      const all = db.getStudents();
+      return (all && all.length > 0) ? all[0] : SEED_STUDENTS[0];
+    } catch {
+      return SEED_STUDENTS[0];
+    }
+  });
+
+  const [classes, setClasses] = useState<SchoolClass[]>(() => {
+    try {
+      const data = db.getClasses();
+      return (data && data.length > 0) ? data : SEED_CLASSES;
+    } catch {
+      return SEED_CLASSES;
+    }
+  });
+
+  const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
+    try {
+      const data = db.getNotifications();
+      return (data && data.length > 0) ? data : SEED_NOTIFICATIONS;
+    } catch {
+      return SEED_NOTIFICATIONS;
+    }
+  });
+
+  const [dailyReport, setDailyReport] = useState<DailyReportData>(() => {
+    try {
+      const data = db.getDailyReport();
+      return (data && data.timeline) ? data : SEED_DAILY_REPORT;
+    } catch {
+      return SEED_DAILY_REPORT;
+    }
+  });
 
   const setSoundEnabled = (enabled: boolean) => {
     sound.enabled = enabled;
@@ -77,12 +116,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const handleSyncPayload = (data: any) => {
       if (data?.fullState) {
         const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
-        if (s) {
+        if (s && s.length > 0) {
           setStudents(s);
           db.saveStudents(s, false);
           setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
         }
-        if (c) {
+        if (c && c.length > 0) {
           setClasses(c);
           db.saveClasses(c, false);
         }
@@ -106,12 +145,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // 1. BroadcastChannel
     let channel: BroadcastChannel | null = null;
     if ('BroadcastChannel' in window) {
-      channel = new BroadcastChannel('madrasa_school_sync_v2');
-      channel.onmessage = (event) => {
-        try {
-          handleSyncPayload(event.data);
-        } catch {}
-      };
+      try {
+        channel = new BroadcastChannel('madrasa_school_sync_v2');
+        channel.onmessage = (event) => {
+          try {
+            handleSyncPayload(event.data);
+          } catch {}
+        };
+      } catch {}
     }
 
     // 2. Storage event listener (fires across tabs when LocalStorage changes)
@@ -309,11 +350,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const resetDatabase = () => {
     db.resetAllData();
-    setStudents(db.getStudents());
-    setSelectedStudent(db.getStudents()[0]);
-    setClasses(db.getClasses());
-    setNotifications(db.getNotifications());
-    setDailyReport(db.getDailyReport());
+    setStudents(SEED_STUDENTS);
+    setSelectedStudent(SEED_STUDENTS[0]);
+    setClasses(SEED_CLASSES);
+    setNotifications(SEED_NOTIFICATIONS);
+    setDailyReport(SEED_DAILY_REPORT);
     sound.playSuccess();
   };
 

@@ -98,7 +98,7 @@ function realtimeSyncPlugin(): Plugin {
 }
 
 export default defineConfig({
-  base: './',
+  base: '/digital-school-platform/',
   plugins: [react(), realtimeSyncPlugin()],
   server: {
     port: 3000,
