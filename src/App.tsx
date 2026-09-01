@@ -9,6 +9,10 @@ import { AttendanceTracker } from './pages/attendance/AttendanceTracker';
 import { StudentProfile } from './pages/students/StudentProfile';
 import { DailyReport } from './pages/reports/DailyReport';
 import { NotificationCenter } from './pages/notifications/NotificationCenter';
+import { GradesPage } from './pages/grades/GradesPage';
+import { AssignmentsPage } from './pages/assignments/AssignmentsPage';
+import { ParentTeacherChat } from './pages/chat/ParentTeacherChat';
+import { SchedulePage } from './pages/schedule/SchedulePage';
 import { CommandPalette } from './components/ui/CommandPalette';
 
 const MainContent: React.FC = () => {
@@ -34,6 +38,14 @@ const MainContent: React.FC = () => {
         return <AttendanceTracker />;
       case 'student-profile':
         return <StudentProfile />;
+      case 'grades':
+        return <GradesPage />;
+      case 'assignments':
+        return <AssignmentsPage />;
+      case 'chat':
+        return <ParentTeacherChat />;
+      case 'schedule':
+        return <SchedulePage />;
       case 'daily-report':
         return <DailyReport />;
       case 'link-student':

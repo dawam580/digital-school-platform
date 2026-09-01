@@ -28,6 +28,87 @@ export interface DailyTimelineItem {
   note?: string;
 }
 
+export interface SubjectGrade {
+  id: string;
+  subjectName: string;
+  code: string;
+  icon: string;
+  teacherName: string;
+  period1: number; // e.g. 20 / 20
+  period2: number; // e.g. 20 / 20
+  quizzes: number; // e.g. 10 / 10
+  homework: number; // e.g. 10 / 10
+  participation: number; // e.g. 10 / 10
+  finalExam: number; // e.g. 30 / 30
+  total: number; // calculated e.g. 100
+  maxTotal: number; // 100
+  letter: 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' | 'F';
+  appreciation: string;
+}
+
+export interface AssignmentQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  correctIndex: number;
+  explanation?: string;
+  points: number;
+}
+
+export interface Assignment {
+  id: string;
+  subject: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  teacherName: string;
+  totalPoints: number;
+  status: 'pending' | 'submitted' | 'graded';
+  studentScore?: number;
+  questions: AssignmentQuestion[];
+  teacherFeedback?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  senderRole: 'parent' | 'teacher';
+  senderName: string;
+  text?: string;
+  timestamp: string;
+  isVoice?: boolean;
+  voiceDuration?: string;
+  imageUrl?: string;
+  read: boolean;
+}
+
+export interface TeacherConversation {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  subject: string;
+  avatar: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  messages: ChatMessage[];
+}
+
+export interface SchedulePeriod {
+  periodNumber: number;
+  time: string;
+  subject: string;
+  teacher: string;
+  room: string;
+  icon: string;
+  color: string;
+}
+
+export interface DaySchedule {
+  dayName: string;
+  dayIndex: number; // 0: Sunday, 1: Monday, ...
+  periods: SchedulePeriod[];
+}
+
 export interface Student {
   id: string;
   name: string;
@@ -49,6 +130,8 @@ export interface Student {
   behaviorPoints: BehaviorPoint[];
   competencies: StudentCompetency[];
   lastSeenTime?: string;
+  grades?: SubjectGrade[];
+  assignments?: Assignment[];
   subjects: {
     name: string;
     score: number;
