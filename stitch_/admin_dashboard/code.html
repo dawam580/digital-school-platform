@@ -1,0 +1,376 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Arabic School Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-tint": "#3755c3",
+                "primary-fixed-dim": "#b8c4ff",
+                "on-primary": "#ffffff",
+                "surface-variant": "#d3e4fe",
+                "surface-container": "#e5eeff",
+                "primary": "#00288e",
+                "on-primary-fixed-variant": "#173bab",
+                "surface-container-highest": "#d3e4fe",
+                "secondary-container": "#6cf8bb",
+                "on-primary-container": "#a8b8ff",
+                "on-secondary": "#ffffff",
+                "on-error-container": "#93000a",
+                "background": "#f8f9ff",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "inverse-primary": "#b8c4ff",
+                "on-secondary-container": "#00714d",
+                "on-secondary-fixed-variant": "#005236",
+                "on-tertiary-fixed-variant": "#930013",
+                "error": "#ba1a1a",
+                "on-error": "#ffffff",
+                "outline": "#757684",
+                "on-surface-variant": "#444653",
+                "on-tertiary-fixed": "#410004",
+                "tertiary": "#70000c",
+                "primary-fixed": "#dde1ff",
+                "error-container": "#ffdad6",
+                "surface-container-low": "#eff4ff",
+                "inverse-on-surface": "#eaf1ff",
+                "on-tertiary": "#ffffff",
+                "surface": "#f8f9ff",
+                "tertiary-container": "#9b0015",
+                "surface-container-high": "#dce9ff",
+                "secondary-fixed-dim": "#4edea3",
+                "secondary": "#006c49",
+                "secondary-fixed": "#6ffbbe",
+                "surface-bright": "#f8f9ff",
+                "on-tertiary-container": "#ffa39c",
+                "surface-dim": "#cbdbf5",
+                "on-background": "#0b1c30",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary-fixed": "#002113",
+                "tertiary-fixed": "#ffdad7",
+                "on-surface": "#0b1c30",
+                "on-primary-fixed": "#001453",
+                "outline-variant": "#c4c5d5",
+                "inverse-surface": "#213145",
+                "primary-container": "#1e40af"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "32px",
+                "xs": "8px",
+                "margin-mobile": "16px",
+                "base": "4px",
+                "gutter": "20px",
+                "md": "16px",
+                "lg": "24px",
+                "sm": "12px",
+                "margin-desktop": "40px"
+        },
+        "fontFamily": {
+                "display-lg": [
+                        "beVietnamPro"
+                ],
+                "display-md": [
+                        "beVietnamPro"
+                ],
+                "label-sm": [
+                        "beVietnamPro"
+                ],
+                "body-md": [
+                        "beVietnamPro"
+                ],
+                "label-md": [
+                        "beVietnamPro"
+                ],
+                "headline-sm": [
+                        "beVietnamPro"
+                ],
+                "body-lg": [
+                        "beVietnamPro"
+                ]
+        },
+        "fontSize": {
+                "display-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "display-md": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-sm": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar -->
+<nav class="bg-surface shadow-sm docked full-width top-0 flex flex-row-reverse justify-between items-center w-full px-margin-desktop h-16 z-50 fixed">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+<span class="text-headline-sm font-headline-sm font-bold text-primary">منصة المدرسة</span>
+</div>
+<div class="flex-1 max-w-md mx-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pr-10 pl-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="البحث..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors scale-95 duration-150 ease-in-out relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col h-full fixed right-0 top-0 border-l border-outline-variant z-40 bg-surface-container-low docked right-0 h-screen w-64 pt-20">
+<div class="flex flex-col items-center py-lg px-md border-b border-outline-variant mb-md">
+<img alt="School Logo" class="w-16 h-16 rounded-full mb-sm object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3sc4_xUMvCvNh5ss4I2A7rBu5PxcSthmBXSqgwOBmbRq377z0RgjvGYJwsrUxtHNLgRkI7JJRcCpedzJ8Rj5dDU_KTIM-vlHGSWSMC92BzNc2CQQLrLirXfxa7OJir0_lkQq5tSgkvdSZIxkNGGxT_nj1WlEmkE5S_L5HNngfEvZC5Uhm6_YWTutagujAHSy7MWTZbpDbI8Y1-78dQt4UThY84TA1ocXqY2f4TDTPAEWFTn2WvQbp" data-alt="A clean, minimalist abstract logo for a modern educational institution. The design features geometric shapes suggesting an open book and a rising sun in corporate blue and subtle teal. The aesthetic is flat vector art, placed on a crisp white background with no text.">
+<h2 class="text-headline-sm font-headline-sm font-bold text-primary text-center">مدرسة النخبة</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-base">نظام الإدارة المدرسية</p>
+</div>
+<nav class="flex-1 px-xs space-y-1">
+<a class="flex items-center gap-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-xl mx-2 my-1 font-label-md text-label-md transition-all hover:bg-surface-container-high translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                لوحة التحكم
+            </a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant mx-2 my-1 rounded-xl font-label-md text-label-md transition-all hover:bg-surface-container-high translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+                إدارة الحضور
+            </a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant mx-2 my-1 rounded-xl font-label-md text-label-md transition-all hover:bg-surface-container-high translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                الملفات الشخصية
+            </a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant mx-2 my-1 rounded-xl font-label-md text-label-md transition-all hover:bg-surface-container-high translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                التقارير اليومية
+            </a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant mx-2 my-1 rounded-xl font-label-md text-label-md transition-all hover:bg-surface-container-high translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                التنبيهات
+            </a>
+</nav>
+<div class="p-md">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm px-md rounded-full hover:opacity-90 transition-opacity flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                إضافة طالب جديد
+            </button>
+</div>
+</aside>
+<!-- BottomNavBar (Mobile) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex flex-row-reverse justify-around items-center px-4 py-2 bg-surface border-t border-outline-variant shadow-lg docked full-width bottom-0 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-primary font-bold font-label-sm text-label-sm scale-110 duration-200 active:bg-surface-container-high p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+            الرئيسية
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm duration-200 active:bg-surface-container-high p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+            الحضور
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm duration-200 active:bg-surface-container-high p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+            التقارير
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm duration-200 active:bg-surface-container-high p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="person_outline">person_outline</span>
+            الملف
+        </a>
+</nav>
+<!-- Main Content -->
+<main class="lg:pr-64 pt-16 pb-20 lg:pb-0 min-h-screen">
+<div class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-lg">
+<header class="mb-lg">
+<h1 class="font-display-md text-display-md text-on-surface">نظرة عامة</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-base">ملخص أداء المدرسة اليوم.</p>
+</header>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-xl">
+<!-- Stat Card 1 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/30 flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">إجمالي الطلاب</p>
+<p class="font-display-md text-display-md text-on-surface">1,245</p>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/30 flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-[#16A34A] flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="percent">percent</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">نسبة الحضور اليوم</p>
+<p class="font-display-md text-display-md text-on-surface">94%</p>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/30 flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-error flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="person_off">person_off</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">عدد الغيابات</p>
+<p class="font-display-md text-display-md text-on-surface">75</p>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/30 flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-[#F59E0B] flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">رسائل غير مقروءة</p>
+<p class="font-display-md text-display-md text-on-surface">12</p>
+</div>
+</div>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Chart Area -->
+<div class="lg:col-span-2 bg-surface rounded-xl p-lg shadow-sm border border-outline-variant/30">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">اتجاه الحضور (آخر 7 أيام)</h3>
+<button class="text-primary font-label-md text-label-md hover:underline">عرض التفاصيل</button>
+</div>
+<!-- Placeholder for Chart -->
+<div class="w-full h-64 bg-surface-container-low rounded-lg flex items-center justify-center border border-outline-variant/20 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
+<!-- Simplified mock chart lines using CSS borders/divs -->
+<div class="absolute bottom-10 left-10 right-10 h-32 flex items-end justify-between px-4">
+<div class="w-2 bg-primary/40 rounded-t h-[60%]"></div>
+<div class="w-2 bg-primary/60 rounded-t h-[80%]"></div>
+<div class="w-2 bg-primary/40 rounded-t h-[75%]"></div>
+<div class="w-2 bg-primary/80 rounded-t h-[95%]"></div>
+<div class="w-2 bg-primary/50 rounded-t h-[70%]"></div>
+<div class="w-2 bg-primary/90 rounded-t h-[100%]"></div>
+<div class="w-2 bg-primary rounded-t h-[90%]"></div>
+</div>
+<span class="text-outline font-label-md text-label-md relative z-10">منطقة الرسم البياني</span>
+</div>
+</div>
+<!-- Recent Absences Table/List -->
+<div class="lg:col-span-1 bg-surface rounded-xl p-lg shadow-sm border border-outline-variant/30">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">الغيابات الحديثة</h3>
+</div>
+<div class="space-y-sm">
+<!-- Absence Item 1 -->
+<div class="flex justify-between items-center p-sm bg-surface-container-lowest rounded-lg border border-outline-variant/20 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">أحمد محمود</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">الصف العاشر</p>
+</div>
+</div>
+<div class="text-left">
+<span class="inline-block bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-1 rounded-full">غياب</span>
+<p class="font-label-sm text-label-sm text-outline mt-1">08:15 ص</p>
+</div>
+</div>
+<!-- Absence Item 2 -->
+<div class="flex justify-between items-center p-sm bg-surface-container-lowest rounded-lg border border-outline-variant/20 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">سارة علي</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">الصف الثامن</p>
+</div>
+</div>
+<div class="text-left">
+<span class="inline-block bg-[#FEF3C7] text-[#B45309] font-label-sm text-label-sm px-2 py-1 rounded-full">تأخير</span>
+<p class="font-label-sm text-label-sm text-outline mt-1">08:45 ص</p>
+</div>
+</div>
+<!-- Absence Item 3 -->
+<div class="flex justify-between items-center p-sm bg-surface-container-lowest rounded-lg border border-outline-variant/20 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">عمر خالد</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">الصف الثاني عشر</p>
+</div>
+</div>
+<div class="text-left">
+<span class="inline-block bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-1 rounded-full">غياب</span>
+<p class="font-label-sm text-label-sm text-outline mt-1">09:00 ص</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-md py-sm border border-outline-variant text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-container transition-colors">
+                        عرض القائمة كاملة
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

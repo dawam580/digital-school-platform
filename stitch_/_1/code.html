@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تسجيل حساب ولي الأمر</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#6ffbbe",
+                      "outline-variant": "#c4c5d5",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "surface-container-high": "#dce9ff",
+                      "secondary-container": "#6cf8bb",
+                      "error-container": "#ffdad6",
+                      "background": "#f8f9ff",
+                      "primary-fixed-dim": "#b8c4ff",
+                      "on-secondary-container": "#00714d",
+                      "on-error": "#ffffff",
+                      "on-surface": "#0b1c30",
+                      "on-error-container": "#93000a",
+                      "surface": "#f8f9ff",
+                      "on-primary-fixed-variant": "#173bab",
+                      "error": "#ba1a1a",
+                      "surface-variant": "#d3e4fe",
+                      "secondary-fixed-dim": "#4edea3",
+                      "surface-tint": "#3755c3",
+                      "on-background": "#0b1c30",
+                      "primary-fixed": "#dde1ff",
+                      "tertiary-fixed-dim": "#ffb3ad",
+                      "surface-container": "#e5eeff",
+                      "tertiary-container": "#9b0015",
+                      "on-primary-container": "#a8b8ff",
+                      "on-secondary": "#ffffff",
+                      "tertiary": "#70000c",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#cbdbf5",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-primary-fixed": "#001453",
+                      "inverse-primary": "#b8c4ff",
+                      "on-tertiary-container": "#ffa39c",
+                      "on-surface-variant": "#444653",
+                      "tertiary-fixed": "#ffdad7",
+                      "secondary": "#006c49",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-tertiary-fixed-variant": "#930013",
+                      "on-tertiary-fixed": "#410004",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-secondary-fixed": "#002113",
+                      "surface-container-low": "#eff4ff",
+                      "outline": "#757684",
+                      "inverse-surface": "#213145",
+                      "primary": "#00288e",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#1e40af"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "xs": "8px",
+                      "margin-mobile": "16px",
+                      "sm": "12px",
+                      "margin-desktop": "40px",
+                      "gutter": "20px",
+                      "md": "16px",
+                      "xl": "32px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "headline-sm": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "display-lg": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "display-md": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "label-md": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ],
+                      "label-sm": [
+                              "Be Vietnam Pro", "sans-serif"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-md": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #F8FAFC;
+        }
+        
+        .level-1-shadow {
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.05);
+        }
+        
+        .otp-input:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+            outline: none;
+        }
+        
+        /* Progress line animation */
+        .progress-line-active {
+            transition: width 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-4">
+<!-- Main Container -->
+<main class="w-full max-w-md bg-surface-container-lowest rounded-xl level-1-shadow p-lg md:p-xl relative overflow-hidden">
+<!-- Decorative Header Graphic -->
+<div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary-container to-primary opacity-10 rounded-t-xl -z-10"></div>
+<!-- Header -->
+<div class="text-center mb-xl pt-4">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-container-high mb-sm text-primary">
+<span class="material-symbols-outlined text-display-md" style="font-variation-settings: 'FILL' 1;">
+                    family_restroom
+                </span>
+</div>
+<h1 class="font-display-md text-display-md text-on-surface mb-base">إنشاء حساب جديد</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">مرحباً بك في منصة المدرسة، بوابة ولي الأمر.</p>
+</div>
+<!-- Progress Indicator -->
+<div class="flex items-center justify-between mb-xl relative">
+<div class="absolute top-1/2 left-0 right-0 h-[2px] bg-outline-variant -z-10 -translate-y-1/2 rounded-full"></div>
+<!-- Active progress line: width will change based on step -->
+<div class="absolute top-1/2 right-0 h-[2px] bg-primary -z-10 -translate-y-1/2 rounded-full progress-line-active w-1/2" id="progress-bar"></div>
+<!-- Step 1 Dot -->
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md border-2 border-surface-container-lowest transition-colors duration-300" id="step-1-dot">
+                1
+            </div>
+<!-- Step 2 Dot -->
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-label-md text-label-md border-2 border-surface-container-lowest transition-colors duration-300" id="step-2-dot">
+                2
+            </div>
+</div>
+<!-- Form Area Container (Handles swapping between steps) -->
+<div class="relative" id="form-container">
+<!-- STEP 1: Details -->
+<div class="transition-opacity duration-300 opacity-100" id="step-1">
+<form id="details-form" onsubmit="event.preventDefault(); goToStep2();">
+<div class="space-y-md">
+<!-- Full Name Input -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface" for="fullName">الاسم الكامل</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant">
+                                    person
+                                </span>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg py-sm pr-10 pl-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" id="fullName" placeholder="أدخل اسمك الكامل" required="" type="text"/>
+</div>
+</div>
+<!-- Phone Number Input -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface" for="phoneNumber">رقم الهاتف</label>
+<div class="relative text-left" dir="ltr">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">
+                                    smartphone
+                                </span>
+<!-- Note: using ltr for phone number input but keeping right alignment visual for consistency might require careful styling, using standard LTR for number entry is usually better UX -->
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg py-sm pl-10 pr-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-right" dir="rtl" id="phoneNumber" placeholder="+966 5X XXX XXXX" required="" type="tel"/>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<div class="mt-xl">
+<button class="w-full bg-primary-container text-on-primary font-headline-sm text-headline-sm py-sm rounded-lg hover:bg-primary-container/90 active:bg-primary transition-colors flex items-center justify-center gap-xs" type="submit">
+<span>إرسال رمز التحقق</span>
+<span class="material-symbols-outlined text-[20px]" dir="ltr">
+                                arrow_forward
+                            </span>
+</button>
+</div>
+</form>
+</div>
+<!-- STEP 2: OTP (Initially Hidden) -->
+<div class="absolute top-0 right-0 w-full opacity-0 pointer-events-none transition-opacity duration-300 invisible" id="step-2">
+<div class="text-center mb-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-base">أدخل رمز التحقق</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">sms</span>
+                        تم إرسال الرمز عبر رسالة نصية
+                    </p>
+<p class="font-label-md text-label-md text-primary mt-1" dir="ltr" id="display-phone">+966 5X XXX XXXX</p>
+</div>
+<form onsubmit="event.preventDefault(); finishSignup();">
+<!-- OTP Inputs -->
+<div class="flex justify-center gap-sm mb-lg" dir="ltr">
+<input autocomplete="off" class="otp-input w-14 h-14 text-center font-display-md text-display-md text-on-surface bg-surface-bright border border-outline-variant rounded-lg" id="otp1" maxlength="1" oninput="moveToNext(this, 'otp2')" type="text"/>
+<input autocomplete="off" class="otp-input w-14 h-14 text-center font-display-md text-display-md text-on-surface bg-surface-bright border border-outline-variant rounded-lg" id="otp2" maxlength="1" oninput="moveToNext(this, 'otp3')" onkeydown="moveToPrev(event, 'otp1')" type="text"/>
+<input autocomplete="off" class="otp-input w-14 h-14 text-center font-display-md text-display-md text-on-surface bg-surface-bright border border-outline-variant rounded-lg" id="otp3" maxlength="1" oninput="moveToNext(this, 'otp4')" onkeydown="moveToPrev(event, 'otp2')" type="text"/>
+<input autocomplete="off" class="otp-input w-14 h-14 text-center font-display-md text-display-md text-on-surface bg-surface-bright border border-outline-variant rounded-lg" id="otp4" maxlength="1" onkeydown="moveToPrev(event, 'otp3')" type="text"/>
+</div>
+<!-- Resend Link -->
+<div class="text-center mb-lg">
+<button class="font-label-md text-label-md text-primary hover:underline bg-transparent border-none cursor-pointer" type="button">
+                            إعادة إرسال الرمز (0:59)
+                        </button>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-primary font-headline-sm text-headline-sm py-sm rounded-lg hover:bg-primary-container/90 active:bg-primary transition-colors flex items-center justify-center gap-xs" type="submit">
+<span class="material-symbols-outlined text-[20px]">
+                                check_circle
+                            </span>
+<span>تأكيد</span>
+</button>
+<button class="w-full bg-transparent text-on-surface-variant font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container transition-colors border border-outline-variant" onclick="goToStep1()" type="button">
+                            رجوع
+                        </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<script>
+        function goToStep2() {
+            const phoneVal = document.getElementById('phoneNumber').value;
+            if(phoneVal) {
+                document.getElementById('display-phone').innerText = phoneVal;
+            }
+
+            // UI Transitions
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            
+            step1.classList.remove('opacity-100');
+            step1.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                step1.classList.add('invisible');
+                step1.classList.remove('absolute', 'top-0', 'right-0', 'w-full');
+                
+                step2.classList.remove('invisible', 'absolute', 'top-0', 'right-0', 'w-full');
+                step2.classList.remove('opacity-0', 'pointer-events-none');
+                step2.classList.add('opacity-100');
+                
+                // Focus first OTP input
+                document.getElementById('otp1').focus();
+            }, 300);
+
+            // Update Progress Bar
+            document.getElementById('progress-bar').classList.remove('w-1/2');
+            document.getElementById('progress-bar').classList.add('w-full');
+            
+            // Update Dots
+            const dot2 = document.getElementById('step-2-dot');
+            dot2.classList.remove('bg-surface-container', 'text-on-surface-variant');
+            dot2.classList.add('bg-primary', 'text-on-primary');
+            
+            const dot1 = document.getElementById('step-1-dot');
+            dot1.innerHTML = `<span class="material-symbols-outlined text-[20px]">check</span>`;
+        }
+
+        function goToStep1() {
+            // UI Transitions
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            
+            step2.classList.remove('opacity-100');
+            step2.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                step2.classList.add('invisible', 'absolute', 'top-0', 'right-0', 'w-full');
+                
+                step1.classList.remove('invisible');
+                step1.classList.remove('opacity-0', 'pointer-events-none');
+                step1.classList.add('opacity-100');
+            }, 300);
+
+            // Update Progress Bar
+            document.getElementById('progress-bar').classList.remove('w-full');
+            document.getElementById('progress-bar').classList.add('w-1/2');
+            
+            // Update Dots
+            const dot2 = document.getElementById('step-2-dot');
+            dot2.classList.remove('bg-primary', 'text-on-primary');
+            dot2.classList.add('bg-surface-container', 'text-on-surface-variant');
+            
+            const dot1 = document.getElementById('step-1-dot');
+            dot1.innerHTML = `1`;
+        }
+
+        // OTP Input Logic
+        function moveToNext(current, nextFieldID) {
+            if (current.value.length >= 1) {
+                document.getElementById(nextFieldID).focus();
+            }
+        }
+
+        function moveToPrev(e, prevFieldID) {
+            if (e.key === "Backspace" && e.target.value === "") {
+                document.getElementById(prevFieldID).focus();
+            }
+        }
+
+        function finishSignup() {
+            // Placeholder for form submission
+            alert("تم تأكيد الحساب بنجاح!");
+        }
+    </script>
+</body></html>

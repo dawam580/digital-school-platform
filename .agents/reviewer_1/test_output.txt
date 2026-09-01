@@ -1,0 +1,241 @@
+
+[1m[34m========================================================================[0m
+[1m[36m   منصة المدرسة الرقمية | Digital School Platform — Automated Test Suite[0m
+[1m[34m========================================================================[0m
+
+[1m[35m[Tier 1] Executing: Tier 1: Feature Coverage Suite (Happy Path)...[0m
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F01: Build & Type Safety → F01.1 - Student interface schema validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F01: Build & Type Safety → F01.2 - SchoolClass schema validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F01: Build & Type Safety → F01.3 - NotificationItem schema validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F01: Build & Type Safety → F01.4 - DailyReportData schema validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F01: Build & Type Safety → F01.5 - AttendanceStatus enum constraint validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F02: Arabic RTL & Styling → F02.1 - Arabic text presence in student names
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F02: Arabic RTL & Styling → F02.2 - Arabic text in class and supervisor names
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F02: Arabic RTL & Styling → F02.3 - Arabic time indicators formatting
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F02: Arabic RTL & Styling → F02.4 - Behavior rating Arabic strings
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F02: Arabic RTL & Styling → F02.5 - Daily report Arabic day of week and mood
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F03: Dev Server & Runtime → F03.1 - Environment window and document mock integrity
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F03: Dev Server & Runtime → F03.2 - Web Audio API mock initialization
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F03: Dev Server & Runtime → F03.3 - DOM createElement for canvas elements
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F03: Dev Server & Runtime → F03.4 - FileReader base64 mock functionality
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F03: Dev Server & Runtime → F03.5 - Global requestAnimationFrame and cancelAnimationFrame
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F04: Multi-Role Authentication → F04.1 - Default parent role and authentication status
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F04: Multi-Role Authentication → F04.2 - Teacher login switches role and active tab to attendance
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F04: Multi-Role Authentication → F04.3 - Admin login switches role and active tab to dashboard
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F04: Multi-Role Authentication → F04.4 - Parent login switches role and active tab to student-profile
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F04: Multi-Role Authentication → F04.5 - Logout resets authentication state and navigates to login tab
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F05: Parent Onboarding & OTP → F05.1 - 4-Box OTP input structure validation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F05: Parent Onboarding & OTP → F05.2 - Auto-advancing OTP focus indexing
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F05: Parent Onboarding & OTP → F05.3 - Demo quick fill OTP key code 4821
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F05: Parent Onboarding & OTP → F05.4 - Parent registration simulation with login callback
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F05: Parent Onboarding & OTP → F05.5 - Navigation to link-student following parent onboarding
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F06: Student Linking & Codes → F06.1 - Link student by exact code SCH-2026-R1 (Rayan Al-Otaibi)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F06: Student Linking & Codes → F06.2 - Link student by exact code SCH-2026-S2 (Sarah Al-Qahtani)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F06: Student Linking & Codes → F06.3 - Link student by student academic number 2024-0106 (Omar)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F06: Student Linking & Codes → F06.4 - Link student by national ID 1065432109 (Layan)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F06: Student Linking & Codes → F06.5 - Student link code failure handling with alert sound
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F07: Attendance Marking & Audio → F07.1 - Mark student present updates status and plays tap sound
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F07: Attendance Marking & Audio → F07.2 - Mark student unexcused absent plays alert sound
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F07: Attendance Marking & Audio → F07.3 - Mark student late updates status
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F07: Attendance Marking & Audio → F07.4 - Mark student excused with medical note
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F07: Attendance Marking & Audio → F07.5 - Attendance recentAttendance array contains today ISO date
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F08: Batch Attendance & CSV Export → F08.1 - Mark all present sets status of all students to present
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F08: Batch Attendance & CSV Export → F08.2 - Batch attendance triggers confetti and success chime
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F08: Batch Attendance & CSV Export → F08.3 - Batch attendance creates notification record
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F08: Batch Attendance & CSV Export → F08.4 - CSV builder format headers and student rows
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F08: Batch Attendance & CSV Export → F08.5 - Class status summary counters calculation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F09: Gamified Behavior Points → F09.1 - Award positive +5 behavior points increases student total
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F09: Gamified Behavior Points → F09.2 - Positive points award triggers confetti celebration
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F09: Gamified Behavior Points → F09.3 - Needs work negative point (-1) decreases student total
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F09: Gamified Behavior Points → F09.4 - Behavior points creation dispatches academic notification
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F09: Gamified Behavior Points → F09.5 - Behavior point preserves teacher and date metadata
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F10: Competencies Radar Chart → F10.1 - Radar chart polygon points generation for 6 axes
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F10: Competencies Radar Chart → F10.2 - Radar concentric levels math (25%, 50%, 75%, 100%)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F10: Competencies Radar Chart → F10.3 - Competency scores within valid 0-100 bounds
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F10: Competencies Radar Chart → F10.4 - Radial vertex dot coordinate boundaries within canvas
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F10: Competencies Radar Chart → F10.5 - Competency labels formatting with percentage string
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F11: Golden Certificate Modal → F11.1 - Certificate content includes student name and grade
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F11: Golden Certificate Modal → F11.2 - Academic average percentage rendering
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F11: Golden Certificate Modal → F11.3 - Official school header and registry date metadata
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F11: Golden Certificate Modal → F11.4 - Official signatories validation (Class Supervisor and School Principal)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F11: Golden Certificate Modal → F11.5 - Print trigger invokes window.print()
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F12: Avatar Customization → F12.1 - Curated preset avatars list length of 8
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F12: Avatar Customization → F12.2 - Update student avatar updates in-memory student object
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F12: Avatar Customization → F12.3 - Avatar update persists to local storage
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F12: Avatar Customization → F12.4 - Custom avatar upload Base64 encoding simulation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F12: Avatar Customization → F12.5 - Avatar update plays success chime
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F13: Interactive Daily Report → F13.1 - Daily report timeline items structure and statuses
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F13: Interactive Daily Report → F13.2 - Subjects summary with participation star ratings and homework
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F13: Interactive Daily Report → F13.3 - Daily report teacher voice note simulation text
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F13: Interactive Daily Report → F13.4 - Daily report achievements array validation
+  [31m✗ Tier 1: Feature Coverage Suite (Happy Path) > F13: Interactive Daily Report → F13.5 - Tasks for tomorrow array validation[0m
+    [31mError: Expected string "إحضار مجسم أو رسم بياني لدورة الماء للعلوم" to contain "العلوم"[0m
+        at Object.toContain (file:///C:/Users/HP/Downloads/%D9%85%D8%AF%D8%B1%D8%B3%D8%A9/tests/test-harness.js:239:17)
+        at Object.fn (file:///C:/Users/HP/Downloads/%D9%85%D8%AF%D8%B1%D8%B3%D8%A9/tests/tier1-features.test.js:745:42)
+        at TestRunner.run (file:///C:/Users/HP/Downloads/%D9%85%D8%AF%D8%B1%D8%B3%D8%A9/tests/test-harness.js:342:17)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F14: Notification Center → F14.1 - Initial unread notifications counter calculation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F14: Notification Center → F14.2 - Mark single notification as read decrements unread count
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F14: Notification Center → F14.3 - Mark all notifications as read resets unread count to 0
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F14: Notification Center → F14.4 - Notification category classification
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F14: Notification Center → F14.5 - Add new notification inserts at the top of list
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F15: Global Command Palette → F15.1 - Command palette open/close state toggle
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F15: Global Command Palette → F15.2 - Student instant search filter by Arabic name
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F15: Global Command Palette → F15.3 - Student instant search filter by student academic number
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F15: Global Command Palette → F15.4 - Student search filter by national ID
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F15: Global Command Palette → F15.5 - Quick action selection navigates to designated tab
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F16: Persistent Database & Seeding → F16.1 - Cold start auto-seeds localStorage when empty
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F16: Persistent Database & Seeding → F16.2 - Versioned storage key constants validation (*_v2)
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F16: Persistent Database & Seeding → F16.3 - Classes auto-seeding verification
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F16: Persistent Database & Seeding → F16.4 - Notifications auto-seeding verification
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F16: Persistent Database & Seeding → F16.5 - Daily report auto-seeding verification
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F17: State Durability across Reloads → F17.1 - Attendance modification persists across simulator reinstantiation
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F17: State Durability across Reloads → F17.2 - Behavior points addition persists across reloads
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F17: State Durability across Reloads → F17.3 - Notification read status persists across reloads
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F17: State Durability across Reloads → F17.4 - Avatar custom change persists across reloads
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F17: State Durability across Reloads → F17.5 - Multiple sequential mutations maintain aggregate durability
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F18: Database Factory Reset → F18.1 - Reset restores students to original seed state
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F18: Database Factory Reset → F18.2 - Reset restores notifications to original seed items
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F18: Database Factory Reset → F18.3 - Reset restores selected student to first seed student
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F18: Database Factory Reset → F18.4 - Reset plays success fanfare audio chime
+  [32m✓[0m Tier 1: Feature Coverage Suite (Happy Path) > F18: Database Factory Reset → F18.5 - Direct db.resetAllData() synchronizes all 4 localStorage keys
+  [1mSummary:[0m [32m89 passed[0m, [31m1 failed[0m (97ms)
+
+[1m[35m[Tier 2] Executing: Tier 2: Boundary & Corner Cases Suite...[0m
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F01-B: Build & Type Safety (Boundaries) → F01.B1 - Null-safe handling of student optional lastSeenTime
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F01-B: Build & Type Safety (Boundaries) → F01.B2 - Empty behavior points array boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F01-B: Build & Type Safety (Boundaries) → F01.B3 - Empty badges array boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F01-B: Build & Type Safety (Boundaries) → F01.B4 - Timeline item optional room and teacher attributes
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F01-B: Build & Type Safety (Boundaries) → F01.B5 - Daily report optional teacher note boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F02-B: Arabic RTL & Styling (Boundaries) → F02.B1 - Arabic text containing diacritics (Tashkeel) preservation
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F02-B: Arabic RTL & Styling (Boundaries) → F02.B2 - Mixed Arabic and English alphanumeric strings
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F02-B: Arabic RTL & Styling (Boundaries) → F02.B3 - Ultra-long Arabic text in student name (boundary > 50 chars)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F02-B: Arabic RTL & Styling (Boundaries) → F02.B4 - Arabic honorific abbreviations handling (أ. / د. / ك.)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F02-B: Arabic RTL & Styling (Boundaries) → F02.B5 - RTL numeric percentage formatting (+48 / 96.5%)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F03-B: Dev Server & Runtime (Boundaries) → F03.B1 - Safe fallback when AudioContext is suspended or blocked
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F03-B: Dev Server & Runtime (Boundaries) → F03.B2 - Canvas getContext("2d") returns null for unsupported type
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F03-B: Dev Server & Runtime (Boundaries) → F03.B3 - Window event listener dispatch of custom keyboard events
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F03-B: Dev Server & Runtime (Boundaries) → F03.B4 - Document getElementById returning null for unknown ID
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F03-B: Dev Server & Runtime (Boundaries) → F03.B5 - Safe execution when sound effects are disabled
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F04-B: Multi-Role Authentication (Boundaries) → F04.B1 - Rapid sequential role toggling maintains clean state
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F04-B: Multi-Role Authentication (Boundaries) → F04.B2 - Switching to the same role is idempotent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F04-B: Multi-Role Authentication (Boundaries) → F04.B3 - Logout when already unauthenticated is safe
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F04-B: Multi-Role Authentication (Boundaries) → F04.B4 - Custom phone number formats (with dashes or spaces) sanitized
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F04-B: Multi-Role Authentication (Boundaries) → F04.B5 - Role permissions: parent view defaults to student-profile
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F05-B: Parent Onboarding & OTP (Boundaries) → F05.B1 - Incomplete OTP (3 digits instead of 4) fails validation
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F05-B: Parent Onboarding & OTP (Boundaries) → F05.B2 - Non-numeric OTP input rejection
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F05-B: Parent Onboarding & OTP (Boundaries) → F05.B3 - Empty OTP array initial state
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F05-B: Parent Onboarding & OTP (Boundaries) → F05.B4 - Overwriting existing OTP digits via quick autofill
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F05-B: Parent Onboarding & OTP (Boundaries) → F05.B5 - Single digit change in middle OTP box (index 1)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F06-B: Student Linking & Codes (Boundaries) → F06.B1 - Case-insensitive code matching (sch-2026-r1)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F06-B: Student Linking & Codes (Boundaries) → F06.B2 - Code matching with leading/trailing spaces ("  SCH-2026-S2  ")
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F06-B: Student Linking & Codes (Boundaries) → F06.B3 - Empty string code fails gracefully
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F06-B: Student Linking & Codes (Boundaries) → F06.B4 - Non-existent code with special characters ("SCH-@@@-XX")
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F06-B: Student Linking & Codes (Boundaries) → F06.B5 - Fallback matching by national ID string
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F07-B: Attendance Marking & Audio (Boundaries) → F07.B1 - Rapid consecutive clicks on same status remain idempotent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F07-B: Attendance Marking & Audio (Boundaries) → F07.B2 - Cycling through all 4 statuses in sequence
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F07-B: Attendance Marking & Audio (Boundaries) → F07.B3 - Attendance with empty note string defaults gracefully
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F07-B: Attendance Marking & Audio (Boundaries) → F07.B4 - Attendance marking on non-existent student ID has zero side-effects
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F07-B: Attendance Marking & Audio (Boundaries) → F07.B5 - Muted sound engine produces zero audio entries on attendance update
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F08-B: Batch Attendance & CSV Export (Boundaries) → F08.B1 - Mark all present when all students are already present
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F08-B: Batch Attendance & CSV Export (Boundaries) → F08.B2 - CSV export handles commas and quotation marks in notes
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F08-B: Batch Attendance & CSV Export (Boundaries) → F08.B3 - CSV export string contains correct UTF-8 Arabic encoding characters
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F08-B: Batch Attendance & CSV Export (Boundaries) → F08.B4 - Class summary counters when all students are marked unexcused absent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F08-B: Batch Attendance & CSV Export (Boundaries) → F08.B5 - Class supervisor fallback handling
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F09-B: Gamified Behavior Points (Boundaries) → F09.B1 - Negative points score floor at zero (score never drops below 0)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F09-B: Gamified Behavior Points (Boundaries) → F09.B2 - Awarding zero points maintains existing total score
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F09-B: Gamified Behavior Points (Boundaries) → F09.B3 - Large point addition (+500) updates total accurately
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F09-B: Gamified Behavior Points (Boundaries) → F09.B4 - Behavior point added to student with empty points list
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F09-B: Gamified Behavior Points (Boundaries) → F09.B5 - Behavior points category validation (positive vs needs_work)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F10-B: Competencies Radar Chart (Boundaries) → F10.B1 - Radar chart with 0% scores on all competencies collapses to center
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F10-B: Competencies Radar Chart (Boundaries) → F10.B2 - Radar chart with 100% scores on all competencies reaches full radius
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F10-B: Competencies Radar Chart (Boundaries) → F10.B3 - Radar chart minimum 3-axis spider geometry
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F10-B: Competencies Radar Chart (Boundaries) → F10.B4 - Custom canvas dimensions scaling (small size=100 vs large size=500)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F10-B: Competencies Radar Chart (Boundaries) → F10.B5 - Score maxScore ratio calculation never exceeds 1.0
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F11-B: Golden Certificate Modal (Boundaries) → F11.B1 - Certificate modal with 100.0% perfect GPA
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F11-B: Golden Certificate Modal (Boundaries) → F11.B2 - Certificate modal with 0% GPA boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F11-B: Golden Certificate Modal (Boundaries) → F11.B3 - Ultra-long student name (60+ characters) in certificate
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F11-B: Golden Certificate Modal (Boundaries) → F11.B4 - Certificate for student with empty notes or badges
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F11-B: Golden Certificate Modal (Boundaries) → F11.B5 - Certificate modal close action does not trigger print
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F12-B: Avatar Customization (Boundaries) → F12.B1 - Selecting same preset avatar already active is idempotent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F12-B: Avatar Customization (Boundaries) → F12.B2 - Very long Base64 image payload handling (> 1000 chars)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F12-B: Avatar Customization (Boundaries) → F12.B3 - Updating avatar for non-existent student ID is safe
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F12-B: Avatar Customization (Boundaries) → F12.B4 - Preset avatar URL validity
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F12-B: Avatar Customization (Boundaries) → F12.B5 - Empty string avatar URL fallback
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F13-B: Interactive Daily Report (Boundaries) → F13.B1 - Subject participation star rating boundary at 1 and 5 stars
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F13-B: Interactive Daily Report (Boundaries) → F13.B2 - Timeline items all marked completed boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F13-B: Interactive Daily Report (Boundaries) → F13.B3 - Empty achievements array boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F13-B: Interactive Daily Report (Boundaries) → F13.B4 - Empty tasks for tomorrow array boundary
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F13-B: Interactive Daily Report (Boundaries) → F13.B5 - Voice note simulation state timeout safety
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F14-B: Notification Center (Boundaries) → F14.B1 - Mark all read when unread count is already 0 is idempotent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F14-B: Notification Center (Boundaries) → F14.B2 - Mark non-existent notification ID as read is safe
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F14-B: Notification Center (Boundaries) → F14.B3 - Notifications list with 0 items unread calculation
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F14-B: Notification Center (Boundaries) → F14.B4 - Filtering notifications by non-existent category returns empty array
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F14-B: Notification Center (Boundaries) → F14.B5 - Notification without studentName attribute handling
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F15-B: Global Command Palette (Boundaries) → F15.B1 - Search query with 0 matching results returns empty list
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F15-B: Global Command Palette (Boundaries) → F15.B2 - Search with regex special characters does not crash
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F15-B: Global Command Palette (Boundaries) → F15.B3 - Search with Arabic Tashkeel string
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F15-B: Global Command Palette (Boundaries) → F15.B4 - Rapid Cmd+K open and close state toggles
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F15-B: Global Command Palette (Boundaries) → F15.B5 - Navigating with empty search query displays all students
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F16-B: Persistent Database & Seeding (Boundaries) → F16.B1 - Corrupted JSON in localStorage key recovers gracefully to seed data
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F16-B: Persistent Database & Seeding (Boundaries) → F16.B2 - Corrupted notifications JSON recovers gracefully
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F16-B: Persistent Database & Seeding (Boundaries) → F16.B3 - Corrupted reports JSON recovers gracefully
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F16-B: Persistent Database & Seeding (Boundaries) → F16.B4 - Missing individual keys seeded independently
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F16-B: Persistent Database & Seeding (Boundaries) → F16.B5 - Storage key prefix isolation (*_v2)
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F17-B: State Durability across Reloads (Boundaries) → F17.B1 - Rapid consecutive reloads maintain exact state integrity
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F17-B: State Durability across Reloads (Boundaries) → F17.B2 - Deep copy isolation between localStorage and runtime instances
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F17-B: State Durability across Reloads (Boundaries) → F17.B3 - State durability after partial array splice mutations
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F17-B: State Durability across Reloads (Boundaries) → F17.B4 - Concurrent database reads maintain consistent dataset
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F17-B: State Durability across Reloads (Boundaries) → F17.B5 - Durability of student attendance history across 3 reloads
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F18-B: Database Factory Reset (Boundaries) → F18.B1 - Multiple sequential factory resets are idempotent
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F18-B: Database Factory Reset (Boundaries) → F18.B2 - Factory reset on corrupted localStorage restores clean state
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F18-B: Database Factory Reset (Boundaries) → F18.B3 - Factory reset on empty localStorage initializes all 4 keys
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F18-B: Database Factory Reset (Boundaries) → F18.B4 - Factory reset restores student competencies array lengths
+  [32m✓[0m Tier 2: Boundary & Corner Cases Suite > F18-B: Database Factory Reset (Boundaries) → F18.B5 - Factory reset restores unread notifications count accurately
+  [1mSummary:[0m [32m90 passed[0m, [32m0 failed[0m (26ms)
+
+[1m[35m[Tier 3] Executing: Tier 3: Pairwise Workflows & Cross-Feature Integration...[0m
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W01: Attendance status update (unexcused) → Automated parent notification → Unread increment → Mark read
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W02: Behavior point awarded (+5) → Recalculate score → Notification dispatched → Certificate reflects GPA & Total
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W03: Parent sign-up with OTP "4821" → Login → Redirect to Link Student → Link "SCH-2026-R1"
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W04: Custom avatar change in AvatarPickerModal → StudentProfile updated → Storage persisted
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W05: Mark all present → Statuses updated → Class counters updated → Notification logged
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W06: Command Palette search "سارة" → Select student → Active student switched → Radar chart competencies
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W07: Submit medical excuse in StudentProfile → Status changed to excused → Notification logged
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W08: Award -2 behavior points → Decrement with floor at 0 → Notification dispatched
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W09: Parent role switches to Teacher → Attendance marked → Switches to Admin → Dashboard reflects changes
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W10: Enter link code "SCH-2026-S2" → Active child switched to Sarah → Daily report tab opened
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W11: Update multiple student statuses → CSV report output reflects updated data
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W12: Multi-point awards across categories → Points history array accurately ordered
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W13: Trigger voice note playback simulation → Audio chime logged → Timeline schedule validated
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W14: Notification click with type "new_report" → Mark as read → Navigate to daily-report tab
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W15: Avatar change + Points addition + Attendance mark → Storage re-read → 100% integrity
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W16: Database reset triggered → Storage re-initialized → Notifications, avatars, points restored to seed
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W17: Sound enabled toggle → Disabling sound silences clicks → Enabling restores chimes
+  [32m✓[0m Tier 3: Pairwise Workflows & Cross-Feature Integration → W18: Admin dashboard unread card click → Navigates to notifications tab → Bell count synchronized
+  [1mSummary:[0m [32m18 passed[0m, [32m0 failed[0m (10ms)
+
+[1m[35m[Tier 4] Executing: Tier 4: Real-World Scenarios & Full User Journeys...[0m
+  [32m✓[0m Tier 4: Real-World Scenarios & Full User Journeys → Scenario 1: Morning Roll Call & Immediate Parent Absence Alert
+  [32m✓[0m Tier 4: Real-World Scenarios & Full User Journeys → Scenario 2: New Parent Complete Registration, Multi-Child Linking & Excuse Submission
+  [32m✓[0m Tier 4: Real-World Scenarios & Full User Journeys → Scenario 3: Student Academic Excellence, Points Gamification & Golden Certificate Generation
+  [32m✓[0m Tier 4: Real-World Scenarios & Full User Journeys → Scenario 4: Admin Global Command Palette Navigation, Instant Search & Avatar Update
+  [32m✓[0m Tier 4: Real-World Scenarios & Full User Journeys → Scenario 5: 10 Multi-Domain Mutations, Full Session Reload Cycle & Factory Reset Verification
+  [1mSummary:[0m [32m5 passed[0m, [32m0 failed[0m (3ms)
+
+[1m[34m========================================================================[0m
+[1m[36m                    TEST EXECUTION SUMMARY REPORT                       [0m
+[1m[34m========================================================================[0m
+  [1mTotal Suites:[0m       4
+  [1mTotal Test Cases:[0m   203 (Target: ≥203)
+  [1mPassed:[0m             [32m202 (100%)[0m
+  [1mFailed:[0m             [31m1[0m
+  [1mExecution Time:[0m     147ms
+[1m[34m------------------------------------------------------------------------[0m
+  Tier 1  :  89 /  90 tests [[31mFAILED[0m] - Tier 1: Feature Coverage Suite (Happy Path)
+  Tier 2  :  90 /  90 tests [[32mPASSED[0m] - Tier 2: Boundary & Corner Cases Suite
+  Tier 3  :  18 /  18 tests [[32mPASSED[0m] - Tier 3: Pairwise Workflows & Cross-Feature Integration
+  Tier 4  :   5 /   5 tests [[32mPASSED[0m] - Tier 4: Real-World Scenarios & Full User Journeys
+[1m[34m========================================================================[0m
+
+[31m[1m❌ TEST RUN FAILED with 1 errors.[0m
+

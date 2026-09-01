@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تسجيل الحضور</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#6ffbbe",
+                        "outline-variant": "#c4c5d5",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-container": "#6cf8bb",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary-container": "#00714d",
+                        "on-error": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "surface": "#f8f9ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-tint": "#3755c3",
+                        "on-background": "#0b1c30",
+                        "primary-fixed": "#dde1ff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#9b0015",
+                        "on-primary-container": "#a8b8ff",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#70000c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-fixed": "#001453",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-container": "#ffa39c",
+                        "on-surface-variant": "#444653",
+                        "tertiary-fixed": "#ffdad7",
+                        "secondary": "#006c49",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-tertiary-fixed": "#410004",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container-low": "#eff4ff",
+                        "outline": "#757684",
+                        "inverse-surface": "#213145",
+                        "primary": "#00288e",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#1e40af"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xs": "8px",
+                        "margin-mobile": "16px",
+                        "sm": "12px",
+                        "margin-desktop": "40px",
+                        "gutter": "20px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["beVietnamPro"],
+                        "headline-sm": ["beVietnamPro"],
+                        "body-md": ["beVietnamPro"],
+                        "display-lg": ["beVietnamPro"],
+                        "display-md": ["beVietnamPro"],
+                        "label-md": ["beVietnamPro"],
+                        "label-sm": ["beVietnamPro"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "display-md": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col lg:flex-row">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col h-full fixed right-0 top-0 border-l border-outline-variant z-40 bg-surface-container-low dark:bg-on-background w-64 pt-6">
+<div class="flex items-center gap-4 px-6 mb-8">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A modern, abstract, geometric school logo design, using deep blue and bright white colors. Clean, institutional style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF660i4lI7o1lPFI1DQF9HgSNDb3S-as7zjkSOGo-I4IPlixVDiPYQ4InIgHURhJ8Dqqpqkj2Ueuqz4LCMgD8hSQrWJOkEVKtsKiuZ7rmgJR4INGq3QdTWyHaRjeTn41EmXPxilSNuJqp_2AWEa3yrAAsgC9zI5BUv_evqLIiJeAPeUEClhqC_79ixd8bMTEe8E20bBoWoP5SOCktxUiwI5v4RE9UFwzljDyq2uSW1R_heGZdgnWtM"/>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-primary">مدرسة النخبة</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">نظام الإدارة المدرسية</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">dashboard</span>
+<span class="font-label-md text-label-md">لوحة التحكم</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-xl transition-all group translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">how_to_reg</span>
+<span class="font-label-md text-label-md">إدارة الحضور</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">person</span>
+<span class="font-label-md text-label-md">الملفات الشخصية</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">assessment</span>
+<span class="font-label-md text-label-md">التقارير اليومية</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">notifications</span>
+<span class="font-label-md text-label-md">التنبيهات</span>
+</a>
+</div>
+<div class="p-4 mt-auto">
+<button class="w-full bg-primary-container text-on-primary py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                إضافة طالب جديد
+            </button>
+</div>
+</nav>
+<!-- TopNavBar (Web) -->
+<header class="hidden lg:flex flex-row-reverse justify-between items-center w-full px-margin-desktop h-16 z-50 bg-surface dark:bg-on-background shadow-sm ml-0 lg:pr-64 fixed top-0 left-0">
+<div class="flex items-center gap-4">
+<!-- Empty space for nav structural alignment if needed -->
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors scale-95 duration-150 ease-in-out">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full lg:pr-64 pt-6 lg:pt-24 pb-24 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto min-h-screen">
+<!-- Header & Controls -->
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface mb-1">تسجيل الحضور</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">الخميس، ٢٤ أكتوبر ٢٠٢٤ - الحصة الأولى</p>
+</div>
+<!-- Filters -->
+<div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="البحث عن طالب..." type="text"/>
+</div>
+<div class="flex gap-2">
+<select class="px-4 py-2 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary outline-none cursor-pointer">
+<option>الصف الأول</option>
+<option>الصف الثاني</option>
+<option>الصف الثالث</option>
+</select>
+<select class="px-4 py-2 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary outline-none cursor-pointer">
+<option>الشعبة أ</option>
+<option>الشعبة ب</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Student List -->
+<div class="bg-surface rounded-xl shadow-[0_4px_12px_rgba(30,64,175,0.05)] overflow-hidden">
+<!-- Table Header -->
+<div class="hidden sm:grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-md text-label-md">
+<div class="col-span-5">اسم الطالب</div>
+<div class="col-span-7 flex justify-between pr-4">
+<span class="w-16 text-center">حاضر</span>
+<span class="w-16 text-center">متأخر</span>
+<span class="w-16 text-center">غائب</span>
+<span class="w-16 text-center">بعذر</span>
+</div>
+</div>
+<!-- List Items -->
+<div class="divide-y divide-outline-variant">
+<!-- Student 1 -->
+<div class="flex flex-col sm:grid sm:grid-cols-12 gap-4 px-4 sm:px-6 py-4 items-center hover:bg-surface-container-lowest transition-colors">
+<div class="w-full sm:col-span-5 flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Portrait of a young middle eastern male student in a neat white shirt, professional school portrait style, neutral background, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwRQtJD5csD_kl6hNTds8H3Mus2Z8v0R0UW7StRPwmCs7IQD39gEi74vl7Vbf34qAi4917S6Bts9bCec_iIBCcwv1T7XqNii5bnjMcCj4xxaiLLnhE_8fxCnhITBtZShOTNtfG_N96JTwZDmJfg1CKzIfuodbeIhq-pG_tkoaxEBGdAtoXn1NPp74UoCoDjBAbiOrgpLUFNMI5SHtrFqWXBfF6bsPtO1Oa1ZQPsVgqKpI5oYtxBaam"/>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">أحمد محمد عبدالله</p>
+<p class="font-label-sm text-label-sm text-outline">رقم الطالب: 49201</p>
+</div>
+</div>
+<div class="w-full sm:col-span-7 flex justify-between sm:pr-4 mt-4 sm:mt-0">
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input checked="" class="hidden peer" name="student1" type="radio" value="present"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-green-600 peer-checked:bg-green-50 peer-checked:text-green-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">حاضر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student1" type="radio" value="late"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-yellow-500 peer-checked:bg-yellow-50 peer-checked:text-yellow-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">متأخر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student1" type="radio" value="absent"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-red-600 peer-checked:bg-red-50 peer-checked:text-red-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">غائب</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student1" type="radio" value="excused"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-gray-500 peer-checked:bg-gray-100 peer-checked:text-gray-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">info</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">بعذر</span>
+</label>
+</div>
+</div>
+<!-- Student 2 -->
+<div class="flex flex-col sm:grid sm:grid-cols-12 gap-4 px-4 sm:px-6 py-4 items-center hover:bg-surface-container-lowest transition-colors">
+<div class="w-full sm:col-span-5 flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Portrait of a young middle eastern male student with glasses, smiling slightly, professional school portrait style, neutral background, bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVTi9le4QaQcUac0qRGxDbMCGmK7QyIqNf4-PkjYhOssl3m5eOPg1MIbtptSgbTR_95o4wi67EYiph-948elH4VvzTzvZY2ICnKQgPMmDZ415-0r1Vhb_R2cDE5udIYV6zZbUrQ9uwUoFRyNmBlgYKpQgplfFtJfk2k9WiB8XLnen2QGL_GpHB-i9g2QasCpXWFvvuta85etgmHbeSwZWx36njev0Thxmhthr4MQsYHWQCN757EETd"/>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">خالد عمر سالم</p>
+<p class="font-label-sm text-label-sm text-outline">رقم الطالب: 49202</p>
+</div>
+</div>
+<div class="w-full sm:col-span-7 flex justify-between sm:pr-4 mt-4 sm:mt-0">
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student2" type="radio" value="present"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-green-600 peer-checked:bg-green-50 peer-checked:text-green-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">حاضر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student2" type="radio" value="late"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-yellow-500 peer-checked:bg-yellow-50 peer-checked:text-yellow-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">متأخر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input checked="" class="hidden peer" name="student2" type="radio" value="absent"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-red-600 peer-checked:bg-red-50 peer-checked:text-red-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">غائب</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student2" type="radio" value="excused"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-gray-500 peer-checked:bg-gray-100 peer-checked:text-gray-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">info</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">بعذر</span>
+</label>
+</div>
+</div>
+<!-- Student 3 -->
+<div class="flex flex-col sm:grid sm:grid-cols-12 gap-4 px-4 sm:px-6 py-4 items-center hover:bg-surface-container-lowest transition-colors">
+<div class="w-full sm:col-span-5 flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Portrait of a young middle eastern male student, serious expression, professional school portrait style, neutral background, clean bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtjq_4qh3Lbv6lJNwnrs3pNDrJ0RHra-QutzyCTZDKTg0FHglkST7NYXKd0L-JBm0KxratQXyWHkOtGY7xymzh9xYl569ecFpg3sf6bLN6IJQIkv9If6hNSDGkoRp5kuc4JGWgrxoSTxjjzF40430ErZ_UAKGV8Ngwre3RQEv4P-_6arosuw6rqb9ercoEyY8XK1hVnXgGmGrSm-fr-7Dg7_XIMpuMUkNcoexXhuC6I32uuDBb3gY0"/>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">سعيد طارق المري</p>
+<p class="font-label-sm text-label-sm text-outline">رقم الطالب: 49205</p>
+</div>
+</div>
+<div class="w-full sm:col-span-7 flex justify-between sm:pr-4 mt-4 sm:mt-0">
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student3" type="radio" value="present"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-green-600 peer-checked:bg-green-50 peer-checked:text-green-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">حاضر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input checked="" class="hidden peer" name="student3" type="radio" value="late"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-yellow-500 peer-checked:bg-yellow-50 peer-checked:text-yellow-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">متأخر</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student3" type="radio" value="absent"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-red-600 peer-checked:bg-red-50 peer-checked:text-red-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">غائب</span>
+</label>
+<label class="flex flex-col items-center gap-1 cursor-pointer group">
+<input class="hidden peer" name="student3" type="radio" value="excused"/>
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center text-outline peer-checked:border-gray-500 peer-checked:bg-gray-100 peer-checked:text-gray-600 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">info</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant sm:hidden">بعذر</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 lg:bottom-8 left-8 bg-primary-container text-on-primary shadow-[0_12px_24px_rgba(0,0,0,0.15)] rounded-full px-6 py-4 flex items-center gap-2 hover:bg-opacity-90 transition-all hover:-translate-y-1 z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">save</span>
+<span class="font-headline-sm text-headline-sm">حفظ الحضور</span>
+</button>
+<!-- BottomNavBar (Mobile) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex flex-row-reverse justify-around items-center px-4 py-2 bg-surface dark:bg-on-background shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">الرئيسية</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold active:bg-surface-container-high p-2 rounded-lg scale-110 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm mt-1">الحضور</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm mt-1">التقارير</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="font-label-sm text-label-sm mt-1">الملف</span>
+</a>
+</nav>
+</body></html>
