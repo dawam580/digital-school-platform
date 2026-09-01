@@ -98,6 +98,7 @@ function realtimeSyncPlugin(): Plugin {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [react(), realtimeSyncPlugin()],
   server: {
     port: 3000,
