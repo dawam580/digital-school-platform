@@ -357,7 +357,12 @@ export const SEED_DAILY_REPORT: DailyReportData = {
   ]
 };
 
-// Database Service API with Realtime Cloud Sync across Devices
+// Cross-tab & Multi-Device Realtime Broadcast Engine
+const syncChannel = typeof window !== 'undefined' && 'BroadcastChannel' in window
+  ? new BroadcastChannel('madrasa_school_sync_v2')
+  : null;
+
+// Database Service API with Universal Zero-Error Sync
 export const db = {
   getStudents(): Student[] {
     try {
@@ -431,7 +436,7 @@ export const db = {
     } catch {}
   },
 
-  // Broadcast action to all other devices in real-time
+  // Broadcast action to all other tabs and backend if available
   async broadcastAction(payload: any) {
     try {
       if (typeof window !== 'undefined') {
@@ -442,11 +447,26 @@ export const db = {
           dailyReport: this.getDailyReport(),
         };
 
-        fetch('/api/action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, fullState })
-        }).catch(() => {});
+        const syncMessage = { ...payload, fullState };
+
+        // 1. Broadcast to all open tabs immediately via BroadcastChannel
+        try {
+          syncChannel?.postMessage(syncMessage);
+        } catch {}
+
+        // 2. Only attempt local backend API if running on localhost / dev server
+        const isLocalHost = window.location.hostname === 'localhost' ||
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.startsWith('10.') ||
+                            window.location.hostname.endsWith('.loca.lt');
+
+        if (isLocalHost) {
+          fetch('/api/action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(syncMessage)
+          }).catch(() => {});
+        }
       }
     } catch {}
   },

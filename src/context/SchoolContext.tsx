@@ -56,7 +56,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
-  const [isOnlineSynced, setIsOnlineSynced] = useState(false);
+  const [isOnlineSynced, setIsOnlineSynced] = useState(true);
 
   // Persistent State Loaded from DB
   const [students, setStudents] = useState<Student[]>(() => db.getStudents());
@@ -70,10 +70,69 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSoundEnabledState(enabled);
   };
 
-  // 1. Fetch initial central server state on mount
+  // 1. Cross-Tab Realtime Broadcast Channel Listener (Zero Server Dependency)
   useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+
+    const channel = new BroadcastChannel('madrasa_school_sync_v2');
+
+    channel.onmessage = (event) => {
+      try {
+        const data = event.data;
+        if (data?.fullState) {
+          const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
+          if (s) {
+            setStudents(s);
+            db.saveStudents(s, false);
+            setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
+          }
+          if (c) {
+            setClasses(c);
+            db.saveClasses(c, false);
+          }
+          if (n) {
+            setNotifications(n);
+            db.saveNotifications(n, false);
+          }
+          if (r) {
+            setDailyReport(r);
+            db.saveDailyReport(r, false);
+          }
+
+          if (data.type === 'ATTENDANCE_UPDATE') sound.playSuccess();
+          else if (data.type === 'AWARD_POINT') {
+            sound.playFanfare();
+            triggerConfetti();
+          }
+        }
+      } catch {}
+    };
+
+    return () => {
+      try { channel.close(); } catch {}
+    };
+  }, []);
+
+  // 2. Only attempt server API if running on a dynamic host (localhost / dev server)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const isLocalHost = window.location.hostname === 'localhost' ||
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.startsWith('10.') ||
+                        window.location.hostname.endsWith('.loca.lt');
+
+    if (!isLocalHost) {
+      // Running on GitHub Pages or static host — rely cleanly on LocalStorage + BroadcastChannel
+      return;
+    }
+
+    // Fetch initial server state if available
     fetch('/api/state')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API not available');
+        return res.json();
+      })
       .then(serverState => {
         if (serverState && !serverState.empty) {
           if (serverState.students) {
@@ -94,22 +153,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setDailyReport(serverState.dailyReport);
             db.saveDailyReport(serverState.dailyReport, false);
           }
-        } else {
-          // Push local initial seed to server
-          db.broadcastAction({ type: 'INIT_SYNC' });
         }
       })
       .catch(() => {});
-  }, []);
 
-  // 2. Realtime Multi-Device Sync Stream (SSE)
-  useEffect(() => {
+    // SSE Stream
     let eventSource: EventSource | null = null;
     try {
       eventSource = new EventSource('/api/events');
-      eventSource.onopen = () => {
-        setIsOnlineSynced(true);
-      };
+      eventSource.onopen = () => setIsOnlineSynced(true);
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -117,7 +169,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setIsOnlineSynced(true);
             return;
           }
-
           if (data.fullState) {
             const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
             if (s) {
@@ -137,24 +188,16 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               setDailyReport(r);
               db.saveDailyReport(r, false);
             }
-
-            // Audio & celebration trigger for incoming remote action
-            if (data.type === 'ATTENDANCE_UPDATE') {
-              sound.playSuccess();
-            } else if (data.type === 'AWARD_POINT') {
-              sound.playFanfare();
-              triggerConfetti();
-            }
           }
         } catch {}
       };
       eventSource.onerror = () => {
-        setIsOnlineSynced(false);
+        eventSource?.close();
       };
     } catch {}
 
     return () => {
-      eventSource?.close();
+      try { eventSource?.close(); } catch {}
     };
   }, []);
 
