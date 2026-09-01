@@ -70,134 +70,66 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSoundEnabledState(enabled);
   };
 
-  // 1. Cross-Tab Realtime Broadcast Channel Listener (Zero Server Dependency)
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
-
-    const channel = new BroadcastChannel('madrasa_school_sync_v2');
-
-    channel.onmessage = (event) => {
-      try {
-        const data = event.data;
-        if (data?.fullState) {
-          const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
-          if (s) {
-            setStudents(s);
-            db.saveStudents(s, false);
-            setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
-          }
-          if (c) {
-            setClasses(c);
-            db.saveClasses(c, false);
-          }
-          if (n) {
-            setNotifications(n);
-            db.saveNotifications(n, false);
-          }
-          if (r) {
-            setDailyReport(r);
-            db.saveDailyReport(r, false);
-          }
-
-          if (data.type === 'ATTENDANCE_UPDATE') sound.playSuccess();
-          else if (data.type === 'AWARD_POINT') {
-            sound.playFanfare();
-            triggerConfetti();
-          }
-        }
-      } catch {}
-    };
-
-    return () => {
-      try { channel.close(); } catch {}
-    };
-  }, []);
-
-  // 2. Only attempt server API if running on a dynamic host (localhost / dev server)
+  // Cross-Tab & Multi-Window Instant Synchronization (BroadcastChannel + Storage Event)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const isLocalHost = window.location.hostname === 'localhost' ||
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.startsWith('10.') ||
-                        window.location.hostname.endsWith('.loca.lt');
-
-    if (!isLocalHost) {
-      // Running on GitHub Pages or static host — rely cleanly on LocalStorage + BroadcastChannel
-      return;
-    }
-
-    // Fetch initial server state if available
-    fetch('/api/state')
-      .then(res => {
-        if (!res.ok) throw new Error('API not available');
-        return res.json();
-      })
-      .then(serverState => {
-        if (serverState && !serverState.empty) {
-          if (serverState.students) {
-            setStudents(serverState.students);
-            db.saveStudents(serverState.students, false);
-            const found = serverState.students.find((s: Student) => s.id === selectedStudent.id) || serverState.students[0];
-            if (found) setSelectedStudent(found);
-          }
-          if (serverState.classes) {
-            setClasses(serverState.classes);
-            db.saveClasses(serverState.classes, false);
-          }
-          if (serverState.notifications) {
-            setNotifications(serverState.notifications);
-            db.saveNotifications(serverState.notifications, false);
-          }
-          if (serverState.dailyReport) {
-            setDailyReport(serverState.dailyReport);
-            db.saveDailyReport(serverState.dailyReport, false);
-          }
+    const handleSyncPayload = (data: any) => {
+      if (data?.fullState) {
+        const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
+        if (s) {
+          setStudents(s);
+          db.saveStudents(s, false);
+          setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
         }
-      })
-      .catch(() => {});
+        if (c) {
+          setClasses(c);
+          db.saveClasses(c, false);
+        }
+        if (n) {
+          setNotifications(n);
+          db.saveNotifications(n, false);
+        }
+        if (r) {
+          setDailyReport(r);
+          db.saveDailyReport(r, false);
+        }
 
-    // SSE Stream
-    let eventSource: EventSource | null = null;
-    try {
-      eventSource = new EventSource('/api/events');
-      eventSource.onopen = () => setIsOnlineSynced(true);
-      eventSource.onmessage = (event) => {
+        if (data.type === 'ATTENDANCE_UPDATE') sound.playSuccess();
+        else if (data.type === 'AWARD_POINT') {
+          sound.playFanfare();
+          triggerConfetti();
+        }
+      }
+    };
+
+    // 1. BroadcastChannel
+    let channel: BroadcastChannel | null = null;
+    if ('BroadcastChannel' in window) {
+      channel = new BroadcastChannel('madrasa_school_sync_v2');
+      channel.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'CONNECTED') {
-            setIsOnlineSynced(true);
-            return;
-          }
-          if (data.fullState) {
-            const { students: s, classes: c, notifications: n, dailyReport: r } = data.fullState;
-            if (s) {
-              setStudents(s);
-              db.saveStudents(s, false);
-              setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
-            }
-            if (c) {
-              setClasses(c);
-              db.saveClasses(c, false);
-            }
-            if (n) {
-              setNotifications(n);
-              db.saveNotifications(n, false);
-            }
-            if (r) {
-              setDailyReport(r);
-              db.saveDailyReport(r, false);
-            }
-          }
+          handleSyncPayload(event.data);
         } catch {}
       };
-      eventSource.onerror = () => {
-        eventSource?.close();
-      };
-    } catch {}
+    }
+
+    // 2. Storage event listener (fires across tabs when LocalStorage changes)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'madrasa_last_sync_timestamp' || e.key === 'madrasa_db_students_v2') {
+        const latestStudents = db.getStudents();
+        setStudents(latestStudents);
+        setSelectedStudent(prev => latestStudents.find(st => st.id === prev.id) || latestStudents[0]);
+        setClasses(db.getClasses());
+        setNotifications(db.getNotifications());
+        setDailyReport(db.getDailyReport());
+      }
+    };
+    window.addEventListener('storage', handleStorage);
 
     return () => {
-      try { eventSource?.close(); } catch {}
+      channel?.close();
+      window.removeEventListener('storage', handleStorage);
     };
   }, []);
 

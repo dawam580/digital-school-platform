@@ -357,12 +357,7 @@ export const SEED_DAILY_REPORT: DailyReportData = {
   ]
 };
 
-// Cross-tab & Multi-Device Realtime Broadcast Engine
-const syncChannel = typeof window !== 'undefined' && 'BroadcastChannel' in window
-  ? new BroadcastChannel('madrasa_school_sync_v2')
-  : null;
-
-// Database Service API with Universal Zero-Error Sync
+// Database Service API with Pure Client-Side Reliability
 export const db = {
   getStudents(): Student[] {
     try {
@@ -436,8 +431,8 @@ export const db = {
     } catch {}
   },
 
-  // Broadcast action to all other tabs and backend if available
-  async broadcastAction(payload: any) {
+  // Broadcast action across tabs cleanly without external API errors
+  broadcastAction(payload: any) {
     try {
       if (typeof window !== 'undefined') {
         const fullState = {
@@ -449,24 +444,15 @@ export const db = {
 
         const syncMessage = { ...payload, fullState };
 
-        // 1. Broadcast to all open tabs immediately via BroadcastChannel
-        try {
-          syncChannel?.postMessage(syncMessage);
-        } catch {}
-
-        // 2. Only attempt local backend API if running on localhost / dev server
-        const isLocalHost = window.location.hostname === 'localhost' ||
-                            window.location.hostname === '127.0.0.1' ||
-                            window.location.hostname.startsWith('10.') ||
-                            window.location.hostname.endsWith('.loca.lt');
-
-        if (isLocalHost) {
-          fetch('/api/action', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(syncMessage)
-          }).catch(() => {});
+        // 1. BroadcastChannel API
+        if ('BroadcastChannel' in window) {
+          const channel = new BroadcastChannel('madrasa_school_sync_v2');
+          channel.postMessage(syncMessage);
+          channel.close();
         }
+
+        // 2. LocalStorage storage event trigger
+        localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
       }
     } catch {}
   },
