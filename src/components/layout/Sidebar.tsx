@@ -14,7 +14,7 @@ import {
   BookOpen,
   MessageSquare,
   Clock,
-  GraduationCap
+  Database
 } from 'lucide-react';
 import { StudentExcelManager } from '../admin/StudentExcelManager';
 import { sound } from '../../utils/soundEffects';
@@ -23,7 +23,7 @@ export const Sidebar: React.FC = () => {
   const { activeTab, setActiveTab, unreadCount, currentRole, selectedStudent } = useSchool();
   const [showExcelModal, setShowExcelModal] = useState(false);
 
-  // Dedicated menu items strictly tailored per role with next-gen 360 features
+  // Dedicated menu items strictly tailored per role with next-gen 360 features & DB studio
   const getRoleMenuItems = () => {
     switch (currentRole) {
       case 'parent':
@@ -52,6 +52,7 @@ export const Sidebar: React.FC = () => {
       default:
         return [
           { id: 'dashboard', label: 'لوحة تحكم الإدارة المدرسية', icon: Home },
+          { id: 'db-studio', label: 'استوديو قواعد البيانات (SQL)', icon: Database, badge: 'نشط' },
           { id: 'grades', label: 'الاعتماد وسجل الدرجات العام', icon: Award },
           { id: 'excel-hub', label: 'إدارة الطلاب وملفات Excel', icon: FileSpreadsheet, isCustomAction: true },
           { id: 'schedule', label: 'جداول الحصص المدرسية', icon: Clock },
@@ -152,19 +153,19 @@ export const Sidebar: React.FC = () => {
 
           {/* Role specific helper widget */}
           {currentRole === 'admin' && (
-            <div className="bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl p-4 border border-emerald-100 dark:border-emerald-800/40 text-right space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 dark:text-emerald-300">
-                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                <span>مركز ملفات Excel والطلاب</span>
+            <div className="bg-indigo-50/70 dark:bg-indigo-950/30 rounded-2xl p-4 border border-indigo-100 dark:border-indigo-800/40 text-right space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-indigo-900 dark:text-indigo-300">
+                <Database className="w-4 h-4 text-indigo-600" />
+                <span>استوديو قواعد البيانات المدمج</span>
               </div>
-              <p className="text-[11px] text-emerald-800/80 dark:text-emerald-400/80 leading-relaxed">
-                استورد بيانات الطلاب من نظام نور أو قم بتصدير الجداول بضغطة زر.
+              <p className="text-[11px] text-indigo-800/80 dark:text-indigo-400/80 leading-relaxed">
+                استعرض الجداول، شغّل كود SQL، ونزّل النسخ الاحتياطية بضغطة زر واحدة.
               </p>
               <button
-                onClick={() => setShowExcelModal(true)}
-                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"
+                onClick={() => setActiveTab('db-studio')}
+                className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"
               >
-                فتح مدير ملفات Excel
+                فتح استوديو البيانات (DB Studio)
               </button>
             </div>
           )}
