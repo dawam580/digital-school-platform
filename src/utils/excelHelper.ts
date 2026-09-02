@@ -1,6 +1,52 @@
 import { Student } from '../types';
 
 /**
+ * Generates and downloads an Arabic-encoded Libyan Official School Excel file (.csv with UTF-8 BOM)
+ */
+export function exportLibyanStudentsToExcel(
+  students: Array<any>,
+  filename = 'كشف_بيانات_الطلاب_الرسمي_ليبيا_2026.csv'
+) {
+  const headers = [
+    'ت',
+    'اسم الطالب رباعي',
+    'الرقم الوطني (12 خانة)',
+    'اسم الأم',
+    'الجنس',
+    'تاريخ الميلاد',
+    'مكان الميلاد',
+    'الصف الدراسي',
+    'الفصل / الشعبة',
+    'هاتف ولي الأمر',
+    'العام الدراسي'
+  ];
+
+  const rows = students.map((s, idx) => [
+    `"${idx + 1}"`,
+    `"${s.name || ''}"`,
+    `"${s.nationalNumber || s.nationalId || ''}"`,
+    `"${s.motherName || 'غير مسجل'}"`,
+    `"${s.gender === 'male' ? 'ذكر' : 'أنثى'}"`,
+    `"${s.birthDate || ''}"`,
+    `"${s.birthPlace || 'طرابلس'}"`,
+    `"${s.grade || 'الصف التاسع الأساسي'}"`,
+    `"${s.sectionCode || s.className || 'أ'}"`,
+    `"${s.parentPhone || ''}"`,
+    `"${s.academicYear || '2025 - 2026 م'}"`
+  ]);
+
+  // \uFEFF is the UTF-8 BOM for Microsoft Excel Arabic compatibility
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Generates and downloads an Arabic-encoded Excel (CSV with UTF-8 BOM) file
  */
 export function exportStudentsToExcel(students: Student[], filename = 'قائمة_طلاب_المدرسة_2026.csv') {
