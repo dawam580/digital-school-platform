@@ -13,7 +13,8 @@ import {
   ParentSummon,
   StudentInfraction,
   AutoSummonCard,
-  StudentFollowUpForm
+  StudentFollowUpForm,
+  SubjectEvaluation
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
 
@@ -772,6 +773,72 @@ export const SEED_PARENT_SUMMONS: ParentSummon[] = [
   }
 ];
 
+export const DEFAULT_LIBYAN_SUBJECT_EVALUATIONS: SubjectEvaluation[] = [
+  {
+    subjectName: 'الرياضيات',
+    teacherName: 'أ. طارق الفيتوري',
+    academicLevel: 'ممتاز',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'متميز في حل المسائل والتفكير المنطقي الحسابي.'
+  },
+  {
+    subjectName: 'اللغة العربية',
+    teacherName: 'أ. عبدالسلام الورفلي',
+    academicLevel: 'جيد جداً',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'قراءة جيدة وتعبير إنشائي ممتاز.'
+  },
+  {
+    subjectName: 'العلوم',
+    teacherName: 'أ. فاطمة المجبري',
+    academicLevel: 'ممتاز',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'شغوف بالتجارب العلمية واستكشاف الظواهر الطبيعية.'
+  },
+  {
+    subjectName: 'الحاسوب وتقنية المعلومات',
+    teacherName: 'أ. محمد الزوي',
+    academicLevel: 'ممتاز',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'استيعاب سريع للمفاهيم التقنية والتطبيق العملي.'
+  },
+  {
+    subjectName: 'اللغة الإنجليزية',
+    teacherName: 'أ. خديجة الترهوني',
+    academicLevel: 'جيد جداً',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'متوسط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'تطور ملحوظ في النطق وحفظ المفردات.'
+  },
+  {
+    subjectName: 'التربية الإسلامية',
+    teacherName: 'أ. عثمان السويحلي',
+    academicLevel: 'ممتاز',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'حفظ متقن وسلوك قدوة في الصف.'
+  },
+  {
+    subjectName: 'الدراسات الاجتماعية',
+    teacherName: 'أ. مريم المنفي',
+    academicLevel: 'جيد جداً',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    teacherNotes: 'مشاركة فعالة وفهم للمفاهيم الجغرافية والتاريخية.'
+  }
+];
+
 export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
   {
     id: 'form-1',
@@ -785,13 +852,8 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
     counselorName: 'أ. نجوى القماطي',
     parentName: 'سالم الورفلي',
     parentPhone: '0922465676',
-    academicLevel: 'ممتاز',
-    homeworkPerformance: 'نشط',
-    classroomParticipation: 'نشط',
-    classroomBehavior: 'منضبط',
-    subjectName: 'الرياضيات',
-    teacherName: 'أ. طارق الفيتوري',
-    teacherNotes: 'طالب متميز ومتفاعل دائماً في حل المسائل الحسابية والمجسمات الهندسية.',
+    overallAcademicLevel: 'ممتاز',
+    subjectEvaluations: DEFAULT_LIBYAN_SUBJECT_EVALUATIONS,
     recommendations: {
       needsHomeworkFollowUp: false,
       needsRemedialSupport: false,
@@ -802,7 +864,6 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
     preparedDate: '2025-09-02',
     counselorSignature: 'أ. نجوى القماطي (المرشد التربوي)',
     principalSignature: 'إدارة المدرسة المعتمدة',
-    teacherSignature: 'أ. طارق الفيتوري',
     parentSignature: 'سالم الورفلي',
     parentReceivedDate: '2025-09-02',
     parentAcknowledged: true
@@ -819,24 +880,64 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
     counselorName: 'أ. نجوى القماطي',
     parentName: 'طارق المقريف',
     parentPhone: '0912345678',
-    academicLevel: 'مقبول',
-    homeworkPerformance: 'متوسط',
-    classroomParticipation: 'متوسط',
-    classroomBehavior: 'يحتاج توجيه',
-    subjectName: 'اللغة العربية',
-    teacherName: 'أ. عبدالسلام الورفلي',
-    teacherNotes: 'يحتاج إلى مزيد من التركيز في الإملاء والقراءة الجهرية مع متابعة يومية للواجبات.',
+    overallAcademicLevel: 'مقبول',
+    subjectEvaluations: [
+      {
+        subjectName: 'الرياضيات',
+        teacherName: 'أ. طارق الفيتوري',
+        academicLevel: 'مقبول',
+        homeworkPerformance: 'متوسط',
+        classroomParticipation: 'متوسط',
+        classroomBehavior: 'منضبط',
+        teacherNotes: 'يحتاج إلى التدريب على حفظ جدول الضرب والعمليات الحسابية.'
+      },
+      {
+        subjectName: 'اللغة العربية',
+        teacherName: 'أ. عبدالسلام الورفلي',
+        academicLevel: 'مقبول أحياناً',
+        homeworkPerformance: 'ضعيف',
+        classroomParticipation: 'ضعيف',
+        classroomBehavior: 'يحتاج توجيه',
+        teacherNotes: 'يحتاج إلى متابعة يومية في الإملاء والقراءة الجهرية وحل التمارين.'
+      },
+      {
+        subjectName: 'العلوم',
+        teacherName: 'أ. فاطمة المجبري',
+        academicLevel: 'مقبول',
+        homeworkPerformance: 'متوسط',
+        classroomParticipation: 'متوسط',
+        classroomBehavior: 'منضبط',
+        teacherNotes: 'مستواه متوسط ويحتاج لمزيد من الاهتمام بالمصطلحات.'
+      },
+      {
+        subjectName: 'الحاسوب وتقنية المعلومات',
+        teacherName: 'أ. محمد الزوي',
+        academicLevel: 'جيد جداً',
+        homeworkPerformance: 'نشط',
+        classroomParticipation: 'نشط',
+        classroomBehavior: 'منضبط',
+        teacherNotes: 'يظهر اهتماماً جيداً بالحصص العملية للحاسوب.'
+      },
+      {
+        subjectName: 'التربية الإسلامية',
+        teacherName: 'أ. عثمان السويحلي',
+        academicLevel: 'جيد جداً',
+        homeworkPerformance: 'متوسط',
+        classroomParticipation: 'متوسط',
+        classroomBehavior: 'منضبط',
+        teacherNotes: 'يحتاج إلى المتابعة المنزلية في تسميع السور القرآنية المقررة.'
+      }
+    ],
     recommendations: {
       needsHomeworkFollowUp: true,
       needsRemedialSupport: true,
       needsBehavioralGuidance: true,
       encourageGoodLevel: false,
-      customNote: 'ضرورة متابعة الاستيقاظ الصباحي المبكر والحد من السهر.'
+      customNote: 'ضرورة متابعة الاستيقاظ الصباحي المبكر وحل الواجبات اليومية أولاً بأول.'
     },
     preparedDate: '2025-09-02',
     counselorSignature: 'أ. نجوى القماطي (المرشد التربوي)',
     principalSignature: 'إدارة المدرسة المعتمدة',
-    teacherSignature: 'أ. عبدالسلام الورفلي',
     parentSignature: 'طارق المقريف',
     parentReceivedDate: '2025-09-02',
     parentAcknowledged: true

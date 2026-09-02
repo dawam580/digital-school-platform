@@ -338,6 +338,16 @@ export type HomeworkPerformance = 'نشط' | 'متوسط' | 'ضعيف';
 export type ClassroomParticipation = 'نشط' | 'متوسط' | 'ضعيف';
 export type ClassroomBehavior = 'منضبط' | 'يحتاج توجيه' | 'مخالف';
 
+export interface SubjectEvaluation {
+  subjectName: string;
+  teacherName: string;
+  academicLevel: AcademicLevel;
+  homeworkPerformance: HomeworkPerformance;
+  classroomParticipation: ClassroomParticipation;
+  classroomBehavior: ClassroomBehavior;
+  teacherNotes: string;
+}
+
 export interface StudentFollowUpForm {
   id: string;
   studentId: string;
@@ -350,13 +360,8 @@ export interface StudentFollowUpForm {
   counselorName: string;
   parentName: string;
   parentPhone: string;
-  academicLevel: AcademicLevel;
-  homeworkPerformance: HomeworkPerformance;
-  classroomParticipation: ClassroomParticipation;
-  classroomBehavior: ClassroomBehavior;
-  subjectName: string;
-  teacherName: string;
-  teacherNotes: string;
+  subjectEvaluations: SubjectEvaluation[];
+  overallAcademicLevel?: AcademicLevel;
   recommendations: {
     needsHomeworkFollowUp: boolean;
     needsRemedialSupport: boolean;
@@ -367,11 +372,12 @@ export interface StudentFollowUpForm {
   preparedDate: string;
   counselorSignature: string;
   principalSignature: string;
-  teacherSignature: string;
+  teacherSignature?: string;
   parentSignature?: string;
   parentReceivedDate?: string;
   parentAcknowledged: boolean;
 }
+
 
 
 
