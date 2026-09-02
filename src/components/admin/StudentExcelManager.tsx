@@ -85,17 +85,19 @@ export const StudentExcelManager: React.FC<StudentExcelManagerProps> = ({ isOpen
     // Update global state through custom context or direct local storage & sync
     localStorage.setItem('madrasa_db_students_v2', JSON.stringify(uniqueStudents));
     
-    // Broadcast update via API
-    fetch('/api/action', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'IMPORT_STUDENTS',
-        fullState: {
-          students: uniqueStudents,
-        }
-      })
-    }).catch(() => {});
+    // Broadcast update via API if running with local node server
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      fetch('/api/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'IMPORT_STUDENTS',
+          fullState: {
+            students: uniqueStudents,
+          }
+        })
+      }).catch(() => {});
+    }
 
     sound.playFanfare();
     triggerConfetti();

@@ -18,6 +18,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Self-healing: Ensure trailing slash on GitHub Pages
+      if (window.location.hostname.includes('github.io') && window.location.pathname === '/digital-school-platform') {
+        window.location.replace('/digital-school-platform/' + window.location.search + window.location.hash);
+      }
+    </script>
   </head>
   <body class="bg-school-background text-school-text-main font-cairo antialiased min-h-screen selection:bg-school-primary-light selection:text-white">
     <div id="root"></div>
