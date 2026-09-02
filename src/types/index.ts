@@ -333,4 +333,45 @@ export interface ParentSummon {
   cardId?: string;
 }
 
+export type AcademicLevel = 'ممتاز' | 'جيد جداً' | 'مقبول' | 'مقبول أحياناً' | 'ضعيف';
+export type HomeworkPerformance = 'نشط' | 'متوسط' | 'ضعيف';
+export type ClassroomParticipation = 'نشط' | 'متوسط' | 'ضعيف';
+export type ClassroomBehavior = 'منضبط' | 'يحتاج توجيه' | 'مخالف';
+
+export interface StudentFollowUpForm {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentNationalNumber: string;
+  grade: string;
+  className: string;
+  academicYear: string;
+  semester: string;
+  counselorName: string;
+  parentName: string;
+  parentPhone: string;
+  academicLevel: AcademicLevel;
+  homeworkPerformance: HomeworkPerformance;
+  classroomParticipation: ClassroomParticipation;
+  classroomBehavior: ClassroomBehavior;
+  subjectName: string;
+  teacherName: string;
+  teacherNotes: string;
+  recommendations: {
+    needsHomeworkFollowUp: boolean;
+    needsRemedialSupport: boolean;
+    needsBehavioralGuidance: boolean;
+    encourageGoodLevel: boolean;
+    customNote?: string;
+  };
+  preparedDate: string;
+  counselorSignature: string;
+  principalSignature: string;
+  teacherSignature: string;
+  parentSignature?: string;
+  parentReceivedDate?: string;
+  parentAcknowledged: boolean;
+}
+
+
 

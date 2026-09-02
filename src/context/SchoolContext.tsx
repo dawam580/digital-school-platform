@@ -15,7 +15,8 @@ import {
   CounselingSession,
   ParentSummon,
   StudentInfraction,
-  AutoSummonCard
+  AutoSummonCard,
+  StudentFollowUpForm
 } from '../types';
 import {
   db,
@@ -28,7 +29,8 @@ import {
   SEED_TEACHERS,
   SEED_CASE_STUDIES,
   SEED_COUNSELING_SESSIONS,
-  SEED_PARENT_SUMMONS
+  SEED_PARENT_SUMMONS,
+  SEED_FOLLOWUP_FORMS
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
 import { sound } from '../utils/soundEffects';
@@ -69,6 +71,11 @@ interface SchoolContextType {
   setCounselingSessions: React.Dispatch<React.SetStateAction<CounselingSession[]>>;
   parentSummons: ParentSummon[];
   setParentSummons: React.Dispatch<React.SetStateAction<ParentSummon[]>>;
+
+  // Student Follow-Up Forms & Evaluation
+  followUpForms: StudentFollowUpForm[];
+  setFollowUpForms: React.Dispatch<React.SetStateAction<StudentFollowUpForm[]>>;
+  saveFollowUpForm: (form: StudentFollowUpForm) => void;
 
   // Automated Summon Cards & Infractions Engine
   infractions: StudentInfraction[];
@@ -276,6 +283,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
+  const [followUpForms, setFollowUpFormsState] = useState<StudentFollowUpForm[]>(() => {
+    try {
+      const data = db.getFollowUpForms();
+      return (data && data.length > 0) ? data : SEED_FOLLOWUP_FORMS;
+    } catch {
+      return SEED_FOLLOWUP_FORMS;
+    }
+  });
+
   const setCaseStudies: React.Dispatch<React.SetStateAction<SocialCaseStudy[]>> = (casesOrUpdater) => {
     setCaseStudiesState(prev => {
       const next = typeof casesOrUpdater === 'function' ? casesOrUpdater(prev) : casesOrUpdater;
@@ -297,6 +313,29 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const next = typeof summonsOrUpdater === 'function' ? summonsOrUpdater(prev) : summonsOrUpdater;
       db.saveParentSummons(next);
       return next;
+    });
+  };
+
+  const setFollowUpForms: React.Dispatch<React.SetStateAction<StudentFollowUpForm[]>> = (formsOrUpdater) => {
+    setFollowUpFormsState(prev => {
+      const next = typeof formsOrUpdater === 'function' ? formsOrUpdater(prev) : formsOrUpdater;
+      db.saveFollowUpForms(next);
+      return next;
+    });
+  };
+
+  const saveFollowUpForm = (form: StudentFollowUpForm) => {
+    setFollowUpFormsState(prev => {
+      const existingIndex = prev.findIndex(f => f.id === form.id);
+      let updated: StudentFollowUpForm[];
+      if (existingIndex >= 0) {
+        updated = [...prev];
+        updated[existingIndex] = form;
+      } else {
+        updated = [form, ...prev];
+      }
+      db.saveFollowUpForms(updated);
+      return updated;
     });
   };
 
@@ -957,6 +996,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setCaseStudies(SEED_CASE_STUDIES);
     setCounselingSessions(SEED_COUNSELING_SESSIONS);
     setParentSummons(SEED_PARENT_SUMMONS);
+    setFollowUpForms(SEED_FOLLOWUP_FORMS);
     setInfractions(SEED_INFRACTIONS);
     setAutoSummonCards(SEED_AUTO_SUMMON_CARDS);
     auditLogger.clearLogs();
@@ -988,6 +1028,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCounselingSessions,
         parentSummons,
         setParentSummons,
+        followUpForms,
+        setFollowUpForms,
+        saveFollowUpForm,
         infractions,
         setInfractions,
         autoSummonCards,

@@ -12,7 +12,8 @@ import {
   CounselingSession,
   ParentSummon,
   StudentInfraction,
-  AutoSummonCard
+  AutoSummonCard,
+  StudentFollowUpForm
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
 
@@ -28,6 +29,7 @@ const STORAGE_KEY_SESSIONS = 'madrasa_db_counseling_sessions_v3';
 const STORAGE_KEY_SUMMONS = 'madrasa_db_parent_summons_v3';
 const STORAGE_KEY_INFRACTIONS = 'madrasa_db_infractions_v3';
 const STORAGE_KEY_AUTO_SUMMON_CARDS = 'madrasa_db_auto_summon_cards_v3';
+const STORAGE_KEY_FOLLOWUP_FORMS = 'madrasa_db_followup_forms_v3';
 
 // Libyan Teachers Directory
 export const SEED_TEACHERS: TeacherAccount[] = [
@@ -770,6 +772,77 @@ export const SEED_PARENT_SUMMONS: ParentSummon[] = [
   }
 ];
 
+export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
+  {
+    id: 'form-1',
+    studentId: 'std-1',
+    studentName: 'معتز سالم الورفلي',
+    studentNationalNumber: '120081234567',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/أ',
+    academicYear: '2025 - 2026 م',
+    semester: 'الفصل الدراسي الأول',
+    counselorName: 'أ. نجوى القماطي',
+    parentName: 'سالم الورفلي',
+    parentPhone: '0922465676',
+    academicLevel: 'ممتاز',
+    homeworkPerformance: 'نشط',
+    classroomParticipation: 'نشط',
+    classroomBehavior: 'منضبط',
+    subjectName: 'الرياضيات',
+    teacherName: 'أ. طارق الفيتوري',
+    teacherNotes: 'طالب متميز ومتفاعل دائماً في حل المسائل الحسابية والمجسمات الهندسية.',
+    recommendations: {
+      needsHomeworkFollowUp: false,
+      needsRemedialSupport: false,
+      needsBehavioralGuidance: false,
+      encourageGoodLevel: true,
+      customNote: 'الاستمرار في تشجيعه وإشراكه في المسابقات المدرسية على مستوى المنطقة.'
+    },
+    preparedDate: '2025-09-02',
+    counselorSignature: 'أ. نجوى القماطي (المرشد التربوي)',
+    principalSignature: 'إدارة المدرسة المعتمدة',
+    teacherSignature: 'أ. طارق الفيتوري',
+    parentSignature: 'سالم الورفلي',
+    parentReceivedDate: '2025-09-02',
+    parentAcknowledged: true
+  },
+  {
+    id: 'form-2',
+    studentId: 'std-3',
+    studentName: 'عبدالرحمن طارق المقريف',
+    studentNationalNumber: '120083456789',
+    grade: 'الصف الثاني الأساسي',
+    className: '2/أ',
+    academicYear: '2025 - 2026 م',
+    semester: 'الفصل الدراسي الأول',
+    counselorName: 'أ. نجوى القماطي',
+    parentName: 'طارق المقريف',
+    parentPhone: '0912345678',
+    academicLevel: 'مقبول',
+    homeworkPerformance: 'متوسط',
+    classroomParticipation: 'متوسط',
+    classroomBehavior: 'يحتاج توجيه',
+    subjectName: 'اللغة العربية',
+    teacherName: 'أ. عبدالسلام الورفلي',
+    teacherNotes: 'يحتاج إلى مزيد من التركيز في الإملاء والقراءة الجهرية مع متابعة يومية للواجبات.',
+    recommendations: {
+      needsHomeworkFollowUp: true,
+      needsRemedialSupport: true,
+      needsBehavioralGuidance: true,
+      encourageGoodLevel: false,
+      customNote: 'ضرورة متابعة الاستيقاظ الصباحي المبكر والحد من السهر.'
+    },
+    preparedDate: '2025-09-02',
+    counselorSignature: 'أ. نجوى القماطي (المرشد التربوي)',
+    principalSignature: 'إدارة المدرسة المعتمدة',
+    teacherSignature: 'أ. عبدالسلام الورفلي',
+    parentSignature: 'طارق المقريف',
+    parentReceivedDate: '2025-09-02',
+    parentAcknowledged: true
+  }
+];
+
 export const db = {
   onSync(callback: any) {
     return () => {};
@@ -789,6 +862,7 @@ export const db = {
       localStorage.removeItem(STORAGE_KEY_SUMMONS);
       localStorage.removeItem(STORAGE_KEY_INFRACTIONS);
       localStorage.removeItem(STORAGE_KEY_AUTO_SUMMON_CARDS);
+      localStorage.removeItem(STORAGE_KEY_FOLLOWUP_FORMS);
     } catch {}
   },
 
@@ -996,6 +1070,21 @@ export const db = {
   saveAutoSummonCards(cards: AutoSummonCard[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_AUTO_SUMMON_CARDS, JSON.stringify(cards));
+    } catch {}
+  },
+
+  getFollowUpForms(): StudentFollowUpForm[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_FOLLOWUP_FORMS);
+      return data ? JSON.parse(data) : SEED_FOLLOWUP_FORMS;
+    } catch {
+      return SEED_FOLLOWUP_FORMS;
+    }
+  },
+
+  saveFollowUpForms(forms: StudentFollowUpForm[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_FOLLOWUP_FORMS, JSON.stringify(forms));
     } catch {}
   },
 
