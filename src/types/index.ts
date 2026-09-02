@@ -71,7 +71,7 @@ export interface Assignment {
 
 export interface ChatMessage {
   id: string;
-  senderRole: 'parent' | 'teacher';
+  senderRole: 'parent' | 'teacher' | 'admin';
   senderName: string;
   text?: string;
   timestamp: string;
@@ -127,6 +127,7 @@ export interface Student {
   academicAverage: number; // e.g. 94.5
   behaviorRating: 'ممتاز' | 'جيد جداً' | 'جيد' | 'يحتاج تحسين';
   behaviorPointsTotal: number;
+  points?: number;
   behaviorPoints: BehaviorPoint[];
   competencies: StudentCompetency[];
   lastSeenTime?: string;

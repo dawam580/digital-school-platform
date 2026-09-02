@@ -664,6 +664,21 @@ export const db = {
     } catch {}
   },
 
+  onSync(callback: (data: any) => void) {
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      const channel = new BroadcastChannel('madrasa_school_sync_v3');
+      channel.onmessage = (event) => {
+        if (event.data?.fullState) {
+          callback(event.data.fullState);
+        } else if (event.data) {
+          callback(event.data);
+        }
+      };
+      return () => channel.close();
+    }
+    return () => {};
+  },
+
   resetAllData() {
     this.saveStudents(SEED_STUDENTS, false);
     this.saveClasses(SEED_CLASSES, false);

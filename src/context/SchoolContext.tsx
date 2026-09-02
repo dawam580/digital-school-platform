@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   UserRole,
   Student,
@@ -14,6 +14,10 @@ import {
 import { db, SEED_STUDENTS, SEED_CLASSES, SEED_NOTIFICATIONS, SEED_DAILY_REPORT, SEED_CONVERSATIONS, SEED_SCHEDULE } from '../services/db';
 import { sound } from '../utils/soundEffects';
 import { triggerConfetti } from '../utils/confetti';
+import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
+import { auditLogger } from '../services/audit/auditLogger';
+import { SecurityEngine } from '../services/security/securityEngine';
+import { studentRepository } from '../services/repositories';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -39,6 +43,9 @@ interface SchoolContextType {
   // Sound Engine
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
+
+  // Toast System
+  showToast: (type: ToastType, title: string, message: string, duration?: number) => void;
 
   // Live Data & Sync
   students: Student[];
@@ -77,6 +84,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isOnlineSynced, setIsOnlineSynced] = useState(true);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try {
       return localStorage.getItem('madrasa_dark_mode') === 'true';
@@ -149,6 +158,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
+  const showToast = useCallback((type: ToastType, title: string, message: string, duration: number = 3500) => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newToast: ToastMessage = { id, type, title, message, duration };
+    
+    setToasts(prev => [...prev.slice(-3), newToast]); // Keep max 4 toasts
+
+    if (type === 'success' || type === 'gold') sound.playSuccess();
+    else if (type === 'error' || type === 'warning') sound.playAlert();
+    else sound.playTap();
+
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, duration);
+  }, []);
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
   const toggleDarkMode = () => {
     setIsDarkMode(prev => {
       const next = !prev;
@@ -173,325 +201,340 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [isDarkMode]);
 
+  // Load from Repository layer on mount
+  useEffect(() => {
+    studentRepository.getAll().then(dbStudents => {
+      if (dbStudents && dbStudents.length > 0) {
+        setStudents(dbStudents);
+      }
+    });
+  }, []);
+
+  // Listen for BroadcastChannel Realtime Cross-tab Sync
+  useEffect(() => {
+    const unsubscribe = db.onSync((event) => {
+      setIsOnlineSynced(true);
+      if (event.students) {
+        setStudents(event.students);
+        setSelectedStudent(prev => event.students.find((s: Student) => s.id === prev.id) || event.students[0]);
+      }
+      if (event.notifications) setNotifications(event.notifications);
+      if (event.dailyReport) setDailyReport(event.dailyReport);
+      if (event.classes) setClasses(event.classes);
+      if (event.conversations) setConversations(event.conversations);
+      if (event.schedule) setSchedule(event.schedule);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const setSoundEnabled = (enabled: boolean) => {
-    sound.enabled = enabled;
     setSoundEnabledState(enabled);
+    sound.enabled = enabled;
   };
 
-  // Cross-Tab & Multi-Window Instant Synchronization (BroadcastChannel + Storage Event)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleSyncPayload = (data: any) => {
-      if (data?.fullState) {
-        const { students: s, classes: c, notifications: n, dailyReport: r, conversations: conv, schedule: sch } = data.fullState;
-        if (s && s.length > 0) {
-          setStudents(s);
-          db.saveStudents(s, false);
-          setSelectedStudent(prev => s.find((st: Student) => st.id === prev.id) || s[0]);
-        }
-        if (c && c.length > 0) {
-          setClasses(c);
-          db.saveClasses(c, false);
-        }
-        if (n) {
-          setNotifications(n);
-          db.saveNotifications(n, false);
-        }
-        if (r) {
-          setDailyReport(r);
-          db.saveDailyReport(r, false);
-        }
-        if (conv) {
-          setConversations(conv);
-          db.saveConversations(conv, false);
-        }
-        if (sch) {
-          setSchedule(sch);
-          db.saveSchedule(sch, false);
-        }
-
-        if (data.type === 'ATTENDANCE_UPDATE') sound.playSuccess();
-        else if (data.type === 'AWARD_POINT' || data.type === 'SUBMIT_ASSIGNMENT') {
-          sound.playFanfare();
-          triggerConfetti();
-        } else if (data.type === 'NEW_CHAT_MESSAGE') {
-          sound.playTap();
-        }
-      }
-    };
-
-    // 1. BroadcastChannel
-    let channel: BroadcastChannel | null = null;
-    if ('BroadcastChannel' in window) {
-      try {
-        channel = new BroadcastChannel('madrasa_school_sync_v3');
-        channel.onmessage = (event) => {
-          try {
-            handleSyncPayload(event.data);
-          } catch {}
-        };
-      } catch {}
-    }
-
-    // 2. Storage event listener
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'madrasa_last_sync_timestamp' || e.key === 'madrasa_db_students_v3') {
-        const latestStudents = db.getStudents();
-        setStudents(latestStudents);
-        setSelectedStudent(prev => latestStudents.find(st => st.id === prev.id) || latestStudents[0]);
-        setClasses(db.getClasses());
-        setNotifications(db.getNotifications());
-        setDailyReport(db.getDailyReport());
-        setConversations(db.getConversations());
-        setSchedule(db.getSchedule());
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-
-    return () => {
-      channel?.close();
-      window.removeEventListener('storage', handleStorage);
-    };
-  }, []);
-
-  // Keyboard shortcut Ctrl+K listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsCommandPaletteOpen(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const login = (phone: string, role: UserRole) => {
     setCurrentUserPhone(phone);
     setCurrentRole(role);
     setIsAuthenticated(true);
+    if (role === 'parent') setActiveTab('student-profile');
+    else if (role === 'teacher') setActiveTab('attendance');
+    else setActiveTab('dashboard');
     sound.playSuccess();
-    if (role === 'parent') {
-      setActiveTab('student-profile');
-    } else if (role === 'teacher') {
-      setActiveTab('attendance');
-    } else {
-      setActiveTab('dashboard');
-    }
+    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : 'إدارة المدرسة'}`);
+    auditLogger.log({
+      actorName: phone,
+      actorRole: role,
+      action: 'USER_LOGIN',
+      entity: 'Auth',
+      details: `تسجيل دخول ناجح برقم ${phone}`,
+      severity: 'INFO'
+    });
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setActiveTab('login');
     sound.playTap();
+    showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح.');
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   const updateAttendance = (studentId: string, status: AttendanceStatus, note?: string) => {
-    const updatedStudents = students.map(s => {
+    SecurityEngine.assertPermission(currentRole, 'TAKE_ATTENDANCE');
+    const updated = students.map(s => {
       if (s.id === studentId) {
-        const today = new Date().toISOString().split('T')[0];
-        const prevRecords = s.recentAttendance.filter(r => r.date !== today);
+        const totalDays = 20;
+        let newPresent = 19;
+        if (status === 'unexcused') newPresent = 17;
+        else if (status === 'late') newPresent = 18;
+        const newRate = Math.round((newPresent / totalDays) * 100);
+
         return {
           ...s,
           status,
-          recentAttendance: [{ date: today, status, note }, ...prevRecords]
+          attendanceNote: note ? SecurityEngine.sanitizeString(note) : undefined,
+          attendanceRate: newRate,
+          lastAttendanceUpdate: 'اليوم'
         };
       }
       return s;
     });
 
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
 
-    const updatedSelected = updatedStudents.find(s => s.id === selectedStudent.id);
-    if (updatedSelected) {
-      setSelectedStudent(updatedSelected);
+    const targetStudent = students.find(s => s.id === studentId);
+    if (targetStudent) {
+      addNotification(
+        `تحديث الحضور: ${targetStudent.name}`,
+        `تم تسجيل حالة الحضور: ${status === 'present' ? 'حاضر' : status === 'late' ? 'متأخر' : status === 'excused' ? 'غائب بعذر' : 'غائب بدون عذر'}`,
+        'attendance',
+        targetStudent.name
+      );
     }
 
-    if (status === 'present') sound.playTap();
-    else if (status === 'unexcused') sound.playAlert();
-    else sound.playTap();
+    auditLogger.log({
+      actorName: currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
+      actorRole: currentRole,
+      action: 'UPDATE_ATTENDANCE',
+      entity: 'Student',
+      details: `تسجيل حضور الطالب ${targetStudent?.name || studentId}: ${status}`,
+      severity: 'INFO'
+    });
+
+    sound.playTap();
+    showToast('success', 'رصد الحضور', `تم تسجيل حالة ${targetStudent?.name.split(' ')[0] || ''} بنجاح`);
   };
 
-  const markAllPresent = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const updatedStudents = students.map(s => ({
-      ...s,
-      status: 'present' as AttendanceStatus,
-      recentAttendance: [{ date: today, status: 'present' as AttendanceStatus }, ...s.recentAttendance.filter(r => r.date !== today)]
-    }));
+  const markAllPresent = (classId?: string) => {
+    SecurityEngine.assertPermission(currentRole, 'TAKE_ATTENDANCE');
+    const updated = students.map(s => {
+      if (!classId || s.className.includes(classId)) {
+        return {
+          ...s,
+          status: 'present' as AttendanceStatus,
+          attendanceRate: 100,
+          lastAttendanceUpdate: 'اليوم'
+        };
+      }
+      return s;
+    });
 
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
-    sound.playSuccess();
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
 
     addNotification(
       'تحضير جماعي للفصل',
-      'تم تسجيل حضور جميع طلاب الصف الخامس (شعبة أ) كحاضرين بنجاح.',
+      'تم تسجيل جميع طلاب الفصل حاضرين لهذا اليوم بنجاح.',
       'attendance'
     );
+
+    auditLogger.log({
+      actorName: currentRole,
+      actorRole: currentRole,
+      action: 'BATCH_ATTENDANCE',
+      entity: 'Class',
+      details: 'تم رصد الحضور الكامل لجميع الطلاب دفعة واحدة',
+      severity: 'INFO'
+    });
+
+    sound.playSuccess();
+    triggerConfetti();
+    showToast('gold', 'تحضير مكتمل', 'تم تسجيل حضور جميع الطلاب بنجاح 🌟');
   };
 
-  const linkStudent = (codeOrId: string): boolean => {
+  const linkStudent = (studentCodeOrId: string): boolean => {
+    const cleanCode = SecurityEngine.cleanText(studentCodeOrId);
     const found = students.find(
-      s => s.linkCode.toLowerCase() === codeOrId.trim().toLowerCase() ||
-           s.studentNumber === codeOrId.trim() ||
-           s.nationalId === codeOrId.trim()
+      s => s.linkCode.toLowerCase() === cleanCode.toLowerCase() || s.nationalId === cleanCode
     );
 
     if (found) {
       setSelectedStudent(found);
+      addNotification(
+        'تم ربط الطالب بنجاح',
+        `تم ربط ملف الطالب ${found.name} بحساب ولي الأمر بنجاح.`,
+        'admin',
+        found.name
+      );
+
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: currentRole,
+        action: 'LINK_STUDENT',
+        entity: 'Student',
+        details: `ربط ملف الطالب ${found.name} (${found.linkCode})`,
+        severity: 'INFO'
+      });
+
       sound.playSuccess();
+      triggerConfetti();
+      showToast('gold', 'تم ربط الطالب!', `أهلاً بك، تم فتح ملف ${found.name} بنجاح.`);
       return true;
     }
     sound.playAlert();
+    showToast('error', 'رمز غير صحيح', 'لم يتم العثور على طالب بهذا الرمز أو الهوية.');
     return false;
   };
 
   const addBehaviorPoint = (studentId: string, point: BehaviorPoint) => {
-    const updatedStudents = students.map(s => {
+    const updated = students.map(s => {
       if (s.id === studentId) {
+        const currentPoints = s.behaviorPointsTotal || 0;
+        const newPoints = currentPoints + point.points;
         return {
           ...s,
-          behaviorPointsTotal: Math.max(0, s.behaviorPointsTotal + point.points),
-          behaviorPoints: [point, ...s.behaviorPoints]
+          behaviorPointsTotal: newPoints,
+          behaviorPoints: [point, ...(s.behaviorPoints || [])]
         };
       }
       return s;
     });
 
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
 
-    const updatedSelected = updatedStudents.find(s => s.id === selectedStudent.id);
-    if (updatedSelected) {
-      setSelectedStudent(updatedSelected);
+    const st = students.find(s => s.id === studentId);
+    if (point.points > 0) {
+      sound.playSuccess();
+      triggerConfetti();
+      showToast('gold', 'وسام تميز!', `تم منح ${st?.name.split(' ')[0]} +${point.points} نقطة سلوكية 🌟`);
+    } else {
+      sound.playAlert();
+      showToast('warning', 'ملاحظة سلوكية', `تم تسجيل ملاحظة سلوكية للطالب`);
     }
-
-    addNotification(
-      `نقطة تقييم جديدة (${point.points > 0 ? '+' + point.points : point.points})`,
-      `تم منح الطالب (${point.title}) بواسطة ${point.teacher}.`,
-      'academic',
-      selectedStudent.name
-    );
   };
 
   const updateStudentAvatar = (studentId: string, avatarUrl: string) => {
-    const updatedStudents = students.map(s => {
+    const updated = students.map(s => {
       if (s.id === studentId) {
         return { ...s, avatar: avatarUrl };
       }
       return s;
     });
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
 
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
     if (selectedStudent.id === studentId) {
       setSelectedStudent({ ...selectedStudent, avatar: avatarUrl });
     }
+    sound.playSuccess();
+    showToast('success', 'تحديث الصورة', 'تم تحديث الصورة الشخصية بنجاح.');
   };
 
   const updateStudentGrade = (studentId: string, gradeId: string, updatedFields: Partial<SubjectGrade>) => {
-    const updatedStudents = students.map(s => {
+    SecurityEngine.assertPermission(currentRole, 'EDIT_GRADES');
+    const updated = students.map(s => {
       if (s.id === studentId && s.grades) {
         const updatedGrades = s.grades.map(g => {
           if (g.id === gradeId) {
             const merged = { ...g, ...updatedFields };
-            const total = merged.period1 + merged.period2 + merged.quizzes + merged.homework + merged.participation + merged.finalExam;
-            let letter: SubjectGrade['letter'] = 'A+';
-            if (total >= 95) letter = 'A+';
-            else if (total >= 90) letter = 'A';
-            else if (total >= 85) letter = 'B+';
-            else if (total >= 80) letter = 'B';
-            else if (total >= 75) letter = 'C+';
-            else if (total >= 70) letter = 'C';
-            else if (total >= 60) letter = 'D';
-            else letter = 'F';
+            const newTotal = (merged.period1 || 0) + (merged.period2 || 0) + (merged.quizzes || 0) +
+                             (merged.homework || 0) + (merged.participation || 0) + (merged.finalExam || 0);
 
-            return { ...merged, total, letter };
+            let letter: 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' = 'A+';
+            if (newTotal >= 95) letter = 'A+';
+            else if (newTotal >= 90) letter = 'A';
+            else if (newTotal >= 85) letter = 'B+';
+            else if (newTotal >= 80) letter = 'B';
+            else if (newTotal >= 75) letter = 'C+';
+            else if (newTotal >= 70) letter = 'C';
+            else letter = 'D';
+
+            return { ...merged, total: newTotal, letter };
           }
           return g;
         });
 
-        // Recalculate student overall GPA average
-        const totalAvg = updatedGrades.reduce((acc, curr) => acc + curr.total, 0) / updatedGrades.length;
+        const sumTotals = updatedGrades.reduce((acc, curr) => acc + curr.total, 0);
+        const newAvg = Math.round((sumTotals / updatedGrades.length) * 10) / 10;
 
         return {
           ...s,
           grades: updatedGrades,
-          academicAverage: Number(totalAvg.toFixed(1))
+          academicAverage: newAvg
         };
       }
       return s;
     });
 
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
-
-    const updatedSelected = updatedStudents.find(s => s.id === selectedStudent.id);
-    if (updatedSelected) setSelectedStudent(updatedSelected);
-
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
     sound.playSuccess();
-    addNotification('تحديث درجات الطالب', 'تم تحديث درجات الطالب ورصدها في السجل الأكاديمي بنجاح.', 'academic', selectedStudent.name);
+    showToast('success', 'رصد الدرجات', 'تم حفظ الدرجة وتحديث المعدل التراكمي فورياً 📊');
+
+    auditLogger.log({
+      actorName: currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
+      actorRole: currentRole,
+      action: 'UPDATE_GRADE',
+      entity: 'SubjectGrade',
+      details: `تعديل درجات الطالب في كشف العلامات`,
+      severity: 'INFO'
+    });
   };
 
   const submitAssignment = (studentId: string, assignmentId: string, score: number, feedback?: string) => {
-    const updatedStudents = students.map(s => {
+    const updated = students.map(s => {
       if (s.id === studentId && s.assignments) {
-        const updatedAsg = s.assignments.map(a => {
+        const updatedAssignments = s.assignments.map(a => {
           if (a.id === assignmentId) {
             return {
               ...a,
               status: 'submitted' as const,
-              studentScore: score,
-              teacherFeedback: feedback || 'تم تصحيح الواجب بنجاح.'
+              score,
+              feedback: feedback || 'تم الحل والتسليم بنجاح.'
             };
           }
           return a;
         });
 
-        // Award +5 behavior reward points for completing assignment
-        const rewardPoint: BehaviorPoint = {
-          id: `bp-asg-${Date.now()}`,
-          category: 'positive',
-          title: 'حل وتسليم الواجب الإلكتروني بنجاح',
-          points: 5,
-          icon: '📝',
-          date: 'اليوم',
-          teacher: 'النظام الأكاديمي'
-        };
-
         return {
           ...s,
-          assignments: updatedAsg,
-          behaviorPointsTotal: s.behaviorPointsTotal + 5,
-          behaviorPoints: [rewardPoint, ...s.behaviorPoints]
+          behaviorPointsTotal: (s.behaviorPointsTotal || 0) + 5,
+          assignments: updatedAssignments
         };
       }
       return s;
     });
 
-    setStudents(updatedStudents);
-    db.saveStudents(updatedStudents, true);
+    setStudents(updated);
+    db.saveStudents(updated, true);
+    studentRepository.saveAll(updated);
 
-    const updatedSelected = updatedStudents.find(s => s.id === selectedStudent.id);
-    if (updatedSelected) setSelectedStudent(updatedSelected);
-
-    sound.playFanfare();
+    sound.playSuccess();
     triggerConfetti();
+    showToast('gold', 'إنجاز رائع!', `حصلت على ${score} درجات وتمت إضافة +5 نقاط تميز 🌟`);
 
-    addNotification('تسليم واجب إلكتروني 📝', `حصل الطالب على درجة (${score}/10) وتمت إضافة +5 نقاط تميز لسجله.`, 'academic', selectedStudent.name);
+    auditLogger.log({
+      actorName: 'الطالب',
+      actorRole: currentRole,
+      action: 'SUBMIT_ASSIGNMENT',
+      entity: 'Assignment',
+      details: `تسليم واجب برقم ${assignmentId} والحصول على ${score} درجة`,
+      severity: 'INFO'
+    });
   };
 
-  const sendChatMessage = (conversationId: string, text?: string, isVoice?: boolean, voiceDuration?: string, imageUrl?: string) => {
+  const sendChatMessage = (
+    conversationId: string,
+    text?: string,
+    isVoice?: boolean,
+    voiceDuration?: string,
+    imageUrl?: string
+  ) => {
+    const cleanText = text ? SecurityEngine.cleanText(text) : undefined;
     const newMsg = {
       id: `msg-${Date.now()}`,
-      senderRole: currentRole === 'parent' ? ('parent' as const) : ('teacher' as const),
-      senderName: currentRole === 'parent' ? 'ولي الأمر' : 'المعلم',
-      text,
+      senderRole: currentRole,
+      senderName: currentRole === 'parent' ? `ولي أمر الطالب (${selectedStudent.name.split(' ')[0]})` : 'المعلم',
+      text: cleanText,
       isVoice,
       voiceDuration,
       imageUrl,
@@ -503,7 +546,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (c.id === conversationId) {
         return {
           ...c,
-          lastMessage: text || (isVoice ? '🎤 رسالة صوتية' : '📷 صورة مرفقة'),
+          lastMessage: cleanText || (isVoice ? '🎤 رسالة صوتية' : '📷 صورة مرفقة'),
           lastMessageTime: 'الآن',
           messages: [...c.messages, newMsg]
         };
@@ -515,7 +558,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     db.saveConversations(updatedConv, true);
     sound.playTap();
 
-    // If parent sent a message, simulate smart AI teacher auto-acknowledgement after 2.5s
     if (currentRole === 'parent') {
       setTimeout(() => {
         const teacherReplies = [
@@ -553,6 +595,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         sound.playSuccess();
         addNotification('رسالة جديدة من المعلم 💬', randomReply, 'admin', selectedStudent.name);
+        showToast('info', 'رسالة جديدة من المعلم', randomReply);
       }, 2000);
     }
   };
@@ -565,8 +608,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   ) => {
     const newNotif: NotificationItem = {
       id: `notif-${Date.now()}`,
-      title,
-      message,
+      title: SecurityEngine.sanitizeString(title),
+      message: SecurityEngine.sanitizeString(message),
       category,
       date: 'الآن',
       time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
@@ -590,9 +633,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setNotifications(updated);
     db.saveNotifications(updated, true);
     sound.playTap();
+    showToast('info', 'التنبيهات', 'تم تعليم كافة التنبيهات كمقروءة.');
   };
 
   const resetDatabase = () => {
+    SecurityEngine.assertPermission(currentRole, 'RESET_SYSTEM');
     db.resetAllData();
     setStudents(SEED_STUDENTS);
     setSelectedStudent(SEED_STUDENTS[0]);
@@ -601,7 +646,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setDailyReport(SEED_DAILY_REPORT);
     setConversations(SEED_CONVERSATIONS);
     setSchedule(SEED_SCHEDULE);
+    auditLogger.clearLogs();
     sound.playSuccess();
+    showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
   };
 
   return (
@@ -621,6 +668,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setIsCommandPaletteOpen,
         soundEnabled,
         setSoundEnabled,
+        showToast,
         students,
         selectedStudent,
         setSelectedStudent,
@@ -646,6 +694,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }}
     >
       {children}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </SchoolContext.Provider>
   );
 };
