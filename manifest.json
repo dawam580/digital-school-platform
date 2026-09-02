@@ -1,0 +1,23 @@
+{
+  "short_name": "المدرسة الرقمية",
+  "name": "منصة المدرسة الرقمية 360°",
+  "icons": [
+    {
+      "src": "./logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#00288e",
+  "theme_color": "#00288e",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar"
+}
