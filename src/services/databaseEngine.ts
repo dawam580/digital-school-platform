@@ -156,6 +156,8 @@ CREATE INDEX IF NOT EXISTS idx_chat_conversation ON chat_messages(conversation_i
 export interface TableMeta {
   tableName: string;
   nameArabic: string;
+  name?: string;
+  displayName?: string;
   description: string;
   icon: string;
   rowCount: number;
@@ -184,13 +186,14 @@ export const databaseEngine = {
       });
 
       return [
-        { tableName: 'students', nameArabic: 'سجل الطلاب الأساسي', description: 'بيانات الهوية الوطنية، الصفوف، والمعدلات التراكمية', icon: '👨‍🎓', rowCount: students.length },
-        { tableName: 'subject_grades', nameArabic: 'سجل الدرجات وكشوف العلامات', description: 'تفصيل درجات الفترات والاختبارات القصيرة والنهائي', icon: '📊', rowCount: totalGrades },
-        { tableName: 'assignments', nameArabic: 'بنك الواجبات التفاعلية', description: 'الواجبات والأسئلة ونماذج الإجابة الإلكترونية', icon: '📝', rowCount: totalAssignments },
-        { tableName: 'chat_messages', nameArabic: 'سجل المحادثات والرسائل', description: 'الرسائل الفورية والملاحظات الصوتية بين الأولياء والمعلمين', icon: '💬', rowCount: totalMessages },
-        { tableName: 'timetable_schedule', nameArabic: 'الجدول المدرسي والحصص', description: 'توزيع الحصص الأسبوعية والمواد والقاعات', icon: '⏰', rowCount: sched.reduce((acc: number, d: any) => acc + (d.periods?.length || 0), 0) },
-        { tableName: 'classes', nameArabic: 'الفصول والشعب الدراسية', description: 'الفصول، المشرفين، وإحصائيات الطلاب', icon: '🏫', rowCount: classes.length },
-        { tableName: 'notifications', nameArabic: 'مركز الإشعارات والتعاميم', description: 'تنبيهات الحضور، الواجبات، والرسائل الإدارية', icon: '🔔', rowCount: notifs.length },
+        { tableName: 'students', nameArabic: 'سجل الطلاب الأساسي', name: 'students', displayName: 'سجل الطلاب الأساسي', description: 'بيانات الهوية الوطنية، الصفوف، والمعدلات التراكمية', icon: '👨‍🎓', rowCount: students.length },
+        { tableName: 'teachers', nameArabic: 'دليل المعلمين ورموز الدخول', name: 'teachers', displayName: 'دليل المعلمين ورموز الدخول', description: 'بيانات المعلمين، رموز الدخول الفريدة، والفصول المسندة', icon: '👨‍🏫', rowCount: 6 },
+        { tableName: 'subject_grades', nameArabic: 'سجل الدرجات وكشوف العلامات', name: 'subject_grades', displayName: 'سجل الدرجات وكشوف العلامات', description: 'تفصيل درجات الفترات والاختبارات القصيرة والنهائي', icon: '📊', rowCount: totalGrades },
+        { tableName: 'assignments', nameArabic: 'بنك الواجبات التفاعلية', name: 'assignments', displayName: 'بنك الواجبات التفاعلية', description: 'الواجبات والأسئلة ونماذج الإجابة الإلكترونية', icon: '📝', rowCount: totalAssignments },
+        { tableName: 'chat_messages', nameArabic: 'سجل المحادثات والرسائل', name: 'chat_messages', displayName: 'سجل المحادثات والرسائل', description: 'الرسائل الفورية والملاحظات الصوتية بين الأولياء والمعلمين', icon: '💬', rowCount: totalMessages },
+        { tableName: 'timetable_schedule', nameArabic: 'الجدول المدرسي والحصص', name: 'timetable_schedule', displayName: 'الجدول المدرسي والحصص', description: 'توزيع الحصص الأسبوعية والمواد والقاعات', icon: '⏰', rowCount: sched.reduce((acc: number, d: any) => acc + (d.periods?.length || 0), 0) },
+        { tableName: 'classes', nameArabic: 'الفصول والشعب الدراسية', name: 'classes', displayName: 'الفصول والشعب الدراسية', description: 'الفصول، المشرفين، وإحصائيات الطلاب', icon: '🏫', rowCount: classes.length },
+        { tableName: 'notifications', nameArabic: 'مركز الإشعارات والتعاميم', name: 'notifications', displayName: 'مركز الإشعارات والتعاميم', description: 'تنبيهات الحضور، الواجبات، والرسائل الإدارية', icon: '🔔', rowCount: notifs.length },
       ];
     } catch {
       return [];

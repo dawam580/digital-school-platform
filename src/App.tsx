@@ -14,6 +14,7 @@ import { AssignmentsPage } from './pages/assignments/AssignmentsPage';
 import { ParentTeacherChat } from './pages/chat/ParentTeacherChat';
 import { SchedulePage } from './pages/schedule/SchedulePage';
 import { DatabaseStudio } from './pages/admin/DatabaseStudio';
+import { SystemOperationalPlanPDF } from './pages/admin/SystemOperationalPlanPDF';
 import { CommandPalette } from './components/ui/CommandPalette';
 
 const MainContent: React.FC = () => {
@@ -67,6 +68,7 @@ const MainContent: React.FC = () => {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
       />
+      <SystemOperationalPlanPDF />
     </>
   );
 };

@@ -17,7 +17,9 @@ import {
   Sun,
   Award,
   MessageSquare,
-  BookOpen
+  BookOpen,
+  FileText,
+  Key
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -30,11 +32,13 @@ export const Navbar: React.FC<NavbarProps> = () => {
   const {
     currentRole,
     setCurrentRole,
+    currentTeacher,
     unreadCount,
     notifications,
     markNotificationAsRead,
     markAllNotificationsAsRead,
     setActiveTab,
+    setShowOperationalPlanModal,
     students,
     selectedStudent,
     setSelectedStudent,
@@ -51,9 +55,8 @@ export const Navbar: React.FC<NavbarProps> = () => {
   const [showStudentMenu, setShowStudentMenu] = useState(false);
 
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
-    { id: 'parent', label: 'ولي أمر', icon: <Users className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
-    { id: 'teacher', label: 'معلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
     { id: 'admin', label: 'إدارة المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
+    { id: 'teacher', label: 'المعلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
   ];
 
   const currentRoleInfo = roles.find(r => r.id === currentRole) || roles[0];
@@ -72,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
           {/* Logo & Platform Name */}
           <div className="flex items-center gap-3">
             <button
-              onClick={() => { setActiveTab('dashboard'); sound.playTap(); }}
+              onClick={() => { setActiveTab(currentRole === 'parent' ? 'student-profile' : 'dashboard'); sound.playTap(); }}
               className="flex items-center gap-3 group focus:outline-none"
             >
               <img
@@ -115,33 +118,17 @@ export const Navbar: React.FC<NavbarProps> = () => {
           {/* Right Action Tools: Dark Mode, Sound, Switcher, Role, Notifs, Logout */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
             
-            {/* Quick 360 Shortcuts */}
-            <div className="hidden xl:flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/60 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+            {/* Operational Plan PDF Button (Visible for Admin & Teacher) */}
+            {currentRole !== 'parent' && (
               <button
-                onClick={() => { setActiveTab('grades'); sound.playTap(); }}
-                className="px-2.5 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                title="سجل الدرجات"
+                onClick={() => { setShowOperationalPlanModal(true); sound.playTap(); }}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shadow-sm hover:bg-amber-100 transition-all"
+                title="عرض خطة التشغيل الشاملة PDF"
               >
-                <Award className="w-3.5 h-3.5 text-amber-500" />
-                <span>الدرجات</span>
+                <FileText className="w-4 h-4 text-amber-600" />
+                <span>خطة التشغيل (PDF)</span>
               </button>
-              <button
-                onClick={() => { setActiveTab('assignments'); sound.playTap(); }}
-                className="px-2.5 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                title="الواجبات التفاعلية"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-purple-500" />
-                <span>الواجبات</span>
-              </button>
-              <button
-                onClick={() => { setActiveTab('chat'); sound.playTap(); }}
-                className="px-2.5 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                title="المحادثة المباشرة"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-teal-500" />
-                <span>المحادثة</span>
-              </button>
-            </div>
+            )}
 
             {/* Dark Mode Toggle */}
             <button
@@ -165,11 +152,11 @@ export const Navbar: React.FC<NavbarProps> = () => {
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
 
-            {/* Student Switcher for Parent */}
+            {/* Student Switcher for Parent Portal */}
             {currentRole === 'parent' && (
               <div className="relative">
                 <button
-                  onClick={() => { setShowStudentMenu(!showStudentMenu); setShowRoleMenu(false); setShowNotifMenu(false); sound.playTap(); }}
+                  onClick={() => { setShowStudentMenu(!showStudentMenu); setShowNotifMenu(false); sound.playTap(); }}
                   className="flex items-center gap-2 bg-blue-50/80 dark:bg-blue-950/50 hover:bg-blue-100/70 border border-blue-200 dark:border-blue-800/60 px-3 py-1.5 rounded-2xl text-xs font-bold text-blue-800 dark:text-blue-300 transition-colors"
                 >
                   <img
@@ -184,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 {showStudentMenu && (
                   <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-2 z-50 animate-in fade-in zoom-in-95">
                     <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
-                      الأبناء المسجلون
+                      الأبناء المسجلون بحسابك
                     </div>
                     {students.slice(0, 3).map(student => (
                       <button
@@ -213,55 +200,67 @@ export const Navbar: React.FC<NavbarProps> = () => {
               </div>
             )}
 
-            {/* Role Switcher */}
-            <div className="relative">
-              <button
-                onClick={() => { setShowRoleMenu(!showRoleMenu); setShowNotifMenu(false); setShowStudentMenu(false); sound.playTap(); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold transition-all border ${currentRoleInfo.color} border-current/20 shadow-sm`}
-                title="تبديل الدور الحالي"
-              >
-                {currentRoleInfo.icon}
-                <span className="hidden sm:inline">{currentRoleInfo.label}</span>
-                <ChevronDown className="w-3.5 h-3.5 opacity-70" />
-              </button>
+            {/* Teacher Code Badge (When logged in as Teacher) */}
+            {currentRole === 'teacher' && currentTeacher && (
+              <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-2xl text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                <GraduationCap className="w-4 h-4 text-emerald-600" />
+                <span className="hidden sm:inline">{currentTeacher.name}</span>
+                <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg text-[10px] border border-emerald-300 dark:border-emerald-700 font-bold">
+                  {currentTeacher.code}
+                </span>
+              </div>
+            )}
 
-              {showRoleMenu && (
-                <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
-                    تبديل نوع الحساب (معاينة)
+            {/* Admin Supervisory Switcher (Only visible to Admin) */}
+            {currentRole === 'admin' && (
+              <div className="relative">
+                <button
+                  onClick={() => { setShowRoleMenu(!showRoleMenu); setShowNotifMenu(false); setShowStudentMenu(false); sound.playTap(); }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold transition-all border ${currentRoleInfo.color} border-current/20 shadow-sm`}
+                  title="الإشراف وتبديل العرض"
+                >
+                  {currentRoleInfo.icon}
+                  <span className="hidden sm:inline">{currentRoleInfo.label}</span>
+                  <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                </button>
+
+                {showRoleMenu && (
+                  <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95">
+                    <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                      الإشراف الإداري المتبادل
+                    </div>
+                    {roles.map(role => (
+                      <button
+                        key={role.id}
+                        onClick={() => {
+                          setCurrentRole(role.id);
+                          setShowRoleMenu(false);
+                          sound.playSuccess();
+                          if (role.id === 'teacher') setActiveTab('attendance');
+                          else setActiveTab('dashboard');
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
+                          currentRole === role.id ? 'bg-purple-50 dark:bg-purple-900/40 font-bold text-purple-700 dark:text-purple-300' : 'text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`p-1 rounded-lg ${role.color}`}>{role.icon}</span>
+                          <span>{role.label}</span>
+                        </div>
+                        {currentRole === role.id && <Check className="w-4 h-4 text-purple-600" />}
+                      </button>
+                    ))}
                   </div>
-                  {roles.map(role => (
-                    <button
-                      key={role.id}
-                      onClick={() => {
-                        setCurrentRole(role.id);
-                        setShowRoleMenu(false);
-                        sound.playSuccess();
-                        if (role.id === 'parent') setActiveTab('student-profile');
-                        else if (role.id === 'teacher') setActiveTab('attendance');
-                        else setActiveTab('dashboard');
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
-                        currentRole === role.id ? 'bg-blue-50 dark:bg-blue-900/40 font-bold text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`p-1 rounded-lg ${role.color}`}>{role.icon}</span>
-                        <span>{role.label}</span>
-                      </div>
-                      {currentRole === role.id && <Check className="w-4 h-4 text-blue-600" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
-            {/* Notification Bell */}
+            {/* Notification Bell with Fixed Complete Dropdown */}
             <div className="relative">
               <button
                 onClick={() => { setShowNotifMenu(!showNotifMenu); setShowRoleMenu(false); setShowStudentMenu(false); sound.playTap(); }}
                 className="relative p-2.5 rounded-2xl text-slate-600 dark:text-slate-300 hover:text-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus:outline-none border border-slate-200 dark:border-slate-700"
-                title="الإشعارات"
+                title="الإشعارات والتنبيهات"
               >
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -271,43 +270,58 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 )}
               </button>
 
+              {/* Complete Responsive Floating Notification Dropdown */}
               {showNotifMenu && (
-                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 py-3 z-50">
-                  <div className="flex items-center justify-between px-4 pb-2 border-b border-slate-100 dark:border-slate-700">
+                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-[92vw] sm:w-[420px] max-w-lg bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 py-3 z-[9999] animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between px-4 pb-3 border-b border-slate-100 dark:border-slate-700">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-800 dark:text-white">التنبيهات المباشرة</span>
+                      <span className="text-sm font-extrabold text-slate-800 dark:text-white">مركز التنبيهات المباشرة</span>
                       {unreadCount > 0 && (
-                        <span className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-[10px] font-black px-2 py-0.5 rounded-full">
-                          {unreadCount} غير مقروء
+                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {unreadCount} جديد
                         </span>
                       )}
                     </div>
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllNotificationsAsRead}
-                        className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-bold"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold"
                       >
-                        قراءة الكل
+                        تحديد الكل كمقروء
                       </button>
                     )}
                   </div>
 
-                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-50 dark:divide-slate-700">
-                    {notifications.slice(0, 4).map(notif => (
-                      <div
-                        key={notif.id}
-                        onClick={() => markNotificationAsRead(notif.id)}
-                        className={`p-3 text-right cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
-                          !notif.read ? 'bg-blue-50/70 dark:bg-blue-900/30' : ''
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">{notif.title}</p>
-                          <span className="text-[10px] text-slate-400 font-mono">{notif.time}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">{notif.message}</p>
+                  {/* Scrollable Notification List without truncation */}
+                  <div className="max-h-[65vh] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700 p-2 space-y-1">
+                    {notifications.length === 0 ? (
+                      <div className="p-6 text-center text-xs text-slate-400">
+                        لا توجد إشعارات جديدة حالياً
                       </div>
-                    ))}
+                    ) : (
+                      notifications.map(notif => (
+                        <div
+                          key={notif.id}
+                          onClick={() => markNotificationAsRead(notif.id)}
+                          className={`p-3 rounded-2xl text-right cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors ${
+                            !notif.read ? 'bg-blue-50/80 dark:bg-blue-900/40 border-r-4 border-blue-600' : 'bg-transparent'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</p>
+                            <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">{notif.time}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed whitespace-normal break-words">
+                            {notif.message}
+                          </p>
+                          {notif.studentName && (
+                            <span className="inline-block mt-2 px-2 py-0.5 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-[10px] font-bold rounded-md">
+                              الطالب: {notif.studentName}
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    )}
                   </div>
 
                   <div className="pt-2 px-3 border-t border-slate-100 dark:border-slate-700 text-center">
@@ -318,7 +332,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                       }}
                       className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 w-full py-2 rounded-xl transition-colors"
                     >
-                      فتح مركز الإشعارات بالكامل ←
+                      عرض جميع الإشعارات في صفحة كاملة ←
                     </button>
                   </div>
                 </div>
@@ -328,7 +342,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
             {/* Logout Button */}
             <button
               onClick={logout}
-              className="p-2.5 rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors border border-slate-200 dark:border-slate-700"
+              className="p-2.5 rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors border border-slate-200 dark:border-slate-700"
               title="تسجيل الخروج"
             >
               <LogOut className="w-5 h-5" />

@@ -1,5 +1,17 @@
 export type UserRole = 'admin' | 'teacher' | 'parent';
 
+export interface TeacherAccount {
+  id: string;
+  code: string; // Unique teacher code e.g. TCH-MATH-101
+  name: string; // e.g. أ. أحمد الغامدي
+  phone: string;
+  subject: string; // e.g. الرياضيات
+  subjectCode: string; // e.g. MATH
+  assignedClasses: string[]; // e.g. ['3/أ', '3/ب', '2/أ']
+  avatar: string;
+  email?: string;
+}
+
 export type AttendanceStatus = 'present' | 'late' | 'excused' | 'unexcused';
 
 export interface BehaviorPoint {
@@ -140,19 +152,19 @@ export interface Student {
     teacher: string;
     evaluation: string;
   }[];
-  recentAttendance: {
+  recentAttendance?: {
     date: string;
     status: AttendanceStatus;
     note?: string;
   }[];
-  notes: {
+  notes?: {
     id: string;
     date: string;
     teacher: string;
     type: 'positive' | 'warning' | 'info';
     text: string;
   }[];
-  badges: {
+  badges?: {
     id: string;
     title: string;
     icon: string;

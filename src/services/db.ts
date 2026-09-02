@@ -1,11 +1,81 @@
-import { Student, SchoolClass, NotificationItem, DailyReportData, SubjectGrade, Assignment, TeacherConversation, DaySchedule } from '../types';
+import { Student, SchoolClass, NotificationItem, DailyReportData, SubjectGrade, Assignment, TeacherConversation, DaySchedule, TeacherAccount } from '../types';
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
+const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v3';
 const STORAGE_KEY_CLASSES = 'madrasa_db_classes_v3';
 const STORAGE_KEY_NOTIFICATIONS = 'madrasa_db_notifications_v3';
 const STORAGE_KEY_REPORTS = 'madrasa_db_reports_v3';
 const STORAGE_KEY_CONVERSATIONS = 'madrasa_db_conversations_v3';
 const STORAGE_KEY_SCHEDULE = 'madrasa_db_schedule_v3';
+
+export const SEED_TEACHERS: TeacherAccount[] = [
+  {
+    id: 't-1',
+    code: 'TCH-MATH-101',
+    name: 'أ. أحمد الغامدي',
+    phone: '0551112233',
+    subject: 'الرياضيات',
+    subjectCode: 'MATH',
+    assignedClasses: ['3/أ', '3/ب', '2/أ'],
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    email: 'ahmed.ghamdi@school.edu.sa'
+  },
+  {
+    id: 't-2',
+    code: 'TCH-SCI-202',
+    name: 'أ. عبدالله السعيد',
+    phone: '0552223344',
+    subject: 'العلوم الطبيعية',
+    subjectCode: 'SCI',
+    assignedClasses: ['3/أ', '2/أ'],
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    email: 'abdullah.saeed@school.edu.sa'
+  },
+  {
+    id: 't-3',
+    code: 'TCH-ARA-303',
+    name: 'أ. محمد الشهري',
+    phone: '0553334455',
+    subject: 'لغتي الجميلة',
+    subjectCode: 'ARB',
+    assignedClasses: ['3/أ', '3/ب'],
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    email: 'mohammed.shehri@school.edu.sa'
+  },
+  {
+    id: 't-4',
+    code: 'TCH-ISL-404',
+    name: 'أ. فيصل الدوسري',
+    phone: '0554445566',
+    subject: 'الدراسات الإسلامية',
+    subjectCode: 'ISL',
+    assignedClasses: ['3/أ', '3/ب', '2/أ', '1/أ'],
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
+    email: 'faisal.dosari@school.edu.sa'
+  },
+  {
+    id: 't-5',
+    code: 'TCH-ENG-505',
+    name: 'أ. طارق الزهراني',
+    phone: '0555556677',
+    subject: 'اللغة الإنجليزية',
+    subjectCode: 'ENG',
+    assignedClasses: ['3/أ', '3/ب'],
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+    email: 'tariq.zahrani@school.edu.sa'
+  },
+  {
+    id: 't-6',
+    code: 'TCH-SOC-606',
+    name: 'أ. بدر المطيري',
+    phone: '0556667788',
+    subject: 'الاجتماعيات والمواطنة',
+    subjectCode: 'SOC',
+    assignedClasses: ['3/أ', '2/أ'],
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    email: 'bader.mutairi@school.edu.sa'
+  }
+];
 
 export const SAMPLE_GRADES_RAYAN: SubjectGrade[] = [
   {
@@ -679,8 +749,86 @@ export const db = {
     return () => {};
   },
 
+  getTeachers(): TeacherAccount[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_TEACHERS);
+      if (data) return JSON.parse(data);
+    } catch {}
+    this.saveTeachers(SEED_TEACHERS, false);
+    return SEED_TEACHERS;
+  },
+
+  getTeacherByCode(code: string): TeacherAccount | undefined {
+    const teachers = this.getTeachers();
+    return teachers.find(t => t.code.trim().toUpperCase() === code.trim().toUpperCase());
+  },
+
+  saveTeachers(teachers: TeacherAccount[], broadcast = true) {
+    try {
+      localStorage.setItem(STORAGE_KEY_TEACHERS, JSON.stringify(teachers));
+      if (broadcast) {
+        this.broadcastAction({ type: 'UPDATE_TEACHERS', teachers });
+      }
+    } catch {}
+  },
+
+  // 1000 Students Benchmark & Scalability Engine
+  generate1000StudentsBenchmark(): { count: number; durationMs: number; memoryEstimateKb: number } {
+    const startTime = performance.now();
+    const firstNames = ['ريان', 'سعود', 'فهد', 'عبدالعزيز', 'سلطان', 'خالد', 'تركي', 'فيصل', 'محمد', 'عبدالله', 'عمر', 'علي', 'يوسف', 'إبراهيم', 'أحمد', 'نواف', 'بدر', 'مشاري', 'سلمان', 'ماجد'];
+    const familyNames = ['العتيبي', 'الغامدي', 'الشهري', 'القحطاني', 'الدوسري', 'الحربي', 'المطيري', 'الزهراني', 'السبيعي', 'العنزي', 'الشمراني', 'الرشيدي', 'المالكي', 'العسيري', 'التميمي'];
+    const classes = ['3/أ', '3/ب', '2/أ', '2/ب', '1/أ', '1/ب'];
+
+    const benchmarkStudents: Student[] = [];
+
+    for (let i = 1; i <= 1000; i++) {
+      const fn = firstNames[i % firstNames.length];
+      const ln = familyNames[i % familyNames.length];
+      const nationalId = (1090000000 + i).toString();
+      const code = `SCH-2026-${i}`;
+      const cls = classes[i % classes.length];
+      const avg = Math.round((85 + (i % 15) + Math.random() * 0.9) * 10) / 10;
+      const att = Math.round(92 + (i % 8));
+
+      benchmarkStudents.push({
+        id: `bench-std-${i}`,
+        name: `${fn} ${ln}`,
+        nationalId,
+        studentNumber: `STD-2026-${1000 + i}`,
+        linkCode: code,
+        avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80`,
+        grade: cls.startsWith('3') ? 'الصف الثالث الابتدائي' : cls.startsWith('2') ? 'الصف الثاني الابتدائي' : 'الصف الأول الابتدائي',
+        className: cls,
+        gender: 'male',
+        parentName: `أبو ${fn} ${ln}`,
+        parentPhone: `055${String(1000000 + i).slice(-7)}`,
+        parentEmail: `parent${i}@school.edu.sa`,
+        status: 'present',
+        attendanceRate: att,
+        academicAverage: avg,
+        behaviorRating: 'ممتاز',
+        behaviorPointsTotal: 25 + (i % 10),
+        behaviorPoints: [],
+        competencies: [],
+        grades: SAMPLE_GRADES_RAYAN,
+        subjects: []
+      });
+    }
+
+    const durationMs = Math.round((performance.now() - startTime) * 100) / 100;
+    const jsonString = JSON.stringify(benchmarkStudents);
+    const memoryEstimateKb = Math.round(new Blob([jsonString]).size / 1024);
+
+    return {
+      count: benchmarkStudents.length,
+      durationMs,
+      memoryEstimateKb
+    };
+  },
+
   resetAllData() {
     this.saveStudents(SEED_STUDENTS, false);
+    this.saveTeachers(SEED_TEACHERS, false);
     this.saveClasses(SEED_CLASSES, false);
     this.saveNotifications(SEED_NOTIFICATIONS, false);
     this.saveDailyReport(SEED_DAILY_REPORT, false);

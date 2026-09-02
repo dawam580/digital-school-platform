@@ -338,7 +338,7 @@ export const StudentProfile: React.FC = () => {
           </h3>
 
           <div className="divide-y divide-slate-100">
-            {selectedStudent.recentAttendance.map((rec, idx) => (
+            {(selectedStudent.recentAttendance || []).map((rec, idx) => (
               <div key={idx} className="py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-[#00288e]" />
@@ -372,7 +372,7 @@ export const StudentProfile: React.FC = () => {
             </div>
 
             <div className="space-y-2.5">
-              {selectedStudent.behaviorPoints.map(bp => (
+              {(selectedStudent.behaviorPoints || []).map(bp => (
                 <div
                   key={bp.id}
                   className={`p-4 rounded-2xl border flex items-center justify-between text-xs ${
@@ -406,7 +406,7 @@ export const StudentProfile: React.FC = () => {
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {selectedStudent.badges.map(badge => (
+              {(selectedStudent.badges || []).map(badge => (
                 <div key={badge.id} className="p-4 rounded-2xl bg-amber-50/40 border border-amber-100 text-center space-y-1.5">
                   <span className="text-3xl block">{badge.icon}</span>
                   <h4 className="text-xs font-extrabold text-amber-900">{badge.title}</h4>

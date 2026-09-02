@@ -9,9 +9,10 @@ import {
   BehaviorPoint,
   TeacherConversation,
   DaySchedule,
-  SubjectGrade
+  SubjectGrade,
+  TeacherAccount
 } from '../types';
-import { db, SEED_STUDENTS, SEED_CLASSES, SEED_NOTIFICATIONS, SEED_DAILY_REPORT, SEED_CONVERSATIONS, SEED_SCHEDULE } from '../services/db';
+import { db, SEED_STUDENTS, SEED_CLASSES, SEED_NOTIFICATIONS, SEED_DAILY_REPORT, SEED_CONVERSATIONS, SEED_SCHEDULE, SEED_TEACHERS } from '../services/db';
 import { sound } from '../utils/soundEffects';
 import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
@@ -25,8 +26,15 @@ interface SchoolContextType {
   setCurrentRole: (role: UserRole) => void;
   isAuthenticated: boolean;
   currentUserPhone: string;
-  login: (phone: string, role: UserRole) => void;
+  currentTeacher: TeacherAccount | null;
+  teachers: TeacherAccount[];
+  login: (phoneOrId: string, role: UserRole) => void;
+  loginWithTeacherCode: (code: string) => boolean;
   logout: () => void;
+
+  // Operational Plan PDF Modal
+  showOperationalPlanModal: boolean;
+  setShowOperationalPlanModal: (show: boolean) => void;
 
   // Active Screen
   activeTab: string;
@@ -79,7 +87,9 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentRole, setCurrentRole] = useState<UserRole>('parent');
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [currentUserPhone, setCurrentUserPhone] = useState('0551234567');
+  const [currentUserPhone, setCurrentUserPhone] = useState('1098765432');
+  const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(null);
+  const [showOperationalPlanModal, setShowOperationalPlanModal] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('student-profile');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
@@ -94,7 +104,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
-  // Persistent State Loaded safely from DB
+  // Persistent Teachers
+  const [teachers, setTeachers] = useState<TeacherAccount[]>(() => {
+    try {
+      const data = db.getTeachers();
+      return (data && data.length > 0) ? data : SEED_TEACHERS;
+    } catch {
+      return SEED_TEACHERS;
+    }
+  });
+
+  // Persistent Students
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const data = db.getStudents();
@@ -162,7 +182,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
     const newToast: ToastMessage = { id, type, title, message, duration };
     
-    setToasts(prev => [...prev.slice(-3), newToast]); // Keep max 4 toasts
+    setToasts(prev => [...prev.slice(-3), newToast]); // Max 4 toasts
 
     if (type === 'success' || type === 'gold') sound.playSuccess();
     else if (type === 'error' || type === 'warning') sound.playAlert();
@@ -235,27 +255,62 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const login = (phone: string, role: UserRole) => {
-    setCurrentUserPhone(phone);
+  const login = (phoneOrId: string, role: UserRole) => {
+    setCurrentUserPhone(phoneOrId);
     setCurrentRole(role);
     setIsAuthenticated(true);
-    if (role === 'parent') setActiveTab('student-profile');
-    else if (role === 'teacher') setActiveTab('attendance');
-    else setActiveTab('dashboard');
+    if (role === 'parent') {
+      setCurrentTeacher(null);
+      setActiveTab('student-profile');
+    } else if (role === 'teacher') {
+      const t = teachers.find(tch => tch.phone === phoneOrId) || teachers[0];
+      setCurrentTeacher(t);
+      setActiveTab('attendance');
+    } else {
+      setCurrentTeacher(null);
+      setActiveTab('dashboard');
+    }
     sound.playSuccess();
     showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : 'إدارة المدرسة'}`);
     auditLogger.log({
-      actorName: phone,
+      actorName: phoneOrId,
       actorRole: role,
       action: 'USER_LOGIN',
       entity: 'Auth',
-      details: `تسجيل دخول ناجح برقم ${phone}`,
+      details: `تسجيل دخول ناجح برقم/هوية ${phoneOrId}`,
       severity: 'INFO'
     });
   };
 
+  const loginWithTeacherCode = (code: string): boolean => {
+    const cleanCode = code.trim().toUpperCase();
+    const foundTeacher = teachers.find(t => t.code.trim().toUpperCase() === cleanCode);
+    if (foundTeacher) {
+      setCurrentTeacher(foundTeacher);
+      setCurrentUserPhone(foundTeacher.phone);
+      setCurrentRole('teacher');
+      setIsAuthenticated(true);
+      setActiveTab('attendance');
+      sound.playSuccess();
+      showToast('gold', `مرحباً ${foundTeacher.name}`, `تم الدخول بنجاح بصفتك ${foundTeacher.subject} (الرمز: ${foundTeacher.code})`);
+      auditLogger.log({
+        actorName: foundTeacher.name,
+        actorRole: 'teacher',
+        action: 'TEACHER_CODE_LOGIN',
+        entity: 'Auth',
+        details: `تسجيل دخول برمز المعلم الفريد: ${foundTeacher.code}`,
+        severity: 'INFO'
+      });
+      return true;
+    }
+    sound.playAlert();
+    showToast('error', 'رمز المعلم غير صحيح', 'تأكد من رمز المعلم (مثال: TCH-MATH-101)');
+    return false;
+  };
+
   const logout = () => {
     setIsAuthenticated(false);
+    setCurrentTeacher(null);
     setActiveTab('login');
     sound.playTap();
     showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح.');
@@ -297,7 +352,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     auditLogger.log({
-      actorName: currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
+      actorName: currentTeacher ? currentTeacher.name : currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
       actorRole: currentRole,
       action: 'UPDATE_ATTENDANCE',
       entity: 'Student',
@@ -334,7 +389,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     );
 
     auditLogger.log({
-      actorName: currentRole,
+      actorName: currentTeacher ? currentTeacher.name : currentRole,
       actorRole: currentRole,
       action: 'BATCH_ATTENDANCE',
       entity: 'Class',
@@ -471,7 +526,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('success', 'رصد الدرجات', 'تم حفظ الدرجة وتحديث المعدل التراكمي فورياً 📊');
 
     auditLogger.log({
-      actorName: currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
+      actorName: currentTeacher ? currentTeacher.name : currentRole === 'teacher' ? 'المعلم' : 'الإدارة',
       actorRole: currentRole,
       action: 'UPDATE_GRADE',
       entity: 'SubjectGrade',
@@ -533,7 +588,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newMsg = {
       id: `msg-${Date.now()}`,
       senderRole: currentRole,
-      senderName: currentRole === 'parent' ? `ولي أمر الطالب (${selectedStudent.name.split(' ')[0]})` : 'المعلم',
+      senderName: currentTeacher ? currentTeacher.name : currentRole === 'parent' ? `ولي أمر الطالب (${selectedStudent.name.split(' ')[0]})` : 'المعلم',
       text: cleanText,
       isVoice,
       voiceDuration,
@@ -641,6 +696,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     db.resetAllData();
     setStudents(SEED_STUDENTS);
     setSelectedStudent(SEED_STUDENTS[0]);
+    setTeachers(SEED_TEACHERS);
     setClasses(SEED_CLASSES);
     setNotifications(SEED_NOTIFICATIONS);
     setDailyReport(SEED_DAILY_REPORT);
@@ -658,8 +714,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCurrentRole,
         isAuthenticated,
         currentUserPhone,
+        currentTeacher,
+        teachers,
         login,
+        loginWithTeacherCode,
         logout,
+        showOperationalPlanModal,
+        setShowOperationalPlanModal,
         activeTab,
         setActiveTab,
         isDarkMode,

@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { UserRole } from '../../types';
-import { Phone, Lock, ArrowLeft, ShieldCheck, Sparkles, User, GraduationCap, Shield } from 'lucide-react';
+import { Phone, Lock, ArrowLeft, ShieldCheck, Sparkles, User, GraduationCap, Shield, Key, Building2, CheckCircle2 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 
 export const Login: React.FC = () => {
-  const { login, setActiveTab, students, setSelectedStudent } = useSchool();
-  const [loginMode, setLoginMode] = useState<'parent_national_id' | 'staff'>('parent_national_id');
+  const { login, loginWithTeacherCode, setActiveTab, students, setSelectedStudent, teachers } = useSchool();
+  const [loginMode, setLoginMode] = useState<'parent' | 'teacher' | 'admin'>('parent');
   
-  // Parent by Student National ID
+  // Parent Form
   const [studentNationalId, setStudentNationalId] = useState('1098765432');
-  const [defaultPassword, setDefaultPassword] = useState('123456');
+  const [parentPassword, setParentPassword] = useState('123456');
 
-  // Staff Login
-  const [phone, setPhone] = useState('0551234567');
-  const [password, setPassword] = useState('123456');
-  const [staffRole, setStaffRole] = useState<'teacher' | 'admin'>('teacher');
+  // Teacher Form (Unique Teacher Code)
+  const [teacherCode, setTeacherCode] = useState('TCH-MATH-101');
+  const [teacherPassword, setTeacherPassword] = useState('123456');
+
+  // Admin Form
+  const [adminPhone, setAdminPhone] = useState('0551234567');
+  const [adminPassword, setAdminPassword] = useState('123456');
+
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +30,7 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      // Match student by National ID or Student Number
+      // Match student by National ID or Link Code
       const foundStudent = students.find(
         s => s.nationalId === studentNationalId.trim() ||
              s.studentNumber === studentNationalId.trim() ||
@@ -35,7 +39,7 @@ export const Login: React.FC = () => {
 
       if (foundStudent) {
         setSelectedStudent(foundStudent);
-        login(foundStudent.parentPhone || '0551234567', 'parent');
+        login(foundStudent.nationalId, 'parent');
       } else {
         setErrorMessage('رقم الهوية الوطنية غير مسجل في النظام. يرجى مراجعة إدارة المدرسة.');
       }
@@ -43,11 +47,27 @@ export const Login: React.FC = () => {
     }, 400);
   };
 
-  const handleStaffLogin = (e: React.FormEvent) => {
+  const handleTeacherLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage('');
+
     setTimeout(() => {
-      login(phone, staffRole);
+      const success = loginWithTeacherCode(teacherCode);
+      if (!success) {
+        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز المعطى لك من الإدارة.');
+      }
+      setLoading(false);
+    }, 400);
+  };
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage('');
+
+    setTimeout(() => {
+      login(adminPhone, 'admin');
       setLoading(false);
     }, 400);
   };
@@ -70,49 +90,65 @@ export const Login: React.FC = () => {
               منصة المدرسة الرقمية
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-              بوابة الدخول الموحدة لأولياء الأمور والإدارة المدرسية
+              النظام السحابي المتكامل لفصل البوابات وإدارة العمليات المدرسية
             </p>
           </div>
         </div>
 
-        {/* Login Mode Selector Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-white rounded-2xl shadow-card border border-slate-100">
+        {/* 3 Isolated Portal Selector Tabs */}
+        <div className="flex items-center gap-1 p-1 bg-white rounded-2xl shadow-card border border-slate-100">
           <button
             type="button"
-            onClick={() => { setLoginMode('parent_national_id'); sound.playTap(); }}
-            className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
-              loginMode === 'parent_national_id'
+            onClick={() => { setLoginMode('parent'); setErrorMessage(''); sound.playTap(); }}
+            className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+              loginMode === 'parent'
                 ? 'bg-[#00288e] text-white shadow-soft'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <User className="w-4 h-4" />
-            <span>دخول ولي الأمر برقم هوية الطالب</span>
+            <span>ولي الأمر</span>
           </button>
 
           <button
             type="button"
-            onClick={() => { setLoginMode('staff'); sound.playTap(); }}
-            className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
-              loginMode === 'staff'
+            onClick={() => { setLoginMode('teacher'); setErrorMessage(''); sound.playTap(); }}
+            className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+              loginMode === 'teacher'
                 ? 'bg-[#00288e] text-white shadow-soft'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Shield className="w-4 h-4" />
-            <span>دخول المعلم والإدارة</span>
+            <GraduationCap className="w-4 h-4" />
+            <span>المعلم (بالرمز)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setLoginMode('admin'); setErrorMessage(''); sound.playTap(); }}
+            className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+              loginMode === 'admin'
+                ? 'bg-[#00288e] text-white shadow-soft'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Building2 className="w-4 h-4" />
+            <span>الإدارة المدرسية</span>
           </button>
         </div>
 
         {/* Login Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-slate-100 space-y-6">
           
-          {loginMode === 'parent_national_id' ? (
-            /* Mode 1: Parent Login by Student National ID */
+          {/* Portal 1: Parent Portal Login */}
+          {loginMode === 'parent' && (
             <form onSubmit={handleParentLogin} className="space-y-5 animate-in fade-in">
               <div className="text-center pb-2 border-b border-slate-100">
-                <h2 className="text-base font-bold text-slate-800">بوابة متابعة الطالب</h2>
-                <p className="text-xs text-slate-400 mt-0.5">أدخل الرقم القومي / الهوية الوطنية للطالب المسجلة لدى المدرسة</p>
+                <div className="inline-flex p-2 bg-blue-50 text-[#00288e] rounded-xl mb-1">
+                  <User className="w-5 h-5" />
+                </div>
+                <h2 className="text-base font-bold text-slate-800">بوابة أولياء الأمور</h2>
+                <p className="text-xs text-slate-400 mt-0.5">الدخول الآمن لمتابعة الأبناء والدرجات والواجبات</p>
               </div>
 
               {/* Student National ID */}
@@ -148,26 +184,23 @@ export const Login: React.FC = () => {
                     onClick={() => { setStudentNationalId('1087654321'); sound.playTap(); }}
                     className="font-bold text-[#00288e] hover:underline"
                   >
-                    سارة (1087654321)
+                    سعود (1087654321)
                   </button>
                 </div>
               </div>
 
-              {/* Default Password */}
+              {/* Password */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-bold text-slate-700">
-                    كلمة المرور الافتراضية
-                  </label>
-                  <span className="text-[11px] text-slate-400">الافتراضية: 123456</span>
-                </div>
+                <label className="block text-sm font-bold text-slate-700">
+                  كلمة المرور
+                </label>
                 <div className="relative">
                   <input
                     type="password"
-                    placeholder="••••••••"
-                    value={defaultPassword}
-                    onChange={e => setDefaultPassword(e.target.value)}
-                    className="w-full px-4 py-3.5 pr-11 text-base rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"
+                    placeholder="••••••"
+                    value={parentPassword}
+                    onChange={e => setParentPassword(e.target.value)}
+                    className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800"
                     required
                   />
                   <Lock className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
@@ -175,110 +208,174 @@ export const Login: React.FC = () => {
               </div>
 
               {errorMessage && (
-                <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs font-bold border border-red-200">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
                   {errorMessage}
                 </div>
               )}
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-4 bg-[#00288e] hover:bg-[#002072] text-white font-bold text-base rounded-2xl shadow-soft hover:shadow-soft-lg active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-4 bg-[#00288e] hover:bg-blue-900 text-white font-bold rounded-2xl shadow-soft transition-all flex items-center justify-center gap-2 active:scale-98"
               >
-                <span>{loading ? 'جاري فتح سجل الطالب...' : 'الدخول إلى سجل الطالب'}</span>
-                <ArrowLeft className="w-4 h-4" />
+                {loading ? 'جاري التحقق...' : 'دخول بوابة ولي الأمر'}
+                <ArrowLeft className="w-5 h-5" />
               </button>
             </form>
-          ) : (
-            /* Mode 2: Staff Login (Teacher / Admin) */
-            <form onSubmit={handleStaffLogin} className="space-y-5 animate-in fade-in">
+          )}
+
+          {/* Portal 2: Teacher Portal with Unique Code */}
+          {loginMode === 'teacher' && (
+            <form onSubmit={handleTeacherLogin} className="space-y-5 animate-in fade-in">
               <div className="text-center pb-2 border-b border-slate-100">
-                <h2 className="text-base font-bold text-slate-800">بوابة الكادر التعليمي والإدارة</h2>
-                <p className="text-xs text-slate-400 mt-0.5">تسجيل الدخول لإدارة الفصول ورصد الحضور</p>
+                <div className="inline-flex p-2 bg-emerald-50 text-emerald-700 rounded-xl mb-1">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <h2 className="text-base font-bold text-slate-800">بوابة المعلمين</h2>
+                <p className="text-xs text-slate-400 mt-0.5">الدخول برمز المعلم الخاص المعتمد من الإدارة</p>
               </div>
 
-              {/* Role Select */}
-              <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setStaffRole('teacher')}
-                  className={`flex-1 py-2 rounded-xl transition-all ${
-                    staffRole === 'teacher' ? 'bg-white text-[#00288e] shadow-sm' : ''
-                  }`}
-                >
-                  معلم الفصل
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStaffRole('admin')}
-                  className={`flex-1 py-2 rounded-xl transition-all ${
-                    staffRole === 'admin' ? 'bg-white text-[#00288e] shadow-sm' : ''
-                  }`}
-                >
-                  مدير المدرسة
-                </button>
-              </div>
-
-              {/* Phone */}
+              {/* Teacher Unique Code */}
               <div className="space-y-1.5">
-                <label className="block text-sm font-bold text-slate-700">رقم الهاتف المسجل</label>
+                <label className="block text-sm font-bold text-slate-700">
+                  رمز المعلم الفريد (Teacher Code)
+                </label>
                 <div className="relative">
                   <input
-                    type="tel"
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    className="w-full px-4 py-3 pr-11 text-sm rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 focus:outline-none"
+                    type="text"
+                    placeholder="مثال: TCH-MATH-101"
+                    value={teacherCode}
+                    onChange={e => setTeacherCode(e.target.value.toUpperCase())}
+                    className="w-full px-4 py-3.5 pr-11 text-base font-mono uppercase font-bold rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"
                     required
                   />
-                  <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                  <Key className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
+
+                {/* Quick teacher demo pills */}
+                <div className="space-y-1 pt-1">
+                  <p className="text-[11px] text-slate-500 font-bold">💡 تجربة سريعة لمعلمي المواد:</p>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {teachers.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => { setTeacherCode(t.code); sound.playTap(); }}
+                        className="text-[10px] px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 font-mono font-bold text-slate-700 border border-slate-200 transition-colors"
+                      >
+                        {t.code} ({t.subject.split(' ')[0]})
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Password */}
               <div className="space-y-1.5">
-                <label className="block text-sm font-bold text-slate-700">كلمة المرور</label>
+                <label className="block text-sm font-bold text-slate-700">
+                  كلمة المرور
+                </label>
                 <div className="relative">
                   <input
                     type="password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 pr-11 text-sm rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 focus:outline-none"
+                    placeholder="••••••"
+                    value={teacherPassword}
+                    onChange={e => setTeacherPassword(e.target.value)}
+                    className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800"
                     required
                   />
-                  <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                  <Lock className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                 </div>
               </div>
+
+              {errorMessage && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
+                  {errorMessage}
+                </div>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-4 bg-[#00288e] hover:bg-[#002072] text-white font-bold text-sm rounded-2xl shadow-soft flex items-center justify-center gap-2"
+                className="w-full py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-2xl shadow-soft transition-all flex items-center justify-center gap-2 active:scale-98"
               >
-                <span>{loading ? 'جاري التحقق...' : 'تسجيل الدخول'}</span>
-                <ArrowLeft className="w-4 h-4" />
+                {loading ? 'جاري التحقق...' : 'دخول بوابة المعلم'}
+                <ArrowLeft className="w-5 h-5" />
               </button>
             </form>
           )}
 
-          {/* Bottom Sign-Up Link */}
-          <div className="text-center pt-3 border-t border-slate-100">
-            <span className="text-xs text-slate-500">ليس لديك حساب؟ </span>
-            <button
-              type="button"
-              onClick={() => setActiveTab('parent-signup')}
-              className="text-xs font-bold text-[#00288e] hover:underline"
-            >
-              إنشاء حساب ولي أمر جديد
-            </button>
-          </div>
+          {/* Portal 3: Admin Portal */}
+          {loginMode === 'admin' && (
+            <form onSubmit={handleAdminLogin} className="space-y-5 animate-in fade-in">
+              <div className="text-center pb-2 border-b border-slate-100">
+                <div className="inline-flex p-2 bg-indigo-50 text-indigo-700 rounded-xl mb-1">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <h2 className="text-base font-bold text-slate-800">بوابة الإدارة المدرسية</h2>
+                <p className="text-xs text-slate-400 mt-0.5">لوحة التحكم المركزية، استوديو البيانات والاعتماد الأكاديمي</p>
+              </div>
+
+              {/* Admin Phone / ID */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-bold text-slate-700">
+                  رقم الهاتف أو المعرّف الإداري
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    placeholder="مثال: 0551234567"
+                    value={adminPhone}
+                    onChange={e => setAdminPhone(e.target.value)}
+                    className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800"
+                    required
+                  />
+                  <Phone className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
+                <p className="text-[11px] text-slate-500 font-bold">💡 حساب تجريبي للمدير: <span className="font-mono text-blue-700">0551234567</span></p>
+              </div>
+
+              {/* Admin Password */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-bold text-slate-700">
+                  كلمة المرور
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    placeholder="••••••"
+                    value={adminPassword}
+                    onChange={e => setAdminPassword(e.target.value)}
+                    className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800"
+                    required
+                  />
+                  <Lock className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
+                  {errorMessage}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-indigo-900 hover:bg-slate-900 text-white font-bold rounded-2xl shadow-soft transition-all flex items-center justify-center gap-2 active:scale-98"
+              >
+                {loading ? 'جاري التحقق...' : 'دخول لوحة الإدارة'}
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            </form>
+          )}
 
         </div>
 
-        {/* Trust Footer */}
-        <div className="text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+        {/* Security Trust Footer */}
+        <div className="flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>منصة تعليمية آمنة ومعتمدة للمتابعة المدرسية المترابطة</span>
+          <span>منظومة آمنة ومشفرة بالكامل | معمارية 360° مفصولة الصلاحيات</span>
         </div>
 
       </div>
