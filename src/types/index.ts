@@ -138,6 +138,11 @@ export interface Student {
   attendanceRate: number; // percentage e.g. 96
   academicAverage: number; // e.g. 94.5 (overall percentage)
   nationalNumber?: string; // Libyan 12-digit National Number
+  motherName?: string; // اسم الأم
+  birthDate?: string; // تاريخ الميلاد YYYY-MM-DD
+  birthPlace?: string; // مكان الميلاد
+  sectionCode?: 'أ' | 'ب' | 'ج' | 'د'; // شعبة الفصل
+  academicYear?: string; // العام الدراسي 2025 - 2026 م
   courseworkScore?: number; // أعمال السنة من 40
   examScore?: number; // امتحان نهاية الفصل من 60
   totalScore?: number; // المجموع من 100

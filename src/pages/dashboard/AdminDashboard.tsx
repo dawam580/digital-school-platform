@@ -19,9 +19,11 @@ import {
   BookOpen,
   MessageSquare,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  FileText
 } from 'lucide-react';
 import { SmartExcelStudentImporter } from '../../components/admin/SmartExcelStudentImporter';
+import { PdfStudentImporterModal } from '../../components/admin/PdfStudentImporterModal';
 import { exportStudentsToExcel } from '../../utils/excelHelper';
 import { sound } from '../../utils/soundEffects';
 import { TimetableConflictEngine, SEED_MULTI_CLASS_SCHEDULES } from '../../services/schedule/conflictDetector';
@@ -29,6 +31,7 @@ import { TimetableConflictEngine, SEED_MULTI_CLASS_SCHEDULES } from '../../servi
 export const AdminDashboard: React.FC = () => {
   const { students, unreadCount, setActiveTab, setSelectedStudent } = useSchool();
   const [showSmartExcelModal, setShowSmartExcelModal] = useState(false);
+  const [showPdfImporterModal, setShowPdfImporterModal] = useState(false);
 
   // Timetable Conflict Check
   const conflicts = useMemo(() => {
@@ -75,11 +78,19 @@ export const AdminDashboard: React.FC = () => {
         {/* Action Tools */}
         <div className="flex flex-wrap items-center gap-2">
           <button
+            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+            className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95 animate-pulse"
+          >
+            <FileText className="w-4 h-4 text-amber-200" />
+            <span>📄 استيراد ذكي من PDF (المنظومة القديمة)</span>
+          </button>
+
+          <button
             onClick={() => { setShowSmartExcelModal(true); sound.playTap(); }}
             className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Sparkles className="w-4 h-4 text-amber-300" />
-            <span>المعالج الذكي لاستيراد وتسكين الطلاب (Excel)</span>
+            <span>استيراد Excel</span>
           </button>
 
           <button
@@ -87,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
             className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Clock className="w-4 h-4" />
-            <span>التحكم بالجداول وتعديل الحصص</span>
+            <span>التحكم بالجداول</span>
           </button>
 
           <button
@@ -95,7 +106,7 @@ export const AdminDashboard: React.FC = () => {
             className="px-3.5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Database className="w-4 h-4" />
-            <span>استوديو البيانات (1000+ طالب)</span>
+            <span>استوديو البيانات</span>
           </button>
         </div>
       </div>
@@ -262,6 +273,12 @@ export const AdminDashboard: React.FC = () => {
       <SmartExcelStudentImporter
         isOpen={showSmartExcelModal}
         onClose={() => setShowSmartExcelModal(false)}
+      />
+
+      {/* Smart PDF Student Importer Modal */}
+      <PdfStudentImporterModal
+        isOpen={showPdfImporterModal}
+        onClose={() => setShowPdfImporterModal(false)}
       />
     </div>
   );
