@@ -1,26 +1,42 @@
 /**
  * ============================================================================
- * منصة المدرسة الرقمية | Service Worker for Offline Caching & PWA
+ * منصة المدرسة الرقمية | Service Worker for Offline Caching & PWA (Self-Healing)
  * ============================================================================
  */
 
-const CACHE_NAME = 'madrasa-pwa-v5';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './favicon.ico',
-  './logo.png'
-];
+const CACHE_NAME = 'madrasa-pwa-v7';
 
+// Safe install handler with individual asset caching (no all-or-nothing fail)
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const basePath = self.location.pathname.replace(/\/sw\.js$/, '') || '';
+      const assets = [
+        `${basePath}/`,
+        `${basePath}/index.html`,
+        `${basePath}/manifest.json`,
+        `${basePath}/favicon.ico`,
+        `${basePath}/logo.png`
+      ];
+
+      // Cache each asset safely; ignore any individual 404s
+      await Promise.allSettled(
+        assets.map((url) =>
+          fetch(url, { cache: 'no-cache' })
+            .then((res) => {
+              if (res && res.status === 200) {
+                return cache.put(url, res);
+              }
+            })
+            .catch(() => {})
+        )
+      );
+    })
   );
 });
 
+// Activate handler to clean up old cache versions
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -31,39 +47,49 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-first with Cache Fallback for dynamic assets
 self.addEventListener('fetch', (event) => {
   // Ignore non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Ignore browser extensions (chrome-extension, moz-extension, etc.) and unsupported schemes
+  // Ignore browser extensions and unsupported protocols
   if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
     return;
   }
 
+  // Ignore SSE and API live sync streams
+  if (event.request.url.includes('/api/')) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          const responseToCache = response.clone();
+    fetch(event.request)
+      .then((networkResponse) => {
+        // If network succeeds, cache fresh copy
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            // Guard against any runtime cache errors
             try {
-              cache.put(event.request, responseToCache).catch(() => {});
+              cache.put(event.request, responseClone).catch(() => {});
             } catch {}
           });
-          return response;
-        })
-        .catch(() => {
-          if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('./index.html');
-          }
-        });
-    })
+        }
+        return networkResponse;
+      })
+      .catch(async () => {
+        // Fallback to cache if offline
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        // HTML navigation fallback to index.html
+        if (event.request.mode === 'navigate' || event.request.headers.get('accept')?.includes('text/html')) {
+          const fallbackIndex = await caches.match('./index.html') || await caches.match('/');
+          if (fallbackIndex) return fallbackIndex;
+        }
+
+        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+      })
   );
 });
