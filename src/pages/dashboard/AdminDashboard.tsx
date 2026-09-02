@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import {
   Users,
@@ -17,15 +17,29 @@ import {
   Database,
   Award,
   BookOpen,
-  MessageSquare
+  MessageSquare,
+  Zap,
+  ShieldCheck
 } from 'lucide-react';
-import { StudentExcelManager } from '../../components/admin/StudentExcelManager';
+import { SmartExcelStudentImporter } from '../../components/admin/SmartExcelStudentImporter';
 import { exportStudentsToExcel } from '../../utils/excelHelper';
 import { sound } from '../../utils/soundEffects';
+import { TimetableConflictEngine, SEED_MULTI_CLASS_SCHEDULES } from '../../services/schedule/conflictDetector';
 
 export const AdminDashboard: React.FC = () => {
   const { students, unreadCount, setActiveTab, setSelectedStudent } = useSchool();
-  const [showExcelModal, setShowExcelModal] = useState(false);
+  const [showSmartExcelModal, setShowSmartExcelModal] = useState(false);
+
+  // Timetable Conflict Check
+  const conflicts = useMemo(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_multi_class_schedules');
+      const schedules = saved ? JSON.parse(saved) : SEED_MULTI_CLASS_SCHEDULES;
+      return TimetableConflictEngine.detectConflicts(schedules);
+    } catch {
+      return [];
+    }
+  }, []);
 
   // Calculated Real Metrics
   const totalStudentsCount = students.length;
@@ -45,7 +59,7 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 text-right animate-in fade-in max-w-6xl mx-auto pb-10">
+    <div className="space-y-6 text-right animate-in fade-in max-w-6xl mx-auto pb-10 font-cairo">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -54,37 +68,75 @@ export const AdminDashboard: React.FC = () => {
             لوحة تحكم الإدارة المدرسية 360°
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-            متابعة لحظية شاملة لجميع الفصول، الدرجات، الواجبات، وقواعد البيانات
+            التحكم بالجداول ومنع التضارب، استيراد وتسكين الطلاب الذكي، ومتابعة العمليات الأكاديمية
           </p>
         </div>
 
         {/* Action Tools */}
         <div className="flex flex-wrap items-center gap-2">
           <button
+            onClick={() => { setShowSmartExcelModal(true); sound.playTap(); }}
+            className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>المعالج الذكي لاستيراد وتسكين الطلاب (Excel)</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
+            className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <Clock className="w-4 h-4" />
+            <span>التحكم بالجداول ومنع التضارب</span>
+          </button>
+
+          <button
             onClick={() => { setActiveTab('db-studio'); sound.playTap(); }}
-            className="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
+            className="px-3.5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Database className="w-4 h-4" />
-            <span>استوديو قواعد البيانات (SQL)</span>
-          </button>
-
-          <button
-            onClick={() => { setShowExcelModal(true); sound.playTap(); }}
-            className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
-          >
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>مدير ملفات Excel والطلاب</span>
-          </button>
-
-          <button
-            onClick={() => { exportStudentsToExcel(students); sound.playTap(); }}
-            className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs shadow-card flex items-center gap-1.5 transition-all"
-            title="تصدير كشف الطلاب"
-          >
-            <Download className="w-4 h-4 text-emerald-600" />
-            <span>تصدير Excel (.xlsx)</span>
+            <span>استوديو البيانات (1000+ طالب)</span>
           </button>
         </div>
+      </div>
+
+      {/* Timetable Conflict & Operational Banner */}
+      <div className={`p-5 rounded-3xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
+        conflicts.length === 0
+          ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800'
+          : 'bg-red-50/80 dark:bg-red-950/30 border-red-200 dark:border-red-800'
+      }`}>
+        <div className="flex items-center gap-3.5">
+          <div className={`p-3 rounded-2xl ${
+            conflicts.length === 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+          }`}>
+            {conflicts.length === 0 ? <ShieldCheck className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6 animate-pulse" />}
+          </div>
+          <div>
+            <h3 className="font-black text-sm text-slate-900 dark:text-white">
+              {conflicts.length === 0
+                ? 'منظومة الجداول المدرسية: متوافقة 100% ولا يوجد أي تضارب بين المعلمين'
+                : `تنبيه إداري: تم اكتشاف ${conflicts.length} تضارب زمني في حصص المعلمين!`}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {conflicts.length === 0
+                ? 'تم فحص جميع الحصص عبر الفصول الخمسة ولا يوجد أي معلم مسند إليه حصتان في نفس الوقت.'
+                : 'اضغط على زر التحكم بالجداول لتشغيل محرك الحل التلقائي وإعادة ترتيب الحصص.'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
+          className={`px-5 py-2.5 rounded-2xl text-xs font-black transition-all shadow-sm active:scale-95 flex items-center gap-1.5 whitespace-nowrap ${
+            conflicts.length === 0
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'bg-red-600 hover:bg-red-700 text-white'
+          }`}
+        >
+          <span>فتح محرك التحكم بالجداول</span>
+          <ChevronLeft className="w-4 h-4" />
+        </button>
       </div>
 
       {/* 4 Horizontal Stat Cards */}
@@ -92,7 +144,7 @@ export const AdminDashboard: React.FC = () => {
         
         {/* Card 1: إجمالي الطلاب */}
         <div
-          onClick={() => setShowExcelModal(true)}
+          onClick={() => setShowSmartExcelModal(true)}
           className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-card hover:shadow-soft transition-all flex items-center justify-between cursor-pointer group"
         >
           <div className="space-y-1">
@@ -100,8 +152,8 @@ export const AdminDashboard: React.FC = () => {
             <div className="text-3xl font-black text-slate-900 dark:text-white font-tajawal tracking-tight">
               {totalStudentsCount}
             </div>
-            <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold group-hover:underline">
-              إدارة واستيراد ملفات Excel ←
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold group-hover:underline">
+              استيراد ذكي من Excel ⚡ ←
             </span>
           </div>
           <div className="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-800 group-hover:scale-110 transition-transform">
@@ -206,10 +258,10 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Excel Manager Modal */}
-      <StudentExcelManager
-        isOpen={showExcelModal}
-        onClose={() => setShowExcelModal(false)}
+      {/* Smart Excel Student Importer Modal */}
+      <SmartExcelStudentImporter
+        isOpen={showSmartExcelModal}
+        onClose={() => setShowSmartExcelModal(false)}
       />
     </div>
   );
