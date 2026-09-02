@@ -39,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
     markAllNotificationsAsRead,
     setActiveTab,
     setShowOperationalPlanModal,
+    setShowAccountSettingsModal,
     students,
     selectedStudent,
     setSelectedStudent,
@@ -86,15 +87,15 @@ export const Navbar: React.FC<NavbarProps> = () => {
               <div className="hidden md:block text-right">
                 <div className="flex items-center gap-2">
                   <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight">
-                    منصة المدرسة الرقمية
+                    منظومة المدرسة الرقمية
                   </h1>
-                  {/* Live Real-time Sync Indicator */}
+                  {/* Libyan Badge */}
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>مزامنة سحابية حية 360°</span>
+                    <span>ليبيا 2025 / 2026 م</span>
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-medium">المنظومة الإدارية والأكاديمية الشاملة</p>
+                <p className="text-xs text-slate-400 font-medium">وزارة التربية والتعليم • النظام التربوي والإداري المعتمد</p>
               </div>
             </button>
           </div>
@@ -338,6 +339,16 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 </div>
               )}
             </div>
+
+            {/* Account Settings Button (Change Phone / Password / Teacher Code) */}
+            <button
+              onClick={() => { setShowAccountSettingsModal(true); sound.playTap(); }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-blue-950/40 text-slate-700 hover:text-blue-700 dark:text-slate-300 dark:hover:text-blue-300 transition-colors border border-slate-200 dark:border-slate-700 text-xs font-bold"
+              title="إعدادات الحساب وتعديل الرقم وكلمة المرور"
+            >
+              <Key className="w-4 h-4 text-amber-500" />
+              <span className="hidden md:inline">إعدادات الحساب</span>
+            </button>
 
             {/* Logout Button */}
             <button

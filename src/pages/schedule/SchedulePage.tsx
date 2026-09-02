@@ -14,7 +14,8 @@ import {
   Users,
   GraduationCap,
   Layers,
-  Zap
+  Zap,
+  Edit3
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -24,6 +25,8 @@ import {
   ClassScheduleMap,
   ScheduleConflict
 } from '../../services/schedule/conflictDetector';
+import { SchedulePeriod, DaySchedule } from '../../types';
+import { SchedulePeriodEditorModal } from '../../components/admin/SchedulePeriodEditorModal';
 
 export const SchedulePage: React.FC = () => {
   const { schedule, selectedStudent, teachers, currentRole, showToast } = useSchool();
@@ -42,7 +45,15 @@ export const SchedulePage: React.FC = () => {
   // View Mode: By Class OR By Teacher
   const [viewMode, setViewMode] = useState<'class' | 'teacher'>('class');
   const [selectedClassName, setSelectedClassName] = useState<string>('3/أ');
-  const [selectedTeacherCode, setSelectedTeacherCode] = useState<string>(teachers[0]?.code || 'TCH-MATH-101');
+  const [selectedTeacherCode, setSelectedTeacherCode] = useState<string>(teachers[0]?.code || 'LIB-MATH-01');
+
+  // Principal Edit Modal State
+  const [editingPeriod, setEditingPeriod] = useState<{
+    dayName: string;
+    dayIndex: number;
+    className: string;
+    period: SchedulePeriod;
+  } | null>(null);
 
   // Conflict Detection
   const conflicts = useMemo(() => {
@@ -68,11 +79,36 @@ export const SchedulePage: React.FC = () => {
     window.print();
   };
 
+  const handleSavePeriod = (dayIndex: number, updatedPeriod: SchedulePeriod) => {
+    setClassSchedules(prev => {
+      const targetClass = selectedClassName;
+      const currentList = prev[targetClass] ? [...prev[targetClass]] : [];
+      const daySchedule = currentList.find(d => d.dayIndex === dayIndex);
+
+      if (daySchedule) {
+        daySchedule.periods = daySchedule.periods.map(p =>
+          p.periodNumber === updatedPeriod.periodNumber ? updatedPeriod : p
+        );
+      }
+
+      const updatedMap = {
+        ...prev,
+        [targetClass]: currentList
+      };
+
+      try {
+        localStorage.setItem('madrasa_multi_class_schedules', JSON.stringify(updatedMap));
+      } catch {}
+
+      return updatedMap;
+    });
+  };
+
   // Active Schedule to display based on selected mode
   const activeClassSchedule = classSchedules[selectedClassName] || schedule;
   const currentTeacher = teachers.find(t => t.code === selectedTeacherCode) || teachers[0];
   const teacherSchedule = useMemo(() => {
-    return TimetableConflictEngine.getTeacherSchedule(currentTeacher?.name || 'أحمد الغامدي', classSchedules);
+    return TimetableConflictEngine.getTeacherSchedule(currentTeacher?.name || 'طارق الفيتوري', classSchedules);
   }, [currentTeacher, classSchedules]);
 
   const displayedSchedule = viewMode === 'class' ? activeClassSchedule : teacherSchedule;
@@ -104,7 +140,7 @@ export const SchedulePage: React.FC = () => {
                 )}
               </div>
               <p className="text-sm text-slate-300 mt-1">
-                توزيع الحصص الأسبوعي الذكي مع فحص التداخلات الزمنية بين الفصول والمعلمين
+                دولة ليبيا - وزارة التربية والتعليم (2025/2026 م) • توزيع الحصص والمواد والمعلمين
               </p>
             </div>
           </div>
@@ -263,16 +299,38 @@ export const SchedulePage: React.FC = () => {
           currentDaySchedule?.periods?.map((period) => (
             <div
               key={period.periodNumber}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all space-y-4 relative overflow-hidden"
+              className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all space-y-4 relative overflow-hidden group"
             >
               <div className="flex items-center justify-between">
                 <span className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-black text-xs flex items-center justify-center">
                   #{period.periodNumber}
                 </span>
-                <span className="flex items-center gap-1 text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                  <Clock className="w-3.5 h-3.5" />
-                  {period.time}
-                </span>
+                
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1 text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                    <Clock className="w-3.5 h-3.5" />
+                    {period.time}
+                  </span>
+
+                  {/* Admin Edit Period Button */}
+                  {currentRole === 'admin' && viewMode === 'class' && (
+                    <button
+                      onClick={() => {
+                        setEditingPeriod({
+                          dayName: currentDaySchedule.dayName,
+                          dayIndex: selectedDayIndex,
+                          className: selectedClassName,
+                          period
+                        });
+                        sound.playTap();
+                      }}
+                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700 transition"
+                      title="تعديل المادة والمعلم"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-3.5">
@@ -291,7 +349,7 @@ export const SchedulePage: React.FC = () => {
                   <MapPin className="w-3.5 h-3.5 text-blue-500" />
                   <span>{period.room}</span>
                 </span>
-                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">بدون أي تضارب ✅</span>
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">بدون تضارب ✅</span>
               </div>
             </div>
           ))
@@ -308,7 +366,7 @@ export const SchedulePage: React.FC = () => {
             </h2>
           </div>
 
-          <span className="text-xs text-slate-400 font-mono">5 أيام • 6 حصص يومياً</span>
+          <span className="text-xs text-slate-400 font-mono">5 أيام • 6 حصص يومياً (2025/2026 م)</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -325,17 +383,33 @@ export const SchedulePage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {displayedSchedule.map((d) => (
+              {displayedSchedule.map((d, dIdx) => (
                 <tr key={d.dayName} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                   <td className="py-3.5 px-4 font-black text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/20">{d.dayName}</td>
                   {[1, 2, 3, 4, 5, 6].map((pNum) => {
                     const p = d.periods.find(item => item.periodNumber === pNum);
                     return (
-                      <td key={pNum} className="py-3.5 px-3 text-center">
+                      <td
+                        key={pNum}
+                        onClick={() => {
+                          if (currentRole === 'admin' && p && viewMode === 'class') {
+                            setEditingPeriod({
+                              dayName: d.dayName,
+                              dayIndex: dIdx,
+                              className: selectedClassName,
+                              period: p
+                            });
+                            sound.playTap();
+                          }
+                        }}
+                        className={`py-3.5 px-3 text-center ${
+                          currentRole === 'admin' && viewMode === 'class' ? 'cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/20' : ''
+                        }`}
+                      >
                         {p ? (
                           <>
                             <div className="font-bold text-slate-800 dark:text-slate-200">{p.subject}</div>
-                            <div className="text-[10px] text-slate-400">{p.room}</div>
+                            <div className="text-[10px] text-slate-400">{p.teacher.split(' ')[1] || p.teacher}</div>
                           </>
                         ) : (
                           <div className="text-slate-300 dark:text-slate-600 font-mono">-</div>
@@ -349,6 +423,20 @@ export const SchedulePage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Schedule Period Editor Modal */}
+      {editingPeriod && (
+        <SchedulePeriodEditorModal
+          isOpen={true}
+          onClose={() => setEditingPeriod(null)}
+          dayName={editingPeriod.dayName}
+          dayIndex={editingPeriod.dayIndex}
+          className={editingPeriod.className}
+          period={editingPeriod.period}
+          teachers={teachers}
+          onSavePeriod={handleSavePeriod}
+        />
+      )}
 
     </div>
   );

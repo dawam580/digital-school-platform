@@ -8,194 +8,207 @@ const STORAGE_KEY_REPORTS = 'madrasa_db_reports_v3';
 const STORAGE_KEY_CONVERSATIONS = 'madrasa_db_conversations_v3';
 const STORAGE_KEY_SCHEDULE = 'madrasa_db_schedule_v3';
 
+// Libyan Teachers Directory
 export const SEED_TEACHERS: TeacherAccount[] = [
   {
     id: 't-1',
-    code: 'TCH-MATH-101',
-    name: 'أ. أحمد الغامدي',
-    phone: '0551112233',
+    code: 'LIB-MATH-01',
+    name: 'أ. طارق الفيتوري',
+    phone: '0912345678',
     subject: 'الرياضيات',
     subjectCode: 'MATH',
     assignedClasses: ['3/أ', '3/ب', '2/أ'],
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    email: 'ahmed.ghamdi@school.edu.sa'
+    email: 'tariq.fitouri@school.edu.ly'
   },
   {
     id: 't-2',
-    code: 'TCH-SCI-202',
-    name: 'أ. عبدالله السعيد',
-    phone: '0552223344',
-    subject: 'العلوم الطبيعية',
-    subjectCode: 'SCI',
-    assignedClasses: ['3/أ', '2/أ'],
+    code: 'LIB-ARA-02',
+    name: 'أ. عبدالسلام الورفلي',
+    phone: '0923456789',
+    subject: 'اللغة العربية',
+    subjectCode: 'ARA',
+    assignedClasses: ['3/أ', '3/ب'],
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    email: 'abdullah.saeed@school.edu.sa'
+    email: 'abdulsalam.werfelli@school.edu.ly'
   },
   {
     id: 't-3',
-    code: 'TCH-ARA-303',
-    name: 'أ. محمد الشهري',
-    phone: '0553334455',
-    subject: 'لغتي الجميلة',
-    subjectCode: 'ARB',
-    assignedClasses: ['3/أ', '3/ب'],
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    email: 'mohammed.shehri@school.edu.sa'
+    code: 'LIB-SCI-03',
+    name: 'أ. مريم الترهوني',
+    phone: '0945678901',
+    subject: 'العلوم الطبيعية',
+    subjectCode: 'SCI',
+    assignedClasses: ['3/أ', '2/أ'],
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    email: 'maryam.tarhouni@school.edu.ly'
   },
   {
     id: 't-4',
-    code: 'TCH-ISL-404',
-    name: 'أ. فيصل الدوسري',
-    phone: '0554445566',
-    subject: 'الدراسات الإسلامية',
-    subjectCode: 'ISL',
+    code: 'LIB-COMP-04',
+    name: 'أ. أسامة المقريف',
+    phone: '0916789012',
+    subject: 'الحاسوب وتقنية المعلومات',
+    subjectCode: 'COMP',
     assignedClasses: ['3/أ', '3/ب', '2/أ', '1/أ'],
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    email: 'faisal.dosari@school.edu.sa'
+    email: 'osama.megrahi@school.edu.ly'
   },
   {
     id: 't-5',
-    code: 'TCH-ENG-505',
-    name: 'أ. طارق الزهراني',
-    phone: '0555556677',
-    subject: 'اللغة الإنجليزية',
-    subjectCode: 'ENG',
-    assignedClasses: ['3/أ', '3/ب'],
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
-    email: 'tariq.zahrani@school.edu.sa'
+    code: 'LIB-ISL-05',
+    name: 'أ. محمود السويحلي',
+    phone: '0927890123',
+    subject: 'التربية الإسلامية',
+    subjectCode: 'ISL',
+    assignedClasses: ['3/أ', '3/ب', '2/أ'],
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    email: 'mahmoud.sweihli@school.edu.ly'
   },
   {
     id: 't-6',
-    code: 'TCH-SOC-606',
-    name: 'أ. بدر المطيري',
-    phone: '0556667788',
-    subject: 'الاجتماعيات والمواطنة',
+    code: 'LIB-ENG-06',
+    name: 'أ. فاطمة الزوي',
+    phone: '0948901234',
+    subject: 'اللغة الإنجليزية',
+    subjectCode: 'ENG',
+    assignedClasses: ['3/أ', '3/ب'],
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    email: 'fatima.zway@school.edu.ly'
+  },
+  {
+    id: 't-7',
+    code: 'LIB-SOC-07',
+    name: 'أ. وليد المصراتي',
+    phone: '0919012345',
+    subject: 'الدراسات الاجتماعية',
     subjectCode: 'SOC',
     assignedClasses: ['3/أ', '2/أ'],
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    email: 'bader.mutairi@school.edu.sa'
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+    email: 'walid.misrati@school.edu.ly'
   }
 ];
 
+// Libyan School Grades (40 coursework + 60 final exam = 100)
 export const SAMPLE_GRADES_RAYAN: SubjectGrade[] = [
   {
     id: 'g1',
     subjectName: 'الرياضيات',
-    code: 'MATH-501',
+    code: 'MATH-101',
     icon: '📐',
-    teacherName: 'أ. أحمد الغامدي',
+    teacherName: 'أ. طارق الفيتوري',
     period1: 20,
-    period2: 19,
+    period2: 20,
     quizzes: 10,
     homework: 10,
     participation: 10,
-    finalExam: 29,
+    finalExam: 58,
     total: 98,
     maxTotal: 100,
     letter: 'A+',
-    appreciation: 'ممتاز مرتفع - تفوق بارز في الهندسة والحساب الذهني'
+    appreciation: 'ممتاز - تفوق بارز في الهندسة والحساب الذهني'
   },
   {
     id: 'g2',
-    subjectName: 'لغتي الجميلة',
-    code: 'ARB-502',
+    subjectName: 'اللغة العربية',
+    code: 'ARA-102',
     icon: '📖',
-    teacherName: 'أ. عبدالمحسن الدوسري',
+    teacherName: 'أ. عبدالسلام الورفلي',
     period1: 19,
     period2: 19,
     quizzes: 10,
     homework: 10,
     participation: 9,
-    finalExam: 28,
+    finalExam: 56,
     total: 95,
     maxTotal: 100,
     letter: 'A',
-    appreciation: 'ممتاز - إلقاء فصيح وإملاء متميز'
+    appreciation: 'ممتاز - إلقاء فصيح وإملاء وقواعد متميزة'
   },
   {
     id: 'g3',
-    subjectName: 'العلوم',
-    code: 'SCI-503',
+    subjectName: 'العلوم الطبيعية',
+    code: 'SCI-103',
     icon: '🔬',
-    teacherName: 'أ. خالد الشهري',
+    teacherName: 'أ. مريم الترهوني',
     period1: 20,
     period2: 20,
     quizzes: 10,
     homework: 9,
     participation: 10,
-    finalExam: 28,
+    finalExam: 58,
     total: 97,
     maxTotal: 100,
     letter: 'A+',
-    appreciation: 'ممتاز مرتفع - شغف علمي ومشاركة نموذجية في التجارب'
+    appreciation: 'ممتاز - شغف علمي ومشاركة نموذجية في التجارب'
   },
   {
     id: 'g4',
-    subjectName: 'الدراسات الإسلامية',
-    code: 'ISL-504',
-    icon: '🕌',
-    teacherName: 'أ. محمد السبيعي',
+    subjectName: 'الحاسوب وتقنية المعلومات',
+    code: 'COMP-104',
+    icon: '💻',
+    teacherName: 'أ. أسامة المقريف',
     period1: 20,
     period2: 20,
     quizzes: 10,
     homework: 10,
     participation: 10,
-    finalExam: 29,
-    total: 99,
+    finalExam: 60,
+    total: 100,
     maxTotal: 100,
     letter: 'A+',
-    appreciation: 'ممتاز مرتفع - حفظ متقن وأخلاق فاضلة'
+    appreciation: 'درجة كاملة - إتقان عملي متميز لأساسيات الحاسوب'
   },
   {
     id: 'g5',
-    subjectName: 'اللغة الإنجليزية (English)',
-    code: 'ENG-505',
-    icon: '🌍',
-    teacherName: 'Mr. Tariq Al-Mansoor',
+    subjectName: 'التربية الإسلامية',
+    code: 'ISL-105',
+    icon: '🕌',
+    teacherName: 'أ. محمود السويحلي',
+    period1: 20,
+    period2: 20,
+    quizzes: 10,
+    homework: 10,
+    participation: 10,
+    finalExam: 59,
+    total: 99,
+    maxTotal: 100,
+    letter: 'A+',
+    appreciation: 'ممتاز - حفظ متقن للقرآن الكريم وسلوك قدوة'
+  },
+  {
+    id: 'g6',
+    subjectName: 'اللغة الإنجليزية',
+    code: 'ENG-106',
+    icon: '🌐',
+    teacherName: 'أ. فاطمة الزوي',
     period1: 18,
     period2: 19,
     quizzes: 9,
     homework: 10,
     participation: 10,
-    finalExam: 28,
+    finalExam: 56,
     total: 94,
     maxTotal: 100,
     letter: 'A',
-    appreciation: 'Excellent - Great vocabulary and active speaking'
-  },
-  {
-    id: 'g6',
-    subjectName: 'المهارات الرقمية والتكنولوجيا',
-    code: 'TECH-506',
-    icon: '💻',
-    teacherName: 'م. عمر القرني',
-    period1: 20,
-    period2: 20,
-    quizzes: 10,
-    homework: 10,
-    participation: 10,
-    finalExam: 30,
-    total: 100,
-    maxTotal: 100,
-    letter: 'A+',
-    appreciation: 'درجة كاملة - إتقان مذهل لأساسيات البرمجة والتصميم'
+    appreciation: 'ممتاز - مهارات تحدث وقراءة جيدة'
   },
   {
     id: 'g7',
-    subjectName: 'التربية البدنية والدفاع عن النفس',
-    code: 'PE-507',
-    icon: '⚽',
-    teacherName: 'ك. صالح الزهراني',
+    subjectName: 'الدراسات الاجتماعية',
+    code: 'SOC-107',
+    icon: '🗺️',
+    teacherName: 'أ. وليد المصراتي',
     period1: 20,
-    period2: 20,
+    period2: 19,
     quizzes: 10,
     homework: 10,
     participation: 10,
-    finalExam: 30,
-    total: 100,
+    finalExam: 57,
+    total: 96,
     maxTotal: 100,
     letter: 'A+',
-    appreciation: 'ممتاز - لياقة بدنية عالية والتزام بالروح الرياضية'
+    appreciation: 'ممتاز - إلمام بتضاريس وتاريخ دولة ليبيا'
   }
 ];
 
@@ -203,10 +216,10 @@ export const SAMPLE_ASSIGNMENTS: Assignment[] = [
   {
     id: 'asg-1',
     subject: 'الرياضيات',
-    title: 'واجب الزوايا والمضلعات الرباعية',
-    description: 'حل أسئلة التحدي للأشكال الهندسية وقياسات الزوايا مع التبرير المنطقي.',
+    title: 'واجب الهندسة والمضلعات الرباعية',
+    description: 'حل أسئلة الهندسة وقياسات الزوايا للعام الدراسي 2025/2026.',
     dueDate: 'اليوم، 09:00 مساءً',
-    teacherName: 'أ. أحمد الغامدي',
+    teacherName: 'أ. طارق الفيتوري',
     totalPoints: 10,
     status: 'pending',
     questions: [
@@ -215,7 +228,7 @@ export const SAMPLE_ASSIGNMENTS: Assignment[] = [
         text: 'ما هو مجموع قياسات الزوايا الداخلية لأي شكل رباعي؟',
         options: ['180 درجة', '360 درجة', '270 درجة', '540 درجة'],
         correctIndex: 1,
-        explanation: 'مجموع قياسات الزوايا الداخلية لأي مضلع رباعي يساوي دائماً 360° (2 × 180°).',
+        explanation: 'مجموع قياسات الزوايا الداخلية لأي مضلع رباعي يساوي دائماً 360 درجة.',
         points: 5
       },
       {
@@ -223,63 +236,35 @@ export const SAMPLE_ASSIGNMENTS: Assignment[] = [
         text: 'إذا كان قياس زاوية في مستطيل هو 90°، فما نوع هذه الزاوية؟',
         options: ['زاوية حادة', 'زاوية قائمة', 'زاوية منفرجة', 'زاوية مستقيمة'],
         correctIndex: 1,
-        explanation: 'الزاوية التي قياسها 90 درجة هي زاوية قائمة بالضبط.',
+        explanation: 'الزاوية التي قياسها 90 درجة هي زاوية قائمة.',
         points: 5
       }
     ]
   },
   {
     id: 'asg-2',
-    subject: 'العلوم',
-    title: 'تحدي دورة الماء وحالات المادة',
-    description: 'تطبيق عملي على التبخر والتكثف وهطول الأمطار.',
+    subject: 'الحاسوب وتقنية المعلومات',
+    title: 'تطبيق عملي: وحدات الإدخال والإخراج',
+    description: 'تصنيف مكونات الحاسوب ووحدات المعالجة المركزية.',
     dueDate: 'غداً، 06:00 مساءً',
-    teacherName: 'أ. خالد الشهري',
+    teacherName: 'أ. أسامة المقريف',
     totalPoints: 10,
     status: 'pending',
     questions: [
       {
         id: 'q3',
-        text: 'العملية التي يتحول فيها الماء من الحالة السائلة إلى الحالة الغازية تسمى:',
-        options: ['التكثف', 'التجمد', 'التبخر', 'الانصهار'],
-        correctIndex: 2,
-        explanation: 'التبخر هو تحول السائل إلى بخار نتيجة ارتفاع درجة الحرارة.',
+        text: 'تعتبر لوحة المفاتيح (Keyboard) من وحدات:',
+        options: ['الإدخال', 'الإخراج', 'التخزين الثانوي', 'المعالجة'],
+        correctIndex: 0,
+        explanation: 'لوحة المفاتيح تُستخدم لإدخال البيانات والأوامر للحاسوب.',
         points: 5
       },
       {
         id: 'q4',
-        text: 'تتكون الغيوم في السماء نتيجة لعملية:',
-        options: ['التكثف', 'الترشيح', 'التبخر', 'الترسيب'],
+        text: 'الشاشة وسماعات الصوت تعتبر من وحدات:',
+        options: ['الإخراج', 'الإدخال', 'التحكم', 'الذاكرة العشوائية'],
         correctIndex: 0,
-        explanation: 'يصعد بخار الماء إلى طبقات الجو العليا ويبرد ليتكثف على شكل غيوم.',
-        points: 5
-      }
-    ]
-  },
-  {
-    id: 'asg-3',
-    subject: 'لغتي الجميلة',
-    title: 'واجب الفاعل وعلامات إعرابه الأصيلة',
-    description: 'تحديد الفاعل في الجملة وتحديد علامة الرفع المناسبة.',
-    dueDate: 'الخميس، 08:00 مساءً',
-    teacherName: 'أ. عبدالمحسن الدوسري',
-    totalPoints: 10,
-    status: 'submitted',
-    studentScore: 10,
-    teacherFeedback: 'أحسنت يا بطل! إجابات نموذجية متقنة.',
-    questions: [
-      {
-        id: 'q5',
-        text: 'في جملة (كتبَ الطالبُ الدرسَ)، ما هو الفاعل؟',
-        options: ['كتبَ', 'الطالبُ', 'الدرسَ', 'ضمير مستتر'],
-        correctIndex: 1,
-        points: 5
-      },
-      {
-        id: 'q6',
-        text: 'علامة رفع الفاعل المفرد الأصلية هي:',
-        options: ['الفتحة', 'الكسرة', 'الضمة', 'الألف'],
-        correctIndex: 2,
+        explanation: 'تقوم الشاشة بعرض وإخراج النتائج للمستخدم.',
         points: 5
       }
     ]
@@ -290,76 +275,36 @@ export const SEED_CONVERSATIONS: TeacherConversation[] = [
   {
     id: 'conv-1',
     teacherId: 't-1',
-    teacherName: 'أ. أحمد الغامدي',
+    teacherName: 'أ. طارق الفيتوري',
     subject: 'معلم الرياضيات',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    lastMessage: 'السلام عليكم يا أبا ريان، ريان أبدع اليوم في حل مسألة التحدي الرياضي 🌟',
+    lastMessage: 'السلام عليكم يا ولي الأمر، معتز أبدع اليوم في حل مسألة الحساب الذهني 🌟',
     lastMessageTime: '10:45 ص',
     unreadCount: 1,
     messages: [
       {
         id: 'm1',
         senderRole: 'teacher',
-        senderName: 'أ. أحمد الغامدي',
-        text: 'السلام عليكم ورحمة الله وبركاته يا أبا ريان. يسعدني إبلاغكم بأن ريان أظهر تميزاً لافتاً في اختبار الهندسة القصير.',
+        senderName: 'أ. طارق الفيتوري',
+        text: 'السلام عليكم ورحمة الله وبركاته. يسعدني إبلاغكم بأن معتز أظهر تميزاً لافتاً في اختبار الهندسة.',
         timestamp: 'أمس 04:15 م',
         read: true
       },
       {
         id: 'm2',
         senderRole: 'parent',
-        senderName: 'فهد العتيبي (ولي الأمر)',
-        text: 'وعليكم السلام ورحمة الله وبركاته أستاذ أحمد. جزاكم الله خيراً على جهودكم واهتمامكم الدائم.',
+        senderName: 'سالم الورفلي (ولي الأمر)',
+        text: 'وعليكم السلام ورحمة الله وبركاته أستاذ طارق. بارك الله فيكم على اهتمامكم ومتابعتكم.',
         timestamp: 'أمس 04:30 م',
         read: true
       },
       {
         id: 'm3',
         senderRole: 'teacher',
-        senderName: 'أ. أحمد الغامدي',
-        text: 'السلام عليكم يا أبا ريان، ريان أبدع اليوم في حل مسألة التحدي الرياضي 🌟 ونرشحه للمشاركة في أولمبياد الرياضيات.',
+        senderName: 'أ. طارق الفيتوري',
+        text: 'السلام عليكم يا ولي الأمر، معتز أبدع اليوم في حل مسألة الحساب الذهني 🌟 ونرشحه لأولمبياد المدرسة.',
         timestamp: '10:45 ص',
         read: false
-      }
-    ]
-  },
-  {
-    id: 'conv-2',
-    teacherId: 't-2',
-    teacherName: 'أ. خالد الشهري',
-    subject: 'معلم العلوم',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    lastMessage: 'نحتاج إحضار نموذج مجسم بركاني ليوم المعرض الأسبوع القادم.',
-    lastMessageTime: 'أمس',
-    unreadCount: 0,
-    messages: [
-      {
-        id: 'm4',
-        senderRole: 'teacher',
-        senderName: 'أ. خالد الشهري',
-        text: 'مرحباً بكم، تم تكليف ريان بمشروع علمي مميز عن طبقات الأرض، يرجى متابعة تسليم النموذج المطلوب.',
-        timestamp: 'أمس 01:20 م',
-        read: true
-      }
-    ]
-  },
-  {
-    id: 'conv-3',
-    teacherId: 't-3',
-    teacherName: 'أ. عبدالمحسن الدوسري',
-    subject: 'معلم لغتي الجميلة',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    lastMessage: 'تم تصحيح الواجب وحصل على الدرجة الكاملة 10/10.',
-    lastMessageTime: '28 أغسطس',
-    unreadCount: 0,
-    messages: [
-      {
-        id: 'm5',
-        senderRole: 'teacher',
-        senderName: 'أ. عبدالمحسن الدوسري',
-        text: 'أحييكم على حرصكم، خط ريان وإملاءه في تحسن مستمر ومبهر.',
-        timestamp: '28 أغسطس 02:00 م',
-        read: true
       }
     ]
   }
@@ -370,392 +315,333 @@ export const SEED_SCHEDULE: DaySchedule[] = [
     dayName: 'الأحد',
     dayIndex: 0,
     periods: [
-      { periodNumber: 1, time: '07:15 - 08:00', subject: 'القرآن الكريم والدراسات الإسلامية', teacher: 'أ. محمد السبيعي', room: 'قاعة 5/أ', icon: '🕌', color: 'emerald' },
-      { periodNumber: 2, time: '08:05 - 08:50', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 5/أ', icon: '📐', color: 'blue' },
-      { periodNumber: 3, time: '09:15 - 10:00', subject: 'لغتي الجميلة', teacher: 'أ. عبدالمحسن الدوسري', room: 'قاعة 5/أ', icon: '📖', color: 'amber' },
-      { periodNumber: 4, time: '10:05 - 10:50', subject: 'العلوم', teacher: 'أ. خالد الشهري', room: 'المختبر العلمي', icon: '🔬', color: 'purple' },
-      { periodNumber: 5, time: '11:10 - 11:55', subject: 'اللغة الإنجليزية', teacher: 'Mr. Tariq', room: 'قاعة اللغات', icon: '🌍', color: 'cyan' },
-      { periodNumber: 6, time: '12:00 - 12:45', subject: 'المهارات الرقمية', teacher: 'م. عمر القرني', room: 'معمل الحاسب', icon: '💻', color: 'indigo' },
+      { periodNumber: 1, time: '08:00 - 08:45', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 3/أ', icon: '📐', color: 'blue' },
+      { periodNumber: 2, time: '08:50 - 09:35', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 3/أ', icon: '📖', color: 'emerald' },
+      { periodNumber: 3, time: '09:40 - 10:25', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+      { periodNumber: 4, time: '10:50 - 11:35', subject: 'الحاسوب', teacher: 'أ. أسامة المقريف', room: 'معمل الحاسوب', icon: '💻', color: 'cyan' },
+      { periodNumber: 5, time: '11:40 - 12:25', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 3/أ', icon: '🕌', color: 'amber' },
+      { periodNumber: 6, time: '12:30 - 01:15', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
     ]
   },
   {
     dayName: 'الإثنين',
     dayIndex: 1,
     periods: [
-      { periodNumber: 1, time: '07:15 - 08:00', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 5/أ', icon: '📐', color: 'blue' },
-      { periodNumber: 2, time: '08:05 - 08:50', subject: 'العلوم', teacher: 'أ. خالد الشهري', room: 'المختبر العلمي', icon: '🔬', color: 'purple' },
-      { periodNumber: 3, time: '09:15 - 10:00', subject: 'الدراسات الإسلامية', teacher: 'أ. محمد السبيعي', room: 'قاعة 5/أ', icon: '🕌', color: 'emerald' },
-      { periodNumber: 4, time: '10:05 - 10:50', subject: 'لغتي الجميلة', teacher: 'أ. عبدالمحسن الدوسري', room: 'قاعة 5/أ', icon: '📖', color: 'amber' },
-      { periodNumber: 5, time: '11:10 - 11:55', subject: 'التربية الفنية', teacher: 'أ. فيصل الشمري', room: 'مرسم الفنون', icon: '🎨', color: 'rose' },
-      { periodNumber: 6, time: '12:00 - 12:45', subject: 'التربية البدنية', teacher: 'ك. صالح الزهراني', room: 'الصالة الرياضية', icon: '⚽', color: 'green' },
+      { periodNumber: 1, time: '08:00 - 08:45', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+      { periodNumber: 2, time: '08:50 - 09:35', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 3/أ', icon: '📐', color: 'blue' },
+      { periodNumber: 3, time: '09:40 - 10:25', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 3/أ', icon: '📖', color: 'emerald' },
+      { periodNumber: 4, time: '10:50 - 11:35', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 3/أ', icon: '🗺️', color: 'teal' },
+      { periodNumber: 5, time: '11:40 - 12:25', subject: 'الحاسوب', teacher: 'أ. أسامة المقريف', room: 'معمل الحاسوب', icon: '💻', color: 'cyan' },
+      { periodNumber: 6, time: '12:30 - 01:15', subject: 'التربية البدنية', teacher: 'أ. سامي المجبري', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' },
     ]
   },
   {
     dayName: 'الثلاثاء',
     dayIndex: 2,
     periods: [
-      { periodNumber: 1, time: '07:15 - 08:00', subject: 'لغتي الجميلة', teacher: 'أ. عبدالمحسن الدوسري', room: 'قاعة 5/أ', icon: '📖', color: 'amber' },
-      { periodNumber: 2, time: '08:05 - 08:50', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 5/أ', icon: '📐', color: 'blue' },
-      { periodNumber: 3, time: '09:15 - 10:00', subject: 'اللغة الإنجليزية', teacher: 'Mr. Tariq', room: 'قاعة اللغات', icon: '🌍', color: 'cyan' },
-      { periodNumber: 4, time: '10:05 - 10:50', subject: 'الاجتماعيات والمواطنة', teacher: 'أ. سلطان الحربي', room: 'قاعة 5/أ', icon: '🗺️', color: 'teal' },
-      { periodNumber: 5, time: '11:10 - 11:55', subject: 'العلوم', teacher: 'أ. خالد الشهري', room: 'المختبر العلمي', icon: '🔬', color: 'purple' },
-      { periodNumber: 6, time: '12:00 - 12:45', subject: 'نشاط الإرشاد الصفي', teacher: 'المرشد الطلابي', room: 'قاعة 5/أ', icon: '⭐', color: 'yellow' },
+      { periodNumber: 1, time: '08:00 - 08:45', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 3/أ', icon: '📖', color: 'emerald' },
+      { periodNumber: 2, time: '08:50 - 09:35', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 3/أ', icon: '🕌', color: 'amber' },
+      { periodNumber: 3, time: '09:40 - 10:25', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 3/أ', icon: '📐', color: 'blue' },
+      { periodNumber: 4, time: '10:50 - 11:35', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+      { periodNumber: 5, time: '11:40 - 12:25', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+      { periodNumber: 6, time: '12:30 - 01:15', subject: 'التربية الفنية', teacher: 'أ. وائل الدرسي', room: 'المرسم', icon: '🎨', color: 'pink' },
     ]
   },
   {
     dayName: 'الأربعاء',
     dayIndex: 3,
     periods: [
-      { periodNumber: 1, time: '07:15 - 08:00', subject: 'العلوم', teacher: 'أ. خالد الشهري', room: 'المختبر العلمي', icon: '🔬', color: 'purple' },
-      { periodNumber: 2, time: '08:05 - 08:50', subject: 'المهارات الرقمية', teacher: 'م. عمر القرني', room: 'معمل الحاسب', icon: '💻', color: 'indigo' },
-      { periodNumber: 3, time: '09:15 - 10:00', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 5/أ', icon: '📐', color: 'blue' },
-      { periodNumber: 4, time: '10:05 - 10:50', subject: 'الدراسات الإسلامية', teacher: 'أ. محمد السبيعي', room: 'قاعة 5/أ', icon: '🕌', color: 'emerald' },
-      { periodNumber: 5, time: '11:10 - 11:55', subject: 'لغتي الجميلة', teacher: 'أ. عبدالمحسن الدوسري', room: 'قاعة 5/أ', icon: '📖', color: 'amber' },
-      { periodNumber: 6, time: '12:00 - 12:45', subject: 'التربية البدنية', teacher: 'ك. صالح الزهراني', room: 'الملعب العشبي', icon: '⚽', color: 'green' },
+      { periodNumber: 1, time: '08:00 - 08:45', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 3/أ', icon: '📐', color: 'blue' },
+      { periodNumber: 2, time: '08:50 - 09:35', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+      { periodNumber: 3, time: '09:40 - 10:25', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 3/أ', icon: '🕌', color: 'amber' },
+      { periodNumber: 4, time: '10:50 - 11:35', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 3/أ', icon: '📖', color: 'emerald' },
+      { periodNumber: 5, time: '11:40 - 12:25', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 3/أ', icon: '🗺️', color: 'teal' },
+      { periodNumber: 6, time: '12:30 - 01:15', subject: 'الحاسوب', teacher: 'أ. أسامة المقريف', room: 'معمل الحاسوب', icon: '💻', color: 'cyan' },
     ]
   },
   {
     dayName: 'الخميس',
     dayIndex: 4,
     periods: [
-      { periodNumber: 1, time: '07:15 - 08:00', subject: 'الدراسات الإسلامية', teacher: 'أ. محمد السبيعي', room: 'قاعة 5/أ', icon: '🕌', color: 'emerald' },
-      { periodNumber: 2, time: '08:05 - 08:50', subject: 'اللغة الإنجليزية', teacher: 'Mr. Tariq', room: 'قاعة اللغات', icon: '🌍', color: 'cyan' },
-      { periodNumber: 3, time: '09:15 - 10:00', subject: 'الرياضيات (مراجعة)', teacher: 'أ. أحمد الغامدي', room: 'قاعة 5/أ', icon: '📐', color: 'blue' },
-      { periodNumber: 4, time: '10:05 - 10:50', subject: 'لغتي الجميلة', teacher: 'أ. عبدالمحسن الدوسري', room: 'قاعة 5/أ', icon: '📖', color: 'amber' },
-      { periodNumber: 5, time: '11:10 - 11:55', subject: 'الأنشطة والموهبة', teacher: 'رائد النشاط', room: 'المسرح المدرسي', icon: '🎭', color: 'pink' },
-      { periodNumber: 6, time: '12:00 - 12:45', subject: 'الاصطفاف والانصراف الأسبوعي', teacher: 'إدارة المدرسة', room: 'الفناء الخارجي', icon: '🚌', color: 'orange' },
+      { periodNumber: 1, time: '08:00 - 08:45', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 3/أ', icon: '🕌', color: 'amber' },
+      { periodNumber: 2, time: '08:50 - 09:35', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 3/أ', icon: '📐', color: 'blue' },
+      { periodNumber: 3, time: '09:40 - 10:25', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+      { periodNumber: 4, time: '10:50 - 11:35', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+      { periodNumber: 5, time: '11:40 - 12:25', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 3/أ', icon: '📖', color: 'emerald' },
+      { periodNumber: 6, time: '12:30 - 01:15', subject: 'النشاط المدرسي', teacher: 'رائد النشاط', room: 'مسرح المدرسة', icon: '🌟', color: 'amber' },
     ]
   }
 ];
 
+// Clean Libyan Students Dataset (12-Digit National Numbers & 2025/2026 Academic Year)
 export const SEED_STUDENTS: Student[] = [
   {
     id: 'std-1',
-    name: 'ريان فهد العتيبي',
-    nationalId: '1098765432',
-    studentNumber: '2024-0104',
-    linkCode: 'SCH-2026-R1',
+    name: 'معتز سالم الورفلي',
+    nationalId: '120081234567',
+    nationalNumber: '120081234567',
+    studentNumber: '2025-0101',
+    linkCode: 'SCH-2026-L1',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
-    grade: 'الصف الخامس الابتدائي',
-    className: 'خامس / أ',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/أ',
     gender: 'male',
-    parentName: 'فهد بن ناصر العتيبي',
-    parentPhone: '0551234567',
-    parentEmail: 'fahad.otb@gmail.com',
+    parentName: 'سالم بن علي الورفلي',
+    parentPhone: '0922465676',
+    parentEmail: 'salem.werfelli@gmail.com',
     status: 'present',
     attendanceRate: 98,
     academicAverage: 96.5,
+    courseworkScore: 39,
+    examScore: 58,
+    totalScore: 97,
+    appreciation: 'ممتاز',
     behaviorRating: 'ممتاز',
     behaviorPointsTotal: 48,
-    lastSeenTime: '07:15 صباحاً (البوابة الرئيسية)',
+    lastSeenTime: '07:50 صباحاً (البوابة المدرسية)',
     grades: SAMPLE_GRADES_RAYAN,
     assignments: SAMPLE_ASSIGNMENTS,
     competencies: [
-      { name: 'حل المشكلات', score: 95, maxScore: 100 },
-      { name: 'التفكير الإبداعي', score: 92, maxScore: 100 },
-      { name: 'العمل الجماعي', score: 98, maxScore: 100 },
-      { name: 'الانضباط والمسؤولية', score: 96, maxScore: 100 },
-      { name: 'التعبير اللغوي', score: 94, maxScore: 100 },
-      { name: 'اللياقة والنشاط', score: 100, maxScore: 100 },
+      { name: 'حل المسائل الرياضية', score: 96, maxScore: 100 },
+      { name: 'التفكير العلمي والابتكار', score: 94, maxScore: 100 },
+      { name: 'مهارات الحاسوب والتطبيقات', score: 100, maxScore: 100 },
+      { name: 'الانضباط والسمت المدرسي', score: 98, maxScore: 100 },
+      { name: 'التعبير اللغوي والإملاء', score: 95, maxScore: 100 },
     ],
     behaviorPoints: [
-      { id: 'bp-1', category: 'positive', title: 'مشاركة ممتازة في الرياضيات', points: 5, icon: '🌟', date: 'اليوم 08:30 ص', teacher: 'أ. أحمد الغامدي' },
-      { id: 'bp-2', category: 'positive', title: 'مساعدة الزملاء في التجربة', points: 3, icon: '🤝', date: 'اليوم 10:15 ص', teacher: 'أ. خالد الشهري' },
-      { id: 'bp-3', category: 'positive', title: 'حل الواجب الإضافي', points: 4, icon: '📚', date: 'أمس', teacher: 'أ. عبدالمحسن الدوسري' },
+      { id: 'bp-1', category: 'positive', title: 'مشاركة ممتازة في الرياضيات والحساب الذهني', points: 5, icon: '🌟', date: 'اليوم 08:30 ص', teacher: 'أ. طارق الفيتوري' },
+      { id: 'bp-2', category: 'positive', title: 'إتقان تطبيق معمل الحاسوب', points: 4, icon: '💻', date: 'اليوم 10:15 ص', teacher: 'أ. أسامة المقريف' },
+      { id: 'bp-3', category: 'positive', title: 'حل واجب العلوم الميداني', points: 4, icon: '🔬', date: 'أمس', teacher: 'أ. مريم الترهوني' },
     ],
     badges: [
-      { id: 'b1', title: 'نجم الحساب الذهني', icon: '🏆', date: '28 أغسطس 2026', description: 'المركز الأول في مسابقة الرياضيات الصفية' },
-      { id: 'b2', title: 'صديق البيئة والمكتبة', icon: '🌿', date: '25 أغسطس 2026', description: 'المشاركة الفعالة في تنظيم المركز التعليمي' },
-      { id: 'b3', title: 'فارس الانضباط الصباحي', icon: '⭐', date: '20 أغسطس 2026', description: 'حضور مبكر بدون أي تأخير طوال الشهر' }
+      { id: 'b1', title: 'نجم الحساب الذهني', icon: '🏆', date: 'سبتمبر 2025', description: 'الترتيب الأول في مسابقة الرياضيات' },
+      { id: 'b2', title: 'صديق معمل الحاسوب', icon: '💻', date: 'أكتوبر 2025', description: 'التميز في التطبيقات التقنية' },
+      { id: 'b3', title: 'فارس الانضباط الصباحي', icon: '⭐', date: 'نوفمبر 2025', description: 'حضور مبكر بدون أي تأخير' }
     ],
     subjects: [
-      { name: 'الرياضيات', score: 98, maxScore: 100, teacher: 'أ. أحمد الغامدي', evaluation: 'متميز في حل المعادلات والتفكير الهندسي' },
-      { name: 'لغتي الجميلة', score: 95, maxScore: 100, teacher: 'أ. عبدالمحسن الدوسري', evaluation: 'قراءة معبرة وإملاء سليم' },
-      { name: 'العلوم', score: 97, maxScore: 100, teacher: 'أ. خالد الشهري', evaluation: 'مشاركة ممتازة في التجارب المعملية' },
-      { name: 'الدراسات الإسلامية', score: 99, maxScore: 100, teacher: 'أ. محمد السبيعي', evaluation: 'حفظ متقن وسلوك قدوة' },
-      { name: 'اللغة الإنجليزية', score: 94, maxScore: 100, teacher: 'Mr. Tariq', evaluation: 'Fluent pronunciation and active in class' },
-      { name: 'التربية البدنية', score: 100, maxScore: 100, teacher: 'ك. صالح الزهراني', evaluation: 'لياقة عالية وروح رياضية' },
+      { name: 'الرياضيات', score: 98, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'متميز في التفكير المنطقي' },
+      { name: 'اللغة العربية', score: 95, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'قراءة معبرة وخط واضح' },
+      { name: 'العلوم الطبيعية', score: 97, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'مشاركة ممتازة في المعمل' },
+      { name: 'الحاسوب', score: 100, maxScore: 100, teacher: 'أ. أسامة المقريف', evaluation: 'درجة كاملة في التطبيق العملي' },
+      { name: 'التربية الإسلامية', score: 99, maxScore: 100, teacher: 'أ. محمود السويحلي', evaluation: 'حفظ وتلاوة وسلوك قدوة' },
     ],
     recentAttendance: [
-      { date: '2026-09-01', status: 'present', note: 'حضور مبكر' },
-      { date: '2026-08-31', status: 'present' },
-      { date: '2026-08-30', status: 'late', note: 'تأخر 10 دقائق بسبب الازدحام' },
-      { date: '2026-08-27', status: 'present' },
-      { date: '2026-08-26', status: 'present' },
+      { date: '2025-09-01', status: 'present', note: 'حضور مبكر' },
+      { date: '2025-09-02', status: 'present', note: 'حضور منتظم' },
     ],
     notes: [
-      { id: 'n1', date: '2026-08-31', teacher: 'أ. أحمد الغامدي', type: 'positive', text: 'حصل ريان على نجمة الأسبوع في مادة الرياضيات للتفوق في مسابقة الحساب الذهني.' },
-      { id: 'n2', date: '2026-08-28', teacher: 'المرشد الطلابي', type: 'info', text: 'تم إجراء الفحص الدوري السنوي للسمع والبصر، والنتائج ممتازة.' }
+      { id: 'n-1', date: 'اليوم', teacher: 'أ. طارق الفيتوري', type: 'positive', text: 'معتز طالب مجتهد ومتفاعل دائماً في حصة الرياضيات.' }
     ]
   },
   {
     id: 'std-2',
-    name: 'سارة خالد القحطاني',
-    nationalId: '1087654321',
-    studentNumber: '2024-0105',
-    linkCode: 'SCH-2026-S2',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
-    grade: 'الصف الخامس الابتدائي',
-    className: 'خامس / أ',
+    name: 'آية مصطفى الترهوني',
+    nationalId: '220082345678',
+    nationalNumber: '220082345678',
+    studentNumber: '2025-0102',
+    linkCode: 'SCH-2026-L2',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/أ',
     gender: 'female',
-    parentName: 'خالد بن سعد القحطاني',
-    parentPhone: '0559876543',
-    parentEmail: 'khaled.qahtani@outlook.com',
+    parentName: 'مصطفى بن رمضان الترهوني',
+    parentPhone: '0912233445',
+    parentEmail: 'mustafa.tarhouni@gmail.com',
     status: 'present',
     attendanceRate: 99,
     academicAverage: 98.2,
+    courseworkScore: 40,
+    examScore: 59,
+    totalScore: 99,
+    appreciation: 'ممتاز',
     behaviorRating: 'ممتاز',
     behaviorPointsTotal: 52,
-    lastSeenTime: '07:10 صباحاً (الحافلة المدرسية #12)',
     grades: SAMPLE_GRADES_RAYAN,
-    assignments: SAMPLE_ASSIGNMENTS,
     competencies: [
-      { name: 'حل المشكلات', score: 98, maxScore: 100 },
-      { name: 'التفكير الإبداعي', score: 96, maxScore: 100 },
-      { name: 'العمل الجماعي', score: 95, maxScore: 100 },
-      { name: 'الانضباط والمسؤولية', score: 100, maxScore: 100 },
-      { name: 'التعبير اللغوي', score: 99, maxScore: 100 },
-      { name: 'اللياقة والنشاط', score: 94, maxScore: 100 },
+      { name: 'التفوق اللغوي', score: 100, maxScore: 100 },
+      { name: 'العلوم والبحث', score: 98, maxScore: 100 },
+      { name: 'الحاسوب والمهارات الرقمية', score: 96, maxScore: 100 }
     ],
-    behaviorPoints: [
-      { id: 'bp-4', category: 'positive', title: 'إلقاء متميز في الإذاعة', points: 5, icon: '🎤', date: 'اليوم 07:15 ص', teacher: 'رائدة النشاط' }
-    ],
-    badges: [
-      { id: 'b4', title: 'فصيحة الأسبوع', icon: '📖', date: '26 أغسطس 2026', description: 'إلقاء إذاعي مميز وطلاقة في التعبير' }
-    ],
-    subjects: [
-      { name: 'الرياضيات', score: 99, maxScore: 100, teacher: 'أ. أحمد الغامدي', evaluation: 'دقة فائقة في حل المسائل' },
-      { name: 'لغتي الجميلة', score: 99, maxScore: 100, teacher: 'أ. عبدالمحسن الدوسري', evaluation: 'فصاحة وتمكن لغوي استثنائي' },
-      { name: 'العلوم', score: 98, maxScore: 100, teacher: 'أ. خالد الشهري', evaluation: 'إجابات علمية منظمة' },
-      { name: 'الدراسات الإسلامية', score: 100, maxScore: 100, teacher: 'أ. محمد السبيعي', evaluation: 'حفظ وتلاوة نموذجية' },
-      { name: 'اللغة الإنجليزية', score: 97, maxScore: 100, teacher: 'Mr. Tariq', evaluation: 'Outstanding writing skills' },
-      { name: 'التربية الفنية', score: 98, maxScore: 100, teacher: 'أ. فيصل الشمري', evaluation: 'حس جمالي وإبداع لوني' },
-    ],
-    recentAttendance: [
-      { date: '2026-09-01', status: 'present' },
-      { date: '2026-08-31', status: 'present' },
-      { date: '2026-08-30', status: 'present' },
-    ],
-    notes: [
-      { id: 'n3', date: '2026-08-30', teacher: 'مديرة المدرسة', type: 'positive', text: 'شكر وتقدير لمشاركتها المميزة في تقديم الإذاعة المدرسية الصباحية.' }
-    ]
+    behaviorPoints: [],
+    subjects: []
+  },
+  {
+    id: 'std-3',
+    name: 'عبدالرحمن علي المقريف',
+    nationalId: '120083456789',
+    nationalNumber: '120083456789',
+    studentNumber: '2025-0103',
+    linkCode: 'SCH-2026-L3',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/ب',
+    gender: 'male',
+    parentName: 'علي بن فرج المقريف',
+    parentPhone: '0923344556',
+    parentEmail: 'ali.megrahi@gmail.com',
+    status: 'present',
+    attendanceRate: 95,
+    academicAverage: 94.0,
+    courseworkScore: 38,
+    examScore: 56,
+    totalScore: 94,
+    appreciation: 'ممتاز',
+    behaviorRating: 'ممتاز',
+    behaviorPointsTotal: 35,
+    grades: SAMPLE_GRADES_RAYAN,
+    competencies: [],
+    behaviorPoints: [],
+    subjects: []
+  },
+  {
+    id: 'std-4',
+    name: 'سارة عمر الفيتوري',
+    nationalId: '220084567890',
+    nationalNumber: '220084567890',
+    studentNumber: '2025-0104',
+    linkCode: 'SCH-2026-L4',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    grade: 'الصف الثاني الأساسي',
+    className: '2/أ',
+    gender: 'female',
+    parentName: 'عمر بن الهادي الفيتوري',
+    parentPhone: '0944455667',
+    parentEmail: 'omar.fitouri@gmail.com',
+    status: 'present',
+    attendanceRate: 97,
+    academicAverage: 96.0,
+    courseworkScore: 39,
+    examScore: 57,
+    totalScore: 96,
+    appreciation: 'ممتاز',
+    behaviorRating: 'ممتاز',
+    behaviorPointsTotal: 40,
+    grades: SAMPLE_GRADES_RAYAN,
+    competencies: [],
+    behaviorPoints: [],
+    subjects: []
+  },
+  {
+    id: 'std-5',
+    name: 'يوسف فتحي السويحلي',
+    nationalId: '120085678901',
+    nationalNumber: '120085678901',
+    studentNumber: '2025-0105',
+    linkCode: 'SCH-2026-L5',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
+    grade: 'الصف الأول الأساسي',
+    className: '1/أ',
+    gender: 'male',
+    parentName: 'فتحي بن مسعود السويحلي',
+    parentPhone: '0915566778',
+    parentEmail: 'fathi.sweihli@gmail.com',
+    status: 'present',
+    attendanceRate: 98,
+    academicAverage: 99.0,
+    courseworkScore: 40,
+    examScore: 59,
+    totalScore: 99,
+    appreciation: 'ممتاز',
+    behaviorRating: 'ممتاز',
+    behaviorPointsTotal: 45,
+    grades: SAMPLE_GRADES_RAYAN,
+    competencies: [],
+    behaviorPoints: [],
+    subjects: []
   }
 ];
 
 export const SEED_CLASSES: SchoolClass[] = [
-  { id: 'c1', name: 'خامس / أ', grade: 'الصف الخامس', studentCount: 26, presentCount: 25, absentCount: 1, lateCount: 2, supervisor: 'أ. أحمد الغامدي' },
-  { id: 'c2', name: 'خامس / ب', grade: 'الصف الخامس', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. خالد الشهري' },
-  { id: 'c3', name: 'سادس / أ', grade: 'الصف السادس', studentCount: 25, presentCount: 25, absentCount: 0, lateCount: 1, supervisor: 'أ. عبدالمحسن الدوسري' },
-  { id: 'c4', name: 'سادس / ب', grade: 'الصف السادس', studentCount: 27, presentCount: 24, absentCount: 3, lateCount: 3, supervisor: 'أ. محمد السبيعي' }
+  { id: 'c-1', name: '3/أ', grade: 'الصف الثالث الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'c-2', name: '3/ب', grade: 'الصف الثالث الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'c-3', name: '2/أ', grade: 'الصف الثاني الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
+  { id: 'c-4', name: '1/أ', grade: 'الصف الأول الأساسي', studentCount: 26, presentCount: 26, absentCount: 0, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
 ];
 
 export const SEED_NOTIFICATIONS: NotificationItem[] = [
-  { id: 'n1', title: 'تسجيل حضور صباحي', message: 'تم تسجيل حضور الطالب ريان فهد العتيبي في تمام الساعة 07:15 ص.', date: 'اليوم', time: '07:16 ص', category: 'attendance', read: false, studentName: 'ريان فهد العتيبي' },
-  { id: 'n2', title: 'واجب إلكتروني جديد 📝', message: 'أضاف أ. أحمد الغامدي واجباً جديداً في مادة الرياضيات (الزوايا والمضلعات).', date: 'اليوم', time: '08:30 ص', category: 'academic', read: false, studentName: 'ريان فهد العتيبي' },
-  { id: 'n3', title: 'كشف الدرجات الأكاديمي جاهز 📊', message: 'تم رصد درجات الفترات واعتمادها رسمياً، يمكنك استعراضها وطباعة الكشف الرسمي الآن.', date: 'اليوم', time: '09:00 ص', category: 'academic', read: false, studentName: 'ريان فهد العتيبي' },
-  { id: 'n4', title: 'رسالة جديدة من معلم المادة 💬', message: 'أرسل أ. أحمد الغامدي رسالة جديدة في محادثة الرياضيات.', date: 'اليوم', time: '10:45 ص', category: 'admin', read: false, studentName: 'ريان فهد العتيبي' }
+  {
+    id: 'n1',
+    title: 'تأكيد الحضور الصباحي',
+    message: 'تم تسجيل حضور الطالب معتز سالم الورفلي في تمام الساعة 07:50 صباحاً.',
+    time: 'منذ 15 دقيقة',
+    date: 'اليوم',
+    category: 'attendance',
+    read: false,
+    studentName: 'معتز سالم الورفلي'
+  },
+  {
+    id: 'n2',
+    title: 'واجب جديد في مادة الحاسوب',
+    message: 'أضاف الأستاذ أسامة المقريف واجباً جديداً: "تطبيق عملي: وحدات الإدخال والإخراج" للعام الدراسي 2025/2026.',
+    time: 'منذ ساعتين',
+    date: 'اليوم',
+    category: 'academic',
+    read: false,
+    studentName: 'معتز سالم الورفلي'
+  },
+  {
+    id: 'n3',
+    title: 'شهادة تميز في الرياضيات',
+    message: 'تهنئة خاصة من إدارة المدرسة لحصول معتز على وسام الحساب الذهني.',
+    time: 'أمس',
+    date: 'أمس',
+    category: 'admin',
+    read: true,
+    studentName: 'معتز سالم الورفلي'
+  }
 ];
 
 export const SEED_DAILY_REPORT: DailyReportData = {
-  id: 'rep-2026-09-01',
+  id: 'rep-1',
   studentId: 'std-1',
-  studentName: 'ريان فهد العتيبي',
-  date: '2026-09-01',
+  studentName: 'معتز سالم الورفلي',
+  date: '2025-09-02',
   dayOfWeek: 'الثلاثاء',
   overallMood: 'ممتاز',
   attendanceStatus: 'present',
-  checkInTime: '07:15 ص',
-  checkOutTime: '01:30 م',
+  checkInTime: '07:50 ص',
+  checkOutTime: '01:15 م',
   timeline: [
-    { id: 't1', time: '07:00 - 07:20', title: 'الاصطفاف الصباحي والنشيد الوطني', status: 'completed', room: 'الفناء الخارجي' },
-    { id: 't2', time: '07:20 - 08:05', title: 'حصة الرياضيات (حل المعادلات)', status: 'completed', room: 'قاعة 5/أ', teacher: 'أ. أحمد الغامدي', note: 'مشاركة ممتازة +5 نقاط' },
-    { id: 't3', time: '08:10 - 08:55', title: 'حصة لغتي الجميلة (النص الشعري)', status: 'completed', room: 'قاعة 5/أ', teacher: 'أ. عبدالمحسن الدوسري' },
-    { id: 't4', time: '08:55 - 09:30', title: 'استراحة الإفطار والنشاط الترفيهي', status: 'completed', room: 'المقصف والساحة' },
-    { id: 't5', time: '09:30 - 10:15', title: 'حصة العلوم (مختبر الطاقة والحرارة)', status: 'completed', room: 'المختبر العلمي', teacher: 'أ. خالد الشهري', note: 'تجربة التوصيل الحراري' },
-    { id: 't6', time: '10:20 - 11:05', title: 'حصة المهارات الرقمية (البرمجة بلغة بايثون)', status: 'completed', room: 'معمل الحاسب', teacher: 'م. عمر القرني' },
-    { id: 't7', time: '11:10 - 11:55', title: 'الدراسات الإسلامية (تفسير سورة النبأ)', status: 'completed', room: 'قاعة 5/أ', teacher: 'أ. محمد السبيعي' },
-    { id: 't8', time: '12:00 - 12:45', title: 'التربية البدنية والألعاب الجماعية', status: 'completed', room: 'الصالة الرياضية', teacher: 'ك. صالح الزهراني' },
-    { id: 't9', time: '12:45 - 01:15', title: 'أداء صلاة الظهر جماعة والاستعداد للانصراف', status: 'completed', room: 'المصلى المدرسي' }
+    { id: 't1', time: '08:00 ص', title: 'طابور الصباح والنشيد الوطني', status: 'completed' },
+    { id: 't2', time: '08:15 ص', title: 'حصة الرياضيات - الأشكال والمجسمات', status: 'completed', teacher: 'أ. طارق الفيتوري' },
+    { id: 't3', time: '09:00 ص', title: 'حصة اللغة العربية - القراءة الصامتة', status: 'completed', teacher: 'أ. عبدالسلام الورفلي' },
+    { id: 't4', time: '10:00 ص', title: 'استراحة الفطور المدرسية', status: 'completed' },
+    { id: 't5', time: '10:30 ص', title: 'حصة العلوم - التجارب المعملية', status: 'completed', teacher: 'أ. مريم الترهوني' },
+    { id: 't6', time: '11:15 ص', title: 'حصة الحاسوب وتقنية المعلومات', status: 'current', teacher: 'أ. أسامة المقريف' },
+    { id: 't7', time: '12:00 م', title: 'التربية الإسلامية والانصراف', status: 'upcoming' },
   ],
   subjectsSummary: [
-    { subject: 'الرياضيات', topic: 'الزوايا والمضلعات الرباعية', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'طرح أسئلة إبداعية وشارك بحماس.' },
-    { subject: 'لغتي الجميلة', topic: 'الفاعل وعلامات إعرابه', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'قراءة معبرة جداً.' },
-    { subject: 'العلوم', topic: 'التوصيل الحراري والمواد العازلة', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'أنجز التجربة بأمان ودقة.' },
-    { subject: 'الدراسات الإسلامية', topic: 'آيات سورة النبأ (1-10)', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'تلاوة مجودة خاشعة.' },
+    { subject: 'الرياضيات', topic: 'الأشكال والمجسمات', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'معتز قدم أداءً نموذجياً في حل المسائل اليوم.' },
+    { subject: 'الحاسوب', topic: 'وحدات الإدخال والإخراج', participation: 5, homeworkStatus: 'مكتمل', teacherNote: 'تفاعل ممتاز مع بيئة التطبيق العملي.' },
   ],
-  behaviorNotes: 'كان سلوك ريان اليوم نموذجياً ومشرفاً، تفاعل بروح تعاونية مع زملائه وأظهر انضباطاً كاملاً في كافة الحصص.',
-  achievements: [
-    'نجمة التميز في الرياضيات لحل التحدي الهندسي 🌟',
-    'إنجاز تجربة العلوم المعملية بنجاح وتسليم تقرير المجموعة 🔬',
-    'المحافظة على الحضور الصباحي المبكر ⏰'
-  ],
-  tasksForTomorrow: [
-    'مراجعة جدول الضرب وحل التمارين ص 42 في الرياضيات',
-    'قراءة النص القرائي (رحلة إلى الفضاء) في لغتي',
-    'إحضار الأدوات الفنية لحصة الرسم'
-  ]
+  teacherNotes: 'معتز طالب مجتهد ومتفاعل دائماً في حصص اليوم.',
+  parentAcknowledged: true
 };
 
 export const db = {
-  getStudents(): Student[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
-      if (data) {
-        const parsed = JSON.parse(data);
-        if (parsed && parsed.length > 0) return parsed;
-      }
-    } catch {}
-    this.saveStudents(SEED_STUDENTS, false);
-    return SEED_STUDENTS;
-  },
-
-  saveStudents(students: Student[], broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_STUDENTS', students });
-      }
-    } catch {}
-  },
-
-  getClasses(): SchoolClass[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_CLASSES);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveClasses(SEED_CLASSES, false);
-    return SEED_CLASSES;
-  },
-
-  saveClasses(classes: SchoolClass[], broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_CLASSES, JSON.stringify(classes));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_CLASSES', classes });
-      }
-    } catch {}
-  },
-
-  getNotifications(): NotificationItem[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_NOTIFICATIONS);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveNotifications(SEED_NOTIFICATIONS, false);
-    return SEED_NOTIFICATIONS;
-  },
-
-  saveNotifications(notifs: NotificationItem[], broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notifs));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_NOTIFICATIONS', notifications: notifs });
-      }
-    } catch {}
-  },
-
-  getDailyReport(): DailyReportData {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_REPORTS);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveDailyReport(SEED_DAILY_REPORT, false);
-    return SEED_DAILY_REPORT;
-  },
-
-  saveDailyReport(report: DailyReportData, broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_REPORTS, JSON.stringify(report));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_REPORT', dailyReport: report });
-      }
-    } catch {}
-  },
-
-  getConversations(): TeacherConversation[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_CONVERSATIONS);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveConversations(SEED_CONVERSATIONS, false);
-    return SEED_CONVERSATIONS;
-  },
-
-  saveConversations(convs: TeacherConversation[], broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_CONVERSATIONS, JSON.stringify(convs));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_CONVERSATIONS', conversations: convs });
-      }
-    } catch {}
-  },
-
-  getSchedule(): DaySchedule[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_SCHEDULE);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveSchedule(SEED_SCHEDULE, false);
-    return SEED_SCHEDULE;
-  },
-
-  saveSchedule(schedule: DaySchedule[], broadcast = true) {
-    try {
-      localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(schedule));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_SCHEDULE', schedule });
-      }
-    } catch {}
-  },
-
-  // Cross-Tab and window synchronizer
-  broadcastAction(payload: any) {
-    try {
-      if (typeof window !== 'undefined') {
-        const fullState = {
-          students: this.getStudents(),
-          classes: this.getClasses(),
-          notifications: this.getNotifications(),
-          dailyReport: this.getDailyReport(),
-          conversations: this.getConversations(),
-          schedule: this.getSchedule(),
-        };
-
-        const syncMessage = { ...payload, fullState };
-
-        if ('BroadcastChannel' in window) {
-          const channel = new BroadcastChannel('madrasa_school_sync_v3');
-          channel.postMessage(syncMessage);
-          channel.close();
-        }
-
-        localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
-      }
-    } catch {}
-  },
-
-  onSync(callback: (data: any) => void) {
-    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-      const channel = new BroadcastChannel('madrasa_school_sync_v3');
-      channel.onmessage = (event) => {
-        if (event.data?.fullState) {
-          callback(event.data.fullState);
-        } else if (event.data) {
-          callback(event.data);
-        }
-      };
-      return () => channel.close();
-    }
+  onSync(callback: any) {
     return () => {};
+  },
+
+  resetAllData() {
+    try {
+      localStorage.removeItem(STORAGE_KEY_STUDENTS);
+      localStorage.removeItem(STORAGE_KEY_TEACHERS);
+      localStorage.removeItem(STORAGE_KEY_CLASSES);
+      localStorage.removeItem(STORAGE_KEY_NOTIFICATIONS);
+      localStorage.removeItem(STORAGE_KEY_REPORTS);
+      localStorage.removeItem(STORAGE_KEY_CONVERSATIONS);
+      localStorage.removeItem(STORAGE_KEY_SCHEDULE);
+    } catch {}
   },
 
   getTeachers(): TeacherAccount[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY_TEACHERS);
-      if (data) return JSON.parse(data);
-    } catch {}
-    this.saveTeachers(SEED_TEACHERS, false);
-    return SEED_TEACHERS;
+      return data ? JSON.parse(data) : SEED_TEACHERS;
+    } catch {
+      return SEED_TEACHERS;
+    }
   },
 
   getTeacherByCode(code: string): TeacherAccount | undefined {
@@ -763,77 +649,191 @@ export const db = {
     return teachers.find(t => t.code.trim().toUpperCase() === code.trim().toUpperCase());
   },
 
-  saveTeachers(teachers: TeacherAccount[], broadcast = true) {
+  saveTeachers(teachers: TeacherAccount[]) {
     try {
       localStorage.setItem(STORAGE_KEY_TEACHERS, JSON.stringify(teachers));
-      if (broadcast) {
-        this.broadcastAction({ type: 'UPDATE_TEACHERS', teachers });
+    } catch {}
+  },
+
+  getStudents(): Student[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return SEED_STUDENTS;
+    } catch {
+      return SEED_STUDENTS;
+    }
+  },
+
+  saveStudents(students: Student[], force: boolean = false): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
+      if (force) {
+        localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
       }
     } catch {}
   },
 
-  // 1000 Students Benchmark & Scalability Engine
-  generate1000StudentsBenchmark(): { count: number; durationMs: number; memoryEstimateKb: number } {
+  getStudentById(id: string): Student | undefined {
+    const students = this.getStudents();
+    return students.find(s => s.id === id);
+  },
+
+  getStudentByNationalId(nationalId: string): Student | undefined {
+    const students = this.getStudents();
+    return students.find(s => (s.nationalNumber || s.nationalId) === nationalId.trim());
+  },
+
+  getStudentByLinkCode(code: string): Student | undefined {
+    const students = this.getStudents();
+    return students.find(s => s.linkCode.toLowerCase() === code.trim().toLowerCase());
+  },
+
+  getClasses(): SchoolClass[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_CLASSES);
+      return data ? JSON.parse(data) : SEED_CLASSES;
+    } catch {
+      return SEED_CLASSES;
+    }
+  },
+
+  saveClasses(classes: SchoolClass[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_CLASSES, JSON.stringify(classes));
+    } catch {}
+  },
+
+  getNotifications(): NotificationItem[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_NOTIFICATIONS);
+      return data ? JSON.parse(data) : SEED_NOTIFICATIONS;
+    } catch {
+      return SEED_NOTIFICATIONS;
+    }
+  },
+
+  saveNotifications(notifications: NotificationItem[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notifications));
+    } catch {}
+  },
+
+  getDailyReport(): DailyReportData {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_REPORTS);
+      return data ? JSON.parse(data) : SEED_DAILY_REPORT;
+    } catch {
+      return SEED_DAILY_REPORT;
+    }
+  },
+
+  saveDailyReport(report: DailyReportData): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_REPORTS, JSON.stringify(report));
+    } catch {}
+  },
+
+  getConversations(): TeacherConversation[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_CONVERSATIONS);
+      return data ? JSON.parse(data) : SEED_CONVERSATIONS;
+    } catch {
+      return SEED_CONVERSATIONS;
+    }
+  },
+
+  saveConversations(conversations: TeacherConversation[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_CONVERSATIONS, JSON.stringify(conversations));
+    } catch {}
+  },
+
+  getSchedule(): DaySchedule[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_SCHEDULE);
+      return data ? JSON.parse(data) : SEED_SCHEDULE;
+    } catch {
+      return SEED_SCHEDULE;
+    }
+  },
+
+  saveSchedule(schedule: DaySchedule[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(schedule));
+    } catch {}
+  },
+
+  generate1000StudentsBenchmark(): {
+    students: Student[];
+    count: number;
+    durationMs: number;
+    generateTimeMs: number;
+    memoryEstimateKb: number;
+    memorySizeKb: number;
+  } {
     const startTime = performance.now();
-    const firstNames = ['ريان', 'سعود', 'فهد', 'عبدالعزيز', 'سلطان', 'خالد', 'تركي', 'فيصل', 'محمد', 'عبدالله', 'عمر', 'علي', 'يوسف', 'إبراهيم', 'أحمد', 'نواف', 'بدر', 'مشاري', 'سلمان', 'ماجد'];
-    const familyNames = ['العتيبي', 'الغامدي', 'الشهري', 'القحطاني', 'الدوسري', 'الحربي', 'المطيري', 'الزهراني', 'السبيعي', 'العنزي', 'الشمراني', 'الرشيدي', 'المالكي', 'العسيري', 'التميمي'];
-    const classes = ['3/أ', '3/ب', '2/أ', '2/ب', '1/أ', '1/ب'];
+    const gradesList = ['الصف الأول الأساسي', 'الصف الثاني الأساسي', 'الصف الثالث الأساسي', 'الصف الرابع الأساسي', 'الصف الخامس الأساسي', 'الصف السادس الأساسي'];
+    const sections = ['أ', 'ب', 'ج'];
+    const firstNames = ['معتز', 'عبدالرحمن', 'يوسف', 'محمد', 'علي', 'أحمد', 'طارق', 'سالم', 'حمزة', 'خالد', 'عمر', 'إبراهيم', 'مصطفى', 'وليد'];
+    const familyNames = ['الورفلي', 'الترهوني', 'المقريف', 'الفيتوري', 'السويحلي', 'الزوي', 'المصراتي', 'الدرسي', 'المجبري', 'القماطي', 'المنفي'];
 
     const benchmarkStudents: Student[] = [];
 
     for (let i = 1; i <= 1000; i++) {
       const fn = firstNames[i % firstNames.length];
       const ln = familyNames[i % familyNames.length];
-      const nationalId = (1090000000 + i).toString();
-      const code = `SCH-2026-${i}`;
-      const cls = classes[i % classes.length];
-      const avg = Math.round((85 + (i % 15) + Math.random() * 0.9) * 10) / 10;
-      const att = Math.round(92 + (i % 8));
+      const grade = gradesList[i % gradesList.length];
+      const sec = sections[i % sections.length];
+      const classNum = (i % 6) + 1;
+      const natId = `12008${String(1000000 + i).slice(-7)}`;
 
       benchmarkStudents.push({
         id: `bench-std-${i}`,
         name: `${fn} ${ln}`,
-        nationalId,
-        studentNumber: `STD-2026-${1000 + i}`,
-        linkCode: code,
-        avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80`,
-        grade: cls.startsWith('3') ? 'الصف الثالث الابتدائي' : cls.startsWith('2') ? 'الصف الثاني الابتدائي' : 'الصف الأول الابتدائي',
-        className: cls,
+        nationalId: natId,
+        nationalNumber: natId,
+        studentNumber: `2025-${String(1000 + i).padStart(4, '0')}`,
+        linkCode: `SCH-2026-L${i}`,
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+        grade,
+        className: `${classNum}/${sec}`,
         gender: 'male',
-        parentName: `أبو ${fn} ${ln}`,
-        parentPhone: `055${String(1000000 + i).slice(-7)}`,
-        parentEmail: `parent${i}@school.edu.sa`,
-        status: 'present',
-        attendanceRate: att,
-        academicAverage: avg,
+        parentName: `ولي أمر ${fn} ${ln}`,
+        parentPhone: `092${String(1000000 + i).slice(-7)}`,
+        parentEmail: `parent.${natId}@school.edu.ly`,
+        status: i % 15 === 0 ? 'unexcused' : 'present',
+        attendanceRate: 90 + (i % 10),
+        academicAverage: 85 + (i % 15),
+        courseworkScore: 35 + (i % 5),
+        examScore: 50 + (i % 10),
+        totalScore: 85 + (i % 15),
+        appreciation: 'ممتاز',
         behaviorRating: 'ممتاز',
-        behaviorPointsTotal: 25 + (i % 10),
+        behaviorPointsTotal: 20 + (i % 30),
         behaviorPoints: [],
         competencies: [],
-        grades: SAMPLE_GRADES_RAYAN,
-        subjects: []
+        subjects: [],
+        recentAttendance: [],
+        notes: [],
+        badges: []
       });
     }
 
-    const durationMs = Math.round((performance.now() - startTime) * 100) / 100;
-    const jsonString = JSON.stringify(benchmarkStudents);
-    const memoryEstimateKb = Math.round(new Blob([jsonString]).size / 1024);
+    const endTime = performance.now();
+    const generateTimeMs = Math.round((endTime - startTime) * 100) / 100;
+    const memorySizeKb = Math.round((JSON.stringify(benchmarkStudents).length / 1024) * 10) / 10;
 
     return {
-      count: benchmarkStudents.length,
-      durationMs,
-      memoryEstimateKb
+      students: benchmarkStudents,
+      count: 1000,
+      durationMs: generateTimeMs,
+      generateTimeMs,
+      memoryEstimateKb: memorySizeKb,
+      memorySizeKb
     };
-  },
-
-  resetAllData() {
-    this.saveStudents(SEED_STUDENTS, false);
-    this.saveTeachers(SEED_TEACHERS, false);
-    this.saveClasses(SEED_CLASSES, false);
-    this.saveNotifications(SEED_NOTIFICATIONS, false);
-    this.saveDailyReport(SEED_DAILY_REPORT, false);
-    this.saveConversations(SEED_CONVERSATIONS, false);
-    this.saveSchedule(SEED_SCHEDULE, false);
-    this.broadcastAction({ type: 'RESET_ALL' });
   }
 };

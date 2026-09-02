@@ -15,10 +15,18 @@ import { ParentTeacherChat } from './pages/chat/ParentTeacherChat';
 import { SchedulePage } from './pages/schedule/SchedulePage';
 import { DatabaseStudio } from './pages/admin/DatabaseStudio';
 import { SystemOperationalPlanPDF } from './pages/admin/SystemOperationalPlanPDF';
+import { AccountSettingsModal } from './components/admin/AccountSettingsModal';
 import { CommandPalette } from './components/ui/CommandPalette';
 
 const MainContent: React.FC = () => {
-  const { isAuthenticated, activeTab, isCommandPaletteOpen, setIsCommandPaletteOpen } = useSchool();
+  const {
+    isAuthenticated,
+    activeTab,
+    isCommandPaletteOpen,
+    setIsCommandPaletteOpen,
+    showAccountSettingsModal,
+    setShowAccountSettingsModal
+  } = useSchool();
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
     return <Login />;
@@ -69,6 +77,10 @@ const MainContent: React.FC = () => {
         onClose={() => setIsCommandPaletteOpen(false)}
       />
       <SystemOperationalPlanPDF />
+      <AccountSettingsModal
+        isOpen={showAccountSettingsModal}
+        onClose={() => setShowAccountSettingsModal(false)}
+      />
     </>
   );
 };

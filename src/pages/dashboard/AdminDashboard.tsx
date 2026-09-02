@@ -87,7 +87,7 @@ export const AdminDashboard: React.FC = () => {
             className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Clock className="w-4 h-4" />
-            <span>التحكم بالجداول ومنع التضارب</span>
+            <span>التحكم بالجداول وتعديل الحصص</span>
           </button>
 
           <button

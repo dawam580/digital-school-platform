@@ -267,7 +267,10 @@ export const DailyReport: React.FC = () => {
             <span>أوسمة وإنجازات اليوم</span>
           </div>
           <div className="space-y-2">
-            {dailyReport.achievements.map((ach, i) => (
+            {(dailyReport.achievements || [
+              'المشاركة الفعالة في مسابقة الحساب الذهني 🌟',
+              'إتمام كافة تمارين معمل الحاسوب بنجاح 💻'
+            ]).map((ach, i) => (
               <div key={i} className="flex items-center gap-2 text-xs bg-white p-3 rounded-2xl border border-amber-100 font-semibold text-slate-700 shadow-sm">
                 <span className="text-amber-500 text-base">⭐</span>
                 <span>{ach}</span>
@@ -283,7 +286,10 @@ export const DailyReport: React.FC = () => {
             <span>المهام والواجبات المطلوبة للغد</span>
           </div>
           <div className="space-y-2">
-            {dailyReport.tasksForTomorrow.map((task, i) => (
+            {(dailyReport.tasksForTomorrow || [
+              'إحضار كراسة الرياضيات لحل تمارين الهندسة',
+              'مراجعة درس وحدات الإدخال والإخراج في الحاسوب'
+            ]).map((task, i) => (
               <div key={i} className="flex items-center gap-2 text-xs bg-white p-3 rounded-2xl border border-blue-100 font-semibold text-slate-700 shadow-sm">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>{task}</span>

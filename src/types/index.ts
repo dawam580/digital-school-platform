@@ -136,7 +136,12 @@ export interface Student {
   parentEmail: string;
   status: AttendanceStatus;
   attendanceRate: number; // percentage e.g. 96
-  academicAverage: number; // e.g. 94.5
+  academicAverage: number; // e.g. 94.5 (overall percentage)
+  nationalNumber?: string; // Libyan 12-digit National Number
+  courseworkScore?: number; // أعمال السنة من 40
+  examScore?: number; // امتحان نهاية الفصل من 60
+  totalScore?: number; // المجموع من 100
+  appreciation?: 'ممتاز' | 'جيد جداً' | 'جيد' | 'مقبول' | 'دور ثانٍ' | string;
   behaviorRating: 'ممتاز' | 'جيد جداً' | 'جيد' | 'يحتاج تحسين';
   behaviorPointsTotal: number;
   points?: number;
@@ -214,7 +219,9 @@ export interface DailyReportData {
     homeworkStatus: 'مكتمل' | 'غير مكتمل' | 'لا يوجد';
     teacherNote?: string;
   }[];
-  behaviorNotes: string;
-  achievements: string[];
-  tasksForTomorrow: string[];
+  behaviorNotes?: string;
+  achievements?: string[];
+  tasksForTomorrow?: string[];
+  teacherNotes?: string | any[];
+  parentAcknowledged?: boolean;
 }

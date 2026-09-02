@@ -6,19 +6,19 @@ import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 
 export const Login: React.FC = () => {
-  const { login, loginWithTeacherCode, setActiveTab, students, setSelectedStudent, teachers } = useSchool();
+  const { login, loginWithTeacherCode, setActiveTab, students, setSelectedStudent, teachers, currentUserPhone } = useSchool();
   const [loginMode, setLoginMode] = useState<'parent' | 'teacher' | 'admin'>('parent');
   
-  // Parent Form
-  const [studentNationalId, setStudentNationalId] = useState('1098765432');
+  // Parent Form (Libyan 12-digit National Number)
+  const [studentNationalId, setStudentNationalId] = useState('120081234567');
   const [parentPassword, setParentPassword] = useState('123456');
 
-  // Teacher Form (Unique Teacher Code)
-  const [teacherCode, setTeacherCode] = useState('TCH-MATH-101');
+  // Teacher Form (Libyan Unique Teacher Code)
+  const [teacherCode, setTeacherCode] = useState('LIB-MATH-01');
   const [teacherPassword, setTeacherPassword] = useState('123456');
 
-  // Admin Form
-  const [adminPhone, setAdminPhone] = useState('0551234567');
+  // Admin Form (Libyan Management Phone)
+  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '0922465676');
   const [adminPassword, setAdminPassword] = useState('123456');
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -30,18 +30,20 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      // Match student by National ID or Link Code
+      // Match student by 12-digit National ID or Link Code
+      const cleanInput = studentNationalId.trim();
       const foundStudent = students.find(
-        s => s.nationalId === studentNationalId.trim() ||
-             s.studentNumber === studentNationalId.trim() ||
-             s.linkCode.toLowerCase() === studentNationalId.trim().toLowerCase()
+        s => (s.nationalNumber && s.nationalNumber === cleanInput) ||
+             s.nationalId === cleanInput ||
+             s.studentNumber === cleanInput ||
+             s.linkCode.toLowerCase() === cleanInput.toLowerCase()
       ) || students[0];
 
       if (foundStudent) {
         setSelectedStudent(foundStudent);
-        login(foundStudent.nationalId, 'parent');
+        login(foundStudent.nationalNumber || foundStudent.nationalId, 'parent');
       } else {
-        setErrorMessage('رقم الهوية الوطنية غير مسجل في النظام. يرجى مراجعة إدارة المدرسة.');
+        setErrorMessage('الرقم الوطني غير مسجل في المنظومة. يرجى مراجعة إدارة المدرسة.');
       }
       setLoading(false);
     }, 400);
@@ -55,7 +57,7 @@ export const Login: React.FC = () => {
     setTimeout(() => {
       const success = loginWithTeacherCode(teacherCode);
       if (!success) {
-        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز المعطى لك من الإدارة.');
+        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز الصادر من إدارة المدرسة (مثل LIB-MATH-01).');
       }
       setLoading(false);
     }, 400);
@@ -73,7 +75,7 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] flex flex-col justify-center items-center p-4 sm:p-6 text-right">
+    <div className="min-h-screen bg-[#f8f9ff] flex flex-col justify-center items-center p-4 sm:p-6 text-right font-cairo">
       
       {/* Background Soft Glow */}
       <div className="absolute top-10 right-1/2 translate-x-1/2 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -81,16 +83,19 @@ export const Login: React.FC = () => {
       <div className="w-full max-w-md space-y-6">
         
         {/* Top Centered Logo & Branding */}
-        <div className="text-center space-y-3">
+        <div className="text-center space-y-2">
           <div className="inline-flex p-3 rounded-2xl bg-white shadow-card border border-slate-100">
             <img src={logoImg} alt="شعار منصة المدرسة" className="h-16 w-auto object-contain mx-auto" />
           </div>
           <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 text-[11px] font-bold border border-blue-200 mb-1">
+              <span>🇱🇾 دولة ليبيا - وزارة التربية والتعليم</span>
+            </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#00288e] tracking-tight">
-              منصة المدرسة الرقمية
+              منظومة المدرسة الرقمية
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-              النظام السحابي المتكامل لفصل البوابات وإدارة العمليات المدرسية
+            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+              العام الدراسي 2025 - 2026 م • النظام الإداري والتربوي المتكامل
             </p>
           </div>
         </div>
@@ -133,7 +138,7 @@ export const Login: React.FC = () => {
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>الإدارة المدرسية</span>
+            <span>إدارة المدرسة</span>
           </button>
         </div>
 
@@ -148,20 +153,21 @@ export const Login: React.FC = () => {
                   <User className="w-5 h-5" />
                 </div>
                 <h2 className="text-base font-bold text-slate-800">بوابة أولياء الأمور</h2>
-                <p className="text-xs text-slate-400 mt-0.5">الدخول الآمن لمتابعة الأبناء والدرجات والواجبات</p>
+                <p className="text-xs text-slate-400 mt-0.5">الدخول بالرقم الوطني للطالب (12 خانة) لمتابعة النتائج والواجبات</p>
               </div>
 
-              {/* Student National ID */}
+              {/* Student National Number (12 digits) */}
               <div className="space-y-1.5">
                 <label className="block text-sm font-bold text-slate-700">
-                  الرقم الوطني / هوية الطالب
+                  الرقم الوطني للطالب (12 خانة)
                 </label>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="مثال: 1098765432"
+                    maxLength={12}
+                    placeholder="120081234567"
                     value={studentNationalId}
-                    onChange={e => setStudentNationalId(e.target.value)}
+                    onChange={e => setStudentNationalId(e.target.value.replace(/\D/g, ''))}
                     className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"
                     required
                   />
@@ -170,21 +176,21 @@ export const Login: React.FC = () => {
                 
                 {/* Demo student pills */}
                 <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1 flex-wrap">
-                  <span>💡 تجربة سريعة:</span>
+                  <span>💡 تجربة سريعة للطلاب:</span>
                   <button
                     type="button"
-                    onClick={() => { setStudentNationalId('1098765432'); sound.playTap(); }}
+                    onClick={() => { setStudentNationalId('120081234567'); sound.playTap(); }}
                     className="font-bold text-[#00288e] hover:underline"
                   >
-                    ريان (1098765432)
+                    معتز (120081234567)
                   </button>
                   <span>•</span>
                   <button
                     type="button"
-                    onClick={() => { setStudentNationalId('1087654321'); sound.playTap(); }}
+                    onClick={() => { setStudentNationalId('220082345678'); sound.playTap(); }}
                     className="font-bold text-[#00288e] hover:underline"
                   >
-                    سعود (1087654321)
+                    آية (220082345678)
                   </button>
                 </div>
               </div>
@@ -238,12 +244,12 @@ export const Login: React.FC = () => {
               {/* Teacher Unique Code */}
               <div className="space-y-1.5">
                 <label className="block text-sm font-bold text-slate-700">
-                  رمز المعلم الفريد (Teacher Code)
+                  رمز المعلم الفريد (Teacher Access Code)
                 </label>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="مثال: TCH-MATH-101"
+                    placeholder="LIB-MATH-01"
                     value={teacherCode}
                     onChange={e => setTeacherCode(e.target.value.toUpperCase())}
                     className="w-full px-4 py-3.5 pr-11 text-base font-mono uppercase font-bold rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"
@@ -312,19 +318,19 @@ export const Login: React.FC = () => {
                 <div className="inline-flex p-2 bg-indigo-50 text-indigo-700 rounded-xl mb-1">
                   <Building2 className="w-5 h-5" />
                 </div>
-                <h2 className="text-base font-bold text-slate-800">بوابة الإدارة المدرسية</h2>
-                <p className="text-xs text-slate-400 mt-0.5">لوحة التحكم المركزية، استوديو البيانات والاعتماد الأكاديمي</p>
+                <h2 className="text-base font-bold text-slate-800">بوابة إدارة المدرسة</h2>
+                <p className="text-xs text-slate-400 mt-0.5">لوحة التحكم المركزية، تعديل الحصص، واستوديو البيانات 2025/2026</p>
               </div>
 
               {/* Admin Phone / ID */}
               <div className="space-y-1.5">
                 <label className="block text-sm font-bold text-slate-700">
-                  رقم الهاتف أو المعرّف الإداري
+                  رقم الهاتف المعتمد للمدير
                 </label>
                 <div className="relative">
                   <input
                     type="tel"
-                    placeholder="مثال: 0551234567"
+                    placeholder="0922465676"
                     value={adminPhone}
                     onChange={e => setAdminPhone(e.target.value)}
                     className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800"
@@ -332,7 +338,7 @@ export const Login: React.FC = () => {
                   />
                   <Phone className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                 </div>
-                <p className="text-[11px] text-slate-500 font-bold">💡 حساب تجريبي للمدير: <span className="font-mono text-blue-700">0551234567</span></p>
+                <p className="text-[11px] text-slate-500 font-bold">💡 رقم المدير المعتمد: <span className="font-mono text-blue-700">0922465676</span></p>
               </div>
 
               {/* Admin Password */}
@@ -375,7 +381,7 @@ export const Login: React.FC = () => {
         {/* Security Trust Footer */}
         <div className="flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>منظومة آمنة ومشفرة بالكامل | معمارية 360° مفصولة الصلاحيات</span>
+          <span>وزارة التربية والتعليم - دولة ليبيا • منظومة آمنة ومشفرة بالكامل</span>
         </div>
 
       </div>

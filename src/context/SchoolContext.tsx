@@ -36,6 +36,14 @@ interface SchoolContextType {
   showOperationalPlanModal: boolean;
   setShowOperationalPlanModal: (show: boolean) => void;
 
+  // Account Settings Modal
+  showAccountSettingsModal: boolean;
+  setShowAccountSettingsModal: (show: boolean) => void;
+  setCurrentUserPhone: (phone: string) => void;
+  setTeachers: (teachers: TeacherAccount[]) => void;
+  setStudents: (students: Student[]) => void;
+  setSchedule: (schedule: DaySchedule[]) => void;
+
   // Active Screen
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -87,9 +95,16 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentRole, setCurrentRole] = useState<UserRole>('parent');
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [currentUserPhone, setCurrentUserPhone] = useState('1098765432');
+  const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
+    try {
+      return localStorage.getItem('madrasa_admin_phone') || '0922465676';
+    } catch {
+      return '0922465676';
+    }
+  });
   const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(null);
   const [showOperationalPlanModal, setShowOperationalPlanModal] = useState(false);
+  const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('student-profile');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
@@ -232,7 +247,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Listen for BroadcastChannel Realtime Cross-tab Sync
   useEffect(() => {
-    const unsubscribe = db.onSync((event) => {
+    const unsubscribe = db.onSync((event: any) => {
       setIsOnlineSynced(true);
       if (event.students) {
         setStudents(event.students);
@@ -256,7 +271,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const login = (phoneOrId: string, role: UserRole) => {
-    setCurrentUserPhone(phoneOrId);
+    setCurrentUserPhoneState(phoneOrId);
     setCurrentRole(role);
     setIsAuthenticated(true);
     if (role === 'parent') {
@@ -287,7 +302,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const foundTeacher = teachers.find(t => t.code.trim().toUpperCase() === cleanCode);
     if (foundTeacher) {
       setCurrentTeacher(foundTeacher);
-      setCurrentUserPhone(foundTeacher.phone);
+      setCurrentUserPhoneState(foundTeacher.phone);
       setCurrentRole('teacher');
       setIsAuthenticated(true);
       setActiveTab('attendance');
@@ -610,14 +625,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
 
     setConversations(updatedConv);
-    db.saveConversations(updatedConv, true);
+    db.saveConversations(updatedConv);
     sound.playTap();
 
     if (currentRole === 'parent') {
       setTimeout(() => {
         const teacherReplies = [
-          'أهلاً بك يا أبا ريان، وصلت ملاحظتك وسيتم متابعة الطالب باهتمام مستمر 🌟',
-          'شكراً لحرصك ومتابعتك الدائمة، ريان نموذج يحتذى به في الفصل 👏',
+          'أهلاً بك يا ولي الأمر، وصلت ملاحظتك وسيتم متابعة الطالب باهتمام مستمر 🌟',
+          'شكراً لحرصك ومتابعتك الدائمة، معتز نموذج يحتذى به في الفصل 👏',
           'تم الاطلاع وسأوافيك بتقرير مفصل بعد الحصة القادمة بإذن الله.'
         ];
         const randomReply = teacherReplies[Math.floor(Math.random() * teacherReplies.length)];
@@ -644,7 +659,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             }
             return c;
           });
-          db.saveConversations(autoUpdated, true);
+          db.saveConversations(autoUpdated);
           return autoUpdated;
         });
 
@@ -674,19 +689,19 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const updated = [newNotif, ...notifications];
     setNotifications(updated);
-    db.saveNotifications(updated, true);
+    db.saveNotifications(updated);
   };
 
   const markNotificationAsRead = (id: string) => {
     const updated = notifications.map(n => n.id === id ? { ...n, read: true } : n);
     setNotifications(updated);
-    db.saveNotifications(updated, true);
+    db.saveNotifications(updated);
   };
 
   const markAllNotificationsAsRead = () => {
     const updated = notifications.map(n => ({ ...n, read: true }));
     setNotifications(updated);
-    db.saveNotifications(updated, true);
+    db.saveNotifications(updated);
     sound.playTap();
     showToast('info', 'التنبيهات', 'تم تعليم كافة التنبيهات كمقروءة.');
   };
@@ -714,13 +729,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCurrentRole,
         isAuthenticated,
         currentUserPhone,
+        setCurrentUserPhone: (phone: string) => setCurrentUserPhoneState(phone),
         currentTeacher,
         teachers,
+        setTeachers,
         login,
         loginWithTeacherCode,
         logout,
         showOperationalPlanModal,
         setShowOperationalPlanModal,
+        showAccountSettingsModal,
+        setShowAccountSettingsModal,
         activeTab,
         setActiveTab,
         isDarkMode,
@@ -731,6 +750,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setSoundEnabled,
         showToast,
         students,
+        setStudents,
         selectedStudent,
         setSelectedStudent,
         classes,
@@ -739,6 +759,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         dailyReport,
         conversations,
         schedule,
+        setSchedule,
         isOnlineSynced,
         updateAttendance,
         markAllPresent,
