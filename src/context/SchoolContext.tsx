@@ -10,9 +10,24 @@ import {
   TeacherConversation,
   DaySchedule,
   SubjectGrade,
-  TeacherAccount
+  TeacherAccount,
+  SocialCaseStudy,
+  CounselingSession,
+  ParentSummon
 } from '../types';
-import { db, SEED_STUDENTS, SEED_CLASSES, SEED_NOTIFICATIONS, SEED_DAILY_REPORT, SEED_CONVERSATIONS, SEED_SCHEDULE, SEED_TEACHERS } from '../services/db';
+import {
+  db,
+  SEED_STUDENTS,
+  SEED_CLASSES,
+  SEED_NOTIFICATIONS,
+  SEED_DAILY_REPORT,
+  SEED_CONVERSATIONS,
+  SEED_SCHEDULE,
+  SEED_TEACHERS,
+  SEED_CASE_STUDIES,
+  SEED_COUNSELING_SESSIONS,
+  SEED_PARENT_SUMMONS
+} from '../services/db';
 import { sound } from '../utils/soundEffects';
 import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
@@ -43,6 +58,14 @@ interface SchoolContextType {
   setTeachers: (teachers: TeacherAccount[]) => void;
   setStudents: (students: Student[]) => void;
   setSchedule: (schedule: DaySchedule[]) => void;
+
+  // Social Counselor & Case Studies
+  caseStudies: SocialCaseStudy[];
+  setCaseStudies: React.Dispatch<React.SetStateAction<SocialCaseStudy[]>>;
+  counselingSessions: CounselingSession[];
+  setCounselingSessions: React.Dispatch<React.SetStateAction<CounselingSession[]>>;
+  parentSummons: ParentSummon[];
+  setParentSummons: React.Dispatch<React.SetStateAction<ParentSummon[]>>;
 
   // Active Screen
   activeTab: string;
@@ -193,6 +216,58 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
+  // Social Counselor State
+  const [caseStudies, setCaseStudiesState] = useState<SocialCaseStudy[]>(() => {
+    try {
+      const data = db.getCaseStudies();
+      return (data && data.length > 0) ? data : SEED_CASE_STUDIES;
+    } catch {
+      return SEED_CASE_STUDIES;
+    }
+  });
+
+  const [counselingSessions, setCounselingSessionsState] = useState<CounselingSession[]>(() => {
+    try {
+      const data = db.getCounselingSessions();
+      return (data && data.length > 0) ? data : SEED_COUNSELING_SESSIONS;
+    } catch {
+      return SEED_COUNSELING_SESSIONS;
+    }
+  });
+
+  const [parentSummons, setParentSummonsState] = useState<ParentSummon[]>(() => {
+    try {
+      const data = db.getParentSummons();
+      return (data && data.length > 0) ? data : SEED_PARENT_SUMMONS;
+    } catch {
+      return SEED_PARENT_SUMMONS;
+    }
+  });
+
+  const setCaseStudies: React.Dispatch<React.SetStateAction<SocialCaseStudy[]>> = (casesOrUpdater) => {
+    setCaseStudiesState(prev => {
+      const next = typeof casesOrUpdater === 'function' ? casesOrUpdater(prev) : casesOrUpdater;
+      db.saveCaseStudies(next);
+      return next;
+    });
+  };
+
+  const setCounselingSessions: React.Dispatch<React.SetStateAction<CounselingSession[]>> = (sessionsOrUpdater) => {
+    setCounselingSessionsState(prev => {
+      const next = typeof sessionsOrUpdater === 'function' ? sessionsOrUpdater(prev) : sessionsOrUpdater;
+      db.saveCounselingSessions(next);
+      return next;
+    });
+  };
+
+  const setParentSummons: React.Dispatch<React.SetStateAction<ParentSummon[]>> = (summonsOrUpdater) => {
+    setParentSummonsState(prev => {
+      const next = typeof summonsOrUpdater === 'function' ? summonsOrUpdater(prev) : summonsOrUpdater;
+      db.saveParentSummons(next);
+      return next;
+    });
+  };
+
   const showToast = useCallback((type: ToastType, title: string, message: string, duration: number = 3500) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
     const newToast: ToastMessage = { id, type, title, message, duration };
@@ -281,12 +356,16 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const t = teachers.find(tch => tch.phone === phoneOrId) || teachers[0];
       setCurrentTeacher(t);
       setActiveTab('attendance');
+    } else if (role === 'counselor') {
+      const t = teachers.find(tch => tch.code === 'LIB-SOC-01') || teachers[0];
+      setCurrentTeacher(t);
+      setActiveTab('counselor-dashboard');
     } else {
       setCurrentTeacher(null);
       setActiveTab('dashboard');
     }
     sound.playSuccess();
-    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : 'إدارة المدرسة'}`);
+    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : 'إدارة المدرسة'}`);
     auditLogger.log({
       actorName: phoneOrId,
       actorRole: role,
@@ -303,14 +382,19 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (foundTeacher) {
       setCurrentTeacher(foundTeacher);
       setCurrentUserPhoneState(foundTeacher.phone);
-      setCurrentRole('teacher');
+      if (foundTeacher.code === 'LIB-SOC-01' || foundTeacher.subjectCode === 'COUNSEL') {
+        setCurrentRole('counselor');
+        setActiveTab('counselor-dashboard');
+      } else {
+        setCurrentRole('teacher');
+        setActiveTab('attendance');
+      }
       setIsAuthenticated(true);
-      setActiveTab('attendance');
       sound.playSuccess();
       showToast('gold', `مرحباً ${foundTeacher.name}`, `تم الدخول بنجاح بصفتك ${foundTeacher.subject} (الرمز: ${foundTeacher.code})`);
       auditLogger.log({
         actorName: foundTeacher.name,
-        actorRole: 'teacher',
+        actorRole: foundTeacher.code === 'LIB-SOC-01' ? 'counselor' : 'teacher',
         action: 'TEACHER_CODE_LOGIN',
         entity: 'Auth',
         details: `تسجيل دخول برمز المعلم الفريد: ${foundTeacher.code}`,
@@ -319,7 +403,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return true;
     }
     sound.playAlert();
-    showToast('error', 'رمز المعلم غير صحيح', 'تأكد من رمز المعلم (مثال: TCH-MATH-101)');
+    showToast('error', 'رمز الدخول غير صحيح', 'تأكد من الرمز الصادر من الإدارة (مثال: LIB-MATH-01 أو LIB-SOC-01)');
     return false;
   };
 
@@ -717,6 +801,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setDailyReport(SEED_DAILY_REPORT);
     setConversations(SEED_CONVERSATIONS);
     setSchedule(SEED_SCHEDULE);
+    setCaseStudies(SEED_CASE_STUDIES);
+    setCounselingSessions(SEED_COUNSELING_SESSIONS);
+    setParentSummons(SEED_PARENT_SUMMONS);
     auditLogger.clearLogs();
     sound.playSuccess();
     showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
@@ -740,6 +827,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setShowOperationalPlanModal,
         showAccountSettingsModal,
         setShowAccountSettingsModal,
+        caseStudies,
+        setCaseStudies,
+        counselingSessions,
+        setCounselingSessions,
+        parentSummons,
+        setParentSummons,
         activeTab,
         setActiveTab,
         isDarkMode,

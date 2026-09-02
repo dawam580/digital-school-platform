@@ -237,8 +237,8 @@ export const Login: React.FC = () => {
                 <div className="inline-flex p-2 bg-emerald-50 text-emerald-700 rounded-xl mb-1">
                   <GraduationCap className="w-5 h-5" />
                 </div>
-                <h2 className="text-base font-bold text-slate-800">بوابة المعلمين</h2>
-                <p className="text-xs text-slate-400 mt-0.5">الدخول برمز المعلم الخاص المعتمد من الإدارة</p>
+                <h2 className="text-base font-bold text-slate-800">بوابة المعلمين والكوادر التربوية</h2>
+                <p className="text-xs text-slate-400 mt-0.5">الدخول بالرمز الخاص (معلمي المواد أو الأخصائي الاجتماعي LIB-SOC-01)</p>
               </div>
 
               {/* Teacher Unique Code */}

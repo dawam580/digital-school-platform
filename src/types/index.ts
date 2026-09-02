@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'teacher' | 'parent';
+export type UserRole = 'admin' | 'teacher' | 'parent' | 'counselor';
 
 export interface TeacherAccount {
   id: string;
@@ -83,7 +83,7 @@ export interface Assignment {
 
 export interface ChatMessage {
   id: string;
-  senderRole: 'parent' | 'teacher' | 'admin';
+  senderRole: UserRole;
   senderName: string;
   text?: string;
   timestamp: string;
@@ -225,3 +225,66 @@ export interface DailyReportData {
   teacherNotes?: string | any[];
   parentAcknowledged?: boolean;
 }
+
+export interface SocialCaseStudy {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentNationalNumber: string;
+  grade: string;
+  className: string;
+  category: 'absence_dropout' | 'behavior_bullying' | 'academic_lag' | 'family_socioeconomic' | 'psychological_crisis' | 'special_needs';
+  categoryLabel: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'monitoring';
+  priority: 'urgent' | 'high' | 'medium' | 'low';
+  openDate: string;
+  symptomsAndObservations: string;
+  diagnosis: string;
+  actionPlan: string[];
+  parentEngagement: 'cooperative' | 'partial' | 'unresponsive';
+  progressEvaluation: string;
+  sessionsCount: number;
+  lastSessionDate?: string;
+}
+
+export interface CounselingSession {
+  id: string;
+  caseId?: string;
+  studentId: string;
+  studentName: string;
+  date: string;
+  time: string;
+  sessionType: 'individual' | 'group' | 'parent_conference' | 'teacher_consultation';
+  objective: string;
+  discussionSummary: string;
+  recommendations: string;
+  nextFollowUpDate: string;
+  counselorName: string;
+}
+
+export interface CommonProblemSolution {
+  id: string;
+  category: 'absence_dropout' | 'behavior_bullying' | 'academic_lag' | 'family_socioeconomic' | 'psychological_crisis' | 'special_needs';
+  categoryLabel: string;
+  title: string;
+  description: string;
+  symptoms: string[];
+  rootCausesLibya: string[];
+  approvedInterventions: string[];
+  parentGuidelines: string[];
+  expectedOutcome: string;
+}
+
+export interface ParentSummon {
+  id: string;
+  studentId: string;
+  studentName: string;
+  parentName: string;
+  parentPhone: string;
+  reason: string;
+  requestedDate: string;
+  requestedTime: string;
+  status: 'sent' | 'attended' | 'rescheduled' | 'no_show';
+  outcomeNotes?: string;
+}
+

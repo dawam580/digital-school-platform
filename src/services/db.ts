@@ -1,4 +1,17 @@
-import { Student, SchoolClass, NotificationItem, DailyReportData, SubjectGrade, Assignment, TeacherConversation, DaySchedule, TeacherAccount } from '../types';
+import {
+  Student,
+  SchoolClass,
+  NotificationItem,
+  DailyReportData,
+  SubjectGrade,
+  Assignment,
+  TeacherConversation,
+  DaySchedule,
+  TeacherAccount,
+  SocialCaseStudy,
+  CounselingSession,
+  ParentSummon
+} from '../types';
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
 const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v3';
@@ -7,6 +20,9 @@ const STORAGE_KEY_NOTIFICATIONS = 'madrasa_db_notifications_v3';
 const STORAGE_KEY_REPORTS = 'madrasa_db_reports_v3';
 const STORAGE_KEY_CONVERSATIONS = 'madrasa_db_conversations_v3';
 const STORAGE_KEY_SCHEDULE = 'madrasa_db_schedule_v3';
+const STORAGE_KEY_CASE_STUDIES = 'madrasa_db_case_studies_v3';
+const STORAGE_KEY_SESSIONS = 'madrasa_db_counseling_sessions_v3';
+const STORAGE_KEY_SUMMONS = 'madrasa_db_parent_summons_v3';
 
 // Libyan Teachers Directory
 export const SEED_TEACHERS: TeacherAccount[] = [
@@ -86,6 +102,17 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     assignedClasses: ['3/أ', '2/أ'],
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     email: 'walid.misrati@school.edu.ly'
+  },
+  {
+    id: 't-8',
+    code: 'LIB-SOC-01',
+    name: 'أ. نجوى القماطي',
+    phone: '0922465676',
+    subject: 'الإرشاد الاجتماعي والنفسي',
+    subjectCode: 'COUNSEL',
+    assignedClasses: ['كافة الفصول والمراحل'],
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    email: 'najwa.gammati@school.edu.ly'
   }
 ];
 
@@ -618,6 +645,126 @@ export const SEED_DAILY_REPORT: DailyReportData = {
   parentAcknowledged: true
 };
 
+export const SEED_CASE_STUDIES: SocialCaseStudy[] = [
+  {
+    id: 'case-1',
+    studentId: 'std-1',
+    studentName: 'معتز سالم الورفلي',
+    studentNationalNumber: '120081234567',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/أ',
+    category: 'academic_lag',
+    categoryLabel: 'التأخر الدراسي وصعوبات القراءة والحساب',
+    status: 'in_progress',
+    priority: 'medium',
+    openDate: '2025-09-01',
+    symptomsAndObservations: 'ملاحظة تردد أثناء القراءة الجهرية في مادة اللغة العربية مع تميز في الحساب الذهني.',
+    diagnosis: 'حاجة لتعزيز الثقة في الإلقاء وتدريب على استراتيجيات الطلاقة اللغوية.',
+    actionPlan: [
+      'جلسة فردية أسبوعية لتدريب مهارات التحدث والتنفس الهادئ.',
+      'تكليف الطالب بقراءة فقرات قصيرة مشجعة ومعدّة مسبقاً في الإذاعة الصفية.',
+      'توجيه معلم اللغة العربية لدعم الطالب ومدح تقدمه المستمر.'
+    ],
+    parentEngagement: 'cooperative',
+    progressEvaluation: 'تحسن ملحوظ بنسبة 40% في الطلاقة والمشاركة الصفية.',
+    sessionsCount: 2,
+    lastSessionDate: '2025-09-02'
+  },
+  {
+    id: 'case-2',
+    studentId: 'std-2',
+    studentName: 'آية منصور الترهوني',
+    studentNationalNumber: '220082345678',
+    grade: 'الصف الثالث الأساسي',
+    className: '3/أ',
+    category: 'psychological_crisis',
+    categoryLabel: 'الضغوط النفسية وقلق الامتحانات',
+    status: 'monitoring',
+    priority: 'high',
+    openDate: '2025-08-28',
+    symptomsAndObservations: 'توتر ملحوظ وشكوى من الصداع قبل موعد الاختبارات الشهرية.',
+    diagnosis: 'قلق أداء امتحاني ناتج عن الرغبة الشديدة في الكمال وخوف الخطأ.',
+    actionPlan: [
+      'تدريب الطالبة على تمارين الاسترخاء والتنفس البطني العميق.',
+      'جلسة إرشاد أسري مع الأم للتخفيف من التوقعات المشحونة بالضغط.',
+      'منح الطالبة 5 دقائق استراحة هادئة قبل توزيع أوراق الاختبار.'
+    ],
+    parentEngagement: 'cooperative',
+    progressEvaluation: 'تجاوزت الاختبار الأخير بهدوء وثقة وحققت الدرجة الكاملة.',
+    sessionsCount: 3,
+    lastSessionDate: '2025-09-01'
+  },
+  {
+    id: 'case-3',
+    studentId: 'std-3',
+    studentName: 'عبدالرحمن طارق المقريف',
+    studentNationalNumber: '120083456789',
+    grade: 'الصف الثاني الأساسي',
+    className: '2/أ',
+    category: 'absence_dropout',
+    categoryLabel: 'الغياب المتكرر وخطر الانقطاع',
+    status: 'open',
+    priority: 'urgent',
+    openDate: '2025-09-02',
+    symptomsAndObservations: 'تكرار الغياب يومي الأحد والخميس مع التأخر عن الطابور الصباحي.',
+    diagnosis: 'صعوبات لوجستية في المواصلات الصباحية وضعف متابعة الاستيقاظ المبكر.',
+    actionPlan: [
+      'استدعاء فوري لولي الأمر لتنظيم خط السير والمواصلات المدرسية.',
+      'توقيع ميثاق الحضور الصباحي وتحفيز الطالب بنقاط الشرف اليومية.'
+    ],
+    parentEngagement: 'partial',
+    progressEvaluation: 'بانتظار حضور ولي الأمر للمقابلة المقررة غداً.',
+    sessionsCount: 1,
+    lastSessionDate: '2025-09-02'
+  }
+];
+
+export const SEED_COUNSELING_SESSIONS: CounselingSession[] = [
+  {
+    id: 'ses-1',
+    caseId: 'case-1',
+    studentId: 'std-1',
+    studentName: 'معتز سالم الورفلي',
+    date: '2025-09-02',
+    time: '10:00 ص',
+    sessionType: 'individual',
+    objective: 'تعزيز مهارات الإلقاء والتغلب على التردد في القراءة',
+    discussionSummary: 'تمت قراءة قصة قصيرة بهدوء ومناقشة مشاعر الطالب الإيجابية مع مدح مخارج الحروف وثقته.',
+    recommendations: 'مواصلة القراءة اليومية 10 دقائق في المنزل مع الوالد وتكليفه بفقرة في إذاعة الغد.',
+    nextFollowUpDate: '2025-09-09',
+    counselorName: 'أ. نجوى القماطي'
+  },
+  {
+    id: 'ses-2',
+    caseId: 'case-2',
+    studentId: 'std-2',
+    studentName: 'آية منصور الترهوني',
+    date: '2025-09-01',
+    time: '11:15 ص',
+    sessionType: 'parent_conference',
+    objective: 'مؤتمر إرشادي مع والدة الطالبة لتخفيف ضغط الامتحانات',
+    discussionSummary: 'تم التوافق مع الأم على تجنب المقارنات وتوفير بيئة نوم مريحة وتشجيع آية على الاسترخاء.',
+    recommendations: 'تطبيق جدول استذكار مرن لا يتجاوز ساعتين يومياً مع فترات راحة نشطة.',
+    nextFollowUpDate: '2025-09-08',
+    counselorName: 'أ. نجوى القماطي'
+  }
+];
+
+export const SEED_PARENT_SUMMONS: ParentSummon[] = [
+  {
+    id: 'sum-1',
+    studentId: 'std-3',
+    studentName: 'عبدالرحمن طارق المقريف',
+    parentName: 'طارق المقريف',
+    parentPhone: '0912345678',
+    reason: 'مناقشة خطة معالجة الغياب المتكرر وتنظيم الحضور الصباحي المنتظم للطالب',
+    requestedDate: '2025-09-03',
+    requestedTime: '09:30 ص',
+    status: 'sent',
+    outcomeNotes: 'تم إرسال الإشعار والتأكيد عبر الرسائل والمنظومة.'
+  }
+];
+
 export const db = {
   onSync(callback: any) {
     return () => {};
@@ -632,6 +779,9 @@ export const db = {
       localStorage.removeItem(STORAGE_KEY_REPORTS);
       localStorage.removeItem(STORAGE_KEY_CONVERSATIONS);
       localStorage.removeItem(STORAGE_KEY_SCHEDULE);
+      localStorage.removeItem(STORAGE_KEY_CASE_STUDIES);
+      localStorage.removeItem(STORAGE_KEY_SESSIONS);
+      localStorage.removeItem(STORAGE_KEY_SUMMONS);
     } catch {}
   },
 
@@ -764,6 +914,51 @@ export const db = {
   saveSchedule(schedule: DaySchedule[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(schedule));
+    } catch {}
+  },
+
+  getCaseStudies(): SocialCaseStudy[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_CASE_STUDIES);
+      return data ? JSON.parse(data) : SEED_CASE_STUDIES;
+    } catch {
+      return SEED_CASE_STUDIES;
+    }
+  },
+
+  saveCaseStudies(cases: SocialCaseStudy[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_CASE_STUDIES, JSON.stringify(cases));
+    } catch {}
+  },
+
+  getCounselingSessions(): CounselingSession[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_SESSIONS);
+      return data ? JSON.parse(data) : SEED_COUNSELING_SESSIONS;
+    } catch {
+      return SEED_COUNSELING_SESSIONS;
+    }
+  },
+
+  saveCounselingSessions(sessions: CounselingSession[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(sessions));
+    } catch {}
+  },
+
+  getParentSummons(): ParentSummon[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_SUMMONS);
+      return data ? JSON.parse(data) : SEED_PARENT_SUMMONS;
+    } catch {
+      return SEED_PARENT_SUMMONS;
+    }
+  },
+
+  saveParentSummons(summons: ParentSummon[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_SUMMONS, JSON.stringify(summons));
     } catch {}
   },
 

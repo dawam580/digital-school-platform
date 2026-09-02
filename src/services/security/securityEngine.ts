@@ -48,6 +48,13 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'TAKE_ATTENDANCE',
     'VIEW_ATTENDANCE_REPORTS'
   ],
+  counselor: [
+    'VIEW_STUDENT_PROFILE',
+    'VIEW_GRADES',
+    'VIEW_ATTENDANCE_REPORTS',
+    'SEND_CHAT',
+    'VIEW_ALL_CHATS'
+  ],
   admin: [
     'VIEW_STUDENT_PROFILE',
     'EDIT_STUDENT_PROFILE',

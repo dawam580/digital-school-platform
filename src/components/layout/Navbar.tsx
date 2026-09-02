@@ -19,7 +19,8 @@ import {
   MessageSquare,
   BookOpen,
   FileText,
-  Key
+  Key,
+  HeartHandshake
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -58,6 +59,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     { id: 'admin', label: 'إدارة المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
     { id: 'teacher', label: 'المعلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
+    { id: 'counselor', label: 'الأخصائي الاجتماعي', icon: <HeartHandshake className="w-4 h-4" />, color: 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300' },
   ];
 
   const currentRoleInfo = roles.find(r => r.id === currentRole) || roles[0];
@@ -212,6 +214,17 @@ export const Navbar: React.FC<NavbarProps> = () => {
               </div>
             )}
 
+            {/* Counselor Badge (When logged in as Counselor) */}
+            {currentRole === 'counselor' && (
+              <div className="flex items-center gap-2 bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 px-3 py-1.5 rounded-2xl text-xs font-bold text-teal-800 dark:text-teal-300">
+                <HeartHandshake className="w-4 h-4 text-teal-600" />
+                <span className="hidden sm:inline">أ. نجوى القماطي (الأخصائي الاجتماعي)</span>
+                <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg text-[10px] border border-teal-300 dark:border-teal-700 font-bold">
+                  LIB-SOC-01
+                </span>
+              </div>
+            )}
+
             {/* Admin Supervisory Switcher (Only visible to Admin) */}
             {currentRole === 'admin' && (
               <div className="relative">
@@ -226,7 +239,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 </button>
 
                 {showRoleMenu && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95">
+                  <div className="absolute left-0 mt-2 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95">
                     <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
                       الإشراف الإداري المتبادل
                     </div>
@@ -238,6 +251,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                           setShowRoleMenu(false);
                           sound.playSuccess();
                           if (role.id === 'teacher') setActiveTab('attendance');
+                          else if (role.id === 'counselor') setActiveTab('counselor-dashboard');
                           else setActiveTab('dashboard');
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${

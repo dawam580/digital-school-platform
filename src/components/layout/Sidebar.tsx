@@ -16,7 +16,8 @@ import {
   Clock,
   Database,
   GraduationCap,
-  Key
+  Key,
+  HeartHandshake
 } from 'lucide-react';
 import { StudentExcelManager } from '../admin/StudentExcelManager';
 import { sound } from '../../utils/soundEffects';
@@ -28,6 +29,14 @@ export const Sidebar: React.FC = () => {
   // Dedicated menu items strictly tailored per role with next-gen 360 features & DB studio
   const getRoleMenuItems = () => {
     switch (currentRole) {
+      case 'counselor':
+        return [
+          { id: 'counselor-dashboard', label: 'مكتب الخدمة الاجتماعية', icon: HeartHandshake, badge: 'رسمي' },
+          { id: 'student-profile', label: 'ملفات وسلوك الطلاب', icon: Users },
+          { id: 'attendance', label: 'سجلات الغياب والمتابعة', icon: CalendarCheck },
+          { id: 'chat', label: 'محادثات أولياء الأمور', icon: MessageSquare },
+          { id: 'notifications', label: 'مركز التنبيهات والإشعارات', icon: Megaphone, unread: unreadCount },
+        ];
       case 'parent':
         return [
           { id: 'student-profile', label: `ملف الطالب (${selectedStudent.name.split(' ')[0]})`, icon: Users },
@@ -54,10 +63,11 @@ export const Sidebar: React.FC = () => {
       default:
         return [
           { id: 'dashboard', label: 'لوحة تحكم الإدارة المدرسية', icon: Home },
+          { id: 'counselor-dashboard', label: 'مكتب الخدمة الاجتماعية والنفسية', icon: HeartHandshake, badge: 'إرشاد' },
           { id: 'db-studio', label: 'استوديو قواعد البيانات (1000+ طالب)', icon: Database, badge: 'نشط' },
           { id: 'grades', label: 'الاعتماد وسجل الدرجات العام', icon: Award },
           { id: 'excel-hub', label: 'إدارة الطلاب وملفات Excel', icon: FileSpreadsheet, isCustomAction: true },
-          { id: 'schedule', label: 'جداول الحصص المدرسية', icon: Clock },
+          { id: 'schedule', label: 'جداول الحصص وتعديل المواد', icon: Clock },
           { id: 'attendance', label: 'متابعة سجلات الحضور الشاملة', icon: CalendarCheck },
           { id: 'student-profile', label: 'ملفات الطلاب والكفايات', icon: Users },
           { id: 'daily-report', label: 'التقارير المعتمدة والأرشيف', icon: FileText },
@@ -70,11 +80,14 @@ export const Sidebar: React.FC = () => {
 
   const getRoleBadge = () => {
     switch (currentRole) {
+      case 'counselor':
+        return { label: 'بوابة الأخصائي الاجتماعي', color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300' };
       case 'parent':
         return { label: 'بوابة ولي الأمر (منفصلة)', color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' };
       case 'teacher':
         return { label: 'بوابة المعلم ورائد الفصل', color: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300' };
       case 'admin':
+      default:
         return { label: 'بوابة الإدارة المدرسية', color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' };
     }
   };

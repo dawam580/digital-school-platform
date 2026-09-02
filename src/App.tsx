@@ -17,6 +17,7 @@ import { DatabaseStudio } from './pages/admin/DatabaseStudio';
 import { SystemOperationalPlanPDF } from './pages/admin/SystemOperationalPlanPDF';
 import { AccountSettingsModal } from './components/admin/AccountSettingsModal';
 import { CommandPalette } from './components/ui/CommandPalette';
+import { SocialCounselorDashboard } from './pages/counselor/SocialCounselorDashboard';
 
 const MainContent: React.FC = () => {
   const {
@@ -44,6 +45,8 @@ const MainContent: React.FC = () => {
     switch (activeTab) {
       case 'dashboard':
         return <AdminDashboard />;
+      case 'counselor-dashboard':
+        return <SocialCounselorDashboard />;
       case 'attendance':
         return <AttendanceTracker />;
       case 'student-profile':
