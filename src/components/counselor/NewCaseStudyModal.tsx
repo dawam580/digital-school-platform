@@ -10,16 +10,18 @@ interface NewCaseStudyModalProps {
   onClose: () => void;
   onSaveCase: (newCase: SocialCaseStudy) => void;
   initialProblemId?: string;
+  preselectedStudentId?: string;
 }
 
 export const NewCaseStudyModal: React.FC<NewCaseStudyModalProps> = ({
   isOpen,
   onClose,
   onSaveCase,
-  initialProblemId
+  initialProblemId,
+  preselectedStudentId
 }) => {
   const { students } = useSchool();
-  const [selectedStudentId, setSelectedStudentId] = useState(students[0]?.id || '');
+  const [selectedStudentId, setSelectedStudentId] = useState(preselectedStudentId || students[0]?.id || '');
   const [selectedCategory, setSelectedCategory] = useState<SocialCaseStudy['category']>('absence_dropout');
   const [priority, setPriority] = useState<SocialCaseStudy['priority']>('medium');
   const [symptoms, setSymptoms] = useState('');

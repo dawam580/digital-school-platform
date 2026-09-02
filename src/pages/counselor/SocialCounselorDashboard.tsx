@@ -22,13 +22,18 @@ import {
   ChevronDown,
   ArrowUpRight,
   TrendingUp,
-  Award
+  Award,
+  Zap,
+  Flame,
+  Send,
+  Bell
 } from 'lucide-react';
-import { SocialCaseStudy, CounselingSession, ParentSummon, CommonProblemSolution } from '../../types';
+import { SocialCaseStudy, CounselingSession, ParentSummon, CommonProblemSolution, AutoSummonCard } from '../../types';
 import { LIBYAN_COMMON_PROBLEMS } from '../../services/counselor/libyanSchoolProblems';
 import { NewCaseStudyModal } from '../../components/counselor/NewCaseStudyModal';
 import { NewSessionModal } from '../../components/counselor/NewSessionModal';
 import { NewSummonModal } from '../../components/counselor/NewSummonModal';
+import { AutoSummonCardModal } from '../../components/counselor/AutoSummonCardModal';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import logoImg from '../../assets/logo.png';
@@ -41,23 +46,42 @@ export const SocialCounselorDashboard: React.FC = () => {
     setCounselingSessions,
     parentSummons,
     setParentSummons,
+    autoSummonCards,
+    setAutoSummonCards,
+    recordInfractionAndCheck,
     students,
     teachers,
     showToast,
     currentUserPhone
   } = useSchool();
 
-  const [activeTab, setActiveTab] = useState<'cases' | 'library' | 'sessions' | 'summons' | 'report'>('cases');
+  const [activeTab, setActiveTab] = useState<'auto_summons' | 'cases' | 'library' | 'sessions' | 'summons' | 'report'>('auto_summons');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
   const [selectedPriorityFilter, setSelectedPriorityFilter] = useState<string>('all');
+  const [summonStatusFilter, setSummonStatusFilter] = useState<string>('all');
 
   // Modals state
   const [showNewCaseModal, setShowNewCaseModal] = useState(false);
   const [showNewSessionModal, setShowNewSessionModal] = useState(false);
   const [showNewSummonModal, setShowNewSummonModal] = useState(false);
+  const [selectedCardForModal, setSelectedCardForModal] = useState<AutoSummonCard | null>(null);
   const [presetProblemId, setPresetProblemId] = useState<string | undefined>(undefined);
   const [selectedCaseForSession, setSelectedCaseForSession] = useState<string | undefined>(undefined);
+  const [selectedStudentForCase, setSelectedStudentForCase] = useState<string | undefined>(undefined);
+
+  // Filtered Auto Summon Cards
+  const filteredAutoCards = useMemo(() => {
+    return autoSummonCards.filter(c => {
+      const matchSearch =
+        c.studentName.includes(searchQuery) ||
+        c.studentNationalNumber.includes(searchQuery) ||
+        c.className.includes(searchQuery);
+      
+      const matchStatus = summonStatusFilter === 'all' || c.status === summonStatusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [autoSummonCards, searchQuery, summonStatusFilter]);
 
   // Filtered Case Studies
   const filteredCases = useMemo(() => {
@@ -88,6 +112,7 @@ export const SocialCounselorDashboard: React.FC = () => {
   }, [searchQuery, selectedCategoryFilter]);
 
   // Statistics
+  const pendingAutoSummonsCount = autoSummonCards.filter(c => c.status === 'pending_counselor').length;
   const totalCasesCount = caseStudies.length;
   const activeCasesCount = caseStudies.filter(c => c.status === 'open' || c.status === 'in_progress').length;
   const resolvedCasesCount = caseStudies.filter(c => c.status === 'resolved').length;
@@ -104,7 +129,6 @@ export const SocialCounselorDashboard: React.FC = () => {
     const updated = [newSession, ...counselingSessions];
     setCounselingSessions(updated);
 
-    // Increment session count in case study if linked
     if (newSession.caseId) {
       setCaseStudies(prev =>
         prev.map(c =>
@@ -124,6 +148,13 @@ export const SocialCounselorDashboard: React.FC = () => {
     showToast('info', 'إصدار استدعاء ولي الأمر ✉️', `تم إرسال الاستدعاء لولي أمر الطالب ${newSummon.studentName}.`);
   };
 
+  const handleUpdateAutoCard = (updatedCard: AutoSummonCard) => {
+    setAutoSummonCards(prev =>
+      prev.map(c => (c.id === updatedCard.id ? updatedCard : c))
+    );
+    setSelectedCardForModal(updatedCard);
+  };
+
   const handleStatusChange = (caseId: string, newStatus: SocialCaseStudy['status']) => {
     setCaseStudies(prev =>
       prev.map(c => (c.id === caseId ? { ...c, status: newStatus } : c))
@@ -133,6 +164,51 @@ export const SocialCounselorDashboard: React.FC = () => {
       triggerConfetti();
       showToast('gold', 'إغلاق الحالة بنجاح 🌟', 'تم حل المشكلة وتحقيق أهداف الخطة الإرشادية.');
     }
+  };
+
+  // Quick Simulation Test Triggers
+  const handleSimulateWeeklyTrigger = () => {
+    const testStudent = students[1] || students[0];
+    sound.playTap();
+    showToast('info', 'محاكاة تسجيل إنذارات...', `يتم رصد 3 إنذارات أسبوعية للطالب ${testStudent.name}`);
+
+    // Record 3 infractions in rapid succession to trigger the threshold
+    setTimeout(() => {
+      recordInfractionAndCheck(testStudent.id, {
+        type: 'absence',
+        typeLabel: 'غياب بدون عذر',
+        title: 'غياب غير مبرر عن الحصة الأولى والثانية',
+        date: new Date().toISOString().split('T')[0],
+        time: '08:00 ص',
+        reportedBy: 'إدارة الحضور',
+        severity: 'alert'
+      });
+    }, 100);
+
+    setTimeout(() => {
+      recordInfractionAndCheck(testStudent.id, {
+        type: 'lateness',
+        typeLabel: 'تأخر صباحي',
+        title: 'التأخر 20 دقيقة عن طابور الصباح',
+        date: new Date().toISOString().split('T')[0],
+        time: '08:20 ص',
+        reportedBy: 'مشرف الطابور',
+        severity: 'warning'
+      });
+    }, 300);
+
+    setTimeout(() => {
+      recordInfractionAndCheck(testStudent.id, {
+        type: 'misconduct',
+        typeLabel: 'مخالفة سلوكية',
+        title: 'إثارة الفوضى ومقاطعة شرح المعلم',
+        date: new Date().toISOString().split('T')[0],
+        time: '10:15 ص',
+        reportedBy: 'معلم الرياضيات',
+        severity: 'warning'
+      });
+      setActiveTab('auto_summons');
+    }, 600);
   };
 
   const handlePrint = () => {
@@ -155,11 +231,11 @@ export const SocialCounselorDashboard: React.FC = () => {
                 <h1 className="text-2xl md:text-3xl font-black">بوابة ومكتب الخدمة الاجتماعية والنفسية</h1>
                 <span className="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1 rounded-xl border border-emerald-500/30 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>ملفات محمية وسرية 100%</span>
+                  <span>محرك استدعاء آلي تراكمي (Active Trigger)</span>
                 </span>
               </div>
               <p className="text-sm text-emerald-200/90 mt-1">
-                وزارة التربية والتعليم - دولة ليبيا (2025 - 2026 م) • دراسة الحالات الفردية وحل المشكلات المدرسية
+                وزارة التربية والتعليم - دولة ليبيا (2025 - 2026 م) • نظام الإنذارات التراكمية (3 أسبوعياً / 5 شهرياً)
               </p>
               <p className="text-xs text-slate-400 mt-0.5">
                 الأخصائية الاجتماعية المعتمدة: <strong className="text-white">أ. نجوى القماطي</strong> (الرمز: <span className="font-mono text-emerald-300">LIB-SOC-01</span>)
@@ -167,11 +243,20 @@ export const SocialCounselorDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions & Trigger Simulator */}
           <div className="flex flex-wrap items-center gap-2">
             <button
+              onClick={handleSimulateWeeklyTrigger}
+              className="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white font-black px-3.5 py-2.5 rounded-2xl transition text-xs shadow-lg active:scale-95 animate-pulse"
+              title="تجربة محاكاة رصد 3 إنذارات وإصدار بطاقة استدعاء تلقائية فوراً"
+            >
+              <Flame className="w-4 h-4" />
+              <span>🧪 تجربة محاكاة الاستدعاء الآلي (3 إنذارات)</span>
+            </button>
+
+            <button
               onClick={() => { setShowNewCaseModal(true); sound.playTap(); }}
-              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-2xl transition text-xs shadow-lg active:scale-95"
+              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black px-3.5 py-2.5 rounded-2xl transition text-xs shadow-lg active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>فتح ملف دراسة حالة</span>
@@ -179,18 +264,10 @@ export const SocialCounselorDashboard: React.FC = () => {
 
             <button
               onClick={() => { setShowNewSessionModal(true); sound.playTap(); }}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-2xl transition text-xs shadow-md active:scale-95"
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2.5 rounded-2xl transition text-xs shadow-md active:scale-95"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>توثيق جلسة إرشادية</span>
-            </button>
-
-            <button
-              onClick={() => { setShowNewSummonModal(true); sound.playTap(); }}
-              className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2.5 rounded-2xl transition text-xs shadow-md active:scale-95"
-            >
-              <Mail className="w-4 h-4" />
-              <span>استدعاء ولي أمر</span>
+              <span>توثيق جلسة</span>
             </button>
           </div>
         </div>
@@ -198,6 +275,23 @@ export const SocialCounselorDashboard: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div
+          onClick={() => { setActiveTab('auto_summons'); sound.playTap(); }}
+          className={`p-4 sm:p-5 rounded-3xl border shadow-sm flex items-center gap-4 cursor-pointer transition ${
+            pendingAutoSummonsCount > 0
+              ? 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/20'
+              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+          }`}
+        >
+          <div className="p-3 rounded-2xl bg-rose-100 text-rose-700">
+            <Zap className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-xs text-rose-900 dark:text-rose-300 font-bold">بطاقات استدعاء آلية (Trigger)</p>
+            <h3 className="text-xl font-black text-rose-700 font-mono">{autoSummonCards.length}</h3>
+          </div>
+        </div>
+
         <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-amber-50 text-amber-600">
             <AlertTriangle className="w-6 h-6" />
@@ -227,20 +321,23 @@ export const SocialCounselorDashboard: React.FC = () => {
             <h3 className="text-xl font-black text-blue-600 font-mono">{totalSessionsCount}</h3>
           </div>
         </div>
-
-        <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-purple-50 text-purple-600">
-            <Mail className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-bold">استدعاءات أولياء الأمور</p>
-            <h3 className="text-xl font-black text-purple-600 font-mono">{totalSummonsCount}</h3>
-          </div>
-        </div>
       </div>
 
       {/* Navigation Tabs Bar */}
       <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <button
+          onClick={() => { setActiveTab('auto_summons'); sound.playTap(); }}
+          className={`flex-1 min-w-[160px] py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
+            activeTab === 'auto_summons' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+          }`}
+        >
+          <Zap className="w-4 h-4 text-rose-600" />
+          <span>بطاقات الاستدعاء الآلي ({autoSummonCards.length})</span>
+          {pendingAutoSummonsCount > 0 && (
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+          )}
+        </button>
+
         <button
           onClick={() => { setActiveTab('cases'); sound.playTap(); }}
           className={`flex-1 min-w-[140px] py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
@@ -258,7 +355,7 @@ export const SocialCounselorDashboard: React.FC = () => {
           }`}
         >
           <Sparkles className="w-4 h-4 text-amber-500" />
-          <span>مكتبة حل المشكلات الليبية ({LIBYAN_COMMON_PROBLEMS.length})</span>
+          <span>مكتبة المشكلات الليبية ({LIBYAN_COMMON_PROBLEMS.length})</span>
         </button>
 
         <button
@@ -278,7 +375,7 @@ export const SocialCounselorDashboard: React.FC = () => {
           }`}
         >
           <Mail className="w-4 h-4 text-purple-600" />
-          <span>استدعاءات أولياء الأمور ({parentSummons.length})</span>
+          <span>أرشيف الاستدعاءات ({parentSummons.length})</span>
         </button>
 
         <button
@@ -288,9 +385,166 @@ export const SocialCounselorDashboard: React.FC = () => {
           }`}
         >
           <FileText className="w-4 h-4 text-indigo-600" />
-          <span>التقرير الشهري لمراقبة التعليم</span>
+          <span>التقرير الشهري للوزارة</span>
         </button>
       </div>
+
+      {/* Tab 0: Automated Summon Cards (Active Triggers) */}
+      {activeTab === 'auto_summons' && (
+        <div className="space-y-4">
+          
+          {/* Rules Explanation Banner */}
+          <div className="p-4 bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-blue-500/10 rounded-2xl border border-rose-200/60 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Zap className="w-4 h-4 text-rose-600" />
+                <span>شروط ومعايير التوليد التلقائي لبطاقات الاستدعاء (Trigger Rules)</span>
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300">
+                • <strong>عتبة أسبوعية:</strong> 3 إنذارات أو أكثر خلال الأسبوع الحالي ➔ إصدار بطاقة استدعاء تلقائياً.<br />
+                • <strong>عتبة شهرية:</strong> 5 إنذارات أو أكثر خلال الشهر الحالي ➔ إصدار بطاقة استدعاء تلقائياً.<br />
+                • الفحص تراكمي ومباشر عند كل رصد غياب أو مخالفة سلوكية، مع منع التكرار لنفس العتبة.
+              </p>
+            </div>
+
+            <button
+              onClick={handleSimulateWeeklyTrigger}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-md shrink-0 active:scale-95"
+            >
+              + محاكاة تجربة رصد إنذارات
+            </button>
+          </div>
+
+          {/* Filter Bar */}
+          <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="relative w-full sm:w-80">
+              <input
+                type="text"
+                placeholder="بحث باسم الطالب، الرقم الوطني، أو الفصل..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs bg-slate-50 dark:bg-slate-900"
+              />
+              <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <select
+                value={summonStatusFilter}
+                onChange={e => setSummonStatusFilter(e.target.value)}
+                className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold bg-slate-50 dark:bg-slate-900"
+              >
+                <option value="all">كافة حالات البطاقات</option>
+                <option value="pending_counselor">تحتاج متابعة الأخصائي ⚠️</option>
+                <option value="summon_sent">تم إرسال استدعاء لولي الأمر ✉️</option>
+                <option value="interview_completed">تمت المقابلة وتوثيق الاتفاق ✅</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredAutoCards.length === 0 ? (
+              <div className="col-span-full p-12 text-center bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 text-slate-400 space-y-2">
+                <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">لا توجد حالات تجاوزت عتبة الإنذارات حالياً.</p>
+                <p className="text-xs text-slate-400">جميع الطلاب ضمن الحدود السلوكية والتربوية المعتمدة.</p>
+                <button
+                  onClick={handleSimulateWeeklyTrigger}
+                  className="text-xs text-rose-600 font-bold hover:underline mt-2 inline-block"
+                >
+                  🧪 اضغط هنا لتجربة محاكاة رصد إنذارات وإصدار بطاقة استدعاء فورية
+                </button>
+              </div>
+            ) : (
+              filteredAutoCards.map(card => {
+                const statusBadge =
+                  card.status === 'interview_completed'
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                    : card.status === 'summon_sent'
+                    ? 'bg-blue-100 text-blue-800 border-blue-300'
+                    : 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse';
+
+                return (
+                  <div
+                    key={card.id}
+                    className="p-5 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition space-y-4 text-xs"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-black text-slate-900 dark:text-white">{card.studentName}</h3>
+                          <span className="px-2 py-0.5 rounded-lg font-bold text-[10px] bg-red-100 text-red-800 border border-red-200 font-mono">
+                            {card.totalWarningsCount} إنذارات
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
+                          فصل: {card.className} • {card.grade} • الرقم الوطني: {card.studentNationalNumber}
+                        </p>
+                      </div>
+
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${statusBadge}`}>
+                        {card.status === 'interview_completed'
+                          ? 'تمت المقابلة ✅'
+                          : card.status === 'summon_sent'
+                          ? 'أُرسل استدعاء ✉️'
+                          : 'تحتاج متابعة عاجلة ⚠️'}
+                      </span>
+                    </div>
+
+                    {/* Breakdown Badges */}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-slate-700 dark:text-slate-300">{card.periodLabel}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{card.triggeredDateFormatted}</span>
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-1.5 text-center text-[10px]">
+                        <div className="p-1.5 bg-red-100/60 rounded-xl font-bold text-red-800">
+                          {card.breakdown.absencesCount} غياب
+                        </div>
+                        <div className="p-1.5 bg-amber-100/60 rounded-xl font-bold text-amber-800">
+                          {card.breakdown.misconductCount} مشاغبة
+                        </div>
+                        <div className="p-1.5 bg-blue-100/60 rounded-xl font-bold text-blue-800">
+                          {card.breakdown.latenessCount} تأخر
+                        </div>
+                        <div className="p-1.5 bg-purple-100/60 rounded-xl font-bold text-purple-800">
+                          {card.breakdown.academicCount} واجبات
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedCardForModal(card);
+                          sound.playTap();
+                        }}
+                        className="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-center text-[11px] shadow-sm"
+                      >
+                        عرض البطاقة والتفاصيل 🔍
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedStudentForCase(card.studentId);
+                          setShowNewCaseModal(true);
+                          sound.playTap();
+                        }}
+                        className="px-3 py-2 bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-700 font-bold rounded-xl border border-purple-200 transition text-[11px]"
+                      >
+                        فتح دراسة حالة 📂
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Tab 1: Case Studies View */}
       {activeTab === 'cases' && (
@@ -753,12 +1007,29 @@ export const SocialCounselorDashboard: React.FC = () => {
         </div>
       )}
 
+      {/* Auto Summon Card Detail Modal */}
+      <AutoSummonCardModal
+        card={selectedCardForModal}
+        isOpen={Boolean(selectedCardForModal)}
+        onClose={() => setSelectedCardForModal(null)}
+        onUpdateCard={handleUpdateAutoCard}
+        onOpenNewCase={(studentId) => {
+          setSelectedStudentForCase(studentId);
+          setShowNewCaseModal(true);
+        }}
+      />
+
       {/* Modals */}
       <NewCaseStudyModal
         isOpen={showNewCaseModal}
-        onClose={() => { setShowNewCaseModal(false); setPresetProblemId(undefined); }}
+        onClose={() => {
+          setShowNewCaseModal(false);
+          setPresetProblemId(undefined);
+          setSelectedStudentForCase(undefined);
+        }}
         onSaveCase={handleSaveCase}
         initialProblemId={presetProblemId}
+        preselectedStudentId={selectedStudentForCase}
       />
 
       <NewSessionModal

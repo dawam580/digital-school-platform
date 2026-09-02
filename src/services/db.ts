@@ -10,8 +10,11 @@ import {
   TeacherAccount,
   SocialCaseStudy,
   CounselingSession,
-  ParentSummon
+  ParentSummon,
+  StudentInfraction,
+  AutoSummonCard
 } from '../types';
+import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
 const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v3';
@@ -23,6 +26,8 @@ const STORAGE_KEY_SCHEDULE = 'madrasa_db_schedule_v3';
 const STORAGE_KEY_CASE_STUDIES = 'madrasa_db_case_studies_v3';
 const STORAGE_KEY_SESSIONS = 'madrasa_db_counseling_sessions_v3';
 const STORAGE_KEY_SUMMONS = 'madrasa_db_parent_summons_v3';
+const STORAGE_KEY_INFRACTIONS = 'madrasa_db_infractions_v3';
+const STORAGE_KEY_AUTO_SUMMON_CARDS = 'madrasa_db_auto_summon_cards_v3';
 
 // Libyan Teachers Directory
 export const SEED_TEACHERS: TeacherAccount[] = [
@@ -782,6 +787,8 @@ export const db = {
       localStorage.removeItem(STORAGE_KEY_CASE_STUDIES);
       localStorage.removeItem(STORAGE_KEY_SESSIONS);
       localStorage.removeItem(STORAGE_KEY_SUMMONS);
+      localStorage.removeItem(STORAGE_KEY_INFRACTIONS);
+      localStorage.removeItem(STORAGE_KEY_AUTO_SUMMON_CARDS);
     } catch {}
   },
 
@@ -959,6 +966,36 @@ export const db = {
   saveParentSummons(summons: ParentSummon[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_SUMMONS, JSON.stringify(summons));
+    } catch {}
+  },
+
+  getInfractions(): StudentInfraction[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_INFRACTIONS);
+      return data ? JSON.parse(data) : SEED_INFRACTIONS;
+    } catch {
+      return SEED_INFRACTIONS;
+    }
+  },
+
+  saveInfractions(infractions: StudentInfraction[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_INFRACTIONS, JSON.stringify(infractions));
+    } catch {}
+  },
+
+  getAutoSummonCards(): AutoSummonCard[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_AUTO_SUMMON_CARDS);
+      return data ? JSON.parse(data) : SEED_AUTO_SUMMON_CARDS;
+    } catch {
+      return SEED_AUTO_SUMMON_CARDS;
+    }
+  },
+
+  saveAutoSummonCards(cards: AutoSummonCard[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY_AUTO_SUMMON_CARDS, JSON.stringify(cards));
     } catch {}
   },
 

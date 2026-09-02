@@ -13,7 +13,9 @@ import {
   TeacherAccount,
   SocialCaseStudy,
   CounselingSession,
-  ParentSummon
+  ParentSummon,
+  StudentInfraction,
+  AutoSummonCard
 } from '../types';
 import {
   db,
@@ -28,6 +30,7 @@ import {
   SEED_COUNSELING_SESSIONS,
   SEED_PARENT_SUMMONS
 } from '../services/db';
+import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
 import { sound } from '../utils/soundEffects';
 import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
@@ -66,6 +69,16 @@ interface SchoolContextType {
   setCounselingSessions: React.Dispatch<React.SetStateAction<CounselingSession[]>>;
   parentSummons: ParentSummon[];
   setParentSummons: React.Dispatch<React.SetStateAction<ParentSummon[]>>;
+
+  // Automated Summon Cards & Infractions Engine
+  infractions: StudentInfraction[];
+  setInfractions: React.Dispatch<React.SetStateAction<StudentInfraction[]>>;
+  autoSummonCards: AutoSummonCard[];
+  setAutoSummonCards: React.Dispatch<React.SetStateAction<AutoSummonCard[]>>;
+  recordInfractionAndCheck: (
+    studentId: string,
+    infractionData: Omit<StudentInfraction, 'id' | 'studentId' | 'studentName'>
+  ) => void;
 
   // Active Screen
   activeTab: string;
@@ -244,6 +257,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
+  // Automated Infractions and Summon Cards State
+  const [infractions, setInfractionsState] = useState<StudentInfraction[]>(() => {
+    try {
+      const data = db.getInfractions();
+      return (data && data.length > 0) ? data : SEED_INFRACTIONS;
+    } catch {
+      return SEED_INFRACTIONS;
+    }
+  });
+
+  const [autoSummonCards, setAutoSummonCardsState] = useState<AutoSummonCard[]>(() => {
+    try {
+      const data = db.getAutoSummonCards();
+      return (data && data.length > 0) ? data : SEED_AUTO_SUMMON_CARDS;
+    } catch {
+      return SEED_AUTO_SUMMON_CARDS;
+    }
+  });
+
   const setCaseStudies: React.Dispatch<React.SetStateAction<SocialCaseStudy[]>> = (casesOrUpdater) => {
     setCaseStudiesState(prev => {
       const next = typeof casesOrUpdater === 'function' ? casesOrUpdater(prev) : casesOrUpdater;
@@ -268,6 +300,22 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   };
 
+  const setInfractions: React.Dispatch<React.SetStateAction<StudentInfraction[]>> = (infractionsOrUpdater) => {
+    setInfractionsState(prev => {
+      const next = typeof infractionsOrUpdater === 'function' ? infractionsOrUpdater(prev) : infractionsOrUpdater;
+      db.saveInfractions(next);
+      return next;
+    });
+  };
+
+  const setAutoSummonCards: React.Dispatch<React.SetStateAction<AutoSummonCard[]>> = (cardsOrUpdater) => {
+    setAutoSummonCardsState(prev => {
+      const next = typeof cardsOrUpdater === 'function' ? cardsOrUpdater(prev) : cardsOrUpdater;
+      db.saveAutoSummonCards(next);
+      return next;
+    });
+  };
+
   const showToast = useCallback((type: ToastType, title: string, message: string, duration: number = 3500) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
     const newToast: ToastMessage = { id, type, title, message, duration };
@@ -286,6 +334,75 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const dismissToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
+
+  const recordInfractionAndCheck = useCallback((
+    studentId: string,
+    infractionData: Omit<StudentInfraction, 'id' | 'studentId' | 'studentName'>
+  ) => {
+    const student = students.find(s => s.id === studentId);
+    if (!student) return;
+
+    const newInfraction: StudentInfraction = {
+      id: `inf-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      studentId: student.id,
+      studentName: student.name,
+      ...infractionData
+    };
+
+    setInfractionsState(prevInfractions => {
+      const updatedInfractions = [newInfraction, ...prevInfractions];
+      db.saveInfractions(updatedInfractions);
+
+      setAutoSummonCardsState(prevCards => {
+        const { triggeredCard, isNewCard, reason } = WarningTriggerEngine.evaluateAndTriggerSummon(
+          student,
+          newInfraction,
+          prevInfractions,
+          prevCards
+        );
+
+        if (isNewCard && triggeredCard) {
+          const updatedCards = [triggeredCard, ...prevCards];
+          db.saveAutoSummonCards(updatedCards);
+
+          sound.playAlert();
+          showToast('error', '⚠️ صدور بطاقة استدعاء تلقائية!', `بلغ الطالب ${student.name} ${reason}`);
+
+          const newNotif: NotificationItem = {
+            id: `notif-trigger-${Date.now()}`,
+            title: `⚠️ استدعاء آلي عاجل: ${student.name}`,
+            message: `بلغ الطالب الحد التراكمي للإنذارات (${reason}). تم إصدار بطاقة استدعاء وتوجيهها لمكتب الخدمة الاجتماعية.`,
+            category: 'academic',
+            date: 'الآن',
+            time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            read: false,
+            studentName: student.name
+          };
+
+          setNotifications(prevNotifs => {
+            const up = [newNotif, ...prevNotifs];
+            db.saveNotifications(up);
+            return up;
+          });
+
+          auditLogger.log({
+            actorName: 'نظام الاستدعاء التلقائي (Warning Trigger)',
+            actorRole: 'admin',
+            action: 'AUTO_SUMMON_TRIGGERED',
+            entity: 'Student',
+            details: `إصدار بطاقة استدعاء للطالب ${student.name} بسبب: ${reason}`,
+            severity: 'CRITICAL'
+          });
+
+          return updatedCards;
+        }
+
+        return prevCards;
+      });
+
+      return updatedInfractions;
+    });
+  }, [students, showToast]);
 
   const toggleDarkMode = () => {
     setIsDarkMode(prev => {
@@ -448,6 +565,31 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         'attendance',
         targetStudent.name
       );
+
+      // Trigger automatic infraction check on unexcused absence or lateness
+      if (status === 'unexcused') {
+        recordInfractionAndCheck(studentId, {
+          type: 'absence',
+          typeLabel: 'غياب بدون عذر',
+          title: note ? `غياب بدون عذر: ${note}` : 'غياب غير مبرر عن اليوم الدراسي',
+          date: new Date().toISOString().split('T')[0],
+          time: '08:00 ص',
+          reportedBy: currentTeacher ? currentTeacher.name : 'إدارة الحضور',
+          severity: 'alert',
+          notes: note
+        });
+      } else if (status === 'late') {
+        recordInfractionAndCheck(studentId, {
+          type: 'lateness',
+          typeLabel: 'تأخر صباحي',
+          title: note ? `تأخر صباحي: ${note}` : 'تأخر عن طابور الصباح والحصة الأولى',
+          date: new Date().toISOString().split('T')[0],
+          time: '08:20 ص',
+          reportedBy: currentTeacher ? currentTeacher.name : 'مشرف الطابور',
+          severity: 'warning',
+          notes: note
+        });
+      }
     }
 
     auditLogger.log({
@@ -561,6 +703,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } else {
       sound.playAlert();
       showToast('warning', 'ملاحظة سلوكية', `تم تسجيل ملاحظة سلوكية للطالب`);
+
+      // Trigger automatic infraction check on misconduct / negative point
+      recordInfractionAndCheck(studentId, {
+        type: 'misconduct',
+        typeLabel: 'مخالفة سلوكية',
+        title: point.title || 'ملاحظة سلوكية تحتاج إلى تحسين',
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+        reportedBy: point.teacher || currentTeacher?.name || 'معلم الحصة',
+        severity: 'warning'
+      });
     }
   };
 
@@ -804,6 +957,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setCaseStudies(SEED_CASE_STUDIES);
     setCounselingSessions(SEED_COUNSELING_SESSIONS);
     setParentSummons(SEED_PARENT_SUMMONS);
+    setInfractions(SEED_INFRACTIONS);
+    setAutoSummonCards(SEED_AUTO_SUMMON_CARDS);
     auditLogger.clearLogs();
     sound.playSuccess();
     showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
@@ -833,6 +988,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCounselingSessions,
         parentSummons,
         setParentSummons,
+        infractions,
+        setInfractions,
+        autoSummonCards,
+        setAutoSummonCards,
+        recordInfractionAndCheck,
         activeTab,
         setActiveTab,
         isDarkMode,

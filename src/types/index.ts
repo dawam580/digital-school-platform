@@ -275,6 +275,50 @@ export interface CommonProblemSolution {
   expectedOutcome: string;
 }
 
+export interface StudentInfraction {
+  id: string;
+  studentId: string;
+  studentName: string;
+  type: 'absence' | 'lateness' | 'disruption' | 'misconduct' | 'homework_missing' | 'custom';
+  typeLabel: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  time: string;
+  reportedBy: string;
+  severity: 'warning' | 'alert' | 'urgent';
+  notes?: string;
+}
+
+export interface AutoSummonCard {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentNationalNumber: string;
+  grade: string;
+  className: string;
+  parentName: string;
+  parentPhone: string;
+  periodType: 'weekly' | 'monthly';
+  periodLabel: string;
+  periodKey: string; // For deduplication (e.g. 2025-W36, 2025-M09)
+  totalWarningsCount: number;
+  breakdown: {
+    absencesCount: number;
+    misconductCount: number;
+    latenessCount: number;
+    academicCount: number;
+  };
+  infractions: StudentInfraction[];
+  triggeredAt: string;
+  triggeredDateFormatted: string;
+  status: 'pending_counselor' | 'summon_sent' | 'interview_completed' | 'case_opened' | 'archived';
+  summonDate?: string;
+  summonTime?: string;
+  interviewNotes?: string;
+  parentFeedback?: string;
+  counselorNotes?: string;
+}
+
 export interface ParentSummon {
   id: string;
   studentId: string;
@@ -286,5 +330,7 @@ export interface ParentSummon {
   requestedTime: string;
   status: 'sent' | 'attended' | 'rescheduled' | 'no_show';
   outcomeNotes?: string;
+  cardId?: string;
 }
+
 
