@@ -33,6 +33,7 @@ import { QrPdfReaderModal } from '../../components/common/QrPdfReaderModal';
 import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTeachersRosterModal';
 import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
 import { SchedulePage } from '../schedule/SchedulePage';
+import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
   StudentFullExamReport,
@@ -86,6 +87,28 @@ export const AdminDashboard: React.FC = () => {
   const [showTeachersRosterModal, setShowTeachersRosterModal] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
+
+  // Handlers for student management
+  const handleClearAllStudents = () => {
+    sound.playAlert();
+    if (window.confirm('⚠️ هل أنت متأكد من رغبتك في حذف وتصفير جميع سجلات الطلاب المسجلين بالكامل للبدء من جديد؟')) {
+      setStudents([]);
+      db.saveStudents([], true);
+      showToast('info', 'تم التصفير', 'تم حذف كشف الطلاب بنجاح. يمكنك الآن استيراد كشف PDF أو Excel جديد.');
+    }
+  };
+
+  const handleDirectLoadBaour = () => {
+    sound.playTap();
+    setStudents(LIBYAN_BAOUR_STUDENTS);
+    db.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
+    try {
+      localStorage.setItem('madrasa_school_name', 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي');
+    } catch {}
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم استيراد كشف مدرسة الباعور 🏛️', `تم تحميل (${LIBYAN_BAOUR_STUDENTS.length}) طالباً موزعين على الفصول بنجاح.`);
+  };
 
   // Available classes dynamically extracted from students + Grades 4, 6, 7, 8, 9, 3
   const availableClasses = useMemo(() => {
@@ -311,6 +334,16 @@ export const AdminDashboard: React.FC = () => {
           >
             <span className="text-sm">⚡</span>
             <span>بناء الجداول الذكية</span>
+          </button>
+
+          {/* Excel Importer Button */}
+          <button
+            onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="استيراد كشوفات الطلاب والمعلمين من ملفات إكسل (.xlsx / .csv)"
+          >
+            <span className="text-sm">📊</span>
+            <span>استيراد إكسل</span>
           </button>
 
           {/* PDF Importer Button */}
@@ -644,26 +677,62 @@ export const AdminDashboard: React.FC = () => {
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             </div>
 
-            {/* Actions: Export + Add Student */}
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            {/* Actions: Export + Add Student + Quick Baour School Load + Clear */}
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+              {/* Direct Al-Baour School 873 Students Load */}
               <button
+                type="button"
+                onClick={handleDirectLoadBaour}
+                className="px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                title="استيراد كشف مدرسة الشهيد امحمد الباعور (33 صفحة • 873 طالباً)"
+              >
+                <span>🏛️</span>
+                <span>كشف مدرسة الباعور (873 طالب) ⚡</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
+                className="px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                title="استيراد كشف إكسل"
+              >
+                <span>📊</span>
+                <span>استيراد إكسل</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+                className="px-3.5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                title="استيراد كشف PDF"
+              >
+                <FileText className="w-4 h-4" />
+                <span>استيراد PDF</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => {
                   exportLibyanStudentsToExcel(filteredStudents, `كشف_طلاب_${schoolProfile.name}`);
                   sound.playSuccess();
                   showToast('success', 'تم التصدير', 'تم تنزيل ملف إكسل بكافة بيانات الطلبة.');
                 }}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
+                className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
+                title="تصدير كشف الطلبة إلى ملف إكسل"
               >
                 <Download className="w-4 h-4 text-emerald-600" />
                 <span>تصدير Excel</span>
               </button>
 
+              {/* Clear All Students */}
               <button
-                onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5"
+                type="button"
+                onClick={handleClearAllStudents}
+                className="px-3 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-black transition flex items-center gap-1 active:scale-95"
+                title="تصفير وحذف جميع الطلاب للبدء من جديد"
               >
-                <FileText className="w-4 h-4" />
-                <span>استيراد كشف PDF</span>
+                <Trash2 className="w-4 h-4" />
+                <span>تصفير وحذف الكشف</span>
               </button>
             </div>
           </div>
@@ -1306,6 +1375,18 @@ export const AdminDashboard: React.FC = () => {
           }}
         />
       )}
+
+      {/* Excel Student & Teacher Importer Modal */}
+      <ExcelStudentImporterModal
+        isOpen={showExcelImporterModal}
+        onClose={() => setShowExcelImporterModal(false)}
+      />
+
+      {/* QR PDF Reader Modal */}
+      <QrPdfReaderModal
+        isOpen={showQrPdfReaderModal}
+        onClose={() => setShowQrPdfReaderModal(false)}
+      />
 
     </div>
   );
