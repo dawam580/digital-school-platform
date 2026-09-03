@@ -22,10 +22,12 @@ import {
   UserCheck,
   Award,
   Printer,
-  FileSpreadsheet
+  FileSpreadsheet,
+  HelpCircle
 } from 'lucide-react';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
+import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
 import {
   LibyanExamEngine,
   StudentFullExamReport,
@@ -66,6 +68,10 @@ export const AdminDashboard: React.FC = () => {
   const [selectedStudentForCard, setSelectedStudentForCard] = useState<Student | null>(null);
   const [selectedStudentRank, setSelectedStudentRank] = useState<number>(1);
   const [showGradeCardModal, setShowGradeCardModal] = useState<boolean>(false);
+
+  // Guide State
+  const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
+  const [showGuideBanner, setShowGuideBanner] = useState<boolean>(true);
 
   // Available classes dynamically extracted from students
   const availableClasses = useMemo(() => {
@@ -225,6 +231,15 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Primary Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+          {/* Visual Guide Button */}
+          <button
+            onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 font-black text-xs sm:text-sm border border-indigo-300 dark:border-indigo-800 shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="شرح مبسط لكيفية استخدام المنظومة"
+          >
+            <span>💡 دليل المنظومة الموضح</span>
+          </button>
+
           {/* PDF Importer Button */}
           <button
             onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
@@ -246,6 +261,111 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Visual Step-by-Step Explanatory Banner ("بطريقة شروحية") */}
+      {showGuideBanner && (
+        <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 dark:from-slate-800/80 dark:via-indigo-950/30 dark:to-slate-900 border-2 border-blue-200 dark:border-blue-800 shadow-sm space-y-3 animate-in fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-blue-900 dark:text-blue-200 font-black text-sm sm:text-base">
+              <span className="text-xl">💡</span>
+              <span>دليل المدير السريع: كيف تدير مدرستك في 4 خطوات سهلة وواضحة جداً؟</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+                className="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-sm transition active:scale-95 flex items-center gap-1"
+              >
+                <span>فتح الدليل المصور بالتفصيل 📖</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowGuideBanner(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg text-xs"
+                title="إخفاء هذا الشريط"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* 4 Interactive Step Cards with Direct Navigation */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-1 text-xs">
+            <button
+              type="button"
+              onClick={() => { setActiveTab('students'); sound.playTap(); }}
+              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+                activeTab === 'students'
+                  ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'
+              }`}
+            >
+              <div className="font-black flex items-center gap-1.5 text-sm">
+                <span>1️⃣ كشف الطلاب</span>
+                {activeTab === 'students' && <span>👈 (أنت هنا)</span>}
+              </div>
+              <p className={`text-[11px] leading-relaxed ${activeTab === 'students' ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                لرفع كشف PDF القديم، رؤية الطلاب وأمهاتهم، وتصدير إكسل.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('exams'); sound.playTap(); }}
+              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+                activeTab === 'exams'
+                  ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-purple-50'
+              }`}
+            >
+              <div className="font-black flex items-center gap-1.5 text-sm">
+                <span>2️⃣ شيت الامتحانات</span>
+                {activeTab === 'exams' && <span>👈 (أنت هنا)</span>}
+              </div>
+              <p className={`text-[11px] leading-relaxed ${activeTab === 'exams' ? 'text-purple-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                لرؤية درجات المواد الثمانية، حساب الترتيب، وطباعة بطاقات النتيجة.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
+              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+                activeTab === 'teachers'
+                  ? 'bg-amber-600 text-white border-amber-700 shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
+              }`}
+            >
+              <div className="font-black flex items-center gap-1.5 text-sm">
+                <span>3️⃣ المعلمين ورموزهم</span>
+                {activeTab === 'teachers' && <span>👈 (أنت هنا)</span>}
+              </div>
+              <p className={`text-[11px] leading-relaxed ${activeTab === 'teachers' ? 'text-amber-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                لإضافة المعلمين وتحديد رموز دخول سهلة لهم وفصولهم.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
+              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+                activeTab === 'attendance'
+                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
+              }`}
+            >
+              <div className="font-black flex items-center gap-1.5 text-sm">
+                <span>4️⃣ متابعة الحضور</span>
+                {activeTab === 'attendance' && <span>👈 (أنت هنا)</span>}
+              </div>
+              <p className={`text-[11px] leading-relaxed ${activeTab === 'attendance' ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                لمعرفة الغياب اليومي وتحضير الجميع بنقرة واحدة.
+              </p>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 4 Main Stat Cards (Clean & Focused) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -973,6 +1093,12 @@ export const AdminDashboard: React.FC = () => {
           rank={selectedStudentRank}
         />
       )}
+
+      {/* Quick System Guide Modal */}
+      <QuickSystemGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
 
     </div>
   );

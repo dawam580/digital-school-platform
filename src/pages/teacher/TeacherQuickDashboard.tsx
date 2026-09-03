@@ -30,6 +30,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { db } from '../../services/db';
 import { LibyanExamEngine } from '../../services/exams/libyanExamEngine';
+import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
 
 export const TeacherQuickDashboard: React.FC = () => {
   const {
@@ -60,6 +61,7 @@ export const TeacherQuickDashboard: React.FC = () => {
   // Selected class
   const assignedClasses = currentTeacher?.assignedClasses || ['3/أ', '3/ب', '2/أ'];
   const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '3/أ');
+  const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
 
   // Filter students for the selected class
   const classStudents = students.filter(s => s.className === selectedClass || s.className.includes(selectedClass));
@@ -281,8 +283,17 @@ export const TeacherQuickDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Header Actions: Back Button + PDF Import + Custom Code + Large Font */}
+        {/* Header Actions: Guide Button + Back Button + PDF Import + Custom Code + Large Font */}
         <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-end">
+          {/* Visual Guide Button */}
+          <button
+            onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white font-black text-xs sm:text-sm border border-white/30 shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="شرح مبسط لكيفية استخدام بوابة المعلم"
+          >
+            <span>💡 كيف أستخدم البوابة؟</span>
+          </button>
+
           {/* Custom Code Button */}
           <button
             onClick={() => { setShowCustomCodeModal(true); sound.playTap(); }}
@@ -320,6 +331,57 @@ export const TeacherQuickDashboard: React.FC = () => {
           >
             {isLargeFontMode ? <ZoomOut className="w-4 h-4 text-amber-300" /> : <ZoomIn className="w-4 h-4 text-emerald-300" />}
             <span>{isLargeFontMode ? 'الخط العادي' : 'تكبير الخط 🔍'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Friendly Teacher Guidance Banner ("بطريقة شروحية") */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 shadow-sm space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 font-black text-sm sm:text-base">
+            <span className="text-xl">💡</span>
+            <span>خطوتان بسيطتان لإنجاز عملك اليوم بكل سهولة وسرعة:</span>
+          </div>
+          <button
+            onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+            className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-sm active:scale-95"
+          >
+            فتح الشرح التوضيحي 📖
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+          <button
+            type="button"
+            onClick={() => { setActiveAction('attendance'); sound.playTap(); }}
+            className={`p-3 rounded-2xl text-right border transition active:scale-95 ${
+              activeAction === 'attendance'
+                ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                : 'bg-white dark:bg-slate-900 border-amber-200 dark:border-amber-800/60 text-slate-800 dark:text-slate-200 hover:bg-amber-100/50'
+            }`}
+          >
+            <strong className={`block mb-1 text-sm ${activeAction === 'attendance' ? 'text-white' : 'text-emerald-700 dark:text-emerald-400'}`}>
+              1️⃣ لتسجيل الحضور اليومي:
+            </strong>
+            <span className={`leading-relaxed text-[11px] ${activeAction === 'attendance' ? 'text-emerald-100' : 'text-slate-600 dark:text-slate-400'}`}>
+              اضغط على زر (1. تحضير الحضور اليومي) بالأسفل، وحدد حالة كل طالب (حاضر / غائب)، ثم اضغط حفظ.
+            </span>
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => { setActiveAction('grading'); sound.playTap(); }}
+            className={`p-3 rounded-2xl text-right border transition active:scale-95 ${
+              activeAction === 'grading'
+                ? 'bg-amber-600 text-white border-amber-700 shadow-sm'
+                : 'bg-white dark:bg-slate-900 border-amber-200 dark:border-amber-800/60 text-slate-800 dark:text-slate-200 hover:bg-amber-100/50'
+            }`}
+          >
+            <strong className={`block mb-1 text-sm ${activeAction === 'grading' ? 'text-white' : 'text-amber-800 dark:text-amber-400'}`}>
+              2️⃣ لرصد الدرجات والامتحانات:
+            </strong>
+            <span className={`leading-relaxed text-[11px] ${activeAction === 'grading' ? 'text-amber-100' : 'text-slate-600 dark:text-slate-400'}`}>
+              اضغط على زر (2. رصد درجات أعمال السنة والامتحانات)، أدخل أعمال السنة والامتحان واضغط حفظ.
+            </span>
           </button>
         </div>
       </div>
@@ -983,6 +1045,12 @@ export const TeacherQuickDashboard: React.FC = () => {
 
         </div>
       )}
+
+      {/* Quick System Guide Modal */}
+      <QuickSystemGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
 
     </div>
   );

@@ -22,10 +22,12 @@ import {
   Key,
   HeartHandshake,
   Building2,
-  Tag
+  Tag,
+  HelpCircle
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
+import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
 
 interface NavbarProps {
   onOpenMobileMenu?: () => void;
@@ -61,6 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showStudentMenu, setShowStudentMenu] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     { id: 'admin', label: 'إدارة المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
@@ -416,6 +419,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               <span className="hidden md:inline">إعدادات الحساب</span>
             </button>
 
+            {/* Quick System Guide Button */}
+            <button
+              onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-200 transition-colors border border-indigo-200 dark:border-indigo-800 text-xs font-black shadow-sm"
+              title="دليل المنظومة السريع الموضح بالخطوات"
+            >
+              <HelpCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span>دليل المنظومة 💡</span>
+            </button>
+
             {/* Back / Logout Button (Prominent & Clear) */}
             <button
               onClick={() => { logout(); sound.playTap(); }}
@@ -430,6 +443,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
 
         </div>
       </div>
+
+      {/* Quick System Guide Modal */}
+      <QuickSystemGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
     </header>
   );
 };
