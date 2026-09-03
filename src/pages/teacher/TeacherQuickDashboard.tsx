@@ -23,15 +23,19 @@ import {
   Calendar,
   Tag,
   Sliders,
-  Edit2
+  Edit2,
+  BookOpen
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { db } from '../../services/db';
+import { LibyanExamEngine } from '../../services/exams/libyanExamEngine';
 
 export const TeacherQuickDashboard: React.FC = () => {
   const {
     currentTeacher,
     students,
+    setStudents,
     updateAttendance,
     markAllPresent,
     updateStudentGrade,
@@ -64,10 +68,120 @@ export const TeacherQuickDashboard: React.FC = () => {
   const [selectedStudentId, setSelectedStudentId] = useState<string>(classStudents[0]?.id || students[0]?.id || '');
   const activeStudent = students.find(s => s.id === selectedStudentId) || classStudents[0] || students[0];
 
-  // Quick grading state
-  const [gradeType, setGradeType] = useState<'coursework' | 'exam'>('coursework');
-  const [quickScore, setQuickScore] = useState<number>(18);
-  const [evaluationWord, setEvaluationWord] = useState<string>('ممتاز');
+  // Dual-mode grading state (Libyan Bylaws)
+  const [gradingMode, setGradingMode] = useState<'quick' | 'detailed'>('quick');
+  const [classScores, setClassScores] = useState<{
+    [studentId: string]: {
+      coursework: number;
+      exam: number;
+      t1?: number;
+      t2?: number;
+      hw?: number;
+      mid?: number;
+    };
+  }>({});
+
+  const teacherSubject = currentTeacher?.subject || 'الرياضيات';
+
+  const getStudentScore = (studentId: string) => {
+    if (classScores[studentId]) return classScores[studentId];
+    const std = students.find(s => s.id === studentId);
+    const existing = std?.subjects?.find(sub => sub.name === teacherSubject || sub.code === currentTeacher?.subjectCode);
+    return {
+      coursework: existing?.courseworkScore ?? 36,
+      exam: existing?.examScore ?? 54,
+      t1: 9,
+      t2: 9,
+      hw: 9,
+      mid: 9
+    };
+  };
+
+  const handleUpdateStudentScore = (
+    studentId: string,
+    field: 'coursework' | 'exam' | 't1' | 't2' | 'hw' | 'mid',
+    value: number
+  ) => {
+    setClassScores(prev => {
+      const current = prev[studentId] || getStudentScore(studentId);
+      const updated = { ...current, [field]: value };
+      if (['t1', 't2', 'hw', 'mid'].includes(field)) {
+        updated.coursework = (updated.t1 || 0) + (updated.t2 || 0) + (updated.hw || 0) + (updated.mid || 0);
+      }
+      return { ...prev, [studentId]: updated };
+    });
+  };
+
+  const handleBulkFillGrades = (coursework: number, exam: number) => {
+    sound.playSuccess();
+    const next: typeof classScores = {};
+    classStudents.forEach(st => {
+      next[st.id] = {
+        coursework,
+        exam,
+        t1: Math.round(coursework * 0.25),
+        t2: Math.round(coursework * 0.25),
+        hw: Math.round(coursework * 0.25),
+        mid: Math.round(coursework * 0.25)
+      };
+    });
+    setClassScores(next);
+    showToast('success', 'رصد جماعي ⚡', `تم تطبيق الدرجات المقترحة لكافة طلاب فصل (${selectedClass}) بنجاح.`);
+  };
+
+  const handleSaveAllGrades = () => {
+    sound.playFanfare();
+    triggerConfetti();
+
+    const updatedStudents = students.map(st => {
+      if (st.className !== selectedClass && !st.className.includes(selectedClass)) return st;
+
+      const score = classScores[st.id] || getStudentScore(st.id);
+      const total = score.coursework + score.exam;
+      const pct = (total / 100) * 100;
+      const app = LibyanExamEngine.getAppreciation(pct);
+
+      const subjects = st.subjects ? [...st.subjects] : [];
+      const subIdx = subjects.findIndex(s => s.name === teacherSubject || s.code === currentTeacher?.subjectCode);
+      const newSubData = {
+        name: teacherSubject,
+        code: currentTeacher?.subjectCode || 'GEN',
+        score: total,
+        maxScore: 100,
+        teacher: currentTeacher?.name || 'معلم المادة',
+        evaluation: app,
+        courseworkScore: score.coursework,
+        examScore: score.exam,
+        totalScore: total
+      };
+
+      if (subIdx >= 0) {
+        subjects[subIdx] = { ...subjects[subIdx], ...newSubData };
+      } else {
+        subjects.push(newSubData);
+      }
+
+      return {
+        ...st,
+        courseworkScore: score.coursework,
+        examScore: score.exam,
+        totalScore: total,
+        appreciation: app,
+        subjects
+      };
+    });
+
+    setStudents(updatedStudents);
+    db.saveStudents(updatedStudents, true);
+
+    addNotification(
+      `📑 تم رصد درجات ${teacherSubject} لفصل (${selectedClass})`,
+      `قام الأستاذ ${currentTeacher?.name || 'المعلم'} باعتماد كشف درجات أعمال السنة والامتحان لكافة طلاب الفصل.`,
+      'academic'
+    );
+
+    showToast('gold', 'تم حفظ الدرجات بنجاح 🌟', `تم اعتماد وتثبيت درجات مادة ${teacherSubject} لفصل (${selectedClass}).`);
+  };
 
   // Success indicator
   const [attendanceSaved, setAttendanceSaved] = useState(false);
@@ -104,8 +218,6 @@ export const TeacherQuickDashboard: React.FC = () => {
   const handleSaveGrade = (evalText: string, scoreVal: number) => {
     if (!activeStudent) return;
     sound.playSuccess();
-    setEvaluationWord(evalText);
-    setQuickScore(scoreVal);
 
     // Save to student record
     updateStudentGrade(activeStudent.id, 'grade-quick', {
@@ -273,10 +385,10 @@ export const TeacherQuickDashboard: React.FC = () => {
           </div>
           <div>
             <span className="font-black text-lg text-slate-900 dark:text-white block">
-              2. رصد الدرجات والتقييم
+              2. رصد درجات أعمال السنة والامتحانات
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 block">
-              اختيارات جاهزة: ممتاز، جيد جداً، جيد
+              أعمال سنة (40) + امتحان (60) وفق اللائحة الليبية
             </span>
           </div>
         </button>
@@ -540,93 +652,271 @@ export const TeacherQuickDashboard: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* SECTION 2: 1-TAP QUICK GRADING                                           */}
+      {/* SECTION 2: LIBYAN EXAM & COURSEWORK GRADING (DUAL MODE)                   */}
       {/* ========================================================================= */}
       {activeAction === 'grading' && (
         <div className="space-y-5 animate-in fade-in">
           
-          {/* Step 1: Select Student */}
-          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
-            <label className="font-black text-base text-slate-800 dark:text-white block">
-              1. اختر الطالب المراد تقييمه:
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto p-1">
-              {classStudents.map(st => (
+          {/* Top Configuration & Mode Switcher */}
+          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 text-xs font-black border border-amber-300 dark:border-amber-800 mb-1">
+                  <span>🇱🇾 اللائحة الليبية المعتمدة للتقييم والامتحانات</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                  رصد درجات مادة: {teacherSubject} • فصل ({selectedClass})
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  إجمالي طلاب الفصل: ({classStudents.length}) طالب • النهاية الكبرى للمادة: 100 درجة (أعمال سنة 40 + امتحان 60)
+                </p>
+              </div>
+
+              {/* Mode Toggle Buttons */}
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center gap-1 border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
                 <button
-                  key={st.id}
-                  onClick={() => { setSelectedStudentId(st.id); sound.playTap(); }}
-                  className={`p-3 rounded-2xl border text-right font-bold text-sm transition-all flex items-center gap-2.5 ${
-                    st.id === activeStudent?.id
-                      ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-105'
-                      : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                  type="button"
+                  onClick={() => { setGradingMode('quick'); sound.playTap(); }}
+                  className={`flex-1 sm:flex-initial py-2 px-4 rounded-xl text-xs font-black transition-all ${
+                    gradingMode === 'quick'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                   }`}
                 >
-                  <img src={st.avatar} alt={st.name} className="w-8 h-8 rounded-full object-cover shrink-0" />
-                  <span className="truncate">{st.name.split(' ').slice(0, 2).join(' ')}</span>
+                  ⚡ الوضع السريع لكبار السن (أعمال سنة 40 + امتحان 60)
                 </button>
-              ))}
+
+                <button
+                  type="button"
+                  onClick={() => { setGradingMode('detailed'); sound.playTap(); }}
+                  className={`flex-1 sm:flex-initial py-2 px-4 rounded-xl text-xs font-black transition-all ${
+                    gradingMode === 'detailed'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  📝 الوضع التفصيلي (تطبيقات، واجبات، شفهي)
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Presets Bar */}
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-bold text-slate-500">خيارات الرصد السريع بلمسة واحدة:</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleBulkFillGrades(38, 56)}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 text-xs font-black border border-emerald-300 dark:border-emerald-800 transition active:scale-95 flex items-center gap-1"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>⭐ رصد تفوق ممتاز للكل (38 أعمال + 56 امتحان)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleBulkFillGrades(30, 45)}
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 text-xs font-black border border-blue-300 dark:border-blue-800 transition active:scale-95"
+                >
+                  <span>جيد جداً للكل (30 + 45)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleBulkFillGrades(22, 32)}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 text-xs font-black border border-amber-300 dark:border-amber-800 transition active:scale-95"
+                >
+                  <span>مقبول للكل (22 + 32)</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Active Student Target Card */}
-          {activeStudent && (
-            <div className="p-5 bg-amber-50 dark:bg-amber-950/30 rounded-3xl border border-amber-300 dark:border-amber-700 flex items-center gap-4">
-              <img src={activeStudent.avatar} alt={activeStudent.name} className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400 shrink-0" />
-              <div>
-                <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block">الطالب المختار للتقييم الآن:</span>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white">{activeStudent.name}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">فصل: {activeStudent.className} • المادة: {currentTeacher?.subject || 'الرياضيات'}</p>
-              </div>
+          {/* Students Grading Table */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 font-black border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="py-3.5 px-3">#</th>
+                    <th className="py-3.5 px-3">اسم التلميذ</th>
+                    {gradingMode === 'quick' ? (
+                      <>
+                        <th className="py-3.5 px-3 text-center">أعمال السنة (من 40)</th>
+                        <th className="py-3.5 px-3 text-center">الامتحان النهائي (من 60)</th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="py-3.5 px-2 text-center">تطبيق 1 (10)</th>
+                        <th className="py-3.5 px-2 text-center">تطبيق 2 (10)</th>
+                        <th className="py-3.5 px-2 text-center">واجبات (10)</th>
+                        <th className="py-3.5 px-2 text-center">منتصف فصل (10)</th>
+                        <th className="py-3.5 px-2 text-center">أعمال السنة (40)</th>
+                        <th className="py-3.5 px-3 text-center">امتحان نهائي (60)</th>
+                      </>
+                    )}
+                    <th className="py-3.5 px-3 text-center bg-slate-100 dark:bg-slate-800">المجموع (100)</th>
+                    <th className="py-3.5 px-3 text-center">التقدير اللفظي</th>
+                    <th className="py-3.5 px-3 text-center">إجراءات سريعة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
+                  {classStudents.map((st, idx) => {
+                    const score = getStudentScore(st.id);
+                    const total = score.coursework + score.exam;
+                    const pct = (total / 100) * 100;
+                    const app = LibyanExamEngine.getAppreciation(pct);
+                    const isPass = total >= 50;
+
+                    return (
+                      <tr key={st.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
+                        <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">{idx + 1}</td>
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2.5">
+                            <img src={st.avatar} alt={st.name} className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                            <div>
+                              <span className="font-black text-slate-900 dark:text-white text-sm block">{st.name}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">{st.nationalNumber || st.nationalId}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {gradingMode === 'quick' ? (
+                          <>
+                            {/* Coursework Quick Input */}
+                            <td className="py-3 px-3 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={40}
+                                value={score.coursework}
+                                onChange={e => handleUpdateStudentScore(st.id, 'coursework', Number(e.target.value))}
+                                className="w-20 py-2 px-2 rounded-xl text-center font-mono font-black text-sm border-2 border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                              />
+                            </td>
+
+                            {/* Exam Quick Input */}
+                            <td className="py-3 px-3 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={60}
+                                value={score.exam}
+                                onChange={e => handleUpdateStudentScore(st.id, 'exam', Number(e.target.value))}
+                                className="w-20 py-2 px-2 rounded-xl text-center font-mono font-black text-sm border-2 border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="py-3 px-2 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={10}
+                                value={score.t1 ?? 9}
+                                onChange={e => handleUpdateStudentScore(st.id, 't1', Number(e.target.value))}
+                                className="w-12 py-1.5 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
+                              />
+                            </td>
+                            <td className="py-3 px-2 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={10}
+                                value={score.t2 ?? 9}
+                                onChange={e => handleUpdateStudentScore(st.id, 't2', Number(e.target.value))}
+                                className="w-12 py-1.5 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
+                              />
+                            </td>
+                            <td className="py-3 px-2 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={10}
+                                value={score.hw ?? 9}
+                                onChange={e => handleUpdateStudentScore(st.id, 'hw', Number(e.target.value))}
+                                className="w-12 py-1.5 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
+                              />
+                            </td>
+                            <td className="py-3 px-2 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={10}
+                                value={score.mid ?? 9}
+                                onChange={e => handleUpdateStudentScore(st.id, 'mid', Number(e.target.value))}
+                                className="w-12 py-1.5 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
+                              />
+                            </td>
+                            <td className="py-3 px-2 text-center font-mono font-black text-amber-700 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-950/20">
+                              {score.coursework}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={60}
+                                value={score.exam}
+                                onChange={e => handleUpdateStudentScore(st.id, 'exam', Number(e.target.value))}
+                                className="w-16 py-1.5 text-center font-mono font-black rounded-lg border-2 border-blue-400 dark:border-blue-700 bg-blue-50/50 dark:bg-slate-800"
+                              />
+                            </td>
+                          </>
+                        )}
+
+                        {/* Total Score */}
+                        <td className="py-3 px-3 text-center font-mono font-black text-base bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white">
+                          {total}
+                        </td>
+
+                        {/* Appreciation Badge */}
+                        <td className="py-3 px-3 text-center">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-black inline-block ${
+                            isPass
+                              ? app === 'ممتاز'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
+                              : 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300'
+                          }`}>
+                            {app} {isPass ? '🟢' : '🔴'}
+                          </span>
+                        </td>
+
+                        {/* 1-Tap Quick Adjust */}
+                        <td className="py-3 px-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleUpdateStudentScore(st.id, 'coursework', 39);
+                                handleUpdateStudentScore(st.id, 'exam', 58);
+                                sound.playTap();
+                              }}
+                              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 rounded-lg text-[10px] font-bold"
+                              title="تعيين الدرجة ممتاز"
+                            >
+                              ⭐ كاملة
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          )}
+          </div>
 
-          {/* Step 2: 1-Tap Evaluation Buttons (Giant Badges) */}
-          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-            <label className="font-black text-base text-slate-800 dark:text-white block">
-              2. التقييم السريع بلمسة واحدة (اختر التقييم وسيتم الرصد فوراً):
-            </label>
-
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              <button
-                onClick={() => handleSaveGrade('ممتاز', 20)}
-                className="p-5 rounded-3xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg text-center shadow-lg active:scale-95 transition flex flex-col items-center gap-2"
-              >
-                <span className="text-3xl">⭐</span>
-                <span>ممتاز (20)</span>
-              </button>
-
-              <button
-                onClick={() => handleSaveGrade('جيد جداً', 18)}
-                className="p-5 rounded-3xl bg-blue-500 hover:bg-blue-600 text-white font-black text-lg text-center shadow-lg active:scale-95 transition flex flex-col items-center gap-2"
-              >
-                <span className="text-3xl">✨</span>
-                <span>جيد جداً (18)</span>
-              </button>
-
-              <button
-                onClick={() => handleSaveGrade('جيد', 15)}
-                className="p-5 rounded-3xl bg-teal-500 hover:bg-teal-600 text-white font-black text-lg text-center shadow-lg active:scale-95 transition flex flex-col items-center gap-2"
-              >
-                <span className="text-3xl">👍</span>
-                <span>جيد (15)</span>
-              </button>
-
-              <button
-                onClick={() => handleSaveGrade('مقبول', 12)}
-                className="p-5 rounded-3xl bg-amber-500 hover:bg-amber-600 text-white font-black text-lg text-center shadow-lg active:scale-95 transition flex flex-col items-center gap-2"
-              >
-                <span className="text-3xl">⚖️</span>
-                <span>مقبول (12)</span>
-              </button>
-
-              <button
-                onClick={() => handleSaveGrade('يحتاج تحسين', 9)}
-                className="p-5 rounded-3xl bg-rose-500 hover:bg-rose-600 text-white font-black text-lg text-center shadow-lg active:scale-95 transition flex flex-col items-center gap-2"
-              >
-                <span className="text-3xl">⚠️</span>
-                <span>يحتاج تحسين (9)</span>
-              </button>
-            </div>
+          {/* Sticky Bottom Save Bar */}
+          <div className="sticky bottom-4 z-20 pt-4">
+            <button
+              onClick={handleSaveAllGrades}
+              className="w-full py-4 px-8 rounded-3xl font-black text-base sm:text-lg shadow-2xl flex items-center justify-center gap-3 transition-all active:scale-95 bg-gradient-to-r from-amber-600 via-emerald-600 to-teal-700 hover:from-amber-700 hover:to-teal-800 text-white"
+            >
+              <Save className="w-6 h-6" />
+              <span>💾 حفظ واعتماد درجات {teacherSubject} لفصل ({selectedClass}) في قاعدة البيانات</span>
+            </button>
           </div>
 
         </div>

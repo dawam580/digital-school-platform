@@ -169,10 +169,14 @@ export interface Student {
   assignments?: Assignment[];
   subjects: {
     name: string;
+    code?: string;
     score: number;
     maxScore: number;
     teacher: string;
     evaluation: string;
+    courseworkScore?: number;
+    examScore?: number;
+    totalScore?: number;
   }[];
   recentAttendance?: {
     date: string;

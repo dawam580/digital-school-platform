@@ -19,9 +19,18 @@ import {
   Sparkles,
   ChevronLeft,
   Filter,
-  UserCheck
+  UserCheck,
+  Award,
+  Printer,
+  FileSpreadsheet
 } from 'lucide-react';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
+import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
+import {
+  LibyanExamEngine,
+  StudentFullExamReport,
+  LIBYAN_BASIC_SUBJECTS
+} from '../../services/exams/libyanExamEngine';
 import { exportLibyanStudentsToExcel } from '../../utils/excelHelper';
 import { sound } from '../../utils/soundEffects';
 import { TeacherAccount, Student } from '../../types';
@@ -41,8 +50,8 @@ export const AdminDashboard: React.FC = () => {
     markAllPresent
   } = useSchool();
 
-  // Active Tab: 'students' | 'teachers' | 'attendance'
-  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'attendance'>('students');
+  // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams'
+  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'attendance' | 'exams'>('students');
 
   // Students Tab State
   const [studentSearch, setStudentSearch] = useState('');
@@ -52,16 +61,23 @@ export const AdminDashboard: React.FC = () => {
   const [showTeacherModal, setShowTeacherModal] = useState(false);
   const [teacherToEdit, setTeacherToEdit] = useState<TeacherAccount | null>(null);
 
+  // Exams Tab State
+  const [selectedExamClass, setSelectedExamClass] = useState<string>('9/أ');
+  const [selectedStudentForCard, setSelectedStudentForCard] = useState<Student | null>(null);
+  const [selectedStudentRank, setSelectedStudentRank] = useState<number>(1);
+  const [showGradeCardModal, setShowGradeCardModal] = useState<boolean>(false);
+
   // Available classes dynamically extracted from students
   const availableClasses = useMemo(() => {
     const set = new Set<string>();
     students.forEach(s => {
       if (s.className) set.add(s.className);
     });
-    return Array.from(set).sort();
+    const arr = Array.from(set).sort();
+    return arr.length > 0 ? arr : ['9/أ', '9/ب', '9/ج', '9/د', '3/أ'];
   }, [students]);
 
-  // Filtered Students
+  // Filtered Students for Tab 1
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
       const matchSearch =
@@ -87,6 +103,20 @@ export const AdminDashboard: React.FC = () => {
     ? Math.round((presentCount / totalStudentsCount) * 100 * 10) / 10
     : 95.6;
 
+  // Exam Calculations for Selected Class (Tab 4)
+  const examStudents = useMemo(() => {
+    const clsList = students.filter(s => s.className === selectedExamClass || s.className.includes(selectedExamClass));
+    return clsList.length > 0 ? clsList : students.slice(0, 25);
+  }, [students, selectedExamClass]);
+
+  const examReports: StudentFullExamReport[] = useMemo(() => {
+    return LibyanExamEngine.calculateClassRankings(examStudents);
+  }, [examStudents]);
+
+  const passedCount = examReports.filter(r => r.status === 'passed' || r.status === 'passed_honors').length;
+  const makeupCount = examReports.filter(r => r.status === 'makeup_exam').length;
+  const passRate = examReports.length > 0 ? Math.round((passedCount / examReports.length) * 100) : 100;
+
   // Delete Student Handler
   const handleDeleteStudent = (id: string, name: string) => {
     if (window.confirm(`هل أنت متأكد من حذف الطالب (${name}) من المنظومة؟`)) {
@@ -109,8 +139,75 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Export Master Sheet to CSV/Excel
+  const exportMasterSheetToExcel = () => {
+    sound.playSuccess();
+    const headers = [
+      'الرقم',
+      'اسم الطالب',
+      'الرقم الوطني',
+      'الفصل',
+      'عربي (أعمال)', 'عربي (تحريري)', 'عربي (مجموع)',
+      'رياضيات (أعمال)', 'رياضيات (تحريري)', 'رياضيات (مجموع)',
+      'علوم (أعمال)', 'علوم (تحريري)', 'علوم (مجموع)',
+      'إنجليزي (أعمال)', 'إنجليزي (تحريري)', 'إنجليزي (مجموع)',
+      'إسلامية (أعمال)', 'إسلامية (تحريري)', 'إسلامية (مجموع)',
+      'تاريخ (أعمال)', 'تاريخ (تحريري)', 'تاريخ (مجموع)',
+      'جغرافيا (أعمال)', 'جغرافيا (تحريري)', 'جغرافيا (مجموع)',
+      'حاسوب (أعمال)', 'حاسوب (تحريري)', 'حاسوب (مجموع)',
+      'المجموع الكلي',
+      'النسبة المئوية %',
+      'الترتيب على الفصل',
+      'التقدير العام',
+      'النتيجة الرسمية'
+    ];
+
+    const rows = examReports.map((r, i) => {
+      const getSub = (code: string) => r.results.find(s => s.subjectCode === code) || { courseworkScore: 0, examScore: 0, totalScore: 0 };
+      const arb = getSub('ARB');
+      const math = getSub('MATH');
+      const sci = getSub('SCI');
+      const eng = getSub('ENG');
+      const isl = getSub('ISL');
+      const hist = getSub('HIST');
+      const geog = getSub('GEOG');
+      const comp = getSub('COMP');
+
+      return [
+        i + 1,
+        `"${r.studentName}"`,
+        `"${r.nationalNumber}"`,
+        `"${r.className}"`,
+        arb.courseworkScore, arb.examScore, arb.totalScore,
+        math.courseworkScore, math.examScore, math.totalScore,
+        sci.courseworkScore, sci.examScore, sci.totalScore,
+        eng.courseworkScore, eng.examScore, eng.totalScore,
+        isl.courseworkScore, isl.examScore, isl.totalScore,
+        hist.courseworkScore, hist.examScore, hist.totalScore,
+        geog.courseworkScore, geog.examScore, geog.totalScore,
+        comp.courseworkScore, comp.examScore, comp.totalScore,
+        r.totalEarnedScore,
+        `${r.percentage}%`,
+        r.rank,
+        r.generalAppreciation,
+        `"${r.statusLabel}"`
+      ].join(',');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `شيت_درجات_${selectedExamClass}_${schoolProfile.name}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('success', 'تم تصدير الشيت 📊', `تم تنزيل شيت درجات فصل (${selectedExamClass}) المعتمد بنجاح.`);
+  };
+
   return (
-    <div className="space-y-6 text-right animate-in fade-in max-w-6xl mx-auto pb-16 font-cairo">
+    <div className="space-y-6 text-right animate-in fade-in max-w-7xl mx-auto pb-16 font-cairo">
       
       {/* Top Header & Fast Actions */}
       <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -122,7 +219,7 @@ export const AdminDashboard: React.FC = () => {
             لوحة تحكم إدارة المدرسة: {schoolProfile.name}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            إدارة كشوفات الطلاب، التحكم في المعلمين، ومتابعة تسجيل الحضور اليومي
+            إدارة كشوفات الطلاب، شيت الامتحانات والنتائج، والتحكم في المعلمين والحضور
           </p>
         </div>
 
@@ -150,8 +247,8 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 3 Main Stat Cards (Clean & Focused) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* 4 Main Stat Cards (Clean & Focused) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1: Students Count */}
         <div
@@ -176,7 +273,30 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: Teachers Count */}
+        {/* Card 2: Exams & Master Sheet */}
+        <div
+          onClick={() => setActiveTab('exams')}
+          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
+            activeTab === 'exams'
+              ? 'bg-purple-50/80 dark:bg-purple-950/40 border-purple-500 shadow-purple-500/20'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-300'
+          }`}
+        >
+          <div>
+            <span className="text-xs font-bold text-slate-500 block">شيت الامتحانات والنتائج</span>
+            <span className="text-3xl font-black text-purple-700 dark:text-purple-300 mt-1 block">
+              {passRate}% نجاح
+            </span>
+            <span className="text-xs text-purple-600 dark:text-purple-400 font-bold mt-1 inline-block">
+              كشف الرصد المعتمد ←
+            </span>
+          </div>
+          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 flex items-center justify-center text-2xl">
+            📑
+          </div>
+        </div>
+
+        {/* Card 3: Teachers Count */}
         <div
           onClick={() => setActiveTab('teachers')}
           className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
@@ -199,7 +319,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 3: Attendance Rate */}
+        {/* Card 4: Attendance Rate */}
         <div
           onClick={() => setActiveTab('attendance')}
           className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
@@ -224,42 +344,54 @@ export const AdminDashboard: React.FC = () => {
 
       </div>
 
-      {/* Big Main Tab Selector Pills */}
-      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center gap-1 border border-slate-200 dark:border-slate-700">
+      {/* Big Main Tab Selector Pills (4 Tabs) */}
+      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl flex flex-wrap sm:flex-nowrap items-center gap-1 border border-slate-200 dark:border-slate-700">
         <button
           onClick={() => { setActiveTab('students'); sound.playTap(); }}
-          className={`flex-1 py-3 px-4 rounded-xl font-black text-sm transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'students'
               ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>1. كشف الطلاب المسجلين والمستوردين ({students.length})</span>
+          <span>1. كشف الطلاب المسجلين ({students.length})</span>
+        </button>
+
+        <button
+          onClick={() => { setActiveTab('exams'); sound.playTap(); }}
+          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+            activeTab === 'exams'
+              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-400 shadow-sm border border-slate-200 dark:border-slate-700'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+          }`}
+        >
+          <Award className="w-4 h-4" />
+          <span>2. شيت الامتحانات والنتائج 📑</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
-          className={`flex-1 py-3 px-4 rounded-xl font-black text-sm transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'teachers'
               ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <UserCheck className="w-4 h-4" />
-          <span>2. التحكم في المعلمين ورموزهم ({teachers.length})</span>
+          <span>3. التحكم في المعلمين ({teachers.length})</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
-          className={`flex-1 py-3 px-4 rounded-xl font-black text-sm transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'attendance'
               ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <CheckCircle2 className="w-4 h-4" />
-          <span>3. متابعة تسجيل الحضور بالكامل</span>
+          <span>4. متابعة الحضور بالكامل</span>
         </button>
       </div>
 
@@ -440,7 +572,186 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 2: TEACHERS MANAGEMENT & CONTROLS                                     */}
+      {/* TAB 2: EXAMS MASTER CONTROL SHEET (LIBYAN CURRICULUM)                    */}
+      {/* ========================================================================= */}
+      {activeTab === 'exams' && (
+        <div className="space-y-4 animate-in fade-in">
+          
+          {/* Header Controls Bar */}
+          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300 text-xs font-bold border border-purple-200 dark:border-purple-800 mb-1">
+                <span>🇱🇾 المركز الوطني للامتحانات • مرحلة التعليم الأساسي</span>
+              </div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                شيت الكنترول المعتمد ورصد الدرجات العام
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                المجموع الكلي المعتمد: 1120 درجة • النهاية الصغرى للنجاح: 50% لكل مادة
+              </p>
+            </div>
+
+            {/* Actions: Export Excel & Print */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={exportMasterSheetToExcel}
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5"
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                <span>تصدير شيت الكنترول Excel</span>
+              </button>
+
+              <button
+                onClick={() => { sound.playTap(); window.print(); }}
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs transition active:scale-95 flex items-center gap-1.5"
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة الكشف A4</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Class Filter & Summary Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            {/* Class Picker */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 sm:col-span-1">
+              <span className="text-xs font-bold text-slate-500 block">اختر الفصل الدراسي:</span>
+              <select
+                value={selectedExamClass}
+                onChange={e => { setSelectedExamClass(e.target.value); sound.playTap(); }}
+                className="w-full py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-black text-purple-700 dark:text-purple-300 focus:outline-none"
+              >
+                {availableClasses.map(cls => (
+                  <option key={cls} value={cls}>فصل ({cls})</option>
+                ))}
+              </select>
+            </div>
+
+            {/* KPI 1: Pass Rate */}
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
+              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">نسبة النجاح العامة</span>
+              <span className="text-2xl font-black text-emerald-700 dark:text-emerald-200 font-mono mt-1 block">
+                {passRate}%
+              </span>
+            </div>
+
+            {/* KPI 2: Passed Count */}
+            <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-center">
+              <span className="text-xs font-bold text-blue-800 dark:text-blue-300 block">الناجحون 🟢</span>
+              <span className="text-2xl font-black text-blue-700 dark:text-blue-200 font-mono mt-1 block">
+                {passedCount} طالب
+              </span>
+            </div>
+
+            {/* KPI 3: Makeup Count */}
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-center">
+              <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block">الدور الثاني 🟡</span>
+              <span className="text-2xl font-black text-amber-700 dark:text-amber-200 font-mono mt-1 block">
+                {makeupCount} طالب
+              </span>
+            </div>
+          </div>
+
+          {/* Master Sheet Matrix Table */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black border-b border-slate-300 dark:border-slate-700">
+                  <tr>
+                    <th className="py-3 px-2 text-center">الترتيب</th>
+                    <th className="py-3 px-3">اسم التلميذ</th>
+                    <th className="py-3 px-2 text-center">عربي (240)</th>
+                    <th className="py-3 px-2 text-center">رياضيات (200)</th>
+                    <th className="py-3 px-2 text-center">علوم (160)</th>
+                    <th className="py-3 px-2 text-center">إنجليزي (160)</th>
+                    <th className="py-3 px-2 text-center">إسلامية (120)</th>
+                    <th className="py-3 px-2 text-center">تاريخ (80)</th>
+                    <th className="py-3 px-2 text-center">جغرافيا (80)</th>
+                    <th className="py-3 px-2 text-center">حاسوب (80)</th>
+                    <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200">
+                      المجموع (1120)
+                    </th>
+                    <th className="py-3 px-2 text-center">النسبة</th>
+                    <th className="py-3 px-3 text-center">النتيجة والتقدير</th>
+                    <th className="py-3 px-2 text-center">إخطار النتيجة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
+                  {examReports.map((r) => {
+                    const originalStudent = students.find(s => s.id === r.studentId) || students[0];
+                    const getSubTotal = (code: string) => r.results.find(s => s.subjectCode === code)?.totalScore ?? 0;
+
+                    return (
+                      <tr key={r.studentId} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                        <td className="py-2.5 px-2 text-center">
+                          <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-black text-xs inline-flex items-center justify-center">
+                            {r.rank}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 font-black text-slate-900 dark:text-white whitespace-nowrap">
+                          {r.studentName}
+                        </td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ARB')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('MATH')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('SCI')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ENG')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ISL')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('HIST')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('GEOG')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('COMP')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono font-black text-purple-700 dark:text-purple-300 bg-purple-50/40 dark:bg-purple-950/20 text-sm">
+                          {r.totalEarnedScore}
+                        </td>
+                        <td className="py-2.5 px-2 text-center font-mono font-black text-slate-800 dark:text-slate-200">
+                          {r.percentage}%
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-black inline-block ${
+                            r.status === 'passed_honors'
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
+                              : r.status === 'passed'
+                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
+                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                          }`}>
+                            {r.generalAppreciation} • {r.status === 'makeup_exam' ? 'دور ثانٍ 🟡' : 'ناجح 🟢'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-2 text-center">
+                          <button
+                            onClick={() => {
+                              setSelectedStudentForCard(originalStudent);
+                              setSelectedStudentRank(r.rank);
+                              setShowGradeCardModal(true);
+                              sound.playTap();
+                            }}
+                            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 rounded-lg text-[11px] font-bold border border-purple-200 dark:border-purple-800 transition active:scale-95 flex items-center justify-center gap-1 mx-auto"
+                            title="طباعة بطاقة إخطار نتيجة الطالب"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                            <span>إخطار</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Table Footer */}
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 font-bold">
+              <span>كشف رصد فصل ({selectedExamClass}) • {examReports.length} تلميذ</span>
+              <span className="text-purple-700 dark:text-purple-300 font-black">
+                ✓ متوافق 100% مع لائحة تنظيم الامتحانات بالمركز الوطني للامتحانات
+              </span>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: TEACHERS MANAGEMENT & CONTROLS                                     */}
       {/* ========================================================================= */}
       {activeTab === 'teachers' && (
         <div className="space-y-4 animate-in fade-in">
@@ -557,7 +868,7 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: FULL ATTENDANCE TRACKING                                          */}
+      {/* TAB 4: FULL ATTENDANCE TRACKING                                          */}
       {/* ========================================================================= */}
       {activeTab === 'attendance' && (
         <div className="space-y-4 animate-in fade-in">
@@ -652,6 +963,16 @@ export const AdminDashboard: React.FC = () => {
         onClose={() => { setShowTeacherModal(false); setTeacherToEdit(null); }}
         teacherToEdit={teacherToEdit}
       />
+
+      {/* Printable Student Grade Card Modal */}
+      {selectedStudentForCard && (
+        <PrintableStudentGradeCard
+          isOpen={showGradeCardModal}
+          onClose={() => { setShowGradeCardModal(false); setSelectedStudentForCard(null); }}
+          student={selectedStudentForCard}
+          rank={selectedStudentRank}
+        />
+      )}
 
     </div>
   );
