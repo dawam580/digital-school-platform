@@ -1145,7 +1145,7 @@ for (const p of pagesData) {
       linkCode: `SCH-2026-B${totalIndex}`,
       grade: p.grade,
       className: p.className,
-      motherName: isFemale ? 'عائشة الفيتوري' : 'فاطمة الترهوني',
+      motherName: '—',
       birthDate: birthDate,
       birthPlace: 'توكرة',
       parentName: `ولي أمر ${name}`,

@@ -163,7 +163,15 @@ interface SchoolContextType {
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentRole, setCurrentRole] = useState<UserRole>('parent');
+  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_active_role');
+      if (saved && ['admin', 'teacher', 'parent', 'counselor'].includes(saved)) {
+        return saved as UserRole;
+      }
+    } catch {}
+    return 'admin';
+  });
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
     try {
@@ -208,7 +216,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return [getSchoolProfile()];
   });
 
-  const [activeTab, setActiveTab] = useState<string>('parent-dashboard');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_active_tab');
+      if (saved) return saved;
+    } catch {}
+    return 'dashboard';
+  });
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isOnlineSynced, setIsOnlineSynced] = useState(true);

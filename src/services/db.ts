@@ -18,16 +18,17 @@ import {
   SchoolProfile
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
+import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 
 export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
 export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
 
 export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
   id: 'school-main-01',
-  name: 'مدرسة الأمل للتعليم الأساسي',
-  code: 'LIB-SCH-01',
-  district: 'مراقبة التربية والتعليم - طرابلس المركز',
-  directorName: 'أ. فتحي الشريف',
+  name: 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي',
+  code: '30713',
+  district: 'مراقبة التربية والتعليم - توكرة',
+  directorName: 'أ. فتحي الشريف (مدير المدرسة)',
   directorPhone: '0922465676',
   academicYear: '2025 - 2026 م',
   isCustom: false
@@ -1103,9 +1104,9 @@ export const db = {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
-      return SEED_STUDENTS;
+      return LIBYAN_BAOUR_STUDENTS;
     } catch {
-      return SEED_STUDENTS;
+      return LIBYAN_BAOUR_STUDENTS;
     }
   },
 

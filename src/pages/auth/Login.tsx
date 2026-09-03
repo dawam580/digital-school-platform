@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
     schoolProfile,
     setShowSchoolManagerModal
   } = useSchool();
-  const [loginMode, setLoginMode] = useState<'parent' | 'teacher' | 'admin'>('parent');
+  const [loginMode, setLoginMode] = useState<'parent' | 'teacher' | 'admin'>('admin');
   
   // Parent Form (Libyan 12-digit National Number)
   const [studentNationalId, setStudentNationalId] = useState('120081234567');
