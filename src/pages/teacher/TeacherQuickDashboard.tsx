@@ -18,7 +18,12 @@ import {
   Check,
   ChevronDown,
   UserCheck,
-  LogOut
+  LogOut,
+  FileText,
+  Calendar,
+  Tag,
+  Sliders,
+  Edit2
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -34,8 +39,16 @@ export const TeacherQuickDashboard: React.FC = () => {
     showToast,
     isLargeFontMode,
     toggleLargeFontMode,
-    logout
+    logout,
+    setShowCustomCodeModal,
+    setShowPdfImporterModal
   } = useSchool();
+
+  // Custom Attendance State
+  const [attendanceDate, setAttendanceDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [attendancePeriod, setAttendancePeriod] = useState<string>('الحصة الأولى');
+  const [showAttendanceCustomizer, setShowAttendanceCustomizer] = useState<boolean>(true);
+  const [studentNotes, setStudentNotes] = useState<{ [studentId: string]: string }>({});
 
   // Active section inside the teacher portal
   const [activeAction, setActiveAction] = useState<'attendance' | 'grading' | 'quick-message'>('attendance');
@@ -140,18 +153,48 @@ export const TeacherQuickDashboard: React.FC = () => {
             <h1 className={`${isLargeFontMode ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'} font-black`}>
               أهلاً بك: {currentTeacher?.name || 'أ. طارق الفيتوري'}
             </h1>
-            <p className="text-emerald-200/90 text-sm sm:text-base font-medium mt-0.5">
-              مادة: <strong className="text-white underline decoration-emerald-400 underline-offset-4">{currentTeacher?.subject || 'الرياضيات'}</strong> • رمز المعلم: <span className="font-mono bg-white/20 px-2 py-0.5 rounded-lg text-xs">{currentTeacher?.code || 'LIB-MATH-01'}</span>
-            </p>
+            <div className="text-emerald-200/90 text-sm sm:text-base font-medium mt-1 flex items-center gap-2 flex-wrap">
+              <span>مادة: <strong className="text-white underline decoration-emerald-400 underline-offset-4">{currentTeacher?.subject || 'الرياضيات'}</strong></span>
+              <span>• رمز المعلم: <span className="font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-xs font-black">{currentTeacher?.code || 'LIB-MATH-01'}</span></span>
+              <button
+                type="button"
+                onClick={() => { setShowCustomCodeModal(true); sound.playTap(); }}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow transition active:scale-95"
+                title="اضغط هنا لتخصيص رمزك"
+              >
+                <Tag className="w-3 h-3" />
+                <span>تخصيص رمزي ✏️</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Header Actions: Back Button + Large Font Toggle */}
-        <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-auto justify-end">
+        {/* Header Actions: Back Button + PDF Import + Custom Code + Large Font */}
+        <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-end">
+          {/* Custom Code Button */}
+          <button
+            onClick={() => { setShowCustomCodeModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="تخصيص وتغيير رمز الدخول الخاص بي"
+          >
+            <Tag className="w-4 h-4" />
+            <span>🏷️ تخصيص رمزي</span>
+          </button>
+
+          {/* Import PDF Button */}
+          <button
+            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm border border-teal-400/40 shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 animate-pulse"
+            title="استيراد كشف درجات وبيانات الطلبة من ملف PDF"
+          >
+            <FileText className="w-4 h-4 text-teal-200" />
+            <span>📄 استيراد PDF</span>
+          </button>
+
           {/* Prominent Back Button */}
           <button
             onClick={() => { logout(); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-lg flex items-center justify-center gap-2 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95"
             title="الرجوع إلى شاشة الدخول واختيار البوابة"
           >
             <LogOut className="w-4 h-4" />
@@ -161,9 +204,9 @@ export const TeacherQuickDashboard: React.FC = () => {
           {/* Accessibility Large Font Toggle */}
           <button
             onClick={toggleLargeFontMode}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-xs sm:text-sm border border-white/20 flex items-center justify-center gap-2 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-xs sm:text-sm border border-white/20 flex items-center justify-center gap-1.5 transition active:scale-95"
           >
-            {isLargeFontMode ? <ZoomOut className="w-5 h-5 text-amber-300" /> : <ZoomIn className="w-5 h-5 text-emerald-300" />}
+            {isLargeFontMode ? <ZoomOut className="w-4 h-4 text-amber-300" /> : <ZoomIn className="w-4 h-4 text-emerald-300" />}
             <span>{isLargeFontMode ? 'الخط العادي' : 'تكبير الخط 🔍'}</span>
           </button>
         </div>
@@ -268,102 +311,210 @@ export const TeacherQuickDashboard: React.FC = () => {
       {activeAction === 'attendance' && (
         <div className="space-y-4 animate-in fade-in">
           
-          {/* Top Control: Mark All Present Giant Button */}
-          <div className="p-4 bg-emerald-100/70 dark:bg-emerald-950/40 rounded-3xl border border-emerald-300 dark:border-emerald-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="font-black text-lg text-emerald-950 dark:text-emerald-200">
-                كشف حضور طلاب فصل ({selectedClass}) • ({classStudents.length}) طالب
-              </h3>
-              <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
-                اضغط على الزر الأخضر بالأسفل لتحضير الفصل بالكامل دفعة واحدة، أو اضغط على حالة كل طالب:
-              </p>
+          {/* Top Control: Custom Attendance Bar & Mark All Present */}
+          <div className="p-4 bg-emerald-100/70 dark:bg-emerald-950/40 rounded-3xl border border-emerald-300 dark:border-emerald-800 space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="font-black text-lg text-emerald-950 dark:text-emerald-200">
+                  كشف حضور طلاب فصل ({selectedClass}) • ({classStudents.length}) طالب
+                </h3>
+                <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
+                  تاريخ التحضير: <strong className="underline">{attendanceDate}</strong> • {attendancePeriod}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleMarkAll}
+                  className="flex-1 sm:flex-initial px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+                >
+                  <Sparkles className="w-5 h-5 text-amber-300" />
+                  <span>🟢 الكل حاضر بلمسة واحدة</span>
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={handleMarkAll}
-              className="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base sm:text-lg rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
-            >
-              <Sparkles className="w-5 h-5 text-amber-300" />
-              <span>🟢 الكل حاضر بلمسة واحدة</span>
-            </button>
+            {/* Custom Attendance Details (Date & Session Selector) */}
+            <div className="p-3 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Calendar className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs font-black text-slate-700 dark:text-slate-300 shrink-0">تخصيص التاريخ:</span>
+                <button
+                  type="button"
+                  onClick={() => { setAttendanceDate(new Date().toISOString().split('T')[0]); sound.playTap(); }}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition border ${
+                    attendanceDate === new Date().toISOString().split('T')[0]
+                      ? 'bg-emerald-600 text-white border-emerald-600'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  اليوم 📅
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const y = new Date();
+                    y.setDate(y.getDate() - 1);
+                    setAttendanceDate(y.toISOString().split('T')[0]);
+                    sound.playTap();
+                  }}
+                  className="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                >
+                  أمس ⏮️
+                </button>
+                <input
+                  type="date"
+                  value={attendanceDate}
+                  onChange={e => setAttendanceDate(e.target.value)}
+                  className="px-2.5 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap w-full sm:w-auto">
+                <span className="text-xs font-black text-slate-700 dark:text-slate-300 shrink-0">الحصة:</span>
+                {['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة'].map(p => {
+                  const full = `الحصة ${p}`;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => { setAttendancePeriod(full); sound.playTap(); }}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold transition border ${
+                        attendancePeriod === full
+                          ? 'bg-teal-700 text-white border-teal-700 shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          {/* Student Rows (Large, High-Contrast Touch Cards) */}
+          {/* Student Rows (Large, High-Contrast Touch Cards with 4 status options) */}
           <div className="space-y-3">
             {classStudents.map((student, idx) => {
               const isPresent = student.status === 'present';
               const isAbsent = student.status === 'unexcused';
               const isLate = student.status === 'late';
+              const isExcused = student.status === 'excused';
 
               return (
                 <div
                   key={student.id}
-                  className={`p-4 sm:p-5 rounded-3xl border-2 transition-all flex flex-col sm:flex-row items-center justify-between gap-4 ${
+                  className={`p-4 sm:p-5 rounded-3xl border-2 transition-all flex flex-col gap-3 ${
                     isPresent
                       ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
                       : isAbsent
                       ? 'bg-red-50/40 dark:bg-red-950/20 border-red-300 dark:border-red-800'
+                      : isExcused
+                      ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-300 dark:border-blue-800'
                       : 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800'
                   }`}
                 >
-                  {/* Student Info */}
-                  <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <span className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm shrink-0">
-                      {idx + 1}
-                    </span>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    {/* Student Info */}
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <span className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm shrink-0">
+                        {idx + 1}
+                      </span>
 
-                    <img
-                      src={student.avatar}
-                      alt={student.name}
-                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
-                    />
+                      <img
+                        src={student.avatar}
+                        alt={student.name}
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
+                      />
 
-                    <div>
-                      <h4 className="font-black text-base sm:text-lg text-slate-900 dark:text-white">
-                        {student.name}
-                      </h4>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        <span>الرقم الوطني: <strong className="font-mono text-slate-700 dark:text-slate-300">{student.nationalNumber || student.nationalId}</strong></span>
-                        {student.motherName && <span>• الأم: <strong>{student.motherName}</strong></span>}
+                      <div>
+                        <h4 className="font-black text-base sm:text-lg text-slate-900 dark:text-white">
+                          {student.name}
+                        </h4>
+                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          <span>الرقم الوطني: <strong className="font-mono text-slate-700 dark:text-slate-300">{student.nationalNumber || student.nationalId}</strong></span>
+                          {student.motherName && <span>• الأم: <strong>{student.motherName}</strong></span>}
+                        </div>
                       </div>
+                    </div>
+
+                    {/* 4 Status Selection Buttons (Min 48px height) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full sm:w-auto shrink-0">
+                      <button
+                        onClick={() => handleStatusChange(student.id, 'present')}
+                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                          isPresent
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
+                        }`}
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>حاضر 🟢</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleStatusChange(student.id, 'unexcused')}
+                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                          isAbsent
+                            ? 'bg-red-600 text-white border-red-600 shadow-md scale-105'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-red-50'
+                        }`}
+                      >
+                        <span>غائب 🔴</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleStatusChange(student.id, 'late')}
+                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                          isLate
+                            ? 'bg-amber-500 text-white border-amber-500 shadow-md scale-105'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
+                        }`}
+                      >
+                        <span>متأخر 🟡</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleStatusChange(student.id, 'excused')}
+                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                          isExcused
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'
+                        }`}
+                      >
+                        <span>إذن رسمي 🔵</span>
+                      </button>
                     </div>
                   </div>
 
-                  {/* Giant Status Selection Buttons (Min 48px height) */}
-                  <div className="grid grid-cols-3 gap-2 w-full sm:w-auto shrink-0">
-                    <button
-                      onClick={() => handleStatusChange(student.id, 'present')}
-                      className={`py-3.5 px-4 rounded-2xl font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all active:scale-95 border ${
-                        isPresent
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
-                      }`}
-                    >
-                      <Check className="w-5 h-5" />
-                      <span>حاضر 🟢</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleStatusChange(student.id, 'unexcused')}
-                      className={`py-3.5 px-4 rounded-2xl font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all active:scale-95 border ${
-                        isAbsent
-                          ? 'bg-red-600 text-white border-red-600 shadow-md scale-105'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-red-50'
-                      }`}
-                    >
-                      <span>غائب 🔴</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleStatusChange(student.id, 'late')}
-                      className={`py-3.5 px-4 rounded-2xl font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all active:scale-95 border ${
-                        isLate
-                          ? 'bg-amber-500 text-white border-amber-500 shadow-md scale-105'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
-                      }`}
-                    >
-                      <span>متأخر 🟡</span>
-                    </button>
+                  {/* Quick Attendance Reason / Note for this student */}
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 flex-wrap text-xs">
+                    <span className="text-slate-400 text-[11px]">ملاحظة أو سبب الغياب/التأخر:</span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {['عذر مرضي 🩺', 'استئذان أسري 🏠', 'مأذون من الإدارة 🏢', 'بدون عذر ⚠️'].map(reason => (
+                        <button
+                          key={reason}
+                          type="button"
+                          onClick={() => {
+                            setStudentNotes(prev => ({ ...prev, [student.id]: reason }));
+                            sound.playTap();
+                            showToast('info', 'تم حفظ الملاحظة', `${student.name}: ${reason}`);
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${
+                            studentNotes[student.id] === reason
+                              ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 text-amber-900 dark:text-amber-200 font-black shadow-sm'
+                              : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                          }`}
+                        >
+                          {reason}
+                        </button>
+                      ))}
+                      {studentNotes[student.id] && (
+                        <span className="font-bold text-amber-600 dark:text-amber-400 text-xs mr-1">
+                          ✓ {studentNotes[student.id]}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

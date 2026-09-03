@@ -20,6 +20,8 @@ import { CommandPalette } from './components/ui/CommandPalette';
 import { SocialCounselorDashboard } from './pages/counselor/SocialCounselorDashboard';
 import { TeacherQuickDashboard } from './pages/teacher/TeacherQuickDashboard';
 import { SchoolManagerModal } from './components/admin/SchoolManagerModal';
+import { PdfStudentImporterModal } from './components/admin/PdfStudentImporterModal';
+import { CustomCodeModal } from './components/admin/CustomCodeModal';
 
 const MainContent: React.FC = () => {
   const {
@@ -31,7 +33,11 @@ const MainContent: React.FC = () => {
     showAccountSettingsModal,
     setShowAccountSettingsModal,
     showSchoolManagerModal,
-    setShowSchoolManagerModal
+    setShowSchoolManagerModal,
+    showPdfImporterModal,
+    setShowPdfImporterModal,
+    showCustomCodeModal,
+    setShowCustomCodeModal
   } = useSchool();
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
@@ -110,6 +116,14 @@ const MainContent: React.FC = () => {
       <SchoolManagerModal
         isOpen={showSchoolManagerModal}
         onClose={() => setShowSchoolManagerModal(false)}
+      />
+      <PdfStudentImporterModal
+        isOpen={showPdfImporterModal}
+        onClose={() => setShowPdfImporterModal(false)}
+      />
+      <CustomCodeModal
+        isOpen={showCustomCodeModal}
+        onClose={() => setShowCustomCodeModal(false)}
       />
     </>
   );

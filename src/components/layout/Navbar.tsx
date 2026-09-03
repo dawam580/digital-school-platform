@@ -21,7 +21,8 @@ import {
   FileText,
   Key,
   HeartHandshake,
-  Building2
+  Building2,
+  Tag
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -30,7 +31,7 @@ interface NavbarProps {
   onOpenMobileMenu?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = () => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const {
     currentRole,
     setCurrentRole,
@@ -44,6 +45,8 @@ export const Navbar: React.FC<NavbarProps> = () => {
     setShowAccountSettingsModal,
     schoolProfile,
     setShowSchoolManagerModal,
+    setShowPdfImporterModal,
+    setShowCustomCodeModal,
     students,
     selectedStudent,
     setSelectedStudent,
@@ -380,6 +383,28 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 </div>
               )}
             </div>
+
+            {/* 1-Click PDF Student Importer Shortcut */}
+            <button
+              onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 transition-colors border border-teal-200 dark:border-teal-800 text-xs font-bold"
+              title="استيراد كشف درجات وبيانات الطلبة من ملف PDF"
+            >
+              <FileText className="w-4 h-4 text-teal-600" />
+              <span>استيراد PDF</span>
+            </button>
+
+            {/* 1-Click Custom Code Shortcut (for teachers) */}
+            {currentRole === 'teacher' && (
+              <button
+                onClick={() => { setShowCustomCodeModal(true); sound.playTap(); }}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 transition-colors border border-amber-300 dark:border-amber-800 text-xs font-bold"
+                title="تخصيص رمز المعلم الخاص بي"
+              >
+                <Tag className="w-3.5 h-3.5 text-amber-600" />
+                <span>تخصيص رمزي</span>
+              </button>
+            )}
 
             {/* Account Settings Button (Change Phone / Password / Teacher Code) */}
             <button

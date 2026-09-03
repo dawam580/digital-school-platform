@@ -30,6 +30,7 @@ import {
   PdfParseResult
 } from '../../services/importers/pdfStudentParser';
 import { Student } from '../../types';
+import { db } from '../../services/db';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { exportLibyanStudentsToExcel } from '../../utils/excelHelper';
@@ -237,6 +238,11 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
 
     const updatedStudentsList = Array.from(existingMap.values());
     setStudents(updatedStudentsList);
+    db.saveStudents(updatedStudentsList, true);
+    try {
+      localStorage.setItem('madrasa_db_students_v3', JSON.stringify(updatedStudentsList));
+      localStorage.setItem('madrasa_students_v1', JSON.stringify(updatedStudentsList));
+    } catch {}
 
     sound.playFanfare();
     triggerConfetti();

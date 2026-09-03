@@ -151,6 +151,13 @@ interface SchoolContextType {
   // Accessibility & Easy Mode for Elderly Teachers
   isLargeFontMode: boolean;
   toggleLargeFontMode: () => void;
+
+  // Global Modals & Customization
+  showPdfImporterModal: boolean;
+  setShowPdfImporterModal: (open: boolean) => void;
+  showCustomCodeModal: boolean;
+  setShowCustomCodeModal: (open: boolean) => void;
+  updateTeacherCode: (teacherId: string, newCode: string) => boolean;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -169,6 +176,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showOperationalPlanModal, setShowOperationalPlanModal] = useState(false);
   const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [showSchoolManagerModal, setShowSchoolManagerModal] = useState(false);
+  const [showPdfImporterModal, setShowPdfImporterModal] = useState(false);
+  const [showCustomCodeModal, setShowCustomCodeModal] = useState(false);
   const [isLargeFontMode, setIsLargeFontMode] = useState(() => {
     try {
       return localStorage.getItem('madrasa_large_font_mode') === 'true';
@@ -1207,6 +1216,24 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
+  const updateTeacherCode = (teacherId: string, newCode: string): boolean => {
+    const clean = newCode.trim();
+    if (!clean) {
+      showToast('error', 'خطأ في الرمز', 'يرجى إدخال رمز صحيح غير فارغ.');
+      return false;
+    }
+    const updated = teachers.map(t => t.id === teacherId ? { ...t, code: clean } : t);
+    setTeachers(updated);
+    db.saveTeachers(updated);
+    if (currentTeacher && currentTeacher.id === teacherId) {
+      setCurrentTeacher({ ...currentTeacher, code: clean });
+    }
+    sound.playSuccess();
+    triggerConfetti();
+    showToast('gold', 'تم تخصيص الرمز بنجاح 🏷️', `أصبح رمز الدخول الخاص بك الآن: ${clean}`);
+    return true;
+  };
+
   return (
     <SchoolContext.Provider
       value={{
@@ -1234,6 +1261,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         importSchoolPackage,
         showSchoolManagerModal,
         setShowSchoolManagerModal,
+        showPdfImporterModal,
+        setShowPdfImporterModal,
+        showCustomCodeModal,
+        setShowCustomCodeModal,
+        updateTeacherCode,
         isLargeFontMode,
         toggleLargeFontMode,
         caseStudies,
