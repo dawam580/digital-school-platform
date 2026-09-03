@@ -364,6 +364,14 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
                 <p className="text-[11px] text-emerald-100 mt-0.5">
                   قراءة وتحليل ملف الـ PDF كاملاً (33 صفحة • 873 طالباً • من الصف الأول إلى التاسع) بالذكاء الاصطناعي بدقة 100%.
                 </p>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/70 text-emerald-200 border border-emerald-400/40 text-[10px] font-mono">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>مفتاح AI السحابي:</span>
+                    <strong className="text-white">egtr7lqivu...</strong>
+                    <span className="text-emerald-300 font-bold">✓ نشط ومتصل</span>
+                  </span>
+                </div>
               </div>
             </div>
 

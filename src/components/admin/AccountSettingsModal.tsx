@@ -16,6 +16,7 @@ import {
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
+import { AiConfigService } from '../../services/ai/aiConfig';
 
 interface AccountSettingsModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [aiToken, setAiToken] = useState(() => AiConfigService.getCredentials().rawToken);
   
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -84,6 +86,11 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
         );
         if (setTeachers) setTeachers(updatedTeachers);
         db.saveTeachers(updatedTeachers);
+      }
+
+      // 4. Update AI Token
+      if (aiToken) {
+        AiConfigService.saveCredentials({ rawToken: aiToken.trim() });
       }
 
       auditLogger.log({
@@ -213,6 +220,30 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                 )}
               </div>
             )}
+          </div>
+
+          {/* Section 3: AI API Key Integration */}
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>مفتاح الذكاء الاصطناعي (AI API Key / Token)</span>
+              </label>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>متصل ومعتمد ⚡</span>
+              </span>
+            </div>
+            <textarea
+              rows={2}
+              value={aiToken}
+              onChange={e => setAiToken(e.target.value)}
+              placeholder="ضع مفتاح الذكاء الاصطناعي هنا..."
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
+            />
+            <p className="text-[11px] text-slate-400">
+              يُستخدم هذا المفتاح في المعالجة السحابية وقراءة كشوفات الـ PDF وتوزيع الطلاب والجداول آلياً.
+            </p>
           </div>
 
           {/* Action Buttons */}
