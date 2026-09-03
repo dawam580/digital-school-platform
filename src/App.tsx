@@ -35,11 +35,27 @@ const MainContent: React.FC = () => {
   } = useSchool();
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
-    return <Login />;
+    return (
+      <>
+        <Login />
+        <SchoolManagerModal
+          isOpen={showSchoolManagerModal}
+          onClose={() => setShowSchoolManagerModal(false)}
+        />
+      </>
+    );
   }
 
   if (activeTab === 'login') {
-    return <Login />;
+    return (
+      <>
+        <Login />
+        <SchoolManagerModal
+          isOpen={showSchoolManagerModal}
+          onClose={() => setShowSchoolManagerModal(false)}
+        />
+      </>
+    );
   }
 
   if (activeTab === 'parent-signup') {

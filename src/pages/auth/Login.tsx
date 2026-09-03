@@ -6,7 +6,17 @@ import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 
 export const Login: React.FC = () => {
-  const { login, loginWithTeacherCode, setActiveTab, students, setSelectedStudent, teachers, currentUserPhone } = useSchool();
+  const {
+    login,
+    loginWithTeacherCode,
+    setActiveTab,
+    students,
+    setSelectedStudent,
+    teachers,
+    currentUserPhone,
+    schoolProfile,
+    setShowSchoolManagerModal
+  } = useSchool();
   const [loginMode, setLoginMode] = useState<'parent' | 'teacher' | 'admin'>('parent');
   
   // Parent Form (Libyan 12-digit National Number)
@@ -92,11 +102,21 @@ export const Login: React.FC = () => {
               <span>🇱🇾 دولة ليبيا - وزارة التربية والتعليم</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#00288e] tracking-tight">
-              منظومة المدرسة الرقمية
+              {schoolProfile.name}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 font-medium">
-              العام الدراسي 2025 - 2026 م • النظام الإداري والتربوي المتكامل
+              {schoolProfile.district} • العام الدراسي {schoolProfile.academicYear}
             </p>
+            <div className="pt-2 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => { setShowSchoolManagerModal(true); sound.playTap(); }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-black border border-amber-300 shadow-sm transition active:scale-95"
+              >
+                <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                <span>تبديل أو تسجيل مدرسة جديدة 🏫</span>
+              </button>
+            </div>
           </div>
         </div>
 
