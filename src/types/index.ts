@@ -19,9 +19,18 @@ export interface TeacherAccount {
   phone: string;
   subject: string; // e.g. الرياضيات
   subjectCode: string; // e.g. MATH
-  assignedClasses: string[]; // e.g. ['3/أ', '3/ب', '2/أ']
+  assignedClasses: string[]; // e.g. ['3/أ', '3/ب', '2/أ', '7/أ']
   avatar: string;
   email?: string;
+  nationalNumber?: string; // الرقم الوطني الليبي (12 خانة)
+  fileNumber?: string; // رقم الملف المالي في منظومة الشاطئ
+  qualification?: string; // المؤهل العلمي (بكالوريوس، ليسانس، ماجستير)
+  specialization?: string; // التخصص الدقيق
+  teachingQuota?: number; // نصاب الحصص الأسبوعي (مثل 20 أو 22 حصة)
+  assignedPeriodsCount?: number; // الحصص الفعلية المسندة بالجدول
+  appointmentDate?: string; // تاريخ المباشرة والتعيين
+  status?: 'active' | 'on_leave' | 'delegated'; // الحالة الوظيفية
+  notes?: string;
 }
 
 export type AttendanceStatus = 'present' | 'late' | 'excused' | 'unexcused';

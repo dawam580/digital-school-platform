@@ -262,4 +262,54 @@ export class LibyanExamEngine {
       rank: index + 1
     }));
   }
+
+  /**
+   * استرجاع حالة اعتماد النتيجة الرسمية للفصل الدراسي
+   */
+  static getCertificationStatus(classId: string): {
+    status: 'draft' | 'submitted_by_teacher' | 'approved_by_admin';
+    teacherSign?: string;
+    adminSign?: string;
+    approvedAt?: string;
+    submittedAt?: string;
+  } {
+    try {
+      const stored = localStorage.getItem(`madrasa_cert_${classId}`);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return { status: 'draft' };
+  }
+
+  /**
+   * قيام معلم المادة برصد الدرجات وطلب الاعتماد الرسمي من الإدارة
+   */
+  static submitForAdminApproval(classId: string, teacherName: string, subject: string) {
+    const cert = {
+      status: 'submitted_by_teacher' as const,
+      teacherSign: `${teacherName} (${subject})`,
+      submittedAt: new Date().toLocaleDateString('ar-LY') + ' ' + new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })
+    };
+    try {
+      localStorage.setItem(`madrasa_cert_${classId}`, JSON.stringify(cert));
+    } catch {}
+    return cert;
+  }
+
+  /**
+   * اعتماد النتيجة رسمياً من مدير المدرسة وإقفال الكنترول والشهادات
+   */
+  static certifyAndLockGrades(classId: string, adminName: string) {
+    const prev = this.getCertificationStatus(classId);
+    const cert = {
+      ...prev,
+      status: 'approved_by_admin' as const,
+      adminSign: adminName || 'إدارة المدرسة المعتمدة',
+      approvedAt: new Date().toLocaleDateString('ar-LY') + ' ' + new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })
+    };
+    try {
+      localStorage.setItem(`madrasa_cert_${classId}`, JSON.stringify(cert));
+    } catch {}
+    return cert;
+  }
 }
+

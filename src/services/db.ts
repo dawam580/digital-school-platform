@@ -70,9 +70,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0912345678',
     subject: 'الرياضيات',
     subjectCode: 'MATH',
-    assignedClasses: ['3/أ', '3/ب', '2/أ'],
+    assignedClasses: ['7/أ', '7/ب', '8/أ', '3/أ'],
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    email: 'tariq.fitouri@school.edu.ly'
+    email: 'tariq.fitouri@school.edu.ly',
+    nationalNumber: '119820045671',
+    fileNumber: 'WSH-8841',
+    qualification: 'بكالوريوس علوم ورياضيات (جامعة طرابلس)',
+    specialization: 'الرياضيات البحتة والتطبيقية',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2012-10-01',
+    status: 'active',
+    notes: 'معلم متميز - رئيس قسم الرياضيات بالمدرسة'
   },
   {
     id: 't-2',
@@ -81,9 +90,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0923456789',
     subject: 'اللغة العربية',
     subjectCode: 'ARA',
-    assignedClasses: ['3/أ', '3/ب'],
+    assignedClasses: ['7/أ', '7/ب', '6/أ', '3/أ'],
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    email: 'abdulsalam.werfelli@school.edu.ly'
+    email: 'abdulsalam.werfelli@school.edu.ly',
+    nationalNumber: '119790012345',
+    fileNumber: 'WSH-6520',
+    qualification: 'ليسانس لغة عربية ودراسات إسلامية',
+    specialization: 'النحو والصرف والأدب العربي',
+    teachingQuota: 22,
+    assignedPeriodsCount: 20,
+    appointmentDate: '2008-09-15',
+    status: 'active',
+    notes: 'معلم أول لغة عربية'
   },
   {
     id: 't-3',
@@ -92,9 +110,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0945678901',
     subject: 'العلوم الطبيعية',
     subjectCode: 'SCI',
-    assignedClasses: ['3/أ', '2/أ'],
+    assignedClasses: ['7/أ', '7/ب', '6/أ', '4/أ'],
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    email: 'maryam.tarhouni@school.edu.ly'
+    email: 'maryam.tarhouni@school.edu.ly',
+    nationalNumber: '219850067890',
+    fileNumber: 'WSH-9310',
+    qualification: 'بكالوريوس علوم فيزيائية وكيميائية',
+    specialization: 'الفيزياء والكيمياء للتعليم الأساسي',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2015-11-20',
+    status: 'active',
+    notes: 'مشرفة معمل العلوم المدرسية'
   },
   {
     id: 't-4',
@@ -103,9 +130,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0916789012',
     subject: 'الحاسوب وتقنية المعلومات',
     subjectCode: 'COMP',
-    assignedClasses: ['3/أ', '3/ب', '2/أ', '1/أ'],
+    assignedClasses: ['7/أ', '8/أ', '9/أ', '6/أ'],
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    email: 'osama.megrahi@school.edu.ly'
+    email: 'osama.megrahi@school.edu.ly',
+    nationalNumber: '119880098765',
+    fileNumber: 'WSH-1044',
+    qualification: 'بكالوريوس تقنية معلومات وهندسة حاسوب',
+    specialization: 'البرمجة والشبكات ونظم التعليم الإلكتروني',
+    teachingQuota: 18,
+    assignedPeriodsCount: 16,
+    appointmentDate: '2018-02-10',
+    status: 'active',
+    notes: 'مسؤول المنظومة الرقمية ومعمل الحاسوب'
   },
   {
     id: 't-5',
@@ -114,9 +150,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0927890123',
     subject: 'التربية الإسلامية',
     subjectCode: 'ISL',
-    assignedClasses: ['3/أ', '3/ب', '2/أ'],
+    assignedClasses: ['7/أ', '7/ب', '8/أ', '4/أ'],
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    email: 'mahmoud.sweihli@school.edu.ly'
+    email: 'mahmoud.sweihli@school.edu.ly',
+    nationalNumber: '119810054321',
+    fileNumber: 'WSH-7712',
+    qualification: 'ليسانس شريعة إسلامية ودراسات قرآنية',
+    specialization: 'أصول الفقه والتلاوة والتجويد',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2010-09-01',
+    status: 'active',
+    notes: 'إشراف النشاط الديني ومسابقات القرآن الكريم'
   },
   {
     id: 't-6',
@@ -125,9 +170,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0948901234',
     subject: 'اللغة الإنجليزية',
     subjectCode: 'ENG',
-    assignedClasses: ['3/أ', '3/ب'],
+    assignedClasses: ['7/أ', '7/ب', '8/أ', '6/أ'],
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-    email: 'fatima.zway@school.edu.ly'
+    email: 'fatima.zway@school.edu.ly',
+    nationalNumber: '219860087654',
+    fileNumber: 'WSH-9923',
+    qualification: 'ليسانس آداب لغة إنجليزية وترجمة',
+    specialization: 'تدريس اللغة الإنجليزية كلغة ثانية',
+    teachingQuota: 20,
+    assignedPeriodsCount: 19,
+    appointmentDate: '2016-10-15',
+    status: 'active',
+    notes: 'معلمة متميزة في التخاطب الصفي'
   },
   {
     id: 't-7',
@@ -136,9 +190,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0919012345',
     subject: 'الدراسات الاجتماعية',
     subjectCode: 'SOC',
-    assignedClasses: ['3/أ', '2/أ'],
+    assignedClasses: ['7/أ', '7/ب', '8/أ', '4/أ'],
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
-    email: 'walid.misrati@school.edu.ly'
+    email: 'walid.misrati@school.edu.ly',
+    nationalNumber: '119840032109',
+    fileNumber: 'WSH-8501',
+    qualification: 'ليسانس تاريخ وجغرافيا ودراسات بيئية',
+    specialization: 'تاريخ وجغرافيا ليبيا والعالم العربي',
+    teachingQuota: 22,
+    assignedPeriodsCount: 20,
+    appointmentDate: '2013-11-05',
+    status: 'active',
+    notes: 'مشرف الرحلات الاستكشافية والنشاط الميداني'
   },
   {
     id: 't-8',
@@ -147,9 +210,18 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0922465676',
     subject: 'الإرشاد الاجتماعي والنفسي',
     subjectCode: 'COUNSEL',
-    assignedClasses: ['كافة الفصول والمراحل'],
+    assignedClasses: ['كافة الفصول والمراحل (4-9)'],
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    email: 'najwa.gammati@school.edu.ly'
+    email: 'najwa.gammati@school.edu.ly',
+    nationalNumber: '219800043210',
+    fileNumber: 'WSH-6019',
+    qualification: 'ماجستير في الخدمة الاجتماعية المدرسية',
+    specialization: 'الإرشاد النفسي والتوجيه السلوكي',
+    teachingQuota: 14,
+    assignedPeriodsCount: 12,
+    appointmentDate: '2007-09-01',
+    status: 'active',
+    notes: 'الأخصائي الاجتماعي العام بالمؤسسة'
   }
 ];
 
@@ -616,10 +688,18 @@ export const SEED_STUDENTS: Student[] = [
 ];
 
 export const SEED_CLASSES: SchoolClass[] = [
-  { id: 'c-1', name: '3/أ', grade: 'الصف الثالث الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
-  { id: 'c-2', name: '3/ب', grade: 'الصف الثالث الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
-  { id: 'c-3', name: '2/أ', grade: 'الصف الثاني الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
-  { id: 'c-4', name: '1/أ', grade: 'الصف الأول الأساسي', studentCount: 26, presentCount: 26, absentCount: 0, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
+  { id: 'c-7a', name: '7/أ', grade: 'الصف السابع الأساسي', studentCount: 32, presentCount: 31, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'c-7b', name: '7/ب', grade: 'الصف السابع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 1, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'c-8a', name: '8/أ', grade: 'الصف الثامن الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. وليد المصراتي' },
+  { id: 'c-8b', name: '8/ب', grade: 'الصف الثامن الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. فاطمة الزوي' },
+  { id: 'c-6a', name: '6/أ', grade: 'الصف السادس الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
+  { id: 'c-6b', name: '6/ب', grade: 'الصف السادس الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
+  { id: 'c-4a', name: '4/أ', grade: 'الصف الرابع الأساسي', studentCount: 31, presentCount: 30, absentCount: 1, lateCount: 0, supervisor: 'أ. محمود السويحلي' },
+  { id: 'c-4b', name: '4/ب', grade: 'الصف الرابع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'c-9a', name: '9/أ', grade: 'الصف التاسع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
+  { id: 'c-9b', name: '9/ب', grade: 'الصف التاسع الأساسي', studentCount: 28, presentCount: 28, absentCount: 0, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'c-3a', name: '3/أ', grade: 'الصف الثالث الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'c-3b', name: '3/ب', grade: 'الصف الثالث الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
 ];
 
 export const SEED_NOTIFICATIONS: NotificationItem[] = [

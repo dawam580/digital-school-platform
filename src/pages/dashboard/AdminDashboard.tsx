@@ -28,6 +28,10 @@ import {
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
 import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
+import { ExcelStudentImporterModal } from '../../components/admin/ExcelStudentImporterModal';
+import { QrPdfReaderModal } from '../../components/common/QrPdfReaderModal';
+import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTeachersRosterModal';
+import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
 import {
   LibyanExamEngine,
   StudentFullExamReport,
@@ -35,6 +39,7 @@ import {
 } from '../../services/exams/libyanExamEngine';
 import { exportLibyanStudentsToExcel } from '../../utils/excelHelper';
 import { sound } from '../../utils/soundEffects';
+import { triggerConfetti } from '../../utils/confetti';
 import { TeacherAccount, Student } from '../../types';
 import { db } from '../../services/db';
 
@@ -74,14 +79,22 @@ export const AdminDashboard: React.FC = () => {
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
   const [showGuideBanner, setShowGuideBanner] = useState<boolean>(true);
 
-  // Available classes dynamically extracted from students
+  // New Feature Modals State
+  const [showExcelImporterModal, setShowExcelImporterModal] = useState<boolean>(false);
+  const [showQrPdfReaderModal, setShowQrPdfReaderModal] = useState<boolean>(false);
+  const [showTeachersRosterModal, setShowTeachersRosterModal] = useState<boolean>(false);
+  const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
+  const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
+
+  // Available classes dynamically extracted from students + Grades 4, 6, 7, 8, 9, 3
   const availableClasses = useMemo(() => {
     const set = new Set<string>();
+    ['7/أ', '7/ب', '8/أ', '8/ب', '6/أ', '6/ب', '4/أ', '4/ب', '9/أ', '9/ب', '3/أ', '3/ب'].forEach(c => set.add(c));
     students.forEach(s => {
       if (s.className) set.add(s.className);
     });
     const arr = Array.from(set).sort();
-    return arr.length > 0 ? arr : ['9/أ', '9/ب', '9/ج', '9/د', '3/أ'];
+    return arr;
   }, [students]);
 
   // Filtered Students for Tab 1
@@ -255,14 +268,44 @@ export const AdminDashboard: React.FC = () => {
             <span>👁️ مراقبة واجهة المعلم</span>
           </button>
 
+          {/* Excel Importer Button */}
+          <button
+            onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="استيراد كشف الطلبة من ملفات إكسل (.xlsx / .csv)"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
+            <span>📊 استيراد إكسل</span>
+          </button>
+
+          {/* QR Code PDF Reader Button */}
+          <button
+            onClick={() => { setShowQrPdfReaderModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="قراءة كود QR من ملفات PDF الممسوحة ضوئياً"
+          >
+            <span className="text-sm">📱</span>
+            <span>قارئ QR للـ PDF</span>
+          </button>
+
+          {/* Al-Shati Teachers Roster Button */}
+          <button
+            onClick={() => { setShowTeachersRosterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="كشف حصر المعلمين ونصاب الحصص (منظومة الشاطئ)"
+          >
+            <span className="text-sm">📋</span>
+            <span>كشف المعلمين (الشاطئ)</span>
+          </button>
+
           {/* PDF Importer Button */}
           <button
             onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
             title="استيراد كشف الطلبة من ملف PDF للمنظومة القديمة"
           >
-            <FileText className="w-5 h-5 text-emerald-200" />
-            <span>📄 استيراد كشف PDF للطلبة</span>
+            <FileText className="w-4 h-4 text-teal-200" />
+            <span>📄 استيراد PDF</span>
           </button>
 
           {/* Prominent Back Button */}
@@ -787,6 +830,56 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
+          {/* Official Libyan Exam Certification & Approval Banner */}
+          {(() => {
+            const cert = LibyanExamEngine.getCertificationStatus(selectedExamClass);
+            const isApproved = cert.status === 'approved_by_admin';
+            const isSubmitted = cert.status === 'submitted_by_teacher';
+
+            return (
+              <div className={`p-4 rounded-3xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+                isApproved
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-950 dark:text-emerald-200'
+                  : isSubmitted
+                  ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 text-amber-950 dark:text-amber-200'
+                  : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{isApproved ? '🏛️' : isSubmitted ? '⏳' : '📝'}</span>
+                  <div>
+                    <strong className="block text-sm font-black">
+                      {isApproved
+                        ? `✓ تم اعتماد نتيجة فصل (${selectedExamClass}) رسمياً وإقفال الكنترول 🔒`
+                        : isSubmitted
+                        ? `ورد طلب اعتماد من المعلم (${cert.teacherSign}) بتاريخ ${cert.submittedAt}`
+                        : `حالة شيت فصل (${selectedExamClass}): مسودة قيد الرصد الميداني`}
+                    </strong>
+                    <span className="text-xs opacity-80 block">
+                      {isApproved
+                        ? `معتمد بختم الإدارة والوزارة • معتمد بواسطة: ${cert.adminSign} بتاريخ ${cert.approvedAt}`
+                        : 'يتطلب مراجعة الدرجات ثم الضغط على زر الاعتماد الرسمي بالأسفل لإقفال النتائج والشهادات.'}
+                    </span>
+                  </div>
+                </div>
+
+                {!isApproved && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      LibyanExamEngine.certifyAndLockGrades(selectedExamClass, schoolProfile.directorName);
+                      sound.playFanfare();
+                      triggerConfetti();
+                      showToast('gold', 'تم اعتماد النتيجة رسميًا 🏛️', `تم إقفال واعتماد شيت درجات فصل (${selectedExamClass}) بنجاح.`);
+                    }}
+                    className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+                  >
+                    <span>🏛️ اعتماد النتيجة وإقفال الشيت</span>
+                  </button>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Master Sheet Matrix Table */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -1114,6 +1207,46 @@ export const AdminDashboard: React.FC = () => {
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
       />
+
+      {/* Excel Student Importer Modal */}
+      <ExcelStudentImporterModal
+        isOpen={showExcelImporterModal}
+        onClose={() => setShowExcelImporterModal(false)}
+      />
+
+      {/* QR Code PDF Reader Modal */}
+      <QrPdfReaderModal
+        isOpen={showQrPdfReaderModal}
+        onClose={() => setShowQrPdfReaderModal(false)}
+      />
+
+      {/* Printable Teachers Roster Modal (Al-Shati System) */}
+      <PrintableTeachersRosterModal
+        isOpen={showTeachersRosterModal}
+        onClose={() => setShowTeachersRosterModal(false)}
+      />
+
+      {/* Photo Capture & Camera Modal */}
+      {photoTarget && (
+        <PhotoCaptureModal
+          isOpen={showPhotoModal}
+          onClose={() => { setShowPhotoModal(false); setPhotoTarget(null); }}
+          personName={photoTarget.name}
+          onSavePhoto={(photoUrl) => {
+            if (photoTarget.type === 'student') {
+              const updated = students.map(s => s.id === photoTarget.id ? { ...s, avatar: photoUrl } : s);
+              setStudents(updated);
+              db.saveStudents(updated, true);
+              showToast('success', 'تم حفظ الصورة 📸', `تم تحديث صورة الطالب (${photoTarget.name}) بنجاح.`);
+            } else {
+              const updated = teachers.map(t => t.id === photoTarget.id ? { ...t, avatar: photoUrl } : t);
+              setTeachers(updated);
+              db.saveTeachers(updated);
+              showToast('success', 'تم حفظ الصورة 📸', `تم تحديث صورة المعلم (${photoTarget.name}) بنجاح.`);
+            }
+          }}
+        />
+      )}
 
     </div>
   );

@@ -58,9 +58,14 @@ export const TeacherQuickDashboard: React.FC = () => {
   // Active section inside the teacher portal
   const [activeAction, setActiveAction] = useState<'attendance' | 'grading' | 'quick-message'>('attendance');
 
-  // Selected class
-  const assignedClasses = currentTeacher?.assignedClasses || ['3/أ', '3/ب', '2/أ'];
-  const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '3/أ');
+  // Selected class (Includes 7th, 8th, 6th, 4th, 3rd grades)
+  const assignedClasses = React.useMemo(() => {
+    const list = currentTeacher?.assignedClasses || ['7/أ', '7/ب', '3/أ'];
+    const set = new Set(list);
+    ['7/أ', '7/ب', '8/أ', '6/أ', '4/أ', '3/أ'].forEach(c => set.add(c));
+    return Array.from(set);
+  }, [currentTeacher]);
+  const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '7/أ');
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
 
   // Filter students for the selected class
@@ -970,14 +975,28 @@ export const TeacherQuickDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Sticky Bottom Save Bar */}
-          <div className="sticky bottom-4 z-20 pt-4">
+          {/* Sticky Bottom Save & Certification Bar */}
+          <div className="sticky bottom-4 z-20 pt-4 flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleSaveAllGrades}
-              className="w-full py-4 px-8 rounded-3xl font-black text-base sm:text-lg shadow-2xl flex items-center justify-center gap-3 transition-all active:scale-95 bg-gradient-to-r from-amber-600 via-emerald-600 to-teal-700 hover:from-amber-700 hover:to-teal-800 text-white"
+              className="flex-1 py-4 px-6 rounded-3xl font-black text-sm sm:text-base shadow-2xl flex items-center justify-center gap-2 transition-all active:scale-95 bg-emerald-600 hover:bg-emerald-700 text-white"
             >
-              <Save className="w-6 h-6" />
-              <span>💾 حفظ واعتماد درجات {teacherSubject} لفصل ({selectedClass}) في قاعدة البيانات</span>
+              <Save className="w-5 h-5" />
+              <span>💾 حفظ وتثبيت درجات {teacherSubject} لفصل ({selectedClass})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                handleSaveAllGrades();
+                LibyanExamEngine.submitForAdminApproval(selectedClass, currentTeacher?.name || 'معلم المادة', teacherSubject);
+                sound.playFanfare();
+                triggerConfetti();
+                showToast('gold', 'تم إرسال الدرجات للاعتماد 🔒', `تم إرسال كشف درجات ${teacherSubject} لفصل (${selectedClass}) رسمياً لإدارة المدرسة لاعتماده.`);
+              }}
+              className="flex-1 py-4 px-6 rounded-3xl font-black text-sm sm:text-base shadow-2xl flex items-center justify-center gap-2 transition-all active:scale-95 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950"
+            >
+              <span>🔒 إرسال الكشف للاعتماد الرسمي للإدارة 🏛️</span>
             </button>
           </div>
 
