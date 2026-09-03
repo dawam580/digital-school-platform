@@ -20,7 +20,8 @@ import {
   MessageSquare,
   Zap,
   ShieldCheck,
-  FileText
+  FileText,
+  LogOut
 } from 'lucide-react';
 import { SmartExcelStudentImporter } from '../../components/admin/SmartExcelStudentImporter';
 import { PdfStudentImporterModal } from '../../components/admin/PdfStudentImporterModal';
@@ -29,7 +30,7 @@ import { sound } from '../../utils/soundEffects';
 import { TimetableConflictEngine, SEED_MULTI_CLASS_SCHEDULES } from '../../services/schedule/conflictDetector';
 
 export const AdminDashboard: React.FC = () => {
-  const { students, unreadCount, setActiveTab, setSelectedStudent } = useSchool();
+  const { students, unreadCount, setActiveTab, setSelectedStudent, logout } = useSchool();
   const [showSmartExcelModal, setShowSmartExcelModal] = useState(false);
   const [showPdfImporterModal, setShowPdfImporterModal] = useState(false);
 
@@ -107,6 +108,15 @@ export const AdminDashboard: React.FC = () => {
           >
             <Database className="w-4 h-4" />
             <span>استوديو البيانات</span>
+          </button>
+
+          <button
+            onClick={() => { logout(); sound.playTap(); }}
+            className="px-4 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-black text-xs shadow-sm border border-rose-200 dark:border-rose-800 flex items-center gap-1.5 transition-all active:scale-95"
+            title="الرجوع إلى شاشة الدخول واختيار البوابة"
+          >
+            <LogOut className="w-4 h-4 text-rose-600" />
+            <span>⬅️ رجوع (خروج)</span>
           </button>
         </div>
       </div>

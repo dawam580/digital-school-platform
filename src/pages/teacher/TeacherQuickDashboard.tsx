@@ -17,7 +17,8 @@ import {
   CalendarCheck,
   Check,
   ChevronDown,
-  UserCheck
+  UserCheck,
+  LogOut
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -32,7 +33,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     addNotification,
     showToast,
     isLargeFontMode,
-    toggleLargeFontMode
+    toggleLargeFontMode,
+    logout
   } = useSchool();
 
   // Active section inside the teacher portal
@@ -144,14 +146,27 @@ export const TeacherQuickDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Accessibility Large Font Toggle */}
-        <button
-          onClick={toggleLargeFontMode}
-          className="px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-xs sm:text-sm border border-white/20 flex items-center gap-2 transition active:scale-95 shrink-0 self-stretch sm:self-auto justify-center"
-        >
-          {isLargeFontMode ? <ZoomOut className="w-5 h-5 text-amber-300" /> : <ZoomIn className="w-5 h-5 text-emerald-300" />}
-          <span>{isLargeFontMode ? 'الخط العادي' : 'تكبير الخط (مريح للعين) 🔍'}</span>
-        </button>
+        {/* Header Actions: Back Button + Large Font Toggle */}
+        <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-auto justify-end">
+          {/* Prominent Back Button */}
+          <button
+            onClick={() => { logout(); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-lg flex items-center justify-center gap-2 transition active:scale-95"
+            title="الرجوع إلى شاشة الدخول واختيار البوابة"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>⬅️ رجوع (خروج)</span>
+          </button>
+
+          {/* Accessibility Large Font Toggle */}
+          <button
+            onClick={toggleLargeFontMode}
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-xs sm:text-sm border border-white/20 flex items-center justify-center gap-2 transition active:scale-95"
+          >
+            {isLargeFontMode ? <ZoomOut className="w-5 h-5 text-amber-300" /> : <ZoomIn className="w-5 h-5 text-emerald-300" />}
+            <span>{isLargeFontMode ? 'الخط العادي' : 'تكبير الخط 🔍'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Class Switcher Pills (Giant Touch Targets) */}

@@ -18,7 +18,8 @@ import {
   GraduationCap,
   Key,
   HeartHandshake,
-  Building2
+  Building2,
+  LogOut
 } from 'lucide-react';
 import { StudentExcelManager } from '../admin/StudentExcelManager';
 import { sound } from '../../utils/soundEffects';
@@ -33,7 +34,8 @@ export const Sidebar: React.FC = () => {
     selectedStudent,
     setShowOperationalPlanModal,
     schoolProfile,
-    setShowSchoolManagerModal
+    setShowSchoolManagerModal,
+    logout
   } = useSchool();
   const [showExcelModal, setShowExcelModal] = useState(false);
 
@@ -241,8 +243,20 @@ export const Sidebar: React.FC = () => {
 
         </div>
 
+        {/* Back / Logout Button in Sidebar */}
+        <div className="pt-2 pb-1">
+          <button
+            onClick={() => { logout(); sound.playTap(); }}
+            className="w-full py-2.5 px-4 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-black text-xs border border-rose-200 dark:border-rose-800 shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+            title="الرجوع إلى شاشة الدخول الرئيسية"
+          >
+            <LogOut className="w-4 h-4 text-rose-600" />
+            <span>⬅️ رجوع (خروج)</span>
+          </button>
+        </div>
+
         {/* Footer Info */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
           <p className="font-bold text-slate-700 dark:text-slate-300">منصة المدرسة الرقمية 360°</p>
           <p className="text-[10px]">بنية تحتية آمنة ومفصولة الصلاحيات</p>
         </div>

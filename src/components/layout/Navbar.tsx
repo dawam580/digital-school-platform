@@ -391,13 +391,14 @@ export const Navbar: React.FC<NavbarProps> = () => {
               <span className="hidden md:inline">إعدادات الحساب</span>
             </button>
 
-            {/* Logout Button */}
+            {/* Back / Logout Button (Prominent & Clear) */}
             <button
-              onClick={logout}
-              className="p-2.5 rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors border border-slate-200 dark:border-slate-700"
-              title="تسجيل الخروج"
+              onClick={() => { logout(); sound.playTap(); }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-black text-xs border border-rose-200 dark:border-rose-800/60 shadow-sm transition-all active:scale-95"
+              title="الرجوع إلى شاشة الدخول الرئيسية"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 text-rose-600" />
+              <span>⬅️ رجوع (خروج)</span>
             </button>
 
           </div>
