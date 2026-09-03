@@ -14,9 +14,38 @@ import {
   StudentInfraction,
   AutoSummonCard,
   StudentFollowUpForm,
-  SubjectEvaluation
+  SubjectEvaluation,
+  SchoolProfile
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
+
+export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
+export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
+
+export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
+  id: 'school-main-01',
+  name: 'مدرسة الأمل للتعليم الأساسي',
+  code: 'LIB-SCH-01',
+  district: 'مراقبة التربية والتعليم - طرابلس المركز',
+  directorName: 'أ. فتحي الشريف',
+  directorPhone: '0922465676',
+  academicYear: '2025 - 2026 م',
+  isCustom: false
+};
+
+export const getSchoolProfile = (): SchoolProfile => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_SCHOOL_PROFILE);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return DEFAULT_SCHOOL_PROFILE;
+};
+
+export const saveSchoolProfile = (profile: SchoolProfile) => {
+  try {
+    localStorage.setItem(STORAGE_KEY_SCHOOL_PROFILE, JSON.stringify(profile));
+  } catch {}
+};
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
 const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v3';

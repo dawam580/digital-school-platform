@@ -17,13 +17,24 @@ import {
   Database,
   GraduationCap,
   Key,
-  HeartHandshake
+  HeartHandshake,
+  Building2
 } from 'lucide-react';
 import { StudentExcelManager } from '../admin/StudentExcelManager';
 import { sound } from '../../utils/soundEffects';
 
 export const Sidebar: React.FC = () => {
-  const { activeTab, setActiveTab, unreadCount, currentRole, currentTeacher, selectedStudent, setShowOperationalPlanModal } = useSchool();
+  const {
+    activeTab,
+    setActiveTab,
+    unreadCount,
+    currentRole,
+    currentTeacher,
+    selectedStudent,
+    setShowOperationalPlanModal,
+    schoolProfile,
+    setShowSchoolManagerModal
+  } = useSchool();
   const [showExcelModal, setShowExcelModal] = useState(false);
 
   // Dedicated menu items strictly tailored per role with next-gen 360 features & DB studio
@@ -50,11 +61,12 @@ export const Sidebar: React.FC = () => {
         ];
       case 'teacher':
         return [
+          { id: 'teacher-quick', label: 'الوضع السريع الميسر (كبار السن)', icon: Sparkles, badge: 'موصى به' },
           { id: 'attendance', label: 'تسجيل الحضور اليومي', icon: CalendarCheck, badge: 'اليوم' },
           { id: 'grades', label: 'رصد الدرجات وكشوفات الطلاب', icon: Award, badge: 'معتمد' },
           { id: 'assignments', label: 'إدارة وتصحيح الواجبات', icon: BookOpen },
           { id: 'chat', label: 'محادثات أولياء الأمور', icon: MessageSquare, badge: 'حي' },
-          { id: 'student-profile', label: 'تقييم سلوك الطلاب والكفايات', icon: Sparkles },
+          { id: 'student-profile', label: 'تقييم سلوك الطلاب والكفايات', icon: Users },
           { id: 'schedule', label: 'جدول الحصص الأسبوعي', icon: Clock },
           { id: 'daily-report', label: 'تقرير الحصص والواجبات', icon: FileText },
           { id: 'notifications', label: 'تنبيهات واستئذان الطلاب', icon: Megaphone, unread: unreadCount },
@@ -63,6 +75,7 @@ export const Sidebar: React.FC = () => {
       default:
         return [
           { id: 'dashboard', label: 'لوحة تحكم الإدارة المدرسية', icon: Home },
+          { id: 'school-manager', label: 'إدارة المدارس والنسخ المستقلة', icon: Building2, isCustomAction: true },
           { id: 'counselor-dashboard', label: 'مكتب الخدمة الاجتماعية والنفسية', icon: HeartHandshake, badge: 'إرشاد' },
           { id: 'db-studio', label: 'استوديو قواعد البيانات (1000+ طالب)', icon: Database, badge: 'نشط' },
           { id: 'grades', label: 'الاعتماد وسجل الدرجات العام', icon: Award },
@@ -120,7 +133,9 @@ export const Sidebar: React.FC = () => {
                     key={item.id}
                     onClick={() => {
                       sound.playTap();
-                      if (item.isCustomAction) {
+                      if (item.id === 'school-manager') {
+                        setShowSchoolManagerModal(true);
+                      } else if (item.isCustomAction) {
                         setShowExcelModal(true);
                       } else {
                         setActiveTab(item.id);

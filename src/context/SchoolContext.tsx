@@ -16,7 +16,8 @@ import {
   ParentSummon,
   StudentInfraction,
   AutoSummonCard,
-  StudentFollowUpForm
+  StudentFollowUpForm,
+  SchoolProfile
 } from '../types';
 import {
   db,
@@ -30,7 +31,11 @@ import {
   SEED_CASE_STUDIES,
   SEED_COUNSELING_SESSIONS,
   SEED_PARENT_SUMMONS,
-  SEED_FOLLOWUP_FORMS
+  SEED_FOLLOWUP_FORMS,
+  getSchoolProfile,
+  saveSchoolProfile,
+  DEFAULT_SCHOOL_PROFILE,
+  STORAGE_KEY_SAVED_SCHOOLS
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
 import { sound } from '../utils/soundEffects';
@@ -131,6 +136,21 @@ interface SchoolContextType {
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
   resetDatabase: () => void;
+
+  // School Profile & Multi-School Isolation
+  schoolProfile: SchoolProfile;
+  updateSchoolProfile: (profile: Partial<SchoolProfile>) => void;
+  createNewSchool: (name: string, district: string, directorName: string, directorPhone: string, startFresh: boolean) => void;
+  switchSchool: (schoolId: string) => void;
+  savedSchools: SchoolProfile[];
+  exportSchoolPackage: () => void;
+  importSchoolPackage: (jsonContent: string) => boolean;
+  showSchoolManagerModal: boolean;
+  setShowSchoolManagerModal: (open: boolean) => void;
+
+  // Accessibility & Easy Mode for Elderly Teachers
+  isLargeFontMode: boolean;
+  toggleLargeFontMode: () => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -148,6 +168,37 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(null);
   const [showOperationalPlanModal, setShowOperationalPlanModal] = useState(false);
   const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
+  const [showSchoolManagerModal, setShowSchoolManagerModal] = useState(false);
+  const [isLargeFontMode, setIsLargeFontMode] = useState(() => {
+    try {
+      return localStorage.getItem('madrasa_large_font_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleLargeFontMode = () => {
+    setIsLargeFontMode(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('madrasa_large_font_mode', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const [schoolProfile, setSchoolProfileState] = useState<SchoolProfile>(() => {
+    return getSchoolProfile();
+  });
+
+  const [savedSchools, setSavedSchoolsState] = useState<SchoolProfile[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SAVED_SCHOOLS);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [getSchoolProfile()];
+  });
+
   const [activeTab, setActiveTab] = useState<string>('student-profile');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
@@ -543,7 +594,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setActiveTab('counselor-dashboard');
       } else {
         setCurrentRole('teacher');
-        setActiveTab('attendance');
+        setActiveTab('teacher-quick');
       }
       setIsAuthenticated(true);
       sound.playSuccess();
@@ -1004,6 +1055,158 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
   };
 
+  const updateSchoolProfile = (partial: Partial<SchoolProfile>) => {
+    setSchoolProfileState(prev => {
+      const updated = { ...prev, ...partial };
+      saveSchoolProfile(updated);
+      setSavedSchoolsState(currentSchools => {
+        const idx = currentSchools.findIndex(s => s.id === updated.id);
+        let list = [...currentSchools];
+        if (idx >= 0) {
+          list[idx] = updated;
+        } else {
+          list.push(updated);
+        }
+        try {
+          localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+        } catch {}
+        return list;
+      });
+      return updated;
+    });
+    showToast('gold', 'تم تحديث بيانات المدرسة 🏫', 'تم حفظ وتحديث بيانات المدرسة بنجاح في المنظومة.');
+  };
+
+  const createNewSchool = (name: string, district: string, directorName: string, directorPhone: string, startFresh: boolean) => {
+    // 1. Snapshot current school data
+    try {
+      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
+        students,
+        classes,
+        teachers
+      }));
+    } catch {}
+
+    const newId = `school-${Date.now()}`;
+    const newSchool: SchoolProfile = {
+      id: newId,
+      name,
+      code: `SCH-LIB-${Math.floor(100 + Math.random() * 900)}`,
+      district: district || 'مراقبة التربية والتعليم',
+      directorName: directorName || 'مدير المدرسة',
+      directorPhone: directorPhone || '0922465676',
+      academicYear: '2025 - 2026 م',
+      isCustom: true
+    };
+
+    setSchoolProfileState(newSchool);
+    saveSchoolProfile(newSchool);
+
+    setSavedSchoolsState(prev => {
+      const list = [...prev, newSchool];
+      try {
+        localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+      } catch {}
+      return list;
+    });
+
+    if (startFresh) {
+      setStudents([]);
+      db.saveStudents([]);
+    }
+
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم تهيئة المدرسة الجديدة بنجاح 🌟', `تم ضبط المنظومة لمدرسة: ${name}. جاهزة لإدخال البيانات!`);
+  };
+
+  const switchSchool = (schoolId: string) => {
+    const target = savedSchools.find(s => s.id === schoolId);
+    if (!target) return;
+
+    // Snapshot current
+    try {
+      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
+        students,
+        classes,
+        teachers
+      }));
+    } catch {}
+
+    // Restore target
+    try {
+      const savedData = localStorage.getItem(`madrasa_school_data_${target.id}`);
+      if (savedData) {
+        const parsed = JSON.parse(savedData);
+        if (parsed.students) {
+          setStudents(parsed.students);
+          db.saveStudents(parsed.students);
+        }
+      }
+    } catch {}
+
+    setSchoolProfileState(target);
+    saveSchoolProfile(target);
+    sound.playSuccess();
+    showToast('info', 'تم التبديل للمدرسة 🏫', `أنت الآن في: ${target.name}`);
+  };
+
+  const exportSchoolPackage = () => {
+    sound.playTap();
+    const pkg = {
+      schoolProfile,
+      students,
+      teachers,
+      classes,
+      exportedAt: new Date().toISOString(),
+      platform: 'Digital School Platform Libya 360'
+    };
+    const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `حزمة_${schoolProfile.name.replace(/\s+/g, '_')}_2026.madrasa.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('gold', 'تم تصدير نسخة المدرسة 📦', 'تم تنزيل ملف المنظومة بنجاح. يمكنك إرساله لصديقك لتجربته!');
+  };
+
+  const importSchoolPackage = (jsonContent: string): boolean => {
+    try {
+      const pkg = JSON.parse(jsonContent);
+      if (!pkg.schoolProfile || !pkg.schoolProfile.name) {
+        throw new Error('ملف الحزمة غير صالح أو لا يحتوي على بيانات مدرسة.');
+      }
+      setSchoolProfileState(pkg.schoolProfile);
+      saveSchoolProfile(pkg.schoolProfile);
+      if (Array.isArray(pkg.students)) {
+        setStudents(pkg.students);
+        db.saveStudents(pkg.students);
+      }
+      if (Array.isArray(pkg.teachers)) {
+        setTeachers(pkg.teachers);
+        db.saveTeachers(pkg.teachers);
+      }
+      setSavedSchoolsState(prev => {
+        if (!prev.some(s => s.id === pkg.schoolProfile.id)) {
+          const list = [...prev, pkg.schoolProfile];
+          try {
+            localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+          } catch {}
+          return list;
+        }
+        return prev;
+      });
+      sound.playFanfare();
+      triggerConfetti();
+      showToast('gold', 'تم استيراد المدرسة بنجاح 🌟', `تم تحميل بيانات ${pkg.schoolProfile.name} بالكامل.`);
+      return true;
+    } catch (err: any) {
+      showToast('error', 'خطأ في الاستيراد', err.message || 'فشل في قراءة ملف حزمة المدرسة.');
+      return false;
+    }
+  };
+
   return (
     <SchoolContext.Provider
       value={{
@@ -1022,6 +1225,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setShowOperationalPlanModal,
         showAccountSettingsModal,
         setShowAccountSettingsModal,
+        schoolProfile,
+        updateSchoolProfile,
+        createNewSchool,
+        switchSchool,
+        savedSchools,
+        exportSchoolPackage,
+        importSchoolPackage,
+        showSchoolManagerModal,
+        setShowSchoolManagerModal,
+        isLargeFontMode,
+        toggleLargeFontMode,
         caseStudies,
         setCaseStudies,
         counselingSessions,

@@ -1,5 +1,17 @@
 export type UserRole = 'admin' | 'teacher' | 'parent' | 'counselor';
 
+export interface SchoolProfile {
+  id: string;
+  name: string; // e.g. "مدرسة الأمل للتعليم الأساسي"
+  code: string; // e.g. "LIB-SCH-01"
+  district: string; // e.g. "مراقبة التربية والتعليم - طرابلس المركز"
+  directorName: string; // e.g. "أ. فتحي الشريف"
+  directorPhone: string; // "0922465676"
+  academicYear: string; // "2025 - 2026 م"
+  logo?: string;
+  isCustom?: boolean;
+}
+
 export interface TeacherAccount {
   id: string;
   code: string; // Unique teacher code e.g. TCH-MATH-101

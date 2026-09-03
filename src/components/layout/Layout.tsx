@@ -21,15 +21,45 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { activeTab, setActiveTab, currentRole, unreadCount } = useSchool();
 
-  const mobileNav = [
-    ...(currentRole !== 'parent' ? [{ id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard }] : []),
-    { id: 'grades', label: 'الدرجات', icon: Award },
-    { id: 'assignments', label: 'الواجبات', icon: BookOpen },
-    { id: 'chat', label: 'المحادثة', icon: MessageSquare },
-    { id: 'schedule', label: 'الجدول', icon: Clock },
-    { id: 'student-profile', label: 'الملف', icon: UserCheck },
-    { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
-  ];
+  const getMobileNav = () => {
+    switch (currentRole) {
+      case 'teacher':
+        return [
+          { id: 'teacher-quick', label: 'الرئيسية السريعة', icon: LayoutDashboard },
+          { id: 'grades', label: 'الدرجات', icon: Award },
+          { id: 'chat', label: 'المحادثة', icon: MessageSquare },
+          { id: 'schedule', label: 'الجدول', icon: Clock },
+          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+        ];
+      case 'counselor':
+        return [
+          { id: 'counselor-dashboard', label: 'الرئيسية', icon: LayoutDashboard },
+          { id: 'student-profile', label: 'الطلاب', icon: UserCheck },
+          { id: 'attendance', label: 'المتابعة', icon: CalendarCheck },
+          { id: 'chat', label: 'المحادثة', icon: MessageSquare },
+          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+        ];
+      case 'parent':
+        return [
+          { id: 'student-profile', label: 'ملف الطالب', icon: UserCheck },
+          { id: 'grades', label: 'الدرجات', icon: Award },
+          { id: 'assignments', label: 'الواجبات', icon: BookOpen },
+          { id: 'chat', label: 'المحادثة', icon: MessageSquare },
+          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+        ];
+      case 'admin':
+      default:
+        return [
+          { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard },
+          { id: 'attendance', label: 'الحضور', icon: CalendarCheck },
+          { id: 'student-profile', label: 'الطلاب', icon: UserCheck },
+          { id: 'grades', label: 'الدرجات', icon: Award },
+          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+        ];
+    }
+  };
+
+  const mobileNav = getMobileNav();
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors">

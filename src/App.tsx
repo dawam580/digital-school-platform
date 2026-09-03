@@ -18,15 +18,20 @@ import { SystemOperationalPlanPDF } from './pages/admin/SystemOperationalPlanPDF
 import { AccountSettingsModal } from './components/admin/AccountSettingsModal';
 import { CommandPalette } from './components/ui/CommandPalette';
 import { SocialCounselorDashboard } from './pages/counselor/SocialCounselorDashboard';
+import { TeacherQuickDashboard } from './pages/teacher/TeacherQuickDashboard';
+import { SchoolManagerModal } from './components/admin/SchoolManagerModal';
 
 const MainContent: React.FC = () => {
   const {
     isAuthenticated,
     activeTab,
+    currentRole,
     isCommandPaletteOpen,
     setIsCommandPaletteOpen,
     showAccountSettingsModal,
-    setShowAccountSettingsModal
+    setShowAccountSettingsModal,
+    showSchoolManagerModal,
+    setShowSchoolManagerModal
   } = useSchool();
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
@@ -44,11 +49,13 @@ const MainContent: React.FC = () => {
   const renderActivePage = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <AdminDashboard />;
+        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AdminDashboard />;
+      case 'teacher-quick':
+        return <TeacherQuickDashboard />;
       case 'counselor-dashboard':
         return <SocialCounselorDashboard />;
       case 'attendance':
-        return <AttendanceTracker />;
+        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AttendanceTracker />;
       case 'student-profile':
         return <StudentProfile />;
       case 'grades':
@@ -68,7 +75,7 @@ const MainContent: React.FC = () => {
       case 'notifications':
         return <NotificationCenter />;
       default:
-        return <AdminDashboard />;
+        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AdminDashboard />;
     }
   };
 
@@ -83,6 +90,10 @@ const MainContent: React.FC = () => {
       <AccountSettingsModal
         isOpen={showAccountSettingsModal}
         onClose={() => setShowAccountSettingsModal(false)}
+      />
+      <SchoolManagerModal
+        isOpen={showSchoolManagerModal}
+        onClose={() => setShowSchoolManagerModal(false)}
       />
     </>
   );

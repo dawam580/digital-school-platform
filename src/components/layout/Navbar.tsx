@@ -20,7 +20,8 @@ import {
   BookOpen,
   FileText,
   Key,
-  HeartHandshake
+  HeartHandshake,
+  Building2
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -41,6 +42,8 @@ export const Navbar: React.FC<NavbarProps> = () => {
     setActiveTab,
     setShowOperationalPlanModal,
     setShowAccountSettingsModal,
+    schoolProfile,
+    setShowSchoolManagerModal,
     students,
     selectedStudent,
     setSelectedStudent,
@@ -89,15 +92,15 @@ export const Navbar: React.FC<NavbarProps> = () => {
               <div className="hidden md:block text-right">
                 <div className="flex items-center gap-2">
                   <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight">
-                    منظومة المدرسة الرقمية
+                    {schoolProfile.name}
                   </h1>
                   {/* Libyan Badge */}
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>ليبيا 2025 / 2026 م</span>
+                    <span>ليبيا {schoolProfile.academicYear}</span>
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-medium">وزارة التربية والتعليم • النظام التربوي والإداري المعتمد</p>
+                <p className="text-xs text-slate-400 font-medium">{schoolProfile.district} • النظام المعتمد</p>
               </div>
             </button>
           </div>
@@ -121,6 +124,30 @@ export const Navbar: React.FC<NavbarProps> = () => {
           {/* Right Action Tools: Dark Mode, Sound, Switcher, Role, Notifs, Logout */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
             
+            {/* Multi-School Manager Button (Visible for Admin) */}
+            {currentRole === 'admin' && (
+              <button
+                onClick={() => { setShowSchoolManagerModal(true); sound.playTap(); }}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm hover:bg-blue-100 transition-all active:scale-95"
+                title="إدارة المدارس والنسخ المستقلة"
+              >
+                <Building2 className="w-4 h-4 text-blue-600" />
+                <span>المدارس والنسخ المستقلة 🏫</span>
+              </button>
+            )}
+
+            {/* Teacher Quick Mode Toggle (If Teacher) */}
+            {currentRole === 'teacher' && (
+              <button
+                onClick={() => { setActiveTab('teacher-quick'); sound.playTap(); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 shadow-sm hover:bg-emerald-100 transition-all active:scale-95"
+                title="الواجهة الميسرة لكبار السن"
+              >
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>الوضع الميسر لكبار السن ⚡</span>
+              </button>
+            )}
+
             {/* Operational Plan PDF Button (Visible for Admin & Teacher) */}
             {currentRole !== 'parent' && (
               <button
