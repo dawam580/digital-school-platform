@@ -32,6 +32,7 @@ import { ExcelStudentImporterModal } from '../../components/admin/ExcelStudentIm
 import { QrPdfReaderModal } from '../../components/common/QrPdfReaderModal';
 import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTeachersRosterModal';
 import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
+import { SchedulePage } from '../schedule/SchedulePage';
 import {
   LibyanExamEngine,
   StudentFullExamReport,
@@ -58,8 +59,8 @@ export const AdminDashboard: React.FC = () => {
     setCurrentRole
   } = useSchool();
 
-  // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams'
-  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'attendance' | 'exams'>('students');
+  // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'
+  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'>('students');
 
   // Students Tab State
   const [studentSearch, setStudentSearch] = useState('');
@@ -298,6 +299,20 @@ export const AdminDashboard: React.FC = () => {
             <span>كشف المعلمين (الشاطئ)</span>
           </button>
 
+          {/* Smart Timetable Builder Button */}
+          <button
+            onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
+            className={`flex-1 sm:flex-initial px-4 py-3 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 ${
+              activeTab === 'schedule'
+                ? 'bg-indigo-700 text-white shadow-indigo-500/30'
+                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+            }`}
+            title="بناء وتوزيع الجداول المدرسية بالذكاء الاصطناعي"
+          >
+            <span className="text-sm">⚡</span>
+            <span>بناء الجداول الذكية</span>
+          </button>
+
           {/* PDF Importer Button */}
           <button
             onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
@@ -520,56 +535,91 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* Card 5: Smart Timetable Builder */}
+        <div
+          onClick={() => setActiveTab('schedule')}
+          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
+            activeTab === 'schedule'
+              ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-indigo-500 shadow-indigo-500/20'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-300'
+          }`}
+        >
+          <div>
+            <span className="text-xs font-bold text-slate-500 block">الجداول المدرسية الذكية</span>
+            <span className="text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1 block">
+              توزيع الحصص AI ⚡
+            </span>
+            <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-1 inline-block">
+              بناء وتصدير الجداول ←
+            </span>
+          </div>
+          <div className="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-2xl">
+            ⏰
+          </div>
+        </div>
+
       </div>
 
-      {/* Big Main Tab Selector Pills (4 Tabs) */}
+      {/* Big Main Tab Selector Pills (5 Tabs) */}
       <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl flex flex-wrap sm:flex-nowrap items-center gap-1 border border-slate-200 dark:border-slate-700">
         <button
           onClick={() => { setActiveTab('students'); sound.playTap(); }}
-          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'students'
               ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>1. كشف الطلاب المسجلين ({students.length})</span>
+          <span>1. كشف الطلاب ({students.length})</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('exams'); sound.playTap(); }}
-          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'exams'
               ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>2. شيت الامتحانات والنتائج 📑</span>
+          <span>2. شيت الامتحانات 📑</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
-          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'teachers'
               ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <UserCheck className="w-4 h-4" />
-          <span>3. التحكم في المعلمين ({teachers.length})</span>
+          <span>3. المعلمون ({teachers.length})</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
-          className={`flex-1 py-3 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'attendance'
               ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
           <CheckCircle2 className="w-4 h-4" />
-          <span>4. متابعة الحضور بالكامل</span>
+          <span>4. متابعة الحضور</span>
+        </button>
+
+        <button
+          onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
+          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+            activeTab === 'schedule'
+              ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+          }`}
+        >
+          <span className="text-base">⏰</span>
+          <span>5. الجداول الذكية AI ⚡</span>
         </button>
       </div>
 
@@ -1182,6 +1232,15 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: SMART AI TIMETABLE & SCHEDULE BUILDER                              */}
+      {/* ========================================================================= */}
+      {activeTab === 'schedule' && (
+        <div className="space-y-4 animate-in fade-in">
+          <SchedulePage />
         </div>
       )}
 

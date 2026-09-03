@@ -15,7 +15,8 @@ import {
   GraduationCap,
   Layers,
   Zap,
-  Edit3
+  Edit3,
+  FileSpreadsheet
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -25,6 +26,7 @@ import {
   ClassScheduleMap,
   ScheduleConflict
 } from '../../services/schedule/conflictDetector';
+import { TimetableAIGenerator } from '../../services/schedule/timetableAiGenerator';
 import { SchedulePeriod, DaySchedule } from '../../types';
 import { SchedulePeriodEditorModal } from '../../components/admin/SchedulePeriodEditorModal';
 
@@ -59,6 +61,25 @@ export const SchedulePage: React.FC = () => {
   const conflicts = useMemo(() => {
     return TimetableConflictEngine.detectConflicts(classSchedules);
   }, [classSchedules]);
+
+  // AI Smart Schedule Generator
+  const handleGenerateAiSchedule = () => {
+    sound.playTap();
+    const targetClasses = ['7/أ', '7/ب', '8/أ', '8/ب', '6/أ', '6/ب', '4/أ', '4/ب', '9/أ', '3/أ'];
+    const gen = TimetableAIGenerator.generateSmartSchedule(targetClasses, teachers);
+    setClassSchedules(gen.schedules);
+    setSelectedClassName('7/أ');
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم التوليد الذكي للجداول المدرسية بالذكاء الاصطناعي ⚡', `تم إنشاء وتوزيع ${gen.totalPeriodsGenerated} حصة لجميع الصفوف بنجاح (0 تضارب).`);
+  };
+
+  // Export Timetable to Excel
+  const handleExportExcel = () => {
+    sound.playSuccess();
+    TimetableAIGenerator.exportMasterTimetableToExcel(classSchedules, 'مدرسة_الأمل_للتعليم_الأساسي');
+    showToast('success', 'تم تصدير الجدول Excel 📊', 'تم حفظ ملف جداول جميع الفصول بصيغة .xlsx بنجاح.');
+  };
 
   // AI Conflict Auto-Resolver
   const handleAutoResolve = () => {
@@ -146,6 +167,26 @@ export const SchedulePage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {/* AI Auto Generator Button */}
+            {currentRole !== 'parent' && (
+              <button
+                onClick={handleGenerateAiSchedule}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-4 py-2.5 rounded-2xl transition text-xs shadow-lg active:scale-95"
+              >
+                <Sparkles className="w-4 h-4 text-slate-950" />
+                <span>توليد الجداول الذكية بالذكاء الاصطناعي ⚡</span>
+              </button>
+            )}
+
+            {/* Export Excel Button */}
+            <button
+              onClick={handleExportExcel}
+              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl transition text-xs shadow-md shrink-0 active:scale-95"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span>تصدير إكسل (.xlsx)</span>
+            </button>
+
             {conflicts.length > 0 && currentRole !== 'parent' && (
               <button
                 onClick={handleAutoResolve}
