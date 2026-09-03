@@ -40,20 +40,22 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      // Match student by 12-digit National ID or Link Code
+      // Match student by 4-digit parent code, 12-digit National ID, studentNumber, or Link Code
       const cleanInput = studentNationalId.trim();
       const foundStudent = students.find(
         s => (s.nationalNumber && s.nationalNumber === cleanInput) ||
              s.nationalId === cleanInput ||
              s.studentNumber === cleanInput ||
-             s.linkCode.toLowerCase() === cleanInput.toLowerCase()
+             s.linkCode.toLowerCase() === cleanInput.toLowerCase() ||
+             (cleanInput === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101')) ||
+             (cleanInput === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))
       ) || students[0];
 
       if (foundStudent) {
         setSelectedStudent(foundStudent);
         login(foundStudent.nationalNumber || foundStudent.nationalId, 'parent');
       } else {
-        setErrorMessage('الرقم الوطني غير مسجل في المنظومة. يرجى مراجعة إدارة المدرسة.');
+        setErrorMessage('الرمز أو الرقم الوطني غير مسجل في المنظومة. يرجى مراجعة إدارة المدرسة.');
       }
       setLoading(false);
     }, 400);
@@ -176,18 +178,18 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">الدخول بالرقم الوطني للطالب (12 خانة) لمتابعة النتائج والواجبات</p>
               </div>
 
-              {/* Student National Number (12 digits) */}
+              {/* Student 4-digit code or National Number */}
               <div className="space-y-1.5">
                 <label className="block text-sm font-bold text-slate-700">
-                  الرقم الوطني للطالب (12 خانة)
+                  رمز ولي الأمر (4 أرقام) أو الرقم الوطني للطالب
                 </label>
                 <div className="relative">
                   <input
                     type="text"
-                    maxLength={12}
-                    placeholder="120081234567"
+                    maxLength={16}
+                    placeholder="رمز ولي الأمر (مثال: 1001 أو 120081234567)"
                     value={studentNationalId}
-                    onChange={e => setStudentNationalId(e.target.value.replace(/\D/g, ''))}
+                    onChange={e => setStudentNationalId(e.target.value)}
                     className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"
                     required
                   />
@@ -196,21 +198,21 @@ export const Login: React.FC = () => {
                 
                 {/* Demo student pills */}
                 <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1 flex-wrap">
-                  <span>💡 تجربة سريعة للطلاب:</span>
+                  <span>💡 تجربة سريعة للرمز:</span>
                   <button
                     type="button"
-                    onClick={() => { setStudentNationalId('120081234567'); sound.playTap(); }}
-                    className="font-bold text-[#00288e] hover:underline"
+                    onClick={() => { setStudentNationalId('1001'); sound.playTap(); }}
+                    className="font-bold text-[#00288e] hover:underline bg-blue-50 px-2 py-0.5 rounded-md"
                   >
-                    معتز (120081234567)
+                    معتز (رمز: 1001)
                   </button>
                   <span>•</span>
                   <button
                     type="button"
-                    onClick={() => { setStudentNationalId('220082345678'); sound.playTap(); }}
-                    className="font-bold text-[#00288e] hover:underline"
+                    onClick={() => { setStudentNationalId('1002'); sound.playTap(); }}
+                    className="font-bold text-[#00288e] hover:underline bg-blue-50 px-2 py-0.5 rounded-md"
                   >
-                    آية (220082345678)
+                    آية (رمز: 1002)
                   </button>
                 </div>
               </div>

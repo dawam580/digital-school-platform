@@ -49,7 +49,8 @@ export const AdminDashboard: React.FC = () => {
     logout,
     showToast,
     updateAttendance,
-    markAllPresent
+    markAllPresent,
+    setCurrentRole
   } = useSchool();
 
   // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams'
@@ -238,6 +239,20 @@ export const AdminDashboard: React.FC = () => {
             title="شرح مبسط لكيفية استخدام المنظومة"
           >
             <span>💡 دليل المنظومة الموضح</span>
+          </button>
+
+          {/* Teacher Supervision Button */}
+          <button
+            onClick={() => {
+              setCurrentRole('teacher');
+              sound.playTap();
+              showToast('info', 'وضع مراقبة المعلم 👁️', 'أنت الآن في واجهة المعلم للمراقبة والمتابعة المباشرة.');
+            }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="الانتقال لواجهة المعلم للمراقبة والمتابعة"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>👁️ مراقبة واجهة المعلم</span>
           </button>
 
           {/* PDF Importer Button */}

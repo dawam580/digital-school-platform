@@ -21,6 +21,7 @@ import { SocialCounselorDashboard } from './pages/counselor/SocialCounselorDashb
 import { TeacherQuickDashboard } from './pages/teacher/TeacherQuickDashboard';
 import { SchoolManagerModal } from './components/admin/SchoolManagerModal';
 import { PdfStudentImporterModal } from './components/admin/PdfStudentImporterModal';
+import { ParentDashboard } from './pages/parent/ParentDashboard';
 import { CustomCodeModal } from './components/admin/CustomCodeModal';
 
 const MainContent: React.FC = () => {
@@ -69,15 +70,29 @@ const MainContent: React.FC = () => {
   }
 
   const renderActivePage = () => {
+    // 1. Parent Role: completely isolated to their children's dedicated dashboard
+    if (currentRole === 'parent') {
+      if (activeTab === 'chat') return <ParentTeacherChat />;
+      return <ParentDashboard />;
+    }
+
+    // 2. Teacher Role: streamlined to TeacherQuickDashboard
+    if (currentRole === 'teacher') {
+      if (activeTab === 'chat') return <ParentTeacherChat />;
+      return <TeacherQuickDashboard />;
+    }
+
+    // 3. Counselor Role
+    if (currentRole === 'counselor') {
+      return <SocialCounselorDashboard />;
+    }
+
+    // 4. Admin Role: defaults to AdminDashboard
     switch (activeTab) {
       case 'dashboard':
-        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AdminDashboard />;
-      case 'teacher-quick':
-        return <TeacherQuickDashboard />;
-      case 'counselor-dashboard':
-        return <SocialCounselorDashboard />;
+        return <AdminDashboard />;
       case 'attendance':
-        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AttendanceTracker />;
+        return <AttendanceTracker />;
       case 'student-profile':
         return <StudentProfile />;
       case 'grades':
@@ -96,8 +111,10 @@ const MainContent: React.FC = () => {
         return <LinkStudent />;
       case 'notifications':
         return <NotificationCenter />;
+      case 'teacher-quick':
+        return <TeacherQuickDashboard />;
       default:
-        return currentRole === 'teacher' ? <TeacherQuickDashboard /> : <AdminDashboard />;
+        return <AdminDashboard />;
     }
   };
 

@@ -61,8 +61,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const mobileNav = getMobileNav();
 
-  // Admin & Teacher have built-in tabs in their dashboard — no sidebar needed
-  const showSidebar = currentRole === 'parent' || currentRole === 'counselor';
+  // All roles (Parent, Teacher, Admin) have their own clean self-contained dashboards — no desktop sidebar needed
+  const showSidebar = currentRole === 'counselor';
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors">
@@ -71,18 +71,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {showSidebar && <Sidebar />}
         
-        <main className={`flex-1 overflow-y-auto pb-24 md:pb-8 ${showSidebar ? 'p-4 sm:p-6 lg:p-8' : 'p-3 sm:p-5 lg:p-7'}`}>
+        <main className={`flex-1 overflow-y-auto ${currentRole === 'parent' ? 'pb-8 p-3 sm:p-5 lg:p-7' : 'pb-24 md:pb-8 p-3 sm:p-5 lg:p-7'}`}>
           <div className="max-w-7xl mx-auto space-y-5">
             {children}
           </div>
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-2 py-2 shadow-lg">
-        <div className="flex items-center justify-around">
-          {mobileNav.map(item => {
-            const Icon = item.icon;
+      {/* Mobile Bottom Navigation Bar (Hidden for parent who has a self-contained WhatsApp-like UI) */}
+      {currentRole !== 'parent' && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-2 py-2 shadow-lg">
+          <div className="flex items-center justify-around">
+            {mobileNav.map(item => {
+              const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
@@ -106,6 +107,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           })}
         </div>
       </nav>
+      )}
     </div>
   );
 };

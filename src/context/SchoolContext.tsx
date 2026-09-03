@@ -208,7 +208,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return [getSchoolProfile()];
   });
 
-  const [activeTab, setActiveTab] = useState<string>('student-profile');
+  const [activeTab, setActiveTab] = useState<string>('parent-dashboard');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isOnlineSynced, setIsOnlineSynced] = useState(true);
@@ -567,11 +567,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsAuthenticated(true);
     if (role === 'parent') {
       setCurrentTeacher(null);
-      setActiveTab('student-profile');
+      setActiveTab('parent-dashboard');
     } else if (role === 'teacher') {
       const t = teachers.find(tch => tch.phone === phoneOrId) || teachers[0];
       setCurrentTeacher(t);
-      setActiveTab('attendance');
+      setActiveTab('teacher-quick');
     } else if (role === 'counselor') {
       const t = teachers.find(tch => tch.code === 'LIB-SOC-01') || teachers[0];
       setCurrentTeacher(t);
