@@ -24,6 +24,7 @@ import { PdfStudentImporterModal } from './components/admin/PdfStudentImporterMo
 import { ParentDashboard } from './pages/parent/ParentDashboard';
 import { CustomCodeModal } from './components/admin/CustomCodeModal';
 import { SuperAdminDashboard } from './pages/superadmin/SuperAdminDashboard';
+import { ExamCoordinatorDashboard } from './pages/exams/ExamCoordinatorDashboard';
 
 const MainContent: React.FC = () => {
   const {
@@ -74,6 +75,11 @@ const MainContent: React.FC = () => {
     // 0. Super Admin Role: Multi-School District Directorate
     if (currentRole === 'superadmin') {
       return <SuperAdminDashboard />;
+    }
+
+    // Exams Coordinator Role (رئيس الكنترول)
+    if (currentRole === 'exams_coordinator') {
+      return <ExamCoordinatorDashboard />;
     }
 
     // 1. Parent Role: completely isolated to their children's dedicated dashboard

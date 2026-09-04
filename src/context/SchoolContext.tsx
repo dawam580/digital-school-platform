@@ -168,12 +168,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const qRole = params.get('role');
-        if (qRole && ['admin', 'teacher', 'parent', 'counselor', 'superadmin'].includes(qRole)) {
+        if (qRole && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(qRole)) {
           return qRole as UserRole;
         }
       }
       const saved = localStorage.getItem('madrasa_active_role');
-      if (saved && ['admin', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
+      if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
         return saved as UserRole;
       }
     } catch {}
@@ -229,6 +229,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const params = new URLSearchParams(window.location.search);
         const qRole = params.get('role');
         if (qRole === 'superadmin') return 'superadmin-dashboard';
+        if (qRole === 'exams_coordinator') return 'exams-coordinator-dashboard';
         if (qRole === 'teacher') return 'teacher-quick';
         if (qRole === 'parent') return 'parent-dashboard';
         if (qRole === 'admin') return 'dashboard';
@@ -608,12 +609,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } else if (role === 'superadmin') {
       setCurrentTeacher(null);
       setActiveTab('superadmin-dashboard');
+    } else if (role === 'exams_coordinator') {
+      setCurrentTeacher(null);
+      setActiveTab('exams-coordinator-dashboard');
     } else {
       setCurrentTeacher(null);
       setActiveTab('dashboard');
     }
     sound.playSuccess();
-    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : role === 'superadmin' ? 'المدير العام (سوبر أدمن)' : 'إدارة المدرسة'}`);
+    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : role === 'exams_coordinator' ? 'منسق الامتحانات والتقويم (الكنترول)' : role === 'superadmin' ? 'المدير العام (سوبر أدمن)' : 'إدارة المدرسة'}`);
     auditLogger.log({
       actorName: phoneOrId,
       actorRole: role,

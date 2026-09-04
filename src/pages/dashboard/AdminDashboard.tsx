@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
-import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
+import { ComprehensiveSystemGuideModal } from '../../components/common/ComprehensiveSystemGuideModal';
 import { ExcelStudentImporterModal } from '../../components/admin/ExcelStudentImporterModal';
 import { QrPdfReaderModal } from '../../components/common/QrPdfReaderModal';
 import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTeachersRosterModal';
@@ -271,112 +271,68 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Primary Action Buttons */}
+        {/* Primary Action Buttons (Clear, High-Contrast & Streamlined for School Director) */}
         <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+          {/* OpenAI PDF Importer Button */}
+          <button
+            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="استيراد كشف الطلبة من ملف PDF بالذكاء الاصطناعي (OpenAI GPT-4o-mini)"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>استيراد PDF بالذكاء الاصطناعي ⚡</span>
+          </button>
+
+          {/* Excel Importer Button */}
+          <button
+            onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="استيراد كشف الطلبة من ملفات إكسل (.xlsx / .csv)"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-white" />
+            <span>استيراد إكسل 📊</span>
+          </button>
+
+          {/* Comprehensive System Guide Button */}
+          <button
+            onClick={() => { setShowGuideModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="الدليل الشامل لكافة الأدوار المدرسية من الألف للياء"
+          >
+            <BookOpen className="w-4 h-4 text-white" />
+            <span>دليل المنظومة الشامل 📖</span>
+          </button>
+
           {/* Director Invite & Separate Role Links Button */}
           <button
             onClick={() => { setShowInviteModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="نسخ رسالة دعوة وتجربة المنظومة لمدير مدرسة آخر وتوزيع الروابط"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="إرسال رسالة دعوة وتوزيع الروابط المستقلة للأدوار"
           >
-            <span>✉️ دعوة المدراء والروابط</span>
+            <span>✉️ دعوة المدراء وقص الروابط</span>
           </button>
 
-          {/* Visual Guide Button */}
-          <button
-            onClick={() => { setShowGuideModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 font-black text-xs sm:text-sm border border-indigo-300 dark:border-indigo-800 shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="شرح مبسط لكيفية استخدام المنظومة"
-          >
-            <span>💡 دليل المنظومة الموضح</span>
-          </button>
-
-          {/* Teacher Supervision Button */}
+          {/* Direct Switch to Exam Coordinator Portal */}
           <button
             onClick={() => {
-              setCurrentRole('teacher');
+              setCurrentRole('exams_coordinator');
               sound.playTap();
-              showToast('info', 'وضع مراقبة المعلم 👁️', 'أنت الآن في واجهة المعلم للمراقبة والمتابعة المباشرة.');
+              showToast('gold', 'بوابة الكنترول والامتحانات 📜', 'تم الانتقال إلى بوابة منسق الامتحانات والتقويم (1120 درجة).');
             }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="الانتقال لواجهة المعلم للمراقبة والمتابعة"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="الانتقال المباشر لبوابة منسق الامتحانات ورئيس الكنترول"
           >
-            <Sparkles className="w-4 h-4 text-amber-300" />
-            <span>👁️ مراقبة واجهة المعلم</span>
+            <span>📜 بوابة الكنترول</span>
           </button>
 
-          {/* Excel Importer Button */}
-          <button
-            onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="استيراد كشف الطلبة من ملفات إكسل (.xlsx / .csv)"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
-            <span>📊 استيراد إكسل</span>
-          </button>
-
-          {/* QR Code PDF Reader Button */}
-          <button
-            onClick={() => { setShowQrPdfReaderModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="قراءة كود QR من ملفات PDF الممسوحة ضوئياً"
-          >
-            <span className="text-sm">📱</span>
-            <span>قارئ QR للـ PDF</span>
-          </button>
-
-          {/* Al-Shati Teachers Roster Button */}
-          <button
-            onClick={() => { setShowTeachersRosterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="كشف حصر المعلمين ونصاب الحصص (منظومة الشاطئ)"
-          >
-            <span className="text-sm">📋</span>
-            <span>كشف المعلمين (الشاطئ)</span>
-          </button>
-
-          {/* Smart Timetable Builder Button */}
-          <button
-            onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
-            className={`flex-1 sm:flex-initial px-4 py-3 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 ${
-              activeTab === 'schedule'
-                ? 'bg-indigo-700 text-white shadow-indigo-500/30'
-                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-            }`}
-            title="بناء وتوزيع الجداول المدرسية بالذكاء الاصطناعي"
-          >
-            <span className="text-sm">⚡</span>
-            <span>بناء الجداول الذكية</span>
-          </button>
-
-          {/* Excel Importer Button */}
-          <button
-            onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="استيراد كشوفات الطلاب والمعلمين من ملفات إكسل (.xlsx / .csv)"
-          >
-            <span className="text-sm">📊</span>
-            <span>استيراد إكسل</span>
-          </button>
-
-          {/* PDF Importer Button */}
-          <button
-            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-            title="استيراد كشف الطلبة من ملف PDF للمنظومة القديمة"
-          >
-            <FileText className="w-4 h-4 text-teal-200" />
-            <span>📄 استيراد PDF</span>
-          </button>
-
-          {/* Prominent Back Button */}
+          {/* Logout Button */}
           <button
             onClick={() => { logout(); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-sm border border-rose-400/50 shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="الرجوع إلى شاشة تسجيل الدخول"
           >
-            <LogOut className="w-5 h-5" />
-            <span>⬅️ رجوع (خروج)</span>
+            <LogOut className="w-4 h-4" />
+            <span>⬅️ خروج</span>
           </button>
         </div>
       </div>
@@ -887,6 +843,39 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'exams' && (
         <div className="space-y-4 animate-in fade-in">
           
+          {/* Official Exams Coordinator Portal Banner */}
+          <div className="p-4 bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-3xl border border-purple-500/40 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-black shrink-0 shadow-md">
+                📜
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-black text-sm text-white">بوابة منسق الامتحانات والتقويم ورئيس الكنترول المستقلة</h4>
+                  <span className="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-400/30">
+                    لائحة 1013 لسنة 2022م
+                  </span>
+                </div>
+                <p className="text-xs text-purple-200 mt-1 leading-relaxed">
+                  تم فصل أعمال الكنترول ورصد الدرجات وأرقام الجلوس في بوابة مخصصة لتسهيل مهمة رئيس الكنترول ومنع تشتيت إدارة المدرسة.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setCurrentRole('exams_coordinator');
+                sound.playTap();
+                showToast('gold', 'بوابة الكنترول 📜', 'تم الانتقال المباشر إلى لوحة تحكم رئيس الكنترول.');
+              }}
+              className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 flex items-center gap-2 shrink-0"
+            >
+              <span>فتح بوابة الكنترول الكاملة ⚡</span>
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
+          
           {/* Header Controls Bar */}
           <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
@@ -1343,8 +1332,8 @@ export const AdminDashboard: React.FC = () => {
         />
       )}
 
-      {/* Quick System Guide Modal */}
-      <QuickSystemGuideModal
+      {/* Comprehensive System Guide Modal (All 6 Roles + Libyan Regulations) */}
+      <ComprehensiveSystemGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
       />

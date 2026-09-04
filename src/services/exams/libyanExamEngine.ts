@@ -119,12 +119,15 @@ export interface StudentFullExamReport {
   studentName: string;
   nationalNumber: string;
   className: string;
+  seatNumber: string;
   results: StudentExamResultItem[];
   totalMaxScore: number;
   totalEarnedScore: number;
+  totalObtained?: number;
   percentage: number;
   rank: number;
   generalAppreciation: 'ممتاز' | 'جيد جداً' | 'جيد' | 'مقبول' | 'ضعيف';
+  appreciation?: string;
   status: 'passed_honors' | 'passed' | 'makeup_exam' | 'failed';
   statusLabel: string;
   failedSubjects: string[];
@@ -230,17 +233,22 @@ export class LibyanExamEngine {
       statusLabel = 'راسب وباقٍ للإعادة في صفه 🔴';
     }
 
+    const seatNumber = student.studentNumber || String(1000 + (parseInt((student.id || '').replace(/\D/g, '').slice(-4) || '101', 10)));
+
     return {
       studentId: student.id,
       studentName: student.name,
       nationalNumber: student.nationalNumber || student.nationalId || '-',
       className: student.className || '9/أ',
+      seatNumber,
       results,
       totalMaxScore: totalMax,
       totalEarnedScore: totalEarned,
+      totalObtained: totalEarned,
       percentage,
       rank: 1, // calculated in batch
       generalAppreciation,
+      appreciation: generalAppreciation,
       status,
       statusLabel,
       failedSubjects

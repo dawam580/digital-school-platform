@@ -29,6 +29,7 @@ import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
 import { DirectorInviteModal } from '../common/DirectorInviteModal';
+import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
 
 interface NavbarProps {
   onOpenMobileMenu?: () => void;
@@ -66,9 +67,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showStudentMenu, setShowStudentMenu] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showDirectorInviteModal, setShowDirectorInviteModal] = useState(false);
+  const [showComprehensiveGuide, setShowComprehensiveGuide] = useState(false);
 
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
-    { id: 'admin', label: 'إدارة المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
+    { id: 'admin', label: 'مدير المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
+    { id: 'exams_coordinator', label: 'منسق الامتحانات والكنترول', icon: <Award className="w-4 h-4" />, color: 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300' },
     { id: 'superadmin', label: 'المدير العام (سوبر أدمن)', icon: <Building2 className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
     { id: 'teacher', label: 'المعلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
     { id: 'counselor', label: 'الأخصائي الاجتماعي', icon: <HeartHandshake className="w-4 h-4" />, color: 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300' },
@@ -304,6 +307,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             </div>
 
             {/* Director Invite & Role Links Button */}
+            {/* Comprehensive System Guide Button */}
+            <button
+              type="button"
+              onClick={() => { setShowComprehensiveGuide(true); sound.playTap(); }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-black border border-blue-200 dark:border-blue-800 transition active:scale-95 shadow-sm"
+              title="دليل المنظومة الشامل من الألف إلى الياء"
+            >
+              <span>📚 دليل المنظومة الشامل</span>
+            </button>
+
+            {/* Director Invite & Role Links Button */}
             <button
               type="button"
               onClick={() => { setShowDirectorInviteModal(true); sound.playTap(); }}
@@ -360,6 +374,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       <DirectorInviteModal
         isOpen={showDirectorInviteModal}
         onClose={() => setShowDirectorInviteModal(false)}
+      />
+
+      {/* Comprehensive System Guide Modal (A to Z) */}
+      <ComprehensiveSystemGuideModal
+        isOpen={showComprehensiveGuide}
+        onClose={() => setShowComprehensiveGuide(false)}
       />
     </header>
   );

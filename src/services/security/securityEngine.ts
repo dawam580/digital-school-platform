@@ -55,6 +55,16 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'SEND_CHAT',
     'VIEW_ALL_CHATS'
   ],
+  exams_coordinator: [
+    'VIEW_STUDENT_PROFILE',
+    'VIEW_GRADES',
+    'EDIT_GRADES',
+    'APPROVE_GRADES',
+    'VIEW_ATTENDANCE_REPORTS',
+    'ACCESS_EXCEL_HUB',
+    'EXPORT_DATA',
+    'IMPORT_DATA'
+  ],
   admin: [
     'VIEW_STUDENT_PROFILE',
     'EDIT_STUDENT_PROFILE',

@@ -136,10 +136,10 @@ export const SchedulePage: React.FC = () => {
   const currentDaySchedule = displayedSchedule[selectedDayIndex] || displayedSchedule[0];
 
   return (
-    <div className="space-y-8 animate-fadeIn pb-12 font-cairo text-right">
-      
-      {/* Header Banner with Conflict Indicator */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden border border-blue-800/40">
+    <div className="animate-fadeIn pb-12 font-cairo text-right">
+      <div className="print:hidden space-y-8">
+        {/* Header Banner with Conflict Indicator */}
+        <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden border border-blue-800/40">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
             <div className="w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-3xl shadow-xl border border-blue-500/30">
@@ -477,7 +477,147 @@ export const SchedulePage: React.FC = () => {
           teachers={teachers}
           onSavePeriod={handleSavePeriod}
         />
-      )}
+        )}
+
+      </div>
+
+      {/* ========================================================================= */}
+      {/* OFFICIAL LIBYAN MINISTRY OF EDUCATION A4 PRINTABLE TIMETABLE              */}
+      {/* (Hidden on screen, renders cleanly on A4 print)                            */}
+      {/* ========================================================================= */}
+      <div className="hidden print:block p-8 bg-white text-slate-900 font-cairo w-full max-w-4xl mx-auto dir-rtl text-right">
+        {/* Ministry Official Header */}
+        <div className="border-b-2 border-slate-900 pb-4 mb-6">
+          <div className="flex items-center justify-between text-xs leading-relaxed">
+            <div className="text-right space-y-0.5">
+              <p className="font-bold">دولة ليبيا</p>
+              <p className="font-bold">وزارة التربية والتعليم</p>
+              <p className="font-bold">مراقبة التربية والتعليم توكرة</p>
+              <p className="font-black text-sm">مدرسة الشهيد امحمد الباعور للتعليم الأساسي</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-14 h-14 mx-auto mb-1 rounded-full border-2 border-slate-900 flex items-center justify-center text-xl font-black">
+                🏛️
+              </div>
+              <h2 className="text-base font-black tracking-wide">جدول الحصص الأسبوعي المعتمد</h2>
+              <p className="text-[11px] font-bold text-slate-700 font-mono">العام الدراسي: 2025 - 2026 م</p>
+            </div>
+
+            <div className="text-left font-mono text-xs space-y-0.5">
+              <p className="font-bold text-slate-900">
+                الفصل: <strong className="text-sm font-black">{viewMode === 'class' ? selectedClassName : `المعلم: ${currentTeacher.name}`}</strong>
+              </p>
+              <p>الفترة: الصباحية (08:00 - 01:00)</p>
+              <p>زمن الحصة: 45 دقيقة</p>
+              <p className="text-[10px] text-slate-500">لائحة 1013 لسنة 2022م</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Official Matrix Table */}
+        <table className="w-full border-collapse border-2 border-slate-900 text-center text-xs mb-6">
+          <thead>
+            <tr className="bg-slate-100 border-b-2 border-slate-900">
+              <th className="border border-slate-800 p-2 font-black w-24">اليوم</th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 1</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">08:00 - 08:45</div>
+              </th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 2</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">08:45 - 09:30</div>
+              </th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 3</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">09:30 - 10:15</div>
+              </th>
+              <th className="border border-slate-800 p-1 font-black bg-amber-50/70 w-14 text-[10px]">
+                <div>استراحة</div>
+                <div className="text-[9px] font-mono text-slate-500">10:15 - 10:45</div>
+              </th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 4</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">10:45 - 11:30</div>
+              </th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 5</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">11:30 - 12:15</div>
+              </th>
+              <th className="border border-slate-800 p-2 font-black">
+                <div>الحصة 6</div>
+                <div className="text-[10px] font-normal font-mono text-slate-600">12:15 - 01:00</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayedSchedule.map((d) => (
+              <tr key={d.dayName} className="border-b border-slate-800">
+                <td className="border border-slate-800 p-2.5 font-black bg-slate-50">{d.dayName}</td>
+                {[1, 2, 3].map(pNum => {
+                  const p = d.periods.find(item => item.periodNumber === pNum);
+                  return (
+                    <td key={pNum} className="border border-slate-800 p-2">
+                      {p ? (
+                        <div>
+                          <div className="font-black text-slate-900">{p.subject}</div>
+                          <div className="text-[10px] text-slate-600">{p.teacher}</div>
+                        </div>
+                      ) : (
+                        <div className="text-slate-400 font-mono">-</div>
+                      )}
+                    </td>
+                  );
+                })}
+                <td className="border border-slate-800 p-1 bg-amber-50/40 text-[10px] text-amber-950 font-bold">
+                  فسحة
+                </td>
+                {[4, 5, 6].map(pNum => {
+                  const p = d.periods.find(item => item.periodNumber === pNum);
+                  return (
+                    <td key={pNum} className="border border-slate-800 p-2">
+                      {p ? (
+                        <div>
+                          <div className="font-black text-slate-900">{p.subject}</div>
+                          <div className="text-[10px] text-slate-600">{p.teacher}</div>
+                        </div>
+                      ) : (
+                        <div className="text-slate-400 font-mono">-</div>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Official Libyan Signatures & Seal Section */}
+        <div className="grid grid-cols-4 gap-4 pt-6 border-t-2 border-slate-800 text-center text-xs">
+          <div className="space-y-8">
+            <p className="font-bold text-slate-700">منسق الجداول المدرسية</p>
+            <p className="font-mono text-slate-400">التوقيع: ....................</p>
+          </div>
+
+          <div className="space-y-8">
+            <p className="font-bold text-slate-700">الموجه التربوي المختص</p>
+            <p className="font-mono text-slate-400">التوقيع: ....................</p>
+          </div>
+
+          <div className="space-y-8">
+            <p className="font-bold text-slate-700">مدير المدرسة</p>
+            <p className="font-black text-slate-900">أ. فرج امحمد الباعور</p>
+            <p className="font-mono text-slate-400">التوقيع: ....................</p>
+          </div>
+
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-24 h-24 rounded-full border-2 border-dashed border-slate-400 flex flex-col items-center justify-center text-[10px] text-slate-500 p-2">
+              <span className="font-bold">مكان الختم الرسمي</span>
+              <span>للمدرسة والكنترول</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   );

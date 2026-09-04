@@ -11,7 +11,9 @@ import {
   Users,
   ExternalLink,
   Sparkles,
-  Send
+  Send,
+  FileSpreadsheet,
+  HeartHandshake
 } from 'lucide-react';
 import { useSchool } from '../../context/SchoolContext';
 import {
@@ -73,19 +75,27 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
   const roleCards = [
     {
       key: 'admin',
-      title: 'رابط مدير المدرسة (لوحة التحكم الكاملة)',
+      title: 'رابط مدير المدرسة (لوحة التحكم العامة للمدير)',
       role: 'admin' as const,
       icon: <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />,
       color: 'border-purple-200 dark:border-purple-800 bg-purple-50/60 dark:bg-purple-950/30 text-purple-900 dark:text-purple-200',
       badge: 'المدير المستهدف للتجربة 🏛️'
     },
     {
-      key: 'superadmin',
-      title: 'رابط المدير العام / السوبر أدمن (كافة المدارس)',
-      role: 'superadmin' as const,
-      icon: <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />,
-      color: 'border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200',
-      badge: 'مراقبة التعليم وإضافة المدارس 🌐'
+      key: 'exams_coordinator',
+      title: 'رابط منسق الامتحانات والتقويم ورئيس الكنترول',
+      role: 'exams_coordinator' as const,
+      icon: <FileSpreadsheet className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
+      color: 'border-amber-200 dark:border-amber-800 bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200',
+      badge: 'بوابة شيت الكنترول (1120 درجة) 📜'
+    },
+    {
+      key: 'counselor',
+      title: 'رابط الأخصائي الاجتماعي والنفسي بالمدرسة',
+      role: 'counselor' as const,
+      icon: <HeartHandshake className="w-4 h-4 text-rose-600 dark:text-rose-400" />,
+      color: 'border-rose-200 dark:border-rose-800 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200',
+      badge: 'متابعة السلوك والحالات 🤝'
     },
     {
       key: 'teacher',
@@ -96,11 +106,19 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
       badge: 'رمز الدخول: LIB-MATH-01'
     },
     {
+      key: 'superadmin',
+      title: 'رابط المدير العام / السوبر أدمن (كافة المدارس)',
+      role: 'superadmin' as const,
+      icon: <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />,
+      color: 'border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200',
+      badge: 'مراقبة التعليم وإضافة المدارس 🌐'
+    },
+    {
       key: 'parent',
       title: 'رابط بوابة ولي الأمر (معزول ومخصص لأولياء الأمور)',
       role: 'parent' as const,
-      icon: <Users className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
-      color: 'border-amber-200 dark:border-amber-800 bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200',
+      icon: <Users className="w-4 h-4 text-teal-600 dark:text-teal-400" />,
+      color: 'border-teal-200 dark:border-teal-800 bg-teal-50/60 dark:bg-teal-950/30 text-teal-900 dark:text-teal-200',
       badge: 'أمان مشدد • رؤية الأبناء فقط'
     }
   ];

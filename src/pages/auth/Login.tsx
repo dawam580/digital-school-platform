@@ -17,7 +17,8 @@ import {
   ExternalLink,
   HelpCircle,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Award
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -37,7 +38,7 @@ export const Login: React.FC = () => {
     setShowSchoolManagerModal
   } = useSchool();
 
-  const [loginMode, setLoginMode] = useState<'admin' | 'superadmin' | 'teacher' | 'parent'>('admin');
+  const [loginMode, setLoginMode] = useState<'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('admin');
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   // Check URL query parameters on load to auto-select tab
@@ -47,6 +48,7 @@ export const Login: React.FC = () => {
         const params = new URLSearchParams(window.location.search);
         const qRole = params.get('role');
         if (qRole === 'superadmin') setLoginMode('superadmin');
+        else if (qRole === 'exams_coordinator') setLoginMode('exams_coordinator');
         else if (qRole === 'teacher') setLoginMode('teacher');
         else if (qRole === 'parent') setLoginMode('parent');
         else if (qRole === 'admin') setLoginMode('admin');
@@ -66,6 +68,10 @@ export const Login: React.FC = () => {
   const [adminPhone, setAdminPhone] = useState(currentUserPhone || '0922465676');
   const [adminPassword, setAdminPassword] = useState('123456');
 
+  // Exams Coordinator Form
+  const [examsPhone, setExamsPhone] = useState('0912345678');
+  const [examsPassword, setExamsPassword] = useState('123456');
+
   // Super Admin Form
   const [superAdminCode, setSuperAdminCode] = useState('DISTRICT-SUPER-01');
 
@@ -76,6 +82,11 @@ export const Login: React.FC = () => {
   const handleQuickDirectorDemo = () => {
     sound.playSuccess();
     login(adminPhone || '0922465676', 'admin');
+  };
+
+  const handleQuickExamCoordinatorDemo = () => {
+    sound.playSuccess();
+    login('0912345678', 'exams_coordinator');
   };
 
   const handleQuickSuperAdminDemo = () => {
@@ -204,8 +215,8 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Isolated Portal Selector Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+        {/* 5 Isolated Portal Selector Tabs */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
           <button
             type="button"
             onClick={() => { setLoginMode('admin'); setErrorMessage(''); sound.playTap(); }}
@@ -217,6 +228,19 @@ export const Login: React.FC = () => {
           >
             <Building2 className="w-4 h-4" />
             <span>مدير المدرسة</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setLoginMode('exams_coordinator'); setErrorMessage(''); sound.playTap(); }}
+            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+              loginMode === 'exams_coordinator'
+                ? 'bg-amber-600 text-white shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Award className="w-4 h-4" />
+            <span>منسق الامتحانات</span>
           </button>
 
           <button
@@ -340,6 +364,83 @@ export const Login: React.FC = () => {
                   className="w-full py-3.5 bg-purple-700 hover:bg-purple-800 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
                 >
                   {loading ? 'جاري التحقق...' : 'دخول لوحة تحكم المدير 🏛️'}
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Portal: Exams & Control Coordinator */}
+          {loginMode === 'exams_coordinator' && (
+            <div className="space-y-5 animate-in fade-in">
+              <div className="text-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="inline-flex p-2.5 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 rounded-2xl mb-1.5">
+                  <Award className="w-5 h-5" />
+                </div>
+                <h2 className="text-base font-black text-slate-800 dark:text-white">بوابة منسق الامتحانات والتقويم (رئيس الكنترول)</h2>
+                <p className="text-xs text-slate-400 mt-0.5">شيت الكنترول المركزي (1120 درجة)، رصد أعمال السنة، وأرقام الجلوس والشهادات</p>
+              </div>
+
+              {/* Instant 1-Click Demo Button */}
+              <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
+                    ⚡ دخول فوري لمنسق الامتحانات:
+                  </span>
+                  <span className="text-[11px] text-amber-700/80 dark:text-amber-300/80">
+                    رصد درجات الفترات والامتحانات واعتماد النتيجة A4
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleQuickExamCoordinatorDemo}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
+                >
+                  دخول الكنترول 📜
+                </button>
+              </div>
+
+              <form onSubmit={(e) => { e.preventDefault(); handleQuickExamCoordinatorDemo(); }} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    رقم هاتف منسق الامتحانات:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      value={examsPhone}
+                      onChange={e => setExamsPhone(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      required
+                    />
+                    <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                  </div>
+                  <p className="text-[11px] text-slate-400">💡 معتمد وفق لائحة الامتحانات رقم (1013) لسنة 2022م</p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    كلمة المرور:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      placeholder="••••••"
+                      value={examsPassword}
+                      onChange={e => setExamsPassword(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                >
+                  {loading ? 'جاري التحقق...' : 'دخول بوابة منسق الامتحانات والكنترول 📜'}
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               </form>
