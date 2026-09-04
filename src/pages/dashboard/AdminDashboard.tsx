@@ -72,7 +72,7 @@ export const AdminDashboard: React.FC = () => {
   const [teacherToEdit, setTeacherToEdit] = useState<TeacherAccount | null>(null);
 
   // Exams Tab State
-  const [selectedExamClass, setSelectedExamClass] = useState<string>('9/أ');
+  const [selectedExamClass, setSelectedExamClass] = useState<string>('9/1 صباح');
   const [selectedStudentForCard, setSelectedStudentForCard] = useState<Student | null>(null);
   const [selectedStudentRank, setSelectedStudentRank] = useState<number>(1);
   const [showGradeCardModal, setShowGradeCardModal] = useState<boolean>(false);
@@ -110,14 +110,16 @@ export const AdminDashboard: React.FC = () => {
     showToast('gold', 'تم استيراد كشف مدرسة الباعور 🏛️', `تم تحميل (${LIBYAN_BAOUR_STUDENTS.length}) طالباً موزعين على الفصول بنجاح.`);
   };
 
-  // Available classes dynamically extracted from students + Grades 4, 6, 7, 8, 9, 3
+  // Available classes dynamically extracted from real students in the database
   const availableClasses = useMemo(() => {
     const set = new Set<string>();
-    ['7/أ', '7/ب', '8/أ', '8/ب', '6/أ', '6/ب', '4/أ', '4/ب', '9/أ', '9/ب', '3/أ', '3/ب'].forEach(c => set.add(c));
     students.forEach(s => {
-      if (s.className) set.add(s.className);
+      if (s.className) set.add(s.className.trim());
     });
-    const arr = Array.from(set).sort();
+    if (set.size === 0) {
+      ['1/1 مساء', '1/2 مساء', '7/1 صباح', '8/1 صباح', '9/1 صباح'].forEach(c => set.add(c));
+    }
+    const arr = Array.from(set).sort((a, b) => a.localeCompare(b, 'ar', { numeric: true }));
     return arr;
   }, [students]);
 

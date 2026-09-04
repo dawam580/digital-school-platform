@@ -43,6 +43,16 @@ Every feature from `ORIGINAL_REQUEST.md` is inventoried and verified.
 | 18 | F18 | Database Factory Reset | `resetDatabase()` restores seed state safely across all 4 keys | M3 | VERIFIED |
 | 19 | F19 | E2E Automated Test Suite | Comprehensive multi-tier test suite executing all user flows | M4 | VERIFIED |
 | 20 | F20 | Adversarial Hardening & Forensics | Adversarial edge testing (Tier 5), forensic integrity verification, zero mock traps | M5 | VERIFIED |
+| 21 | U01 | Direct Admin Landing | Direct URL (/) opens immediately to General Admin Dashboard | M_UP1 | PLANNED |
+| 22 | U02 | Universal Role Switcher & Return Button | Omnipresent 4-role switcher + return to admin button when viewing non-admin role | M_UP1 | PLANNED |
+| 23 | U03 | Al-Baour 873 Roster Integrity | Exact 873 real students, 7-digit IDs, real birthdates, 33 pages/28 classes | M_UP1 | PLANNED |
+| 24 | U04 | Zero Fake Mothers' Names | Purge all fake mothers' names from parsers, engines, modals; use "—" | M_UP1 | PLANNED |
+| 25 | U05 | Manual Student Editing | Add updateStudent in context and UI modal to edit mother name/student info | M_UP1 | PLANNED |
+| 26 | U06 | Al-Baour Reset & Clean Wipe | resetDatabase restores 873 Baour students; clean wipe button clears students cleanly | M_UP1 | PLANNED |
+| 27 | U07 | Libyan Governance 4-Office UI | AdminDashboard structured into 4 Libyan school offices | M_UP1 | PLANNED |
+| 28 | U08 | Clean Excel/PDF Import & Export | De-duplicated direct buttons for Excel/PDF import and export across offices | M_UP1 | PLANNED |
+| 29 | U09 | Storage Persistence & Crash Guards | Fix db.ts empty array reload bug and Sidebar selectedStudent crash guard | M_UP1 | PLANNED |
+| 30 | U10 | Build & Test Regression Zero | TypeScript build exits 0 and test suite passes 100% | M_UP1 | PLANNED |
 
 ---
 
@@ -56,6 +66,10 @@ Every feature from `ORIGINAL_REQUEST.md` is inventoried and verified.
 | M3 | Database Persistence & Durability Verification (R3) | Verify all CRUD operations, state durability across reloads, localStorage sync | M1, M2 | DONE |
 | M4 | E2E Automated Test Suite Execution (R4) | Execute 100% of E2E test suite (Tiers 1-4) with 0 failures | M0, M1, M2, M3 | DONE |
 | M5 | Adversarial Coverage Hardening & Forensic Audit | Tier 5 white-box challenger tests, forensic auditor verification, final sign-off | M4 | DONE |
+| M_UP1 | System Upgrade & Repair (R1, R2, R3) | Implement Direct Admin Landing, 873 Al-Baour roster integrity, mother name fix, and 4-office admin workflow | M5 | IN_PROGRESS |
+| M_UP2 | Independent Code & Functional Review | 2 Reviewers independently verify R1, R2, R3 implementation, UI, RTL, and builds | M_UP1 | PLANNED |
+| M_UP3 | Adversarial Challenge & Stress Verification | 2 Challengers adversarially test role routing, wipe/reload persistence, and PDF/Excel edge cases | M_UP1 | PLANNED |
+| M_UP4 | Forensic Integrity Audit & Final Sign-Off | 1 Forensic Auditor verifies zero cheating, zero fake data, genuine logic | M_UP2, M_UP3 | PLANNED |
 
 ---
 

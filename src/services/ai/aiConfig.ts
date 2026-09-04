@@ -10,6 +10,7 @@ export interface AiCredentials {
   keyId: string;
   keySecret: string;
   rawToken: string;
+  openAiApiKey?: string;
   status: 'active' | 'inactive' | 'testing';
   provider: string;
   lastConnectedAt?: string;
@@ -19,8 +20,9 @@ const DEFAULT_AI_CREDENTIALS: AiCredentials = {
   keyId: 'egtr7lqivu6mombnu3m1omunh9',
   keySecret: '9ce6ea4d-dd43-416b-9706-6054d4c98cd6',
   rawToken: 'ZWd0cjdscWl2dTZtb21ibnUzbTFvbXVuaDk:OWNlNmVhNGQtZGQ0My00MTZiLTk3MDYtNjA1NGQ0Yzk4Y2Q2',
+  openAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
   status: 'active',
-  provider: 'AI Document Intelligence (Libyan Schools Edition)',
+  provider: 'OpenAI & Cloud Document Intelligence (Libyan Schools Edition)',
   lastConnectedAt: new Date().toISOString()
 };
 
@@ -52,6 +54,10 @@ export class AiConfigService {
       lastConnectedAt: new Date().toISOString()
     };
 
+    if (creds.rawToken && creds.rawToken.trim().startsWith('sk-')) {
+      updated.openAiApiKey = creds.rawToken.trim();
+    }
+
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updated));
     } catch {}
@@ -60,11 +66,14 @@ export class AiConfigService {
   }
 
   /**
-   * فك تشفير وفحص مفتاح Base64
+   * فك تشفير وفحص مفتاح Base64 أو OpenAI
    */
   static parseToken(rawInput: string): { keyId: string; keySecret: string } | null {
     try {
       const trimmed = rawInput.trim();
+      if (trimmed.startsWith('sk-')) {
+        return { keyId: 'openai-gpt4o', keySecret: trimmed };
+      }
       if (trimmed.includes(':')) {
         const parts = trimmed.split(':');
         let keyId = parts[0];
@@ -93,6 +102,6 @@ export class AiConfigService {
    */
   static isConnected(): boolean {
     const creds = this.getCredentials();
-    return !!creds.keyId && creds.status === 'active';
+    return (!!creds.keyId || !!creds.openAiApiKey) && creds.status === 'active';
   }
 }
