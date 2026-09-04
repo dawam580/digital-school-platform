@@ -337,26 +337,26 @@ export const ExamCoordinatorDashboard: React.FC = () => {
       {/* Central Control Sheet Table (1120 Scores) */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right text-xs min-w-[1250px]">
             <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black border-b border-slate-300 dark:border-slate-700">
               <tr>
-                <th className="py-3 px-2 text-center">الترتيب</th>
-                <th className="py-3 px-2 text-center">رقم الجلوس</th>
-                <th className="py-3 px-3">اسم التلميذ</th>
-                <th className="py-3 px-2 text-center">عربي (240)</th>
-                <th className="py-3 px-2 text-center">رياضيات (200)</th>
-                <th className="py-3 px-2 text-center">علوم (160)</th>
-                <th className="py-3 px-2 text-center">إنجليزي (160)</th>
-                <th className="py-3 px-2 text-center">إسلامية (120)</th>
-                <th className="py-3 px-2 text-center">تاريخ (80)</th>
-                <th className="py-3 px-2 text-center">جغرافيا (80)</th>
-                <th className="py-3 px-2 text-center">حاسوب (80)</th>
-                <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200">
+                <th className="py-3 px-2 text-center whitespace-nowrap">الترتيب</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">رقم الجلوس</th>
+                <th className="py-3 px-3 whitespace-nowrap">اسم التلميذ</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">عربي (240)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">رياضيات (200)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">علوم (160)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">إنجليزي (160)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">إسلامية (120)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">تاريخ (80)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">جغرافيا (80)</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">حاسوب (80)</th>
+                <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200 whitespace-nowrap">
                   المجموع (1120)
                 </th>
-                <th className="py-3 px-2 text-center">النسبة</th>
-                <th className="py-3 px-3 text-center">النتيجة والتقدير</th>
-                <th className="py-3 px-2 text-center">الشهادة A4</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">النسبة</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">النتيجة والتقدير</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">الشهادة A4</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
@@ -372,7 +372,7 @@ export const ExamCoordinatorDashboard: React.FC = () => {
 
                   return (
                     <tr key={r.studentId} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="py-3 px-2 text-center font-mono">
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">
                         <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center font-black text-[11px] ${
                           idx === 0
                             ? 'bg-amber-100 text-amber-900 font-black ring-2 ring-amber-400'
@@ -385,41 +385,41 @@ export const ExamCoordinatorDashboard: React.FC = () => {
                           {idx + 1}
                         </span>
                       </td>
-                      <td className="py-3 px-2 text-center font-mono text-purple-700 dark:text-purple-300 font-black">
+                      <td className="py-3 px-2 text-center font-mono text-purple-700 dark:text-purple-300 font-black whitespace-nowrap">
                         {r.seatNumber}
                       </td>
-                      <td className="py-3 px-3">
-                        <span className="font-black text-slate-900 dark:text-white text-xs block">
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <span className="font-black text-slate-900 dark:text-white text-xs block whitespace-nowrap">
                           {r.studentName}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">
                           قيد: {r.nationalNumber || '-'}
                         </span>
                       </td>
 
                       {/* Subjects */}
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'ARB')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'MATH')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'SCI')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'ENG')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'ISL')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'HIST')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'GEOG')}</td>
-                      <td className="py-3 px-2 text-center font-mono">{getSubScore(r, 'COMP')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ARB')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'MATH')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'SCI')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ENG')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ISL')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'HIST')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'GEOG')}</td>
+                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'COMP')}</td>
 
                       {/* Total */}
-                      <td className="py-3 px-2 text-center font-mono font-black bg-purple-50/50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-200">
+                      <td className="py-3 px-2 text-center font-mono font-black bg-purple-50/50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-200 whitespace-nowrap">
                         {r.totalEarnedScore}
                       </td>
 
                       {/* Percentage */}
-                      <td className="py-3 px-2 text-center font-mono font-black text-slate-800 dark:text-white">
+                      <td className="py-3 px-2 text-center font-mono font-black text-slate-800 dark:text-white whitespace-nowrap">
                         {r.percentage}%
                       </td>
 
                       {/* Result */}
-                      <td className="py-3 px-3 text-center">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black inline-block ${
+                      <td className="py-3 px-3 text-center whitespace-nowrap">
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black inline-block whitespace-nowrap ${
                           r.status === 'passed' || r.status === 'passed_honors'
                             ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                             : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
@@ -429,7 +429,7 @@ export const ExamCoordinatorDashboard: React.FC = () => {
                       </td>
 
                       {/* Action */}
-                      <td className="py-3 px-2 text-center">
+                      <td className="py-3 px-2 text-center whitespace-nowrap">
                         <button
                           type="button"
                           onClick={() => {

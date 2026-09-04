@@ -233,44 +233,34 @@ export const SchedulePage: React.FC = () => {
             </button>
           </div>
 
-          {/* Secondary Selector Dropdown */}
+          {/* Secondary Selector Dropdown / Pills */}
           {viewMode === 'class' ? (
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-xs text-slate-400 font-bold">اختر الفصل:</span>
-              <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs text-slate-400 font-bold whitespace-nowrap">اختر الفصل:</span>
+              <select
+                value={selectedClassName}
+                onChange={e => { setSelectedClassName(e.target.value); sound.playTap(); }}
+                className="py-1.5 px-3 rounded-xl bg-slate-800 text-white border border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 {Object.keys(classSchedules).map(cls => (
-                  <button
-                    key={cls}
-                    onClick={() => { setSelectedClassName(cls); sound.playTap(); }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-xl transition ${
-                      selectedClassName === cls
-                        ? 'bg-white text-slate-900 font-black'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    فصل {cls}
-                  </button>
+                  <option key={cls} value={cls}>فصل {cls}</option>
                 ))}
-              </div>
+              </select>
             </div>
           ) : (
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-xs text-slate-400 font-bold">اختر المعلم:</span>
-              <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs text-slate-400 font-bold whitespace-nowrap">اختر المعلم:</span>
+              <select
+                value={selectedTeacherCode}
+                onChange={e => { setSelectedTeacherCode(e.target.value); sound.playTap(); }}
+                className="py-1.5 px-3 rounded-xl bg-slate-800 text-white border border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 {teachers.map(t => (
-                  <button
-                    key={t.id}
-                    onClick={() => { setSelectedTeacherCode(t.code); sound.playTap(); }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-xl transition ${
-                      selectedTeacherCode === t.code
-                        ? 'bg-white text-slate-900 font-black'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {t.name.split(' ')[1] || t.name} ({t.subject.split(' ')[0]})
-                  </button>
+                  <option key={t.id} value={t.code}>
+                    {t.name} — {t.subject}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           )}
 
@@ -411,22 +401,22 @@ export const SchedulePage: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right text-xs min-w-[720px]">
             <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-100 dark:border-slate-800">
               <tr>
-                <th className="py-3 px-4">اليوم</th>
-                <th className="py-3 px-3 text-center">الحصة 1</th>
-                <th className="py-3 px-3 text-center">الحصة 2</th>
-                <th className="py-3 px-3 text-center">الحصة 3</th>
-                <th className="py-3 px-3 text-center">الحصة 4</th>
-                <th className="py-3 px-3 text-center">الحصة 5</th>
-                <th className="py-3 px-3 text-center">الحصة 6</th>
+                <th className="py-3 px-4 whitespace-nowrap">اليوم</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 1</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 2</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 3</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 4</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 5</th>
+                <th className="py-3 px-3 text-center whitespace-nowrap">الحصة 6</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {displayedSchedule.map((d, dIdx) => (
                 <tr key={d.dayName} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                  <td className="py-3.5 px-4 font-black text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/20">{d.dayName}</td>
+                  <td className="py-3.5 px-4 font-black text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/20 whitespace-nowrap">{d.dayName}</td>
                   {[1, 2, 3, 4, 5, 6].map((pNum) => {
                     const p = d.periods.find(item => item.periodNumber === pNum);
                     return (
@@ -443,14 +433,14 @@ export const SchedulePage: React.FC = () => {
                             sound.playTap();
                           }
                         }}
-                        className={`py-3.5 px-3 text-center ${
+                        className={`py-3.5 px-3 text-center whitespace-nowrap ${
                           currentRole === 'admin' && viewMode === 'class' ? 'cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/20' : ''
                         }`}
                       >
                         {p ? (
                           <>
-                            <div className="font-bold text-slate-800 dark:text-slate-200">{p.subject}</div>
-                            <div className="text-[10px] text-slate-400">{p.teacher.split(' ')[1] || p.teacher}</div>
+                            <div className="font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">{p.subject}</div>
+                            <div className="text-[10px] text-slate-400 whitespace-nowrap">{p.teacher.split(' ')[1] || p.teacher}</div>
                           </>
                         ) : (
                           <div className="text-slate-300 dark:text-slate-600 font-mono">-</div>

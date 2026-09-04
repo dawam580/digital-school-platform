@@ -258,55 +258,55 @@ export const AdminDashboard: React.FC = () => {
     <div className="space-y-6 text-right animate-in fade-in max-w-7xl mx-auto pb-16 font-cairo">
       
       {/* Top Header & Fast Actions */}
-      <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 mb-1.5">
+      <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-5">
+        <div className="space-y-1.5 max-w-2xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 mb-1">
             <span>🇱🇾 {schoolProfile.district} • العام {schoolProfile.academicYear}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
             لوحة تحكم إدارة المدرسة: {schoolProfile.name}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
             إدارة كشوفات الطلاب، شيت الامتحانات والنتائج، والتحكم في المعلمين والحضور
           </p>
         </div>
 
         {/* Primary Action Buttons (Clear, High-Contrast & Streamlined for School Director) */}
-        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+        <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto justify-start xl:justify-end">
           {/* OpenAI PDF Importer Button */}
           <button
             onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="استيراد كشف الطلبة من ملف PDF بالذكاء الاصطناعي (OpenAI GPT-4o-mini)"
           >
-            <Sparkles className="w-4 h-4 text-amber-300" />
+            <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
             <span>استيراد PDF بالذكاء الاصطناعي ⚡</span>
           </button>
 
           {/* Excel Importer Button */}
           <button
             onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="استيراد كشف الطلبة من ملفات إكسل (.xlsx / .csv)"
           >
-            <FileSpreadsheet className="w-4 h-4 text-white" />
+            <FileSpreadsheet className="w-4 h-4 text-white shrink-0" />
             <span>استيراد إكسل 📊</span>
           </button>
 
           {/* Comprehensive System Guide Button */}
           <button
             onClick={() => { setShowGuideModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="الدليل الشامل لكافة الأدوار المدرسية من الألف للياء"
           >
-            <BookOpen className="w-4 h-4 text-white" />
+            <BookOpen className="w-4 h-4 text-white shrink-0" />
             <span>دليل المنظومة الشامل 📖</span>
           </button>
 
           {/* Director Invite & Separate Role Links Button */}
           <button
             onClick={() => { setShowInviteModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="إرسال رسالة دعوة وتوزيع الروابط المستقلة للأدوار"
           >
             <span>✉️ دعوة المدراء وقص الروابط</span>
@@ -319,7 +319,7 @@ export const AdminDashboard: React.FC = () => {
               sound.playTap();
               showToast('gold', 'بوابة الكنترول والامتحانات 📜', 'تم الانتقال إلى بوابة منسق الامتحانات والتقويم (1120 درجة).');
             }}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="الانتقال المباشر لبوابة منسق الامتحانات ورئيس الكنترول"
           >
             <span>📜 بوابة الكنترول</span>
@@ -328,10 +328,10 @@ export const AdminDashboard: React.FC = () => {
           {/* Logout Button */}
           <button
             onClick={() => { logout(); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="whitespace-nowrap px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-md flex items-center justify-center gap-2 transition active:scale-95"
             title="الرجوع إلى شاشة تسجيل الدخول"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4 shrink-0" />
             <span>⬅️ خروج</span>
           </button>
         </div>
@@ -442,8 +442,8 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* 4 Main Stat Cards (Clean & Focused) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 5 Main Stat Cards (Clean & Balanced Responsive Grid) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         
         {/* Card 1: Students Count */}
         <div
@@ -562,65 +562,65 @@ export const AdminDashboard: React.FC = () => {
 
       </div>
 
-      {/* Big Main Tab Selector Pills (5 Tabs) */}
-      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl flex flex-wrap sm:flex-nowrap items-center gap-1 border border-slate-200 dark:border-slate-700">
+      {/* Big Main Tab Selector Pills (5 Tabs - Non-Colliding Responsive Grid) */}
+      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 border border-slate-200 dark:border-slate-700">
         <button
           onClick={() => { setActiveTab('students'); sound.playTap(); }}
-          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'students'
               ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
-          <Users className="w-4 h-4" />
+          <Users className="w-4 h-4 shrink-0" />
           <span>1. كشف الطلاب ({students.length})</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('exams'); sound.playTap(); }}
-          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'exams'
               ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
-          <Award className="w-4 h-4" />
+          <Award className="w-4 h-4 shrink-0" />
           <span>2. شيت الامتحانات 📑</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
-          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'teachers'
               ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="w-4 h-4 shrink-0" />
           <span>3. المعلمون ({teachers.length})</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
-          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'attendance'
               ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
-          <CheckCircle2 className="w-4 h-4" />
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>4. متابعة الحضور</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
-          className={`flex-1 py-3 px-2 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 col-span-2 sm:col-span-1 ${
             activeTab === 'schedule'
               ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
           }`}
         >
-          <span className="text-base">⏰</span>
+          <span className="text-base shrink-0">⏰</span>
           <span>5. الجداول الذكية AI ⚡</span>
         </button>
       </div>
@@ -632,10 +632,10 @@ export const AdminDashboard: React.FC = () => {
         <div className="space-y-4 animate-in fade-in">
           
           {/* Controls Bar: Search + Class Filter + Export */}
-          <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
             
             {/* Search Input */}
-            <div className="relative flex-1 w-full sm:w-auto">
+            <div className="relative flex-1 min-w-[280px]">
               <input
                 type="text"
                 value={studentSearch}
@@ -647,12 +647,12 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Actions: Export + Add Student + Quick Baour School Load + Clear */}
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap justify-start xl:justify-end">
               {/* Direct Al-Baour School 873 Students Load */}
               <button
                 type="button"
                 onClick={handleDirectLoadBaour}
-                className="px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                className="whitespace-nowrap px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
                 title="استيراد كشف مدرسة الشهيد امحمد الباعور (33 صفحة • 873 طالباً)"
               >
                 <span>🏛️</span>
@@ -662,7 +662,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
-                className="px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                className="whitespace-nowrap px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
                 title="استيراد كشف إكسل"
               >
                 <span>📊</span>
@@ -672,10 +672,10 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-                className="px-3.5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
+                className="whitespace-nowrap px-3.5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
                 title="استيراد كشف PDF"
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="w-4 h-4 shrink-0" />
                 <span>استيراد PDF</span>
               </button>
 
@@ -686,10 +686,10 @@ export const AdminDashboard: React.FC = () => {
                   sound.playSuccess();
                   showToast('success', 'تم التصدير', 'تم تنزيل ملف إكسل بكافة بيانات الطلبة.');
                 }}
-                className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
+                className="whitespace-nowrap px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
                 title="تصدير كشف الطلبة إلى ملف إكسل"
               >
-                <Download className="w-4 h-4 text-emerald-600" />
+                <Download className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>تصدير Excel</span>
               </button>
 
@@ -697,59 +697,95 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClearAllStudents}
-                className="px-3 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-black transition flex items-center gap-1 active:scale-95"
+                className="whitespace-nowrap px-3 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-black transition flex items-center gap-1 active:scale-95"
                 title="تصفير وحذف جميع الطلاب للبدء من جديد"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 shrink-0" />
                 <span>تصفير وحذف الكشف</span>
               </button>
             </div>
           </div>
 
-          {/* Section Filter Pills */}
+          {/* Section Filter Card (Ergonomic & Non-Colliding) */}
           {availableClasses.length > 0 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <span className="text-xs font-bold text-slate-500 shrink-0">الفصل:</span>
-              <button
-                onClick={() => { setSelectedClassFilter('all'); sound.playTap(); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
-                  selectedClassFilter === 'all'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
-                }`}
-              >
-                الكل ({students.length})
-              </button>
-              {availableClasses.map(cls => (
+            <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <span className="text-xs font-black text-slate-700 dark:text-slate-300 whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                  <span>🏫</span>
+                  <span>تصفية حسب الفصل:</span>
+                </span>
+                
+                {/* Direct Select Dropdown (Instant Jump for Director) */}
+                <select
+                  value={selectedClassFilter}
+                  onChange={e => { setSelectedClassFilter(e.target.value); sound.playTap(); }}
+                  aria-label="تصفية حسب الفصل"
+                  className="flex-1 md:w-64 py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-black text-blue-700 dark:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">جميع الفصول (33 فصلاً • {students.length} طالب)</option>
+                  {availableClasses.map(cls => {
+                    const count = students.filter(s => s.className === cls).length;
+                    return (
+                      <option key={cls} value={cls}>فصل ({cls}) — {count} طالب</option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              {/* Quick Grade Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-thin">
                 <button
-                  key={cls}
-                  onClick={() => { setSelectedClassFilter(cls); sound.playTap(); }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
-                    selectedClassFilter === cls
+                  type="button"
+                  onClick={() => { setSelectedClassFilter('all'); sound.playTap(); }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition shrink-0 ${
+                    selectedClassFilter === 'all'
                       ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
+                      : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  فصل ({cls})
+                  الكل ({students.length})
                 </button>
-              ))}
+
+                {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(gradeNum => {
+                  const gradeClasses = availableClasses.filter(c => c.startsWith(gradeNum + '/') || c.startsWith(gradeNum + ' '));
+                  if (gradeClasses.length === 0) return null;
+                  const isSelected = selectedClassFilter !== 'all' && (selectedClassFilter.startsWith(gradeNum + '/') || selectedClassFilter.startsWith(gradeNum + ' '));
+                  return (
+                    <button
+                      key={gradeNum}
+                      type="button"
+                      onClick={() => {
+                        setSelectedClassFilter(gradeClasses[0]);
+                        sound.playTap();
+                      }}
+                      className={`px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition shrink-0 ${
+                        isSelected
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 font-black border border-blue-300 dark:border-blue-700'
+                          : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      }`}
+                    >
+                      الصف {gradeNum} ({gradeClasses.length} شعب)
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
           {/* Students Table */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs">
+              <table className="w-full text-right text-xs min-w-[880px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 font-black border-b border-slate-200 dark:border-slate-700">
                   <tr>
-                    <th className="py-3.5 px-4">#</th>
-                    <th className="py-3.5 px-4">اسم الطالب الرباعي</th>
-                    <th className="py-3.5 px-4">الصف والفصل</th>
-                    <th className="py-3.5 px-4">الرقم الوطني</th>
-                    <th className="py-3.5 px-4">اسم الأم</th>
-                    <th className="py-3.5 px-4">تاريخ الميلاد</th>
-                    <th className="py-3.5 px-4">حالة الحضور</th>
-                    <th className="py-3.5 px-4 text-center">إجراءات</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">#</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">اسم الطالب الرباعي</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">الصف والفصل</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">الرقم الوطني</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">اسم الأم</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">تاريخ الميلاد</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">حالة الحضور</th>
+                    <th className="py-3.5 px-4 text-center whitespace-nowrap">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
@@ -771,35 +807,35 @@ export const AdminDashboard: React.FC = () => {
                   ) : (
                     filteredStudents.map((st, idx) => (
                       <tr key={st.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                        <td className="py-3 px-4 text-slate-400 font-mono">{idx + 1}</td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 px-4 text-slate-400 font-mono whitespace-nowrap">{idx + 1}</td>
+                        <td className="py-3 px-4 whitespace-nowrap">
                           <div className="flex items-center gap-2.5">
                             <img
                               src={st.avatar}
                               alt={st.name}
                               className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                             />
-                            <span className="font-black text-slate-900 dark:text-white text-sm">
+                            <span className="font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
                               {st.name}
                             </span>
                           </div>
                         </td>
-                        <td className="py-3 px-4">
-                          <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-black border border-blue-200 dark:border-blue-800">
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-black border border-blue-200 dark:border-blue-800 whitespace-nowrap">
                             {st.className || st.grade || 'غير محدد'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-mono font-black text-slate-700 dark:text-slate-300">
+                        <td className="py-3 px-4 font-mono font-black text-slate-700 dark:text-slate-300 whitespace-nowrap">
                           {st.nationalNumber || st.nationalId || '-'}
                         </td>
-                        <td className="py-3 px-4 text-slate-600 dark:text-slate-400">
+                        <td className="py-3 px-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           {st.motherName || '-'}
                         </td>
-                        <td className="py-3 px-4 text-slate-500 font-mono">
+                        <td className="py-3 px-4 text-slate-500 font-mono whitespace-nowrap">
                           {st.birthDate || '-'}
                         </td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-black inline-block ${
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-black inline-block whitespace-nowrap ${
                             st.status === 'present'
                               ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
                               : st.status === 'late'
@@ -811,7 +847,7 @@ export const AdminDashboard: React.FC = () => {
                             {st.status === 'present' ? 'حاضر 🟢' : st.status === 'late' ? 'متأخر 🟡' : st.status === 'excused' ? 'إذن رسمي 🔵' : 'غائب 🔴'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
                           <button
                             onClick={() => handleDeleteStudent(st.id, st.name)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
@@ -877,7 +913,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
           
           {/* Header Controls Bar */}
-          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300 text-xs font-bold border border-purple-200 dark:border-purple-800 mb-1">
                 <span>🇱🇾 المركز الوطني للامتحانات • مرحلة التعليم الأساسي</span>
@@ -891,20 +927,20 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Actions: Export Excel & Print */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 justify-start xl:justify-end">
               <button
                 onClick={exportMasterSheetToExcel}
-                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5"
+                className="whitespace-nowrap px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5"
               >
-                <FileSpreadsheet className="w-4 h-4" />
+                <FileSpreadsheet className="w-4 h-4 shrink-0" />
                 <span>تصدير شيت الكنترول Excel</span>
               </button>
 
               <button
                 onClick={() => { sound.playTap(); window.print(); }}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs transition active:scale-95 flex items-center gap-1.5"
+                className="whitespace-nowrap px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs transition active:scale-95 flex items-center gap-1.5"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4 shrink-0" />
                 <span>طباعة الكشف A4</span>
               </button>
             </div>
@@ -992,7 +1028,7 @@ export const AdminDashboard: React.FC = () => {
                       triggerConfetti();
                       showToast('gold', 'تم اعتماد النتيجة رسميًا 🏛️', `تم إقفال واعتماد شيت درجات فصل (${selectedExamClass}) بنجاح.`);
                     }}
-                    className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+                    className="whitespace-nowrap px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
                   >
                     <span>🏛️ اعتماد النتيجة وإقفال الشيت</span>
                   </button>
@@ -1004,25 +1040,25 @@ export const AdminDashboard: React.FC = () => {
           {/* Master Sheet Matrix Table */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs">
+              <table className="w-full text-right text-xs min-w-[1200px]">
                 <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black border-b border-slate-300 dark:border-slate-700">
                   <tr>
-                    <th className="py-3 px-2 text-center">الترتيب</th>
-                    <th className="py-3 px-3">اسم التلميذ</th>
-                    <th className="py-3 px-2 text-center">عربي (240)</th>
-                    <th className="py-3 px-2 text-center">رياضيات (200)</th>
-                    <th className="py-3 px-2 text-center">علوم (160)</th>
-                    <th className="py-3 px-2 text-center">إنجليزي (160)</th>
-                    <th className="py-3 px-2 text-center">إسلامية (120)</th>
-                    <th className="py-3 px-2 text-center">تاريخ (80)</th>
-                    <th className="py-3 px-2 text-center">جغرافيا (80)</th>
-                    <th className="py-3 px-2 text-center">حاسوب (80)</th>
-                    <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200">
+                    <th className="py-3 px-2 text-center whitespace-nowrap">الترتيب</th>
+                    <th className="py-3 px-3 whitespace-nowrap">اسم التلميذ</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">عربي (240)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">رياضيات (200)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">علوم (160)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">إنجليزي (160)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">إسلامية (120)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">تاريخ (80)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">جغرافيا (80)</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">حاسوب (80)</th>
+                    <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200 whitespace-nowrap">
                       المجموع (1120)
                     </th>
-                    <th className="py-3 px-2 text-center">النسبة</th>
-                    <th className="py-3 px-3 text-center">النتيجة والتقدير</th>
-                    <th className="py-3 px-2 text-center">إخطار النتيجة</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">النسبة</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">النتيجة والتقدير</th>
+                    <th className="py-3 px-2 text-center whitespace-nowrap">إخطار النتيجة</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
@@ -1032,7 +1068,7 @@ export const AdminDashboard: React.FC = () => {
 
                     return (
                       <tr key={r.studentId} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                        <td className="py-2.5 px-2 text-center">
+                        <td className="py-2.5 px-2 text-center whitespace-nowrap">
                           <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-black text-xs inline-flex items-center justify-center">
                             {r.rank}
                           </span>
@@ -1040,22 +1076,22 @@ export const AdminDashboard: React.FC = () => {
                         <td className="py-2.5 px-3 font-black text-slate-900 dark:text-white whitespace-nowrap">
                           {r.studentName}
                         </td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ARB')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('MATH')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('SCI')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ENG')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('ISL')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('HIST')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('GEOG')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono">{getSubTotal('COMP')}</td>
-                        <td className="py-2.5 px-2 text-center font-mono font-black text-purple-700 dark:text-purple-300 bg-purple-50/40 dark:bg-purple-950/20 text-sm">
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('ARB')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('MATH')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('SCI')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('ENG')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('ISL')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('HIST')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('GEOG')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono whitespace-nowrap">{getSubTotal('COMP')}</td>
+                        <td className="py-2.5 px-2 text-center font-mono font-black text-purple-700 dark:text-purple-300 bg-purple-50/40 dark:bg-purple-950/20 text-sm whitespace-nowrap">
                           {r.totalEarnedScore}
                         </td>
-                        <td className="py-2.5 px-2 text-center font-mono font-black text-slate-800 dark:text-slate-200">
+                        <td className="py-2.5 px-2 text-center font-mono font-black text-slate-800 dark:text-slate-200 whitespace-nowrap">
                           {r.percentage}%
                         </td>
-                        <td className="py-2.5 px-3 text-center">
-                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-black inline-block ${
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-black inline-block whitespace-nowrap ${
                             r.status === 'passed_honors'
                               ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
                               : r.status === 'passed'
@@ -1065,7 +1101,7 @@ export const AdminDashboard: React.FC = () => {
                             {r.generalAppreciation} • {r.status === 'makeup_exam' ? 'دور ثانٍ 🟡' : 'ناجح 🟢'}
                           </span>
                         </td>
-                        <td className="py-2.5 px-2 text-center">
+                        <td className="py-2.5 px-2 text-center whitespace-nowrap">
                           <button
                             onClick={() => {
                               setSelectedStudentForCard(originalStudent);
@@ -1073,7 +1109,7 @@ export const AdminDashboard: React.FC = () => {
                               setShowGradeCardModal(true);
                               sound.playTap();
                             }}
-                            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 rounded-lg text-[11px] font-bold border border-purple-200 dark:border-purple-800 transition active:scale-95 flex items-center justify-center gap-1 mx-auto"
+                            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 rounded-lg text-[11px] font-bold border border-purple-200 dark:border-purple-800 transition active:scale-95 flex items-center justify-center gap-1 mx-auto whitespace-nowrap"
                             title="طباعة بطاقة إخطار نتيجة الطالب"
                           >
                             <Printer className="w-3.5 h-3.5" />
@@ -1118,9 +1154,9 @@ export const AdminDashboard: React.FC = () => {
 
             <button
               onClick={() => { setTeacherToEdit(null); setShowTeacherModal(true); sound.playTap(); }}
-              className="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5"
+              className="whitespace-nowrap px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 shrink-0" />
               <span>+ إضافة معلم جديد</span>
             </button>
           </div>
@@ -1239,9 +1275,9 @@ export const AdminDashboard: React.FC = () => {
                 sound.playSuccess();
                 showToast('gold', 'تم تحضير جميع الطلاب 🟢', 'تم اعتماد الحضور لكافة الطلاب في المدرسة بنجاح.');
               }}
-              className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm shadow-md transition active:scale-95 flex items-center gap-2"
+              className="whitespace-nowrap px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm shadow-md transition active:scale-95 flex items-center gap-2 shrink-0"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 shrink-0" />
               <span>🟢 تحضير الجميع حاضر بلمسة واحدة</span>
             </button>
           </div>
@@ -1249,23 +1285,23 @@ export const AdminDashboard: React.FC = () => {
           {/* 4 Attendance Status Summary Boxes */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center">
-              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">الحاضرون 🟢</span>
-              <span className="text-2xl font-black text-emerald-700 dark:text-emerald-200 mt-1 block font-mono">{presentCount}</span>
+              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block whitespace-nowrap">الحاضرون 🟢</span>
+              <span className="text-2xl font-black text-emerald-700 dark:text-emerald-200 mt-1 block font-mono whitespace-nowrap">{presentCount}</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-center">
-              <span className="text-xs font-bold text-rose-800 dark:text-rose-300 block">الغائبون 🔴</span>
-              <span className="text-2xl font-black text-rose-700 dark:text-rose-200 mt-1 block font-mono">{absentCount}</span>
+              <span className="text-xs font-bold text-rose-800 dark:text-rose-300 block whitespace-nowrap">الغائبون 🔴</span>
+              <span className="text-2xl font-black text-rose-700 dark:text-rose-200 mt-1 block font-mono whitespace-nowrap">{absentCount}</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-center">
-              <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block">المتأخرون 🟡</span>
-              <span className="text-2xl font-black text-amber-700 dark:text-amber-200 mt-1 block font-mono">{lateCount}</span>
+              <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block whitespace-nowrap">المتأخرون 🟡</span>
+              <span className="text-2xl font-black text-amber-700 dark:text-amber-200 mt-1 block font-mono whitespace-nowrap">{lateCount}</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-center">
-              <span className="text-xs font-bold text-blue-800 dark:text-blue-300 block">إذن رسمي 🔵</span>
-              <span className="text-2xl font-black text-blue-700 dark:text-blue-200 mt-1 block font-mono">{excusedCount}</span>
+              <span className="text-xs font-bold text-blue-800 dark:text-blue-300 block whitespace-nowrap">إذن رسمي 🔵</span>
+              <span className="text-2xl font-black text-blue-700 dark:text-blue-200 mt-1 block font-mono whitespace-nowrap">{excusedCount}</span>
             </div>
           </div>
 
@@ -1287,8 +1323,8 @@ export const AdminDashboard: React.FC = () => {
                     className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-black text-sm text-slate-800 dark:text-white">فصل ({cls})</span>
-                      <span className="font-black text-sm font-mono text-emerald-600">{clsRate}%</span>
+                      <span className="font-black text-sm text-slate-800 dark:text-white whitespace-nowrap">فصل ({cls})</span>
+                      <span className="font-black text-sm font-mono text-emerald-600 whitespace-nowrap">{clsRate}%</span>
                     </div>
                     <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                       <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${clsRate}%` }} />
