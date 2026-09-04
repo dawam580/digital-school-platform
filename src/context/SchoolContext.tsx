@@ -163,7 +163,7 @@ interface SchoolContextType {
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
+  const [currentRole, setCurrentRoleState] = useState<UserRole>(() => {
     try {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
@@ -179,6 +179,35 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
     return 'admin';
   });
+
+  const setCurrentRole = (role: UserRole) => {
+    setCurrentRoleState(role);
+    try {
+      localStorage.setItem('madrasa_active_role', role);
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        url.searchParams.set('role', role);
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+
+    if (role === 'admin') {
+      setActiveTab('dashboard');
+    } else if (role === 'teacher') {
+      setActiveTab('teacher-quick');
+      if (!currentTeacher && teachers && teachers.length > 0) {
+        setCurrentTeacher(teachers[0]);
+      }
+    } else if (role === 'exams_coordinator') {
+      setActiveTab('exams-coordinator-dashboard');
+    } else if (role === 'counselor') {
+      setActiveTab('counselor-dashboard');
+    } else if (role === 'superadmin') {
+      setActiveTab('superadmin-dashboard');
+    } else if (role === 'parent') {
+      setActiveTab('parent-dashboard');
+    }
+  };
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
     try {

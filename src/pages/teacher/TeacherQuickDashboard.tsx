@@ -24,7 +24,8 @@ import {
   Tag,
   Sliders,
   Edit2,
-  BookOpen
+  BookOpen,
+  Building2
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -46,7 +47,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     toggleLargeFontMode,
     logout,
     setShowCustomCodeModal,
-    setShowPdfImporterModal
+    setShowPdfImporterModal,
+    setCurrentRole
   } = useSchool();
 
   // Custom Attendance State
@@ -319,14 +321,29 @@ export const TeacherQuickDashboard: React.FC = () => {
             <span>📄 استيراد PDF</span>
           </button>
 
+          {/* Return to Admin Dashboard (For Directors Testing the Teacher View) */}
+          <button
+            type="button"
+            onClick={() => {
+              sound.playTap();
+              setCurrentRole('admin');
+              showToast('info', 'لوحة تحكم المدير 🏛️', 'تم الرجوع إلى لوحة الإدارة العامة لمدرسة الباعور.');
+            }}
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm border border-purple-400/50 shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="الرجوع إلى لوحة تحكم مدير المدرسة الرئيسية"
+          >
+            <Building2 className="w-4 h-4" />
+            <span>⬅️ لوحة تحكم المدير</span>
+          </button>
+
           {/* Prominent Back Button */}
           <button
             onClick={() => { logout(); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border border-rose-400/50 shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
             title="الرجوع إلى شاشة الدخول واختيار البوابة"
           >
             <LogOut className="w-4 h-4" />
-            <span>⬅️ رجوع (خروج)</span>
+            <span>خروج</span>
           </button>
 
           {/* Accessibility Large Font Toggle */}
@@ -802,7 +819,7 @@ export const TeacherQuickDashboard: React.FC = () => {
           {/* Students Grading Table */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs">
+              <table className="w-full text-right text-xs min-w-[850px] whitespace-nowrap">
                 <thead className="bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 font-black border-b border-slate-200 dark:border-slate-700">
                   <tr>
                     <th className="py-3.5 px-3">#</th>

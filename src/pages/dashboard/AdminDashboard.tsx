@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import {
   Users,
+  UserPlus,
   CheckCircle2,
   AlertTriangle,
   FileText,
@@ -25,6 +26,7 @@ import {
   FileSpreadsheet,
   HelpCircle
 } from 'lucide-react';
+import { StudentManagerModal } from '../../components/admin/StudentManagerModal';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
 import { ComprehensiveSystemGuideModal } from '../../components/common/ComprehensiveSystemGuideModal';
@@ -58,7 +60,8 @@ export const AdminDashboard: React.FC = () => {
     showToast,
     updateAttendance,
     markAllPresent,
-    setCurrentRole
+    setCurrentRole,
+    loginWithTeacherCode
   } = useSchool();
 
   // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'
@@ -89,6 +92,10 @@ export const AdminDashboard: React.FC = () => {
   const [showTeachersRosterModal, setShowTeachersRosterModal] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
+
+  // Manual Student Manager Modal State
+  const [showStudentModal, setShowStudentModal] = useState<boolean>(false);
+  const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
 
   // Handlers for student management
   const handleClearAllStudents = () => {
@@ -631,6 +638,66 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'students' && (
         <div className="space-y-4 animate-in fade-in">
           
+          {/* How Students are Entered into the System (Educational 4-Method Guide) */}
+          <div className="p-5 bg-gradient-to-r from-blue-50 via-indigo-50/50 to-slate-50 dark:from-slate-800/80 dark:via-blue-950/30 dark:to-slate-900 border-2 border-blue-200 dark:border-blue-800/70 rounded-3xl space-y-3 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 font-black text-sm sm:text-base text-blue-950 dark:text-blue-200">
+                <span className="text-2xl">💡</span>
+                <span>كيف يتم إدخال أسماء وبيانات الطلبة إلى المنظومة؟ (4 طرق معتمدة وسريعة)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setStudentToEdit(null);
+                  setShowStudentModal(true);
+                  sound.playTap();
+                }}
+                className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-2 shrink-0"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>+ إضافة طالب جديد يدوياً الآن</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+              <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm space-y-1">
+                <div className="font-black text-blue-700 dark:text-blue-300 flex items-center gap-1.5 text-xs sm:text-sm">
+                  <span>1️⃣ الإدخال اليدوي الفردي</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  تسجيل طالب جديد أو تعديل بياناته (الاسم الرباعي، الرقم الوطني، رقم القيد، الفصل، تاريخ الميلاد) عبر النموذج المعتمد.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm space-y-1">
+                <div className="font-black text-teal-700 dark:text-teal-300 flex items-center gap-1.5 text-xs sm:text-sm">
+                  <span>2️⃣ استيراد كشف PDF الوزاري</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  رفع كشوفات المركز الوطني للامتحانات (PDF) وقراءتها وتوزيع الطلاب وتواريخ ميلادهم آلياً في ثوانٍ.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm space-y-1">
+                <div className="font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 text-xs sm:text-sm">
+                  <span>3️⃣ استيراد كشف Excel</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  رفع ملف إكسل يحتوي كشوفات المدرسة لملء الفصول والطلاب دفعة واحدة وبضغطة زر واحدة.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm space-y-1">
+                <div className="font-black text-purple-700 dark:text-purple-300 flex items-center gap-1.5 text-xs sm:text-sm">
+                  <span>4️⃣ ربط ولي الأمر برقم القيد</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  يسجل ولي الأمر عبر بوابته المستقلة ويربط ابنه عبر رمز الطالب أو رقم القيد للمتابعة الآلية.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Controls Bar: Search + Class Filter + Export */}
           <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
             
@@ -648,6 +715,21 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Actions: Export + Add Student + Quick Baour School Load + Clear */}
             <div className="flex items-center gap-2 flex-wrap justify-start xl:justify-end">
+              {/* Manual Add Student Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setStudentToEdit(null);
+                  setShowStudentModal(true);
+                  sound.playTap();
+                }}
+                className="whitespace-nowrap px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-md transition flex items-center gap-1.5 active:scale-95"
+                title="إضافة طالب جديد يدوياً إلى المنظومة"
+              >
+                <UserPlus className="w-4 h-4 shrink-0" />
+                <span>+ إضافة طالب يدوياً</span>
+              </button>
+
               {/* Direct Al-Baour School 873 Students Load */}
               <button
                 type="button"
@@ -849,6 +931,17 @@ export const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="py-3 px-4 text-center whitespace-nowrap">
                           <button
+                            onClick={() => {
+                              setStudentToEdit(st);
+                              setShowStudentModal(true);
+                              sound.playTap();
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition ml-1"
+                            title="تعديل بيانات الطالب"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleDeleteStudent(st.id, st.name)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
                             title="حذف الطالب من المنظومة"
@@ -898,18 +991,33 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setCurrentRole('exams_coordinator');
-                sound.playTap();
-                showToast('gold', 'بوابة الكنترول 📜', 'تم الانتقال المباشر إلى لوحة تحكم رئيس الكنترول.');
-              }}
-              className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 flex items-center gap-2 shrink-0"
-            >
-              <span>فتح بوابة الكنترول الكاملة ⚡</span>
-              <ChevronLeft className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentRole('teacher');
+                  sound.playTap();
+                  showToast('gold', 'بوابة المعلم 👨‍🏫', 'تم الانتقال المباشر لتجربة رصد الدرجات كمعلم.');
+                }}
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+                title="الانتقال لواجهة المعلم وتجربة رصد أعمال السنة والامتحانات"
+              >
+                <span>تجربة رصد درجات المعلم ⚡</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentRole('exams_coordinator');
+                  sound.playTap();
+                  showToast('gold', 'بوابة الكنترول 📜', 'تم الانتقال المباشر إلى لوحة تحكم رئيس الكنترول.');
+                }}
+                className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+              >
+                <span>فتح بوابة الكنترول الكاملة ⚡</span>
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           
           {/* Header Controls Bar */}
@@ -1152,13 +1260,28 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
 
-            <button
-              onClick={() => { setTeacherToEdit(null); setShowTeacherModal(true); sound.playTap(); }}
-              className="whitespace-nowrap px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
-            >
-              <Plus className="w-4 h-4 shrink-0" />
-              <span>+ إضافة معلم جديد</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentRole('teacher');
+                  sound.playTap();
+                  showToast('gold', 'بوابة المعلم 👨‍🏫', 'تم الانتقال المباشر لتجربة رصد الدرجات والحضور كمعلم.');
+                }}
+                className="whitespace-nowrap px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+                title="الدخول الفوري كمعلم وتجربة رصد أعمال السنة والامتحانات"
+              >
+                <span>تجربة رصد الدرجات كمعلم ⚡</span>
+              </button>
+
+              <button
+                onClick={() => { setTeacherToEdit(null); setShowTeacherModal(true); sound.playTap(); }}
+                className="whitespace-nowrap px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 shrink-0"
+              >
+                <Plus className="w-4 h-4 shrink-0" />
+                <span>+ إضافة معلم جديد</span>
+              </button>
+            </div>
           </div>
 
           {/* Teacher Cards Grid */}
@@ -1228,14 +1351,28 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <button
-                    onClick={() => { setTeacherToEdit(teacher); setShowTeacherModal(true); sound.playTap(); }}
-                    className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    <span>تعديل البيانات</span>
-                  </button>
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setTeacherToEdit(teacher); setShowTeacherModal(true); sound.playTap(); }}
+                      className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>تعديل</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sound.playSuccess();
+                        loginWithTeacherCode(teacher.code);
+                      }}
+                      className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-black border border-emerald-300 dark:border-emerald-800 transition active:scale-95 flex items-center gap-1 shadow-sm"
+                      title="تجربة الدخول ورصد الدرجات بصفتك هذا المعلم"
+                    >
+                      <span>دخول كمعلم ↗️</span>
+                    </button>
+                  </div>
 
                   <button
                     onClick={() => handleDeleteTeacher(teacher.id, teacher.name)}
@@ -1350,6 +1487,13 @@ export const AdminDashboard: React.FC = () => {
           <SchedulePage />
         </div>
       )}
+
+      {/* Manual Student Manager Modal */}
+      <StudentManagerModal
+        isOpen={showStudentModal}
+        onClose={() => { setShowStudentModal(false); setStudentToEdit(null); }}
+        studentToEdit={studentToEdit}
+      />
 
       {/* Teacher Manager Modal */}
       <TeacherManagerModal

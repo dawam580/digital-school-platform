@@ -15,7 +15,9 @@ import {
   ChevronLeft,
   AlertTriangle,
   HelpCircle,
-  FileText
+  FileText,
+  Building2,
+  LogOut
 } from 'lucide-react';
 import { Student } from '../../types';
 import { sound } from '../../utils/soundEffects';
@@ -25,7 +27,7 @@ import { PrintableStudentGradeCard } from '../../components/exams/PrintableStude
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 
 export const ExamCoordinatorDashboard: React.FC = () => {
-  const { schoolProfile, students, showToast } = useSchool();
+  const { schoolProfile, students, showToast, setCurrentRole, logout } = useSchool();
 
   // Selected Class for Control Sheet
   const availableClasses = useMemo(() => {
@@ -176,6 +178,21 @@ export const ExamCoordinatorDashboard: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
+            {/* Direct Return to Admin Dashboard Button */}
+            <button
+              type="button"
+              onClick={() => {
+                sound.playTap();
+                setCurrentRole('admin');
+                showToast('info', 'لوحة تحكم المدير 🏛️', 'تم الرجوع إلى لوحة الإدارة العامة لمدرسة الباعور.');
+              }}
+              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 border border-purple-400/50"
+              title="الرجوع إلى لوحة تحكم مدير المدرسة"
+            >
+              <Building2 className="w-4 h-4" />
+              <span>⬅️ لوحة تحكم المدير</span>
+            </button>
+
             <button
               type="button"
               onClick={handleExportControlExcel}
@@ -200,6 +217,17 @@ export const ExamCoordinatorDashboard: React.FC = () => {
               className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition flex items-center justify-center gap-1.5"
             >
               <span>📋 كشف المناداة والجلوس</span>
+            </button>
+
+            {/* Logout Button */}
+            <button
+              type="button"
+              onClick={() => { logout(); sound.playTap(); }}
+              className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 border border-rose-400/40"
+              title="تسجيل الخروج"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>خروج</span>
             </button>
           </div>
         </div>
