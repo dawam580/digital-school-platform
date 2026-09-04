@@ -23,6 +23,7 @@ import { SchoolManagerModal } from './components/admin/SchoolManagerModal';
 import { PdfStudentImporterModal } from './components/admin/PdfStudentImporterModal';
 import { ParentDashboard } from './pages/parent/ParentDashboard';
 import { CustomCodeModal } from './components/admin/CustomCodeModal';
+import { SuperAdminDashboard } from './pages/superadmin/SuperAdminDashboard';
 
 const MainContent: React.FC = () => {
   const {
@@ -70,6 +71,11 @@ const MainContent: React.FC = () => {
   }
 
   const renderActivePage = () => {
+    // 0. Super Admin Role: Multi-School District Directorate
+    if (currentRole === 'superadmin') {
+      return <SuperAdminDashboard />;
+    }
+
     // 1. Parent Role: completely isolated to their children's dedicated dashboard
     if (currentRole === 'parent') {
       if (activeTab === 'chat') return <ParentTeacherChat />;

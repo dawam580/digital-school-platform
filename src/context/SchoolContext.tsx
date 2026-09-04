@@ -165,8 +165,15 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentRole, setCurrentRole] = useState<UserRole>(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qRole = params.get('role');
+        if (qRole && ['admin', 'teacher', 'parent', 'counselor', 'superadmin'].includes(qRole)) {
+          return qRole as UserRole;
+        }
+      }
       const saved = localStorage.getItem('madrasa_active_role');
-      if (saved && ['admin', 'teacher', 'parent', 'counselor'].includes(saved)) {
+      if (saved && ['admin', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
         return saved as UserRole;
       }
     } catch {}
@@ -218,6 +225,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [activeTab, setActiveTab] = useState<string>(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qRole = params.get('role');
+        if (qRole === 'superadmin') return 'superadmin-dashboard';
+        if (qRole === 'teacher') return 'teacher-quick';
+        if (qRole === 'parent') return 'parent-dashboard';
+        if (qRole === 'admin') return 'dashboard';
+      }
       const saved = localStorage.getItem('madrasa_active_tab');
       if (saved) return saved;
     } catch {}
@@ -590,12 +605,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const t = teachers.find(tch => tch.code === 'LIB-SOC-01') || teachers[0];
       setCurrentTeacher(t);
       setActiveTab('counselor-dashboard');
+    } else if (role === 'superadmin') {
+      setCurrentTeacher(null);
+      setActiveTab('superadmin-dashboard');
     } else {
       setCurrentTeacher(null);
       setActiveTab('dashboard');
     }
     sound.playSuccess();
-    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : 'إدارة المدرسة'}`);
+    showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : role === 'superadmin' ? 'المدير العام (سوبر أدمن)' : 'إدارة المدرسة'}`);
     auditLogger.log({
       actorName: phoneOrId,
       actorRole: role,

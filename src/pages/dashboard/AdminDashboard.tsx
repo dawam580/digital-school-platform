@@ -33,6 +33,7 @@ import { QrPdfReaderModal } from '../../components/common/QrPdfReaderModal';
 import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTeachersRosterModal';
 import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
 import { SchedulePage } from '../schedule/SchedulePage';
+import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
@@ -82,6 +83,7 @@ export const AdminDashboard: React.FC = () => {
   const [showGuideBanner, setShowGuideBanner] = useState<boolean>(true);
 
   // New Feature Modals State
+  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
   const [showExcelImporterModal, setShowExcelImporterModal] = useState<boolean>(false);
   const [showQrPdfReaderModal, setShowQrPdfReaderModal] = useState<boolean>(false);
   const [showTeachersRosterModal, setShowTeachersRosterModal] = useState<boolean>(false);
@@ -271,6 +273,15 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Primary Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+          {/* Director Invite & Separate Role Links Button */}
+          <button
+            onClick={() => { setShowInviteModal(true); sound.playTap(); }}
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="نسخ رسالة دعوة وتجربة المنظومة لمدير مدرسة آخر وتوزيع الروابط"
+          >
+            <span>✉️ دعوة المدراء والروابط</span>
+          </button>
+
           {/* Visual Guide Button */}
           <button
             onClick={() => { setShowGuideModal(true); sound.playTap(); }}
@@ -1388,6 +1399,12 @@ export const AdminDashboard: React.FC = () => {
       <QrPdfReaderModal
         isOpen={showQrPdfReaderModal}
         onClose={() => setShowQrPdfReaderModal(false)}
+      />
+
+      {/* Director Invite & Role Links Modal */}
+      <DirectorInviteModal
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
       />
 
     </div>

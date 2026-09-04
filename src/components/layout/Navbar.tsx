@@ -28,6 +28,7 @@ import {
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
+import { DirectorInviteModal } from '../common/DirectorInviteModal';
 
 interface NavbarProps {
   onOpenMobileMenu?: () => void;
@@ -64,9 +65,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showStudentMenu, setShowStudentMenu] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showDirectorInviteModal, setShowDirectorInviteModal] = useState(false);
 
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     { id: 'admin', label: 'إدارة المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
+    { id: 'superadmin', label: 'المدير العام (سوبر أدمن)', icon: <Building2 className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
     { id: 'teacher', label: 'المعلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
     { id: 'counselor', label: 'الأخصائي الاجتماعي', icon: <HeartHandshake className="w-4 h-4" />, color: 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300' },
   ];
@@ -300,6 +303,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               )}
             </div>
 
+            {/* Director Invite & Role Links Button */}
+            <button
+              type="button"
+              onClick={() => { setShowDirectorInviteModal(true); sound.playTap(); }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black border border-purple-200 dark:border-purple-800 transition active:scale-95 shadow-sm"
+              title="نسخ رسالة دعوة المدير والروابط المنفصلة"
+            >
+              <span>✉️ رسالة الدعوة والروابط</span>
+            </button>
+
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
@@ -341,6 +354,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       <QuickSystemGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
+      />
+
+      {/* Director Invite & Role Links Modal */}
+      <DirectorInviteModal
+        isOpen={showDirectorInviteModal}
+        onClose={() => setShowDirectorInviteModal(false)}
       />
     </header>
   );

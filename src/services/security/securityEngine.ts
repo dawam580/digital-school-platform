@@ -74,6 +74,26 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'EXPORT_DATA',
     'IMPORT_DATA',
     'RESET_SYSTEM'
+  ],
+  superadmin: [
+    'VIEW_STUDENT_PROFILE',
+    'EDIT_STUDENT_PROFILE',
+    'VIEW_GRADES',
+    'EDIT_GRADES',
+    'APPROVE_GRADES',
+    'SOLVE_ASSIGNMENT',
+    'CREATE_ASSIGNMENT',
+    'GRADE_ASSIGNMENT',
+    'SEND_CHAT',
+    'VIEW_ALL_CHATS',
+    'TAKE_ATTENDANCE',
+    'VIEW_ATTENDANCE_REPORTS',
+    'ACCESS_EXCEL_HUB',
+    'ACCESS_DB_STUDIO',
+    'VIEW_AUDIT_LOGS',
+    'EXPORT_DATA',
+    'IMPORT_DATA',
+    'RESET_SYSTEM'
   ]
 };
 
