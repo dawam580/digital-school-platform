@@ -36,6 +36,7 @@ import { PrintableTeachersRosterModal } from '../../components/admin/PrintableTe
 import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
 import { SchedulePage } from '../schedule/SchedulePage';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
+import { MinistryRosterModal } from '../../components/admin/MinistryRosterModal';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
@@ -92,6 +93,7 @@ export const AdminDashboard: React.FC = () => {
   const [showTeachersRosterModal, setShowTeachersRosterModal] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
+  const [showMinistryRosterModal, setShowMinistryRosterModal] = useState<boolean>(false);
 
   // Manual Student Manager Modal State
   const [showStudentModal, setShowStudentModal] = useState<boolean>(false);
@@ -739,6 +741,17 @@ export const AdminDashboard: React.FC = () => {
               >
                 <span>🏛️</span>
                 <span>كشف مدرسة الباعور (873 طالب) ⚡</span>
+              </button>
+
+              {/* Official Ministry Roster Modal (100% Exact 7-column replica A4) */}
+              <button
+                type="button"
+                onClick={() => { setShowMinistryRosterModal(true); sound.playTap(); }}
+                className="whitespace-nowrap px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-black shadow-md transition flex items-center gap-1.5 active:scale-95 border border-emerald-400/40"
+                title="عرض وطباعة الكشف الوزاري الرسمي المعتمد (طبق الأصل A4 - كشف المركز الوطني للامتحانات 7 أعمدة)"
+              >
+                <FileText className="w-4 h-4 shrink-0 text-amber-300" />
+                <span>📄 الكشف الوزاري الرسمي (طبق الأصل A4) 🏛️</span>
               </button>
 
               <button
@@ -1574,6 +1587,12 @@ export const AdminDashboard: React.FC = () => {
       <DirectorInviteModal
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
+      />
+
+      {/* Official Libyan Ministry Roster Modal (100% Exact 7-column replica A4) */}
+      <MinistryRosterModal
+        isOpen={showMinistryRosterModal}
+        onClose={() => setShowMinistryRosterModal(false)}
       />
 
     </div>

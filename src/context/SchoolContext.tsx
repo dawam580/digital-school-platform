@@ -44,6 +44,7 @@ import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast'
 import { auditLogger } from '../services/audit/auditLogger';
 import { SecurityEngine } from '../services/security/securityEngine';
 import { studentRepository } from '../services/repositories';
+import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -291,22 +292,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
-  // Persistent Students
+  // Persistent Students (Libyan Official Al-Baour Roster 873 Students)
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const data = db.getStudents();
-      return (data && data.length > 0) ? data : SEED_STUDENTS;
+      if (data && data.length > 5) return data;
+      if (data && data.length > 0 && data[0]?.id !== 'std-1') return data;
+      return LIBYAN_BAOUR_STUDENTS;
     } catch {
-      return SEED_STUDENTS;
+      return LIBYAN_BAOUR_STUDENTS;
     }
   });
 
   const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
     try {
       const all = db.getStudents();
-      return (all && all.length > 0) ? all[0] : SEED_STUDENTS[0];
+      const list = (all && all.length > 5) ? all : LIBYAN_BAOUR_STUDENTS;
+      return list[0];
     } catch {
-      return SEED_STUDENTS[0];
+      return LIBYAN_BAOUR_STUDENTS[0];
     }
   });
 
@@ -1110,8 +1114,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const resetDatabase = () => {
     SecurityEngine.assertPermission(currentRole, 'RESET_SYSTEM');
     db.resetAllData();
-    setStudents(SEED_STUDENTS);
-    setSelectedStudent(SEED_STUDENTS[0]);
+    setStudents(LIBYAN_BAOUR_STUDENTS);
+    setSelectedStudent(LIBYAN_BAOUR_STUDENTS[0]);
     setTeachers(SEED_TEACHERS);
     setClasses(SEED_CLASSES);
     setNotifications(SEED_NOTIFICATIONS);

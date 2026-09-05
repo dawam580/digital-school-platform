@@ -225,35 +225,52 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
                 </div>
               </form>
 
-              {/* Portable Package Export & Import Box */}
-              <div className="p-5 rounded-3xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+              {/* Portable Package Backup & Restore Box (Clear for beginners) */}
+              <div className="p-5 rounded-3xl bg-slate-50 dark:bg-slate-800/60 border-2 border-dashed border-blue-200 dark:border-slate-700 space-y-3">
                 <div className="flex items-center gap-2">
-                  <Download className="w-4 h-4 text-emerald-600" />
-                  <h4 className="font-black text-sm text-slate-900 dark:text-white">
-                    تصدير حزمة مدرسة مستقلة لإرسالها لصديقك
-                  </h4>
+                  <Download className="w-5 h-5 text-blue-600" />
+                  <div>
+                    <h4 className="font-black text-sm text-slate-900 dark:text-white">
+                      نسخة الأمان والنسخ الاحتياطي الشامل للمنظومة (Backup) 📦
+                    </h4>
+                    <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold">
+                      لحفظ بيانات المدرسة ونقلها بالكامل إلى كمبيوتر آخر
+                    </span>
+                  </div>
                 </div>
-                <p className="text-slate-600 dark:text-slate-400 text-xs">
-                  يمكنك تنزيل ملف مستقل كامل للمنظومة (`.madrasa.json`) وإرساله لصديقك عبر الواتساب أو تيليجرام. عند فتحه سيتم تشغيل المنظومة لديه بنفس الإعدادات أو ببيانات جديدة فوراً.
-                </p>
+
+                {/* Beginner Explanatory Alert */}
+                <div className="p-3.5 bg-blue-50/80 dark:bg-blue-950/40 rounded-2xl border border-blue-200 dark:border-blue-800 text-[11px] leading-relaxed text-blue-900 dark:text-blue-200 space-y-1">
+                  <div className="font-black flex items-center gap-1">
+                    <span>💡 ما هو ملف المنظومة (.json) ولماذا هو موجود؟</span>
+                  </div>
+                  <p>
+                    هذا الملف ليس جدولاً عادياً، بل هو <strong>ملف أمان مشفر (مثل نسخة واتساب الاحتياطية)</strong> يحتوي على كامل قاعدة بيانات مدرستك (الطلاب، الدرجات، الحضور، الإعدادات). المنظومة تعمل محلياً داخل جهازك بدون الحاجة لسيرفر خارجي، وهذا الملف يسمح لك بأخذ نسختك في فلاش ميموري وتشغيلها في أي مكان أو استرجاعها إن تعطل المتصفح.
+                  </p>
+                  <p className="text-amber-800 dark:text-amber-300 font-bold pt-0.5">
+                    👉 إذا أردت كشوفات قابلة للقراءة والطباعة: استخدم زر <strong>(تصدير Excel 📊)</strong> أو <strong>(الكشف الوزاري الرسمي A4 🏛️)</strong> في الصفحة الرئيسية.
+                  </p>
+                </div>
 
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <button
                     type="button"
                     onClick={exportSchoolPackage}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-sm flex items-center gap-2 transition active:scale-95 text-xs"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-sm flex items-center gap-2 transition active:scale-95 text-xs"
+                    title="تنزيل نسخة احتياطية كاملة من قاعدة بيانات المنظومة"
                   >
                     <Download className="w-4 h-4" />
-                    <span>تصدير حزمة المنظومة (.json) 📦</span>
+                    <span>حفظ نسخة احتياطية كاملة للمنظومة (.json) 💾</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="px-5 py-2.5 bg-white dark:bg-slate-700 hover:bg-slate-100 text-slate-800 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm flex items-center gap-2 transition text-xs"
+                    title="استرجاع مدرسة من ملف نسخة احتياطية سابقة"
                   >
                     <Upload className="w-4 h-4" />
-                    <span>استيراد حزمة مدرسة أخرى 📥</span>
+                    <span>استرجاع المنظومة من ملف احتياطي 📥</span>
                   </button>
 
                   <input
