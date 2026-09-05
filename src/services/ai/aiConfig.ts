@@ -11,23 +11,31 @@ export interface AiCredentials {
   keySecret: string;
   rawToken: string;
   openAiApiKey?: string;
+  nvidiaApiKey?: string;
+  nvidiaModel?: string;
+  nvidiaBaseUrl?: string;
+  activeProvider: 'nvidia' | 'openai' | 'auto';
   status: 'active' | 'inactive' | 'testing';
   provider: string;
   lastConnectedAt?: string;
 }
 
 const DEFAULT_AI_CREDENTIALS: AiCredentials = {
-  keyId: 'egtr7lqivu6mombnu3m1omunh9',
-  keySecret: '9ce6ea4d-dd43-416b-9706-6054d4c98cd6',
-  rawToken: 'ZWd0cjdscWl2dTZtb21ibnUzbTFvbXVuaDk:OWNlNmVhNGQtZGQ0My00MTZiLTk3MDYtNjA1NGQ0Yzk4Y2Q2',
+  keyId: 'nvidia-nim-deepseek',
+  keySecret: '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',
+  rawToken: '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',
   openAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
+  nvidiaApiKey: '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',
+  nvidiaModel: 'deepseek-ai/deepseek-v4-pro-0813',
+  nvidiaBaseUrl: 'https://integrate.api.nvidia.com/v1',
+  activeProvider: 'nvidia',
   status: 'active',
-  provider: 'OpenAI & Cloud Document Intelligence (Libyan Schools Edition)',
+  provider: 'NVIDIA NIM & DeepSeek AI GPU Cloud (Libyan Schools Edition)',
   lastConnectedAt: new Date().toISOString()
 };
 
 export class AiConfigService {
-  private static STORAGE_KEY = 'madrasa_ai_credentials_v1';
+  private static STORAGE_KEY = 'madrasa_ai_credentials_v2';
 
   /**
    * جلب بيانات الاعتماد الحالية للذكاء الاصطناعي
@@ -54,8 +62,17 @@ export class AiConfigService {
       lastConnectedAt: new Date().toISOString()
     };
 
-    if (creds.rawToken && creds.rawToken.trim().startsWith('sk-')) {
-      updated.openAiApiKey = creds.rawToken.trim();
+    if (creds.rawToken) {
+      const token = creds.rawToken.trim();
+      if (token.startsWith('nvapi-')) {
+        updated.nvidiaApiKey = token;
+        updated.activeProvider = 'nvidia';
+        updated.provider = 'NVIDIA NIM & DeepSeek AI GPU Cloud';
+      } else if (token.startsWith('sk-')) {
+        updated.openAiApiKey = token;
+        updated.activeProvider = 'openai';
+        updated.provider = 'OpenAI Cloud Intelligence';
+      }
     }
 
     try {

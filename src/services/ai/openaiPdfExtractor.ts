@@ -23,17 +23,6 @@ export class OpenAiPdfExtractor {
    */
   static async extractWithAi(rawText: string, targetGrade: string = 'الصف التاسع'): Promise<OpenAiExtractionResult> {
     const creds = AiConfigService.getCredentials();
-    const apiKey = creds.openAiApiKey || 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy';
-
-    if (!apiKey) {
-      return {
-        success: false,
-        students: [],
-        totalParsed: 0,
-        message: 'مفتاح الذكاء الاصطناعي السحابي غير متوفر.',
-        error: 'NO_API_KEY'
-      };
-    }
 
     if (!rawText || rawText.trim().length < 10) {
       return {
@@ -45,7 +34,6 @@ export class OpenAiPdfExtractor {
       };
     }
 
-    // Limit chunk to avoid token limits per single call (about 80,000 chars is fine for gpt-4o-mini)
     const textSnippet = rawText.slice(0, 90000);
 
     const systemPrompt = `أنت خبير استخراج ومعالجة كشوفات وبيانات وزارة التربية والتعليم والمركز الوطني للامتحانات بدولة ليبيا.
@@ -80,36 +68,106 @@ export class OpenAiPdfExtractor {
 ]`;
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey.trim()}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          temperature: 0.1,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: `إليك النصوص المستخرجة من الكشف، استخرج الطلاب بدقة وفق الشروط:\n\n${textSnippet}` }
-          ]
-        })
-      });
+      // Determine primary & secondary AI providers
+      const hasNvidia = !!(creds.nvidiaApiKey && creds.nvidiaApiKey.startsWith('nvapi-'));
+      const hasOpenAi = !!(creds.openAiApiKey && creds.openAiApiKey.startsWith('sk-'));
 
-      if (!response.ok) {
-        const errJson = await response.json().catch(() => ({}));
-        const errMsg = errJson?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
-        return {
-          success: false,
-          students: [],
-          totalParsed: 0,
-          message: `خطأ في الاتصال بالذكاء الاصطناعي: ${errMsg}`,
-          error: errMsg
-        };
+    if (!hasNvidia && !hasOpenAi) {
+      return {
+        success: false,
+        students: [],
+        totalParsed: 0,
+        message: 'مفتاح الذكاء الاصطناعي السحابي غير متوفر (يرجى إدخال مفتاح NVIDIA أو OpenAI في الإعدادات).',
+        error: 'NO_API_KEY'
+      };
+    }
+
+    // Helper to call OpenAI-compatible completion endpoint with timeout
+    const callCompletion = async (
+      endpoint: string,
+      apiKey: string,
+      model: string,
+      extraBody: Record<string, any> = {}
+    ): Promise<string> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey.trim()}`
+          },
+          body: JSON.stringify({
+            model,
+            temperature: 0.1,
+            max_tokens: 8192,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `إليك النصوص المستخرجة من الكشف، استخرج الطلاب بدقة وفق الشروط:\n\n${textSnippet}` }
+            ],
+            ...extraBody
+          })
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errJson = await response.json().catch(() => ({}));
+          throw new Error(errJson?.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.choices?.[0]?.message?.content || '';
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        throw err;
       }
+    };
 
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || '';
+    let content = '';
+    let lastError = '';
+
+    // Attempt 1: NVIDIA NIM (DeepSeek GPU-Accelerated)
+    if (hasNvidia && creds.activeProvider !== 'openai') {
+      try {
+        content = await callCompletion(
+          'https://integrate.api.nvidia.com/v1/chat/completions',
+          creds.nvidiaApiKey!,
+          creds.nvidiaModel || 'deepseek-ai/deepseek-v4-pro-0813',
+          { chat_template_kwargs: { thinking: false } }
+        );
+      } catch (nvidiaErr: any) {
+        console.warn('NVIDIA NIM DeepSeek attempt failed, trying fallback:', nvidiaErr);
+        lastError = nvidiaErr.message || 'NVIDIA NIM request failed';
+      }
+    }
+
+    // Attempt 2: OpenAI Fallback (or Primary if selected)
+    if (!content && hasOpenAi) {
+      try {
+        content = await callCompletion(
+          'https://api.openai.com/v1/chat/completions',
+          creds.openAiApiKey!,
+          'gpt-4o-mini'
+        );
+      } catch (openAiErr: any) {
+        console.error('OpenAI attempt failed:', openAiErr);
+        lastError = openAiErr.message || 'OpenAI request failed';
+      }
+    }
+
+    if (!content) {
+      return {
+        success: false,
+        students: [],
+        totalParsed: 0,
+        message: `تعذر استخراج البيانات عبر الذكاء الاصطناعي: ${lastError}`,
+        error: lastError
+      };
+    }
 
       // Clean markdown code blocks if returned
       let cleanJson = content.trim();
