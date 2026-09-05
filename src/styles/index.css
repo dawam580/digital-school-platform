@@ -41,3 +41,46 @@
 .animate-subtle {
   animation: subtle-pulse 3s infinite ease-in-out;
 }
+
+/* ========================================================================= */
+/* DESIGN SYSTEM TOKENS & UTILITIES (Reference: 21st.dev & Motion.dev)       */
+/* ========================================================================= */
+
+:root {
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-press: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glassy Surface Layers */
+.surface-glass {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .surface-glass {
+  background-color: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+/* 60fps Micro-interaction utilities */
+.press-feedback {
+  transition: transform 150ms var(--ease-press), opacity 150ms ease;
+}
+
+.press-feedback:active {
+  transform: scale(0.97);
+}
+
+.hover-lift {
+  transition: transform 200ms var(--ease-snappy), box-shadow 200ms var(--ease-snappy);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
