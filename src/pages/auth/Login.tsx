@@ -32,6 +32,7 @@ export const Login: React.FC = () => {
     setCurrentRole,
     students,
     setSelectedStudent,
+    setParentLinkedStudent,
     teachers,
     currentUserPhone,
     schoolProfile,
@@ -102,7 +103,10 @@ export const Login: React.FC = () => {
   const handleQuickParentDemo = () => {
     sound.playSuccess();
     const firstStudent = students[0];
-    if (firstStudent) setSelectedStudent(firstStudent);
+    if (firstStudent) {
+      setSelectedStudent(firstStudent);
+      setParentLinkedStudent(firstStudent);
+    }
     login('1001', 'parent');
   };
 
@@ -124,6 +128,7 @@ export const Login: React.FC = () => {
 
       if (foundStudent) {
         setSelectedStudent(foundStudent);
+        setParentLinkedStudent(foundStudent);
         login(foundStudent.nationalNumber || foundStudent.nationalId, 'parent');
       } else {
         setErrorMessage('الرمز أو الرقم الوطني غير مسجل في المنظومة. يرجى مراجعة إدارة المدرسة.');

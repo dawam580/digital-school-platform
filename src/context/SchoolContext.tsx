@@ -54,9 +54,16 @@ interface SchoolContextType {
   currentUserPhone: string;
   currentTeacher: TeacherAccount | null;
   teachers: TeacherAccount[];
+  selectTeacher: (teacher: TeacherAccount) => void;
   login: (phoneOrId: string, role: UserRole) => void;
   loginWithTeacherCode: (code: string) => boolean;
   logout: () => void;
+
+  // Parent Student Linkage & Discovery
+  parentLinkedStudent: Student | null;
+  setParentLinkedStudent: (student: Student | null) => void;
+  previouslyLinkedStudents: Student[];
+  unlinkParentStudent: (studentId: string) => void;
 
   // Operational Plan PDF Modal
   showOperationalPlanModal: boolean;
@@ -197,7 +204,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } else if (role === 'teacher') {
       setActiveTab('teacher-quick');
       if (!currentTeacher && teachers && teachers.length > 0) {
-        setCurrentTeacher(teachers[0]);
+        try {
+          const savedId = localStorage.getItem('madrasa_active_teacher_id');
+          const found = savedId ? teachers.find(t => t.id === savedId) : null;
+          if (found) {
+            setCurrentTeacher(found);
+          }
+        } catch {}
       }
     } else if (role === 'exams_coordinator') {
       setActiveTab('exams-coordinator-dashboard');
@@ -217,7 +230,32 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return '0922465676';
     }
   });
-  const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(null);
+  const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(() => {
+    try {
+      const savedId = localStorage.getItem('madrasa_active_teacher_id');
+      if (savedId) {
+        const found = SEED_TEACHERS.find(t => t.id === savedId);
+        if (found) return found;
+      }
+    } catch {}
+    return null;
+  });
+
+  const [parentLinkedStudentId, setParentLinkedStudentId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('madrasa_parent_child_id') || null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [parentLinkedIds, setParentLinkedIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_parent_linked_ids');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [];
+  });
   const [showOperationalPlanModal, setShowOperationalPlanModal] = useState(false);
   const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [showSchoolManagerModal, setShowSchoolManagerModal] = useState(false);
@@ -313,6 +351,54 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return LIBYAN_BAOUR_STUDENTS[0];
     }
   });
+
+  // Parent Linked Child State
+  const parentLinkedStudent = React.useMemo(() => {
+    if (!parentLinkedStudentId) return null;
+    return students.find(s => s.id === parentLinkedStudentId || s.studentNumber === parentLinkedStudentId || s.nationalNumber === parentLinkedStudentId) || null;
+  }, [parentLinkedStudentId, students]);
+
+  const previouslyLinkedStudents = React.useMemo(() => {
+    return students.filter(s => parentLinkedIds.includes(s.id));
+  }, [parentLinkedIds, students]);
+
+  const setParentLinkedStudent = useCallback((student: Student | null) => {
+    if (student) {
+      setParentLinkedStudentId(student.id);
+      setSelectedStudent(student);
+      setParentLinkedIds(prev => {
+        const next = Array.from(new Set([student.id, ...prev]));
+        try {
+          localStorage.setItem('madrasa_parent_linked_ids', JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      try {
+        localStorage.setItem('madrasa_parent_child_id', student.id);
+      } catch {}
+    } else {
+      setParentLinkedStudentId(null);
+      try {
+        localStorage.removeItem('madrasa_parent_child_id');
+      } catch {}
+    }
+  }, []);
+
+  const unlinkParentStudent = useCallback((studentId: string) => {
+    setParentLinkedIds(prev => {
+      const next = prev.filter(id => id !== studentId);
+      try {
+        localStorage.setItem('madrasa_parent_linked_ids', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    if (parentLinkedStudentId === studentId) {
+      setParentLinkedStudentId(null);
+      try {
+        localStorage.removeItem('madrasa_parent_child_id');
+      } catch {}
+    }
+  }, [parentLinkedStudentId]);
 
   const [classes, setClasses] = useState<SchoolClass[]>(() => {
     try {
@@ -496,6 +582,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const dismissToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
+
+  const selectTeacher = useCallback((teacher: TeacherAccount) => {
+    setCurrentTeacher(teacher);
+    try {
+      localStorage.setItem('madrasa_active_teacher_id', teacher.id);
+    } catch {}
+    showToast('info', 'تم تحديد حساب المعلم 👨‍🏫', `أنت الآن في واجهة المعلم (${teacher.name}) - مادة ${teacher.subject}`);
+  }, [showToast]);
 
   const recordInfractionAndCheck = useCallback((
     studentId: string,
@@ -1314,9 +1408,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         currentTeacher,
         teachers,
         setTeachers,
+        selectTeacher,
         login,
         loginWithTeacherCode,
         logout,
+        parentLinkedStudent,
+        setParentLinkedStudent,
+        previouslyLinkedStudents,
+        unlinkParentStudent,
         showOperationalPlanModal,
         setShowOperationalPlanModal,
         showAccountSettingsModal,

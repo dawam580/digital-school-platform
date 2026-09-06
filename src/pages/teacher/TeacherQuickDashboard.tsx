@@ -33,10 +33,13 @@ import { db } from '../../services/db';
 import { LibyanExamEngine } from '../../services/exams/libyanExamEngine';
 import { ExamStorageService, ExamGradeRecord } from '../../services/exams/examStorageService';
 import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
+import { TeacherSelectionModal } from '../../components/teacher/TeacherSelectionModal';
 
 export const TeacherQuickDashboard: React.FC = () => {
   const {
     currentTeacher,
+    teachers,
+    selectTeacher,
     students,
     setStudents,
     updateAttendance,
@@ -61,15 +64,24 @@ export const TeacherQuickDashboard: React.FC = () => {
   // Active section inside the teacher portal
   const [activeAction, setActiveAction] = useState<'attendance' | 'grading' | 'quick-message'>('attendance');
 
-  // Selected class (Includes 7th, 8th, 6th, 4th, 3rd grades)
+  // Selected class (Defaults to the classes assigned to this specific teacher)
   const assignedClasses = React.useMemo(() => {
-    const list = currentTeacher?.assignedClasses || ['7/أ', '7/ب', '3/أ'];
-    const set = new Set(list);
-    ['7/أ', '7/ب', '8/أ', '6/أ', '4/أ', '3/أ'].forEach(c => set.add(c));
-    return Array.from(set);
+    if (currentTeacher?.assignedClasses && currentTeacher.assignedClasses.length > 0) {
+      return currentTeacher.assignedClasses;
+    }
+    return ['7/أ', '7/ب', '8/أ', '6/أ', '4/أ', '3/أ'];
   }, [currentTeacher]);
+
   const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '7/أ');
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
+  const [showTeacherSelectModal, setShowTeacherSelectModal] = useState<boolean>(!currentTeacher);
+
+  // Synchronize selectedClass when currentTeacher changes
+  React.useEffect(() => {
+    if (assignedClasses.length > 0 && !assignedClasses.includes(selectedClass)) {
+      setSelectedClass(assignedClasses[0]);
+    }
+  }, [assignedClasses, selectedClass]);
 
   // Filter students for the selected class
   const classStudents = students.filter(s => s.className === selectedClass || s.className.includes(selectedClass));
@@ -305,11 +317,22 @@ export const TeacherQuickDashboard: React.FC = () => {
               <span>بوابة المعلم الميسرة • الوضع السريع لكبار السن</span>
             </div>
             <h1 className={`${isLargeFontMode ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'} font-black`}>
-              أهلاً بك: {currentTeacher?.name || 'أ. طارق الفيتوري'}
+              أهلاً بك: {currentTeacher?.name || 'اختر اسمك من كشف المعلمين'}
             </h1>
             <div className="text-emerald-200/90 text-sm sm:text-base font-medium mt-1 flex items-center gap-2 flex-wrap">
-              <span>مادة: <strong className="text-white underline decoration-emerald-400 underline-offset-4">{currentTeacher?.subject || 'الرياضيات'}</strong></span>
-              <span>• رمز المعلم: <span className="font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-xs font-black">{currentTeacher?.code || 'LIB-MATH-01'}</span></span>
+              <span>مادة: <strong className="text-white underline decoration-emerald-400 underline-offset-4">{currentTeacher?.subject || 'غير محدد'}</strong></span>
+              <span>• رمز المعلم: <span className="font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-xs font-black">{currentTeacher?.code || '—'}</span></span>
+              
+              <button
+                type="button"
+                onClick={() => { setShowTeacherSelectModal(true); sound.playTap(); }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-emerald-950 text-xs font-black shadow-md hover:bg-emerald-50 transition active:scale-95"
+                title="اضغط هنا لتغيير المعلم واختيار اسمك من كشف المدرسة"
+              >
+                <Users className="w-3.5 h-3.5 text-emerald-700" />
+                <span>تبديل المعلم 🔄</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => { setShowCustomCodeModal(true); sound.playTap(); }}
@@ -1119,6 +1142,20 @@ export const TeacherQuickDashboard: React.FC = () => {
       <QuickSystemGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
+      />
+
+      {/* Teacher Selection Modal */}
+      <TeacherSelectionModal
+        isOpen={showTeacherSelectModal}
+        onClose={() => setShowTeacherSelectModal(false)}
+        teachers={teachers}
+        currentTeacher={currentTeacher}
+        onSelectTeacher={teacher => {
+          selectTeacher(teacher);
+          if (teacher.assignedClasses && teacher.assignedClasses.length > 0) {
+            setSelectedClass(teacher.assignedClasses[0]);
+          }
+        }}
       />
 
     </div>

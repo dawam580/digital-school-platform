@@ -21,11 +21,14 @@ import {
   Phone,
   LogOut,
   X,
-  MessageSquare
+  MessageSquare,
+  Search,
+  RefreshCw
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
+import { ParentStudentGate } from '../../components/parent/ParentStudentGate';
 import { Student } from '../../types';
 
 export const ParentDashboard: React.FC = () => {
@@ -38,7 +41,11 @@ export const ParentDashboard: React.FC = () => {
     showToast,
     currentUserPhone,
     logout,
-    linkStudent
+    linkStudent,
+    parentLinkedStudent,
+    setParentLinkedStudent,
+    previouslyLinkedStudents,
+    unlinkParentStudent
   } = useSchool();
 
   // Active section inside the parent dashboard
@@ -57,22 +64,44 @@ export const ParentDashboard: React.FC = () => {
   const [excuseReason, setExcuseReason] = useState<string>('ظرف صحي طارئ (مرفق التقرير الطبي)');
   const [isSubmittingExcuse, setIsSubmittingExcuse] = useState<boolean>(false);
 
-  // Identify all children of this parent
-  // If parent phone matches or linkCode matches, or fallback to first 2-3 demo students
-  const parentChildren: Student[] = students.filter(
-    s => (currentUserPhone && s.parentPhone === currentUserPhone) ||
-         s.id === selectedStudent?.id
-  );
+  // Identify all linked children for this parent
+  const parentChildren: Student[] = React.useMemo(() => {
+    const list: Student[] = [];
+    if (parentLinkedStudent) list.push(parentLinkedStudent);
+    previouslyLinkedStudents.forEach(s => {
+      if (!list.some(x => x.id === s.id)) list.push(s);
+    });
+    // If parent phone matches any other students, include them too
+    if (currentUserPhone) {
+      students.forEach(s => {
+        if (s.parentPhone === currentUserPhone && !list.some(x => x.id === s.id)) {
+          list.push(s);
+        }
+      });
+    }
+    return list;
+  }, [parentLinkedStudent, previouslyLinkedStudents, currentUserPhone, students]);
 
-  // Ensure at least the currently selected student and another demo child are available for multi-child testing
-  const displayChildren = parentChildren.length > 0 
-    ? parentChildren 
-    : [selectedStudent || students[0], students[1]].filter(Boolean);
+  const activeChild = parentLinkedStudent || parentChildren[0];
 
-  const activeChild = selectedStudent || displayChildren[0] || students[0];
+  // If no child is linked or selected on this browser session yet, show the Parent Inquiry Gate!
+  if (!activeChild) {
+    return (
+      <ParentStudentGate
+        students={students}
+        onSelectStudent={child => {
+          setParentLinkedStudent(child);
+          setSelectedStudent(child);
+        }}
+        previouslyLinkedStudents={previouslyLinkedStudents}
+        onUnlinkStudent={unlinkParentStudent}
+      />
+    );
+  }
 
   // Handle switching active child
   const handleSelectChild = (child: Student) => {
+    setParentLinkedStudent(child);
     setSelectedStudent(child);
     sound.playTap();
     showToast('info', 'تم التبديل 🔄', `أنت الآن تتابع بيانات الطالب (${child.name.split(' ')[0]})`);
@@ -152,6 +181,19 @@ export const ParentDashboard: React.FC = () => {
             </button>
 
             <button
+              onClick={() => {
+                setParentLinkedStudent(null);
+                sound.playTap();
+                showToast('info', 'بوابة الاستعلام 🔍', 'يمكنك الآن إدخال رقم قيد أو اختيار طالب آخر.');
+              }}
+              className="px-3.5 py-2 rounded-2xl bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs sm:text-sm font-bold shadow flex items-center gap-1.5 transition active:scale-95"
+              title="استعلام عن طالب آخر أو الرجوع للبحث"
+            >
+              <Search className="w-4 h-4 text-indigo-200" />
+              <span>استعلام عن طالب آخر 🔍</span>
+            </button>
+
+            <button
               onClick={() => { setShowLinkModal(true); sound.playTap(); }}
               className="px-3.5 py-2 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-bold border border-white/20 shadow flex items-center gap-1.5 transition active:scale-95"
               title="ربط ابن آخر بحسابك"
@@ -178,7 +220,7 @@ export const ParentDashboard: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-            {displayChildren.map(child => {
+            {parentChildren.map(child => {
               const isSelected = child.id === activeChild.id;
               return (
                 <button

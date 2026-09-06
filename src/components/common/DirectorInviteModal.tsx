@@ -117,8 +117,8 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
       role: 'teacher' as const,
       icon: <GraduationCap className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
       color: 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200',
-      badge: 'رمز الدخول: LIB-MATH-01 👨‍🏫',
-      desc: 'رصد يومي للدرجات والحضور بنقرة واحدة والتواصل المباشر مع أولياء الأمور.'
+      badge: 'تحديد المعلم ورصد الدرجات 👨‍🏫',
+      desc: 'اختيار المعلم ومادته، رصد الحضور والدرجات، والجدول الأسبوعي مع إمكانية التبديل السريع.'
     },
     {
       key: 'counselor',
@@ -144,8 +144,8 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
       role: 'parent' as const,
       icon: <Users className="w-5 h-5 text-teal-600 dark:text-teal-400" />,
       color: 'border-teal-200 dark:border-teal-800/60 bg-teal-50/70 dark:bg-teal-950/30 text-teal-950 dark:text-teal-200',
-      badge: 'أمان مشدد • رؤية الأبناء فقط 👨‍👩‍👧‍👦',
-      desc: 'متابعة تقارير الحضور اليومية، درجات الاختبارات، والمحادثة مع المعلمين.'
+      badge: 'استعلام برقم القيد • خصوصية تامة 👨‍👩‍👧‍👦',
+      desc: 'استعلام فوري برقم القيد أو الرقم الوطني لمتابعة بطاقة درجات وحضور الأبناء فقط.'
     }
   ];
 
