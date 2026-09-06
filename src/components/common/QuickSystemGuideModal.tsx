@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   BookOpen,
@@ -29,8 +30,8 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-900/80 backdrop-blur-sm font-cairo text-right animate-in fade-in overflow-y-auto">
+  const modalContent = (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-xl font-cairo text-right animate-in fade-in overflow-y-auto duration-200">
       <div className="relative w-full max-w-4xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 my-auto">
         
         {/* Header */}
@@ -268,4 +269,6 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 };
