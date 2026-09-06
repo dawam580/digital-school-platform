@@ -38,6 +38,7 @@ import { SchedulePage } from '../schedule/SchedulePage';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { MinistryRosterModal } from '../../components/admin/MinistryRosterModal';
 import { SubjectManagementModal } from '../../components/admin/SubjectManagementModal';
+import { SecurityPinConfirmModal } from '../../components/common/SecurityPinConfirmModal';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
@@ -96,6 +97,7 @@ export const AdminDashboard: React.FC = () => {
   const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
   const [showMinistryRosterModal, setShowMinistryRosterModal] = useState<boolean>(false);
   const [showSubjectModal, setShowSubjectModal] = useState<boolean>(false);
+  const [showClearPinModal, setShowClearPinModal] = useState<boolean>(false);
 
   // Manual Student Manager Modal State
   const [showStudentModal, setShowStudentModal] = useState<boolean>(false);
@@ -104,11 +106,13 @@ export const AdminDashboard: React.FC = () => {
   // Handlers for student management
   const handleClearAllStudents = () => {
     sound.playAlert();
-    if (window.confirm('⚠️ هل أنت متأكد من رغبتك في حذف وتصفير جميع سجلات الطلاب المسجلين بالكامل للبدء من جديد؟')) {
-      setStudents([]);
-      db.saveStudents([], true);
-      showToast('info', 'تم التصفير', 'تم حذف كشف الطلاب بنجاح. يمكنك الآن استيراد كشف PDF أو Excel جديد.');
-    }
+    setShowClearPinModal(true);
+  };
+
+  const executeClearAllStudents = () => {
+    setStudents([]);
+    db.saveStudents([], true);
+    showToast('info', 'تم التصفير 🗑️', 'تم حذف كشف الطلاب بنجاح بعد التحقق من رمز الأمان. يمكنك الآن استيراد كشف PDF أو Excel جديد.');
   };
 
   const handleDirectLoadBaour = () => {
@@ -1612,6 +1616,17 @@ export const AdminDashboard: React.FC = () => {
         isOpen={showSubjectModal}
         onClose={() => setShowSubjectModal(false)}
         showToast={showToast}
+      />
+
+      {/* 2FA Security PIN Confirmation Modal for Clearing Students */}
+      <SecurityPinConfirmModal
+        isOpen={showClearPinModal}
+        onClose={() => setShowClearPinModal(false)}
+        onSuccess={executeClearAllStudents}
+        title="تأكيد تصفير وحذف كشف الطلاب بالكامل"
+        description="أنت على وشك حذف وتصفير جميع سجلات الطلاب المسجلين بالكامل للبدء من جديد. هذا الإجراء لا يمكن التراجع عنه ويتطلب إدخال رمز أمان مدير المدرسة للتأكيد."
+        actionBadge="تصفير جذري ⚠️"
+        isDestructive={true}
       />
 
     </div>

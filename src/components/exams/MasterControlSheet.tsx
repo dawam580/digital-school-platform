@@ -20,6 +20,7 @@ import {
 import { Student } from '../../types';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { SecurityPinConfirmModal } from '../common/SecurityPinConfirmModal';
 import {
   ExamStorageService,
   ExamSubject,
@@ -184,10 +185,17 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
     }
   };
 
-  // Lock / Unlock control
-  const handleToggleLock = async () => {
-    if (!examLock) return;
+  const [showLockPinModal, setShowLockPinModal] = useState(false);
+
+  // Lock / Unlock control trigger
+  const handleToggleLock = () => {
     sound.playTap();
+    setShowLockPinModal(true);
+  };
+
+  // Execute after PIN verification
+  const executeToggleLock = async () => {
+    if (!examLock) return;
 
     const newLockState = !examLock.isLocked;
     const updatedLock: ExamLock = {
@@ -202,10 +210,10 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
 
     if (newLockState) {
       sound.playSuccess();
-      showToast('gold', 'تم اعتماد وقفل الكنترول 🔒', `تم قفل درجات فصل (${selectedClass}) بنجاح وتوثيق المحضر.`);
+      showToast('gold', 'تم اعتماد وقفل الكنترول 🔒', `تم قفل درجات فصل (${selectedClass}) بنجاح وتوثيق المحضر برمز الأمان.`);
       addNotification?.(
         `🔒 اعتماد شيت الكنترول لفصل ${selectedClass}`,
-        `تم إقفال رصد الدرجات للفصل وتجهيز كشوفات النتائج الرسمية.`,
+        `تم إقفال رصد الدرجات للفصل وتثبيت النتائج الرسمية بعد التحقق من رمز الأمان.`,
         'admin'
       );
     } else {
@@ -784,6 +792,21 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
           </table>
         </div>
       </div>
+
+      {/* 2FA Security PIN Confirmation Modal for Exam Lock */}
+      <SecurityPinConfirmModal
+        isOpen={showLockPinModal}
+        onClose={() => setShowLockPinModal(false)}
+        onSuccess={executeToggleLock}
+        title={examLock?.isLocked ? 'إلغاء قفل شيت الكنترول' : 'اعتماد وقفل شيت الكنترول رسمياً'}
+        description={
+          examLock?.isLocked
+            ? `أنت على وشك إلغاء قفل شيت درجات فصل (${selectedClass}) وإعادة فتحه للتعديل. يرجى إدخال رمز أمان المدير العام للتأكيد.`
+            : `أنت على وشك اعتماد شيت درجات فصل (${selectedClass}) وقفله نهائياً وتثبيت النتائج الرسمية لمنع أي تعديل لاحق.`
+        }
+        actionBadge={examLock?.isLocked ? 'إلغاء قفل الكنترول 🔓' : 'اعتماد وقفل الكنترول 🔒'}
+        isDestructive={examLock?.isLocked}
+      />
     </div>
   );
 };

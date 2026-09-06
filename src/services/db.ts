@@ -18,6 +18,7 @@ import {
   SchoolProfile
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
+import { CryptoVaultService } from './security/cryptoVault';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 
 export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
@@ -1102,7 +1103,9 @@ export const db = {
       const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
       if (data) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return CryptoVaultService.decryptStudentsBatch(parsed);
+        }
       }
       return LIBYAN_BAOUR_STUDENTS;
     } catch {
@@ -1112,7 +1115,8 @@ export const db = {
 
   saveStudents(students: Student[], force: boolean = false): void {
     try {
-      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
+      const encrypted = CryptoVaultService.encryptStudentsBatch(students);
+      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(encrypted));
       if (force) {
         localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
       }

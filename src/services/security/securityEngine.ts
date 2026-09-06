@@ -169,4 +169,69 @@ export class SecurityEngine {
     this.submissionTimestamps.set(key, now);
     return true; // Allowed
   }
+
+  // ================= 2FA / DIRECTOR SECURITY PIN ================= //
+  private static STORAGE_KEY_PIN = 'madrasa_director_pin_sec';
+  private static failedAttempts = 0;
+  private static lockoutUntil = 0;
+
+  public static getDirectorPin(): string {
+    try {
+      return localStorage.getItem(this.STORAGE_KEY_PIN) || '2026';
+    } catch {
+      return '2026';
+    }
+  }
+
+  public static setDirectorPin(newPin: string): boolean {
+    if (!newPin || newPin.length < 4) return false;
+    try {
+      localStorage.setItem(this.STORAGE_KEY_PIN, newPin);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public static isPinLockedOut(): { isLocked: boolean; remainingSeconds: number } {
+    const now = Date.now();
+    if (now < this.lockoutUntil) {
+      const remaining = Math.ceil((this.lockoutUntil - now) / 1000);
+      return { isLocked: true, remainingSeconds: remaining };
+    }
+    return { isLocked: false, remainingSeconds: 0 };
+  }
+
+  public static verifyDirectorPin(inputPin: string): { valid: boolean; message: string } {
+    const lockout = this.isPinLockedOut();
+    if (lockout.isLocked) {
+      return {
+        valid: false,
+        message: `تم تجميد المحاولات مؤقتاً لحماية النظام. يرجى الانتظار (${lockout.remainingSeconds}) ثانية.`
+      };
+    }
+
+    const expected = this.getDirectorPin();
+    if (inputPin.trim() === expected.trim()) {
+      this.failedAttempts = 0;
+      this.lockoutUntil = 0;
+      return { valid: true, message: 'رمز الأمان صحيح' };
+    }
+
+    this.failedAttempts++;
+    if (this.failedAttempts >= 3) {
+      this.lockoutUntil = Date.now() + 30000; // 30s lockout
+      return {
+        valid: false,
+        message: 'تم استنفاد 3 محاولات خاطئة. تم قفل المحاولات مؤقتاً لمدة 30 ثانية للحماية من التخمين.'
+      };
+    }
+
+    return {
+      valid: false,
+      message: `رمز الأمان غير صحيح. المحاولات المتبقية: (${3 - this.failedAttempts})`
+    };
+  }
 }
+
+export { CryptoVaultService } from './cryptoVault';

@@ -7,6 +7,7 @@
 
 import { Student, SubjectGrade, Assignment, TeacherConversation } from '../../types';
 import { indexedDBManager } from '../storage/indexedDb';
+import { CryptoVaultService } from '../security/cryptoVault';
 
 export interface IRepository<T> {
   getAll(): Promise<T[]>;
@@ -22,20 +23,21 @@ export class StudentRepository implements IRepository<Student> {
   async getAll(): Promise<Student[]> {
     try {
       const idbData = await indexedDBManager.getAll<Student>(this.storeName);
-      if (idbData && idbData.length > 0) return idbData;
+      if (idbData && idbData.length > 0) return CryptoVaultService.decryptStudentsBatch(idbData);
       
       const local = localStorage.getItem(this.localKey);
-      return local ? JSON.parse(local) : [];
+      return local ? CryptoVaultService.decryptStudentsBatch(JSON.parse(local)) : [];
     } catch {
       const local = localStorage.getItem(this.localKey);
-      return local ? JSON.parse(local) : [];
+      return local ? CryptoVaultService.decryptStudentsBatch(JSON.parse(local)) : [];
     }
   }
 
   async saveAll(students: Student[]): Promise<boolean> {
     try {
-      localStorage.setItem(this.localKey, JSON.stringify(students));
-      await indexedDBManager.putAll(this.storeName, students);
+      const encrypted = CryptoVaultService.encryptStudentsBatch(students);
+      localStorage.setItem(this.localKey, JSON.stringify(encrypted));
+      await indexedDBManager.putAll(this.storeName, encrypted);
       return true;
     } catch {
       return false;
