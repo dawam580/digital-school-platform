@@ -35,6 +35,38 @@ import { ExamStorageService, ExamGradeRecord } from '../../services/exams/examSt
 import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
 import { TeacherSelectionModal } from '../../components/teacher/TeacherSelectionModal';
 
+export const normalizeClassQuery = (cls: string): string => {
+  if (!cls) return '';
+  return cls
+    .replace(/\/أ/g, '/1')
+    .replace(/\/ب/g, '/2')
+    .replace(/\/ج/g, '/3')
+    .replace(/\/د/g, '/4')
+    .replace(/\/هـ/g, '/5')
+    .trim();
+};
+
+export const matchesClass = (studentClass: string | undefined, targetClass: string): boolean => {
+  if (!studentClass || !targetClass) return false;
+  if (studentClass === targetClass || studentClass.includes(targetClass)) return true;
+  
+  const normS = normalizeClassQuery(studentClass);
+  const normT = normalizeClassQuery(targetClass);
+  
+  const targetBase = normT.split(' ')[0];
+  const studentBase = normS.split(' ')[0];
+  
+  return normS.includes(normT) || (targetBase.length > 0 && studentBase === targetBase);
+};
+
+export const ALL_LIBYAN_PERIODS = [
+  'الحصة الأولى',
+  'الحصة الثانية',
+  'الحصة الثالثة',
+  'الحصة الرابعة',
+  'الحصة الخامسة'
+];
+
 export const TeacherQuickDashboard: React.FC = () => {
   const {
     currentTeacher,
@@ -60,6 +92,12 @@ export const TeacherQuickDashboard: React.FC = () => {
   const [attendancePeriod, setAttendancePeriod] = useState<string>('الحصة الأولى');
   const [showAttendanceCustomizer, setShowAttendanceCustomizer] = useState<boolean>(true);
   const [studentNotes, setStudentNotes] = useState<{ [studentId: string]: string }>({});
+  const [attendanceViewMode, setAttendanceViewMode] = useState<'cards' | 'periods-matrix'>('cards');
+  
+  // Period-specific attendance cache: [date_period_studentId] => { status, note }
+  const [periodAttendanceRecords, setPeriodAttendanceRecords] = useState<{
+    [recordKey: string]: { status: AttendanceStatus; note?: string };
+  }>({});
 
   // Active section inside the teacher portal
   const [activeAction, setActiveAction] = useState<'attendance' | 'grading' | 'quick-message'>('attendance');
@@ -69,10 +107,10 @@ export const TeacherQuickDashboard: React.FC = () => {
     if (currentTeacher?.assignedClasses && currentTeacher.assignedClasses.length > 0) {
       return currentTeacher.assignedClasses;
     }
-    return ['7/أ', '7/ب', '8/أ', '6/أ', '4/أ', '3/أ'];
+    return ['3/أ', '7/أ', '7/ب', '8/أ', '6/أ', '4/أ'];
   }, [currentTeacher]);
 
-  const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '7/أ');
+  const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '3/أ');
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
   const [showTeacherSelectModal, setShowTeacherSelectModal] = useState<boolean>(!currentTeacher);
 
@@ -83,8 +121,10 @@ export const TeacherQuickDashboard: React.FC = () => {
     }
   }, [assignedClasses, selectedClass]);
 
-  // Filter students for the selected class
-  const classStudents = students.filter(s => s.className === selectedClass || s.className.includes(selectedClass));
+  // Filter students for the selected class using smart normalization
+  const classStudents = React.useMemo(() => {
+    return students.filter(s => matchesClass(s.className, selectedClass));
+  }, [students, selectedClass]);
 
   // Selected student for grading or messaging
   const [selectedStudentId, setSelectedStudentId] = useState<string>(classStudents[0]?.id || students[0]?.id || '');
@@ -156,7 +196,7 @@ export const TeacherQuickDashboard: React.FC = () => {
     triggerConfetti();
 
     const updatedStudents = students.map(st => {
-      if (st.className !== selectedClass && !st.className.includes(selectedClass)) return st;
+      if (!matchesClass(st.className, selectedClass)) return st;
 
       const score = classScores[st.id] || getStudentScore(st.id);
       const total = score.coursework + score.exam;
@@ -240,18 +280,55 @@ export const TeacherQuickDashboard: React.FC = () => {
   // Success indicator
   const [attendanceSaved, setAttendanceSaved] = useState(false);
 
-  // 1. One-Tap Status Change
-  const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
+  // Period-aware status helper
+  const getStudentPeriodStatus = (studentId: string, periodName: string = attendancePeriod): AttendanceStatus => {
+    const key = `${attendanceDate}_${periodName}_${studentId}`;
+    if (periodAttendanceRecords[key]) {
+      return periodAttendanceRecords[key].status;
+    }
+    const std = students.find(s => s.id === studentId);
+    return std?.status || 'present';
+  };
+
+  const getStudentPeriodNote = (studentId: string, periodName: string = attendancePeriod): string => {
+    const key = `${attendanceDate}_${periodName}_${studentId}`;
+    if (periodAttendanceRecords[key]?.note) {
+      return periodAttendanceRecords[key].note!;
+    }
+    return studentNotes[studentId] || '';
+  };
+
+  // 1. One-Tap Status Change (Records for active period and syncs globally)
+  const handleStatusChange = (studentId: string, status: AttendanceStatus, targetPeriod: string = attendancePeriod) => {
     sound.playTap();
+    const key = `${attendanceDate}_${targetPeriod}_${studentId}`;
+    setPeriodAttendanceRecords(prev => ({
+      ...prev,
+      [key]: { status, note: studentNotes[studentId] }
+    }));
     updateAttendance(studentId, status);
   };
 
-  // 2. One-Tap Mark All Present
-  const handleMarkAll = () => {
+  // 1b. Direct Cycle Status (for Matrix View cells)
+  const handleCyclePeriodStatus = (studentId: string, targetPeriod: string) => {
+    const current = getStudentPeriodStatus(studentId, targetPeriod);
+    const order: AttendanceStatus[] = ['present', 'unexcused', 'late', 'excused'];
+    const nextIdx = (order.indexOf(current) + 1) % order.length;
+    handleStatusChange(studentId, order[nextIdx], targetPeriod);
+  };
+
+  // 2. One-Tap Mark All Present for Active Period
+  const handleMarkAll = (targetPeriod: string = attendancePeriod) => {
     sound.playSuccess();
     triggerConfetti();
-    classStudents.forEach(s => updateAttendance(s.id, 'present'));
-    showToast('success', 'رائع جداً 👏', `تم تحضير جميع طلاب فصل ${selectedClass} حاضرين بنجاح!`);
+    const nextRecords = { ...periodAttendanceRecords };
+    classStudents.forEach(s => {
+      const key = `${attendanceDate}_${targetPeriod}_${s.id}`;
+      nextRecords[key] = { status: 'present', note: studentNotes[s.id] };
+      updateAttendance(s.id, 'present');
+    });
+    setPeriodAttendanceRecords(nextRecords);
+    showToast('success', 'رائع جداً 👏', `تم تحضير جميع طلاب فصل ${selectedClass} حاضرين في ${targetPeriod} بنجاح!`);
   };
 
   // 3. Save Attendance with Feedback
@@ -260,11 +337,11 @@ export const TeacherQuickDashboard: React.FC = () => {
     triggerConfetti();
     setAttendanceSaved(true);
     addNotification(
-      `تم اعتماد حضور فصل ${selectedClass}`,
-      `قام الأستاذ ${currentTeacher?.name || 'المعلم'} باعتماد كشف الحضور اليومي وإشعار أولياء الأمور فوراً.`,
+      `تم اعتماد حضور فصل ${selectedClass} - (${attendancePeriod})`,
+      `قام الأستاذ ${currentTeacher?.name || 'معلم المادة'} باعتماد كشف حضور مادة ${currentTeacher?.subject || 'الرياضيات'} لفصل (${selectedClass}) في ${attendancePeriod} وإشعار أولياء الأمور فوراً.`,
       'attendance'
     );
-    showToast('gold', 'تم الحفظ والاعتماد 💾', `تم تثبيت كشف حضور فصل ${selectedClass} بنجاح.`);
+    showToast('gold', 'تم الحفظ والاعتماد 💾', `تم تثبيت كشف حضور فصل ${selectedClass} (${attendancePeriod}) بنجاح.`);
     setTimeout(() => setAttendanceSaved(false), 3000);
   };
 
@@ -470,19 +547,30 @@ export const TeacherQuickDashboard: React.FC = () => {
           اختر الفصل الدراسي:
         </span>
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          {assignedClasses.map(cls => (
-            <button
-              key={cls}
-              onClick={() => { setSelectedClass(cls); sound.playTap(); }}
-              className={`flex-1 sm:flex-initial py-3 px-6 rounded-2xl font-black text-base sm:text-lg transition-all active:scale-95 shadow-sm border ${
-                selectedClass === cls
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              فصل ({cls})
-            </button>
-          ))}
+          {assignedClasses.map(cls => {
+            const count = students.filter(s => matchesClass(s.className, cls)).length;
+            const isSel = selectedClass === cls || matchesClass(selectedClass, cls);
+            return (
+              <button
+                key={cls}
+                onClick={() => { setSelectedClass(cls); sound.playTap(); }}
+                className={`flex-1 sm:flex-initial py-2.5 px-5 rounded-2xl font-black text-sm sm:text-base transition-all active:scale-95 shadow-sm border flex items-center justify-center gap-2 ${
+                  isSel
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-600/30 ring-2 ring-emerald-400/40'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <span>فصل ({cls})</span>
+                {count > 0 && (
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-mono font-black ${
+                    isSel ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                  }`}>
+                    {count} طالب
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -577,7 +665,7 @@ export const TeacherQuickDashboard: React.FC = () => {
 
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 <button
-                  onClick={handleMarkAll}
+                  onClick={() => handleMarkAll(attendancePeriod)}
                   className="flex-1 sm:flex-initial px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
                 >
                   <Sparkles className="w-5 h-5 text-amber-300" />
@@ -626,152 +714,316 @@ export const TeacherQuickDashboard: React.FC = () => {
                 <span className="text-xs font-black text-slate-700 dark:text-slate-300 shrink-0">الحصة:</span>
                 {['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة'].map(p => {
                   const full = `الحصة ${p}`;
+                  const pPresentCount = classStudents.filter(st => getStudentPeriodStatus(st.id, full) === 'present').length;
                   return (
                     <button
                       key={p}
                       type="button"
                       onClick={() => { setAttendancePeriod(full); sound.playTap(); }}
-                      className={`px-2.5 py-1 rounded-xl text-xs font-bold transition border ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition border flex items-center gap-1.5 ${
                         attendancePeriod === full
-                          ? 'bg-teal-700 text-white border-teal-700 shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                          ? 'bg-teal-700 text-white border-teal-700 shadow-md ring-2 ring-teal-400/40 scale-105'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      {p}
+                      <span>{p}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-black ${
+                        attendancePeriod === full
+                          ? 'bg-white/20 text-white'
+                          : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
+                      }`}>
+                        {pPresentCount}/{classStudents.length}
+                      </span>
                     </button>
                   );
                 })}
               </div>
             </div>
+
+            {/* View Mode Toggle: Single-Period Cards vs 5-Periods Comprehensive Matrix */}
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-emerald-200/80 dark:border-emerald-800/60 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-emerald-950 dark:text-emerald-200">نمط عرض الحضور:</span>
+                <div className="p-1 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => { setAttendanceViewMode('cards'); sound.playTap(); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1.5 ${
+                      attendanceViewMode === 'cards'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>📇 بطاقات الحضور الفردية ({attendancePeriod})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setAttendanceViewMode('periods-matrix'); sound.playTap(); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1.5 ${
+                      attendanceViewMode === 'periods-matrix'
+                        ? 'bg-teal-700 text-white shadow-sm'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>📊 كشف الحصص الشامل (مصفوفة الحصص 1 - 5)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="text-xs text-emerald-900 dark:text-emerald-200 font-bold">
+                مادة: <strong className="underline decoration-emerald-400">{teacherSubject}</strong> • الأستاذ: {currentTeacher?.name || 'معلم المادة'}
+              </div>
+            </div>
           </div>
 
-          {/* Student Rows (Large, High-Contrast Touch Cards with 4 status options) */}
-          <div className="space-y-3">
-            {classStudents.map((student, idx) => {
-              const isPresent = student.status === 'present';
-              const isAbsent = student.status === 'unexcused';
-              const isLate = student.status === 'late';
-              const isExcused = student.status === 'excused';
+          {attendanceViewMode === 'periods-matrix' ? (
+            /* ======================================================= */
+            /* 5-PERIODS COMPREHENSIVE MATRIX VIEW                     */
+            /* ======================================================= */
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-teal-500/30 overflow-hidden shadow-lg space-y-3 p-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                  <h4 className="font-black text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>📊 مصفوفة متابعة حصص مادة {teacherSubject} (الحصص 1 إلى 5)</span>
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    فصل ({selectedClass}) • اضغط على أي حصة لتبديل حالة الطالب فوراً بين (حاضر 🟢 / غائب 🔴 / متأخر 🟡 / إذن 🔵)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-black flex-wrap">
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">🟢 حاضر</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300">🔴 غائب</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">🟡 متأخر</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300">🔵 إذن رسمي</span>
+                </div>
+              </div>
 
-              return (
-                <div
-                  key={student.id}
-                  className={`p-4 sm:p-5 rounded-3xl border-2 transition-all flex flex-col gap-3 ${
-                    isPresent
-                      ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
-                      : isAbsent
-                      ? 'bg-red-50/40 dark:bg-red-950/20 border-red-300 dark:border-red-800'
-                      : isExcused
-                      ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-300 dark:border-blue-800'
-                      : 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800'
-                  }`}
-                >
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    {/* Student Info */}
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                      <span className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm shrink-0">
-                        {idx + 1}
-                      </span>
+              {/* Responsive Scrollable Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-right border-collapse text-xs sm:text-sm">
+                  <thead>
+                    <tr className="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-black border-b border-slate-200 dark:border-slate-700">
+                      <th className="p-3 w-10 text-center">#</th>
+                      <th className="p-3 min-w-[200px]">اسم الطالب ورقم القيد</th>
+                      <th className="p-3 text-center min-w-[100px]">الحصة 1</th>
+                      <th className="p-3 text-center min-w-[100px]">الحصة 2</th>
+                      <th className="p-3 text-center min-w-[100px]">الحصة 3</th>
+                      <th className="p-3 text-center min-w-[100px]">الحصة 4</th>
+                      <th className="p-3 text-center min-w-[100px]">الحصة 5</th>
+                      <th className="p-3 min-w-[150px]">ملاحظة / عذر</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {classStudents.map((st, idx) => (
+                      <tr key={st.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <td className="p-3 text-center font-bold text-slate-400">
+                          {idx + 1}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2.5">
+                            <img src={st.avatar} alt={st.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border" />
+                            <div>
+                              <strong className="block text-slate-900 dark:text-white">{st.name}</strong>
+                              <span className="font-mono text-[11px] text-slate-400">قيد: {st.studentNumber || st.nationalNumber || st.id}</span>
+                            </div>
+                          </div>
+                        </td>
+                        {ALL_LIBYAN_PERIODS.map(pName => {
+                          const status = getStudentPeriodStatus(st.id, pName);
+                          return (
+                            <td key={pName} className="p-2 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleCyclePeriodStatus(st.id, pName)}
+                                className={`w-full py-1.5 px-2 rounded-xl font-black text-xs transition active:scale-90 border shadow-xs ${
+                                  status === 'present'
+                                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-400/40 hover:bg-emerald-500/25'
+                                    : status === 'unexcused'
+                                    ? 'bg-red-500/15 text-red-700 dark:text-red-300 border-red-400/40 hover:bg-red-500/25'
+                                    : status === 'late'
+                                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/40 hover:bg-amber-500/25'
+                                    : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-400/40 hover:bg-blue-500/25'
+                                }`}
+                                title={`اضغط للتبديل: ${pName}`}
+                              >
+                                {status === 'present' && 'حاضر 🟢'}
+                                {status === 'unexcused' && 'غائب 🔴'}
+                                {status === 'late' && 'متأخر 🟡'}
+                                {status === 'excused' && 'إذن 🔵'}
+                              </button>
+                            </td>
+                          );
+                        })}
+                        <td className="p-2">
+                          <span className="text-[11px] text-slate-500 font-medium">
+                            {studentNotes[st.id] || '—'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  {/* Summary Totals Row */}
+                  <tfoot>
+                    <tr className="bg-emerald-50/70 dark:bg-emerald-950/40 font-black text-xs sm:text-sm border-t-2 border-emerald-200 dark:border-emerald-800">
+                      <td colSpan={2} className="p-3 text-emerald-950 dark:text-emerald-200">
+                        إجمالي الحضور الفعلي في مادة {teacherSubject}:
+                      </td>
+                      {ALL_LIBYAN_PERIODS.map(pName => {
+                        const presentCount = classStudents.filter(st => getStudentPeriodStatus(st.id, pName) === 'present').length;
+                        const pct = Math.round((presentCount / (classStudents.length || 1)) * 100);
+                        return (
+                          <td key={pName} className="p-3 text-center">
+                            <span className="font-mono text-emerald-700 dark:text-emerald-300 font-black block">
+                              {presentCount} / {classStudents.length}
+                            </span>
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
+                              ({pct}%)
+                            </span>
+                          </td>
+                        );
+                      })}
+                      <td className="p-3 text-left">
+                        <span className="text-xs text-emerald-800 dark:text-emerald-300 font-black">
+                          {attendanceDate}
+                        </span>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          ) : (
+            /* ======================================================= */
+            /* SINGLE-PERIOD INDIVIDUAL CARDS VIEW                     */
+            /* ======================================================= */
+            <div className="space-y-3">
+              {classStudents.map((student, idx) => {
+                const stStatus = getStudentPeriodStatus(student.id, attendancePeriod);
+                const isPresent = stStatus === 'present';
+                const isAbsent = stStatus === 'unexcused';
+                const isLate = stStatus === 'late';
+                const isExcused = stStatus === 'excused';
 
-                      <img
-                        src={student.avatar}
-                        alt={student.name}
-                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
-                      />
+                return (
+                  <div
+                    key={student.id}
+                    className={`p-4 sm:p-5 rounded-3xl border-2 transition-all flex flex-col gap-3 ${
+                      isPresent
+                        ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
+                        : isAbsent
+                        ? 'bg-red-50/40 dark:bg-red-950/20 border-red-300 dark:border-red-800'
+                        : isExcused
+                        ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-300 dark:border-blue-800'
+                        : 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                      {/* Student Info */}
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <span className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm shrink-0">
+                          {idx + 1}
+                        </span>
 
-                      <div>
-                        <h4 className="font-black text-base sm:text-lg text-slate-900 dark:text-white">
-                          {student.name}
-                        </h4>
-                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                          <span>الرقم الوطني: <strong className="font-mono text-slate-700 dark:text-slate-300">{student.nationalNumber || student.nationalId}</strong></span>
-                          {student.motherName && <span>• الأم: <strong>{student.motherName}</strong></span>}
+                        <img
+                          src={student.avatar}
+                          alt={student.name}
+                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
+                        />
+
+                        <div>
+                          <h4 className="font-black text-base sm:text-lg text-slate-900 dark:text-white">
+                            {student.name}
+                          </h4>
+                          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            <span>الرقم الوطني: <strong className="font-mono text-slate-700 dark:text-slate-300">{student.nationalNumber || student.nationalId}</strong></span>
+                            {student.motherName && <span>• الأم: <strong>{student.motherName}</strong></span>}
+                          </div>
                         </div>
+                      </div>
+
+                      {/* 4 Status Selection Buttons (Min 48px height) */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full sm:w-auto shrink-0">
+                        <button
+                          onClick={() => handleStatusChange(student.id, 'present', attendancePeriod)}
+                          className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                            isPresent
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
+                          }`}
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>حاضر 🟢</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleStatusChange(student.id, 'unexcused', attendancePeriod)}
+                          className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                            isAbsent
+                              ? 'bg-red-600 text-white border-red-600 shadow-md scale-105'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-red-50'
+                          }`}
+                        >
+                          <span>غائب 🔴</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleStatusChange(student.id, 'late', attendancePeriod)}
+                          className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                            isLate
+                              ? 'bg-amber-500 text-white border-amber-500 shadow-md scale-105'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
+                          }`}
+                        >
+                          <span>متأخر 🟡</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleStatusChange(student.id, 'excused', attendancePeriod)}
+                          className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
+                            isExcused
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'
+                          }`}
+                        >
+                          <span>إذن رسمي 🔵</span>
+                        </button>
                       </div>
                     </div>
 
-                    {/* 4 Status Selection Buttons (Min 48px height) */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full sm:w-auto shrink-0">
-                      <button
-                        onClick={() => handleStatusChange(student.id, 'present')}
-                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
-                          isPresent
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
-                        }`}
-                      >
-                        <Check className="w-4 h-4" />
-                        <span>حاضر 🟢</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusChange(student.id, 'unexcused')}
-                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
-                          isAbsent
-                            ? 'bg-red-600 text-white border-red-600 shadow-md scale-105'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-red-50'
-                        }`}
-                      >
-                        <span>غائب 🔴</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusChange(student.id, 'late')}
-                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
-                          isLate
-                            ? 'bg-amber-500 text-white border-amber-500 shadow-md scale-105'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
-                        }`}
-                      >
-                        <span>متأخر 🟡</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusChange(student.id, 'excused')}
-                        className={`py-3.5 px-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 transition-all active:scale-95 border ${
-                          isExcused
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'
-                        }`}
-                      >
-                        <span>إذن رسمي 🔵</span>
-                      </button>
+                    {/* Quick Attendance Reason / Note for this student */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 flex-wrap text-xs">
+                      <span className="text-slate-400 text-[11px]">ملاحظة أو سبب الغياب/التأخر ({attendancePeriod}):</span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {['عذر مرضي 🩺', 'استئذان أسري 🏠', 'مأذون من الإدارة 🏢', 'بدون عذر ⚠️'].map(reason => (
+                          <button
+                            key={reason}
+                            type="button"
+                            onClick={() => {
+                              setStudentNotes(prev => ({ ...prev, [student.id]: reason }));
+                              sound.playTap();
+                              showToast('info', 'تم حفظ الملاحظة', `${student.name}: ${reason}`);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${
+                              studentNotes[student.id] === reason
+                                ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 text-amber-900 dark:text-amber-200 font-black shadow-sm'
+                                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                            }`}
+                          >
+                            {reason}
+                          </button>
+                        ))}
+                        {studentNotes[student.id] && (
+                          <span className="font-bold text-amber-600 dark:text-amber-400 text-xs mr-1">
+                            ✓ {studentNotes[student.id]}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-
-                  {/* Quick Attendance Reason / Note for this student */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 flex-wrap text-xs">
-                    <span className="text-slate-400 text-[11px]">ملاحظة أو سبب الغياب/التأخر:</span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {['عذر مرضي 🩺', 'استئذان أسري 🏠', 'مأذون من الإدارة 🏢', 'بدون عذر ⚠️'].map(reason => (
-                        <button
-                          key={reason}
-                          type="button"
-                          onClick={() => {
-                            setStudentNotes(prev => ({ ...prev, [student.id]: reason }));
-                            sound.playTap();
-                            showToast('info', 'تم حفظ الملاحظة', `${student.name}: ${reason}`);
-                          }}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${
-                            studentNotes[student.id] === reason
-                              ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 text-amber-900 dark:text-amber-200 font-black shadow-sm'
-                              : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                          }`}
-                        >
-                          {reason}
-                        </button>
-                      ))}
-                      {studentNotes[student.id] && (
-                        <span className="font-bold text-amber-600 dark:text-amber-400 text-xs mr-1">
-                          ✓ {studentNotes[student.id]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Big Sticky Save Button */}
           <div className="sticky bottom-4 z-20 pt-4">
