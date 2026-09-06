@@ -64,7 +64,8 @@ export const AdminDashboard: React.FC = () => {
     updateAttendance,
     markAllPresent,
     setCurrentRole,
-    loginWithTeacherCode
+    loginWithTeacherCode,
+    startTour
   } = useSchool();
 
   // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'
@@ -362,27 +363,50 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Visual Step-by-Step Explanatory Banner ("بطريقة شروحية") */}
+      {/* SupaHero & 60fps Interactive Step Banner */}
       {showGuideBanner && (
-        <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 dark:from-slate-800/80 dark:via-indigo-950/30 dark:to-slate-900 border-2 border-blue-200 dark:border-blue-800 shadow-sm space-y-3 animate-in fade-in">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-blue-900 dark:text-blue-200 font-black text-sm sm:text-base">
-              <span className="text-xl">💡</span>
-              <span>دليل المدير السريع: كيف تدير مدرستك في 4 خطوات سهلة وواضحة جداً؟</span>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white p-6 sm:p-7 border border-indigo-500/30 shadow-2xl space-y-4 animate-in fade-in transition-all duration-300">
+          {/* Ambient Glows */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -z-0" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-amber-300 text-xs font-black">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <Sparkles className="w-3.5 h-3.5 fill-current" />
+                <span>دليل المنظومة الذكي • تجربة 60fps التفاعلية</span>
+              </div>
+              <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                كيف تدير مدرستك باحترافية وسلاسة في 4 محطات رئيسية؟
+              </h3>
+              <p className="text-xs text-purple-200/80 max-w-xl leading-relaxed">
+                انقر على أي محطة للانتقال الفوري، أو شغّل الجولة الحية لتتبع الخطوات (التالي والسابق) كما في أرقى التطبيقات العالمية.
+              </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => { startTour(); sound.playFanfare(); }}
+                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 text-xs font-black shadow-lg transition-all duration-200 active:scale-95 flex items-center gap-2 animate-pulse"
+              >
+                <span>🚀 تشغيل الجولة التفاعلية (خطوة بخطوة)</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => { setShowGuideModal(true); sound.playTap(); }}
-                className="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-sm transition active:scale-95 flex items-center gap-1"
+                className="px-3.5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-black border border-white/20 transition active:scale-95 flex items-center gap-1.5"
               >
-                <span>فتح الدليل المصور بالتفصيل 📖</span>
+                <BookOpen className="w-3.5 h-3.5 text-blue-300" />
+                <span>الدليل الشامل 📖</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => setShowGuideBanner(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg text-xs"
+                className="p-2 text-white/50 hover:text-white rounded-xl hover:bg-white/10 transition"
                 title="إخفاء هذا الشريط"
               >
                 ✕
@@ -390,79 +414,121 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* 4 Interactive Step Cards with Direct Navigation */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-1 text-xs">
-            <button
-              type="button"
+          {/* 4 Interactive 60fps Step Cards */}
+          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 text-xs">
+            
+            {/* Step 1: Students & AI */}
+            <div
               onClick={() => { setActiveTab('students'); sound.playTap(); }}
-              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
                 activeTab === 'students'
-                  ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'
+                  ? 'bg-blue-600/30 border-blue-400 shadow-[0_0_25px_rgba(59,130,246,0.3)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
               }`}
             >
-              <div className="font-black flex items-center gap-1.5 text-sm">
-                <span>1️⃣ كشف الطلاب</span>
-                {activeTab === 'students' && <span>👈 (أنت هنا)</span>}
+              <div className="flex items-center justify-between">
+                <span className="font-black text-sm text-white flex items-center gap-1.5">
+                  <span>1️⃣ كشف الطلاب</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold">
+                  ذكاء اصطناعي ⚡
+                </span>
               </div>
-              <p className={`text-[11px] leading-relaxed ${activeTab === 'students' ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                لرفع كشف PDF القديم، رؤية الطلاب وأمهاتهم، وتصدير إكسل.
+              <p className="text-[11px] text-purple-200/80 leading-relaxed">
+                استيراد PDF فوري بالذكاء الاصطناعي، توليد بطاقات QR الذكية، وتصدير إكسل الوزارة.
               </p>
-            </button>
+              {activeTab === 'students' && (
+                <div className="text-[10px] font-black text-blue-300 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
+                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
+                </div>
+              )}
+            </div>
 
-            <button
-              type="button"
+            {/* Step 2: Exams & Control */}
+            <div
               onClick={() => { setActiveTab('exams'); sound.playTap(); }}
-              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
                 activeTab === 'exams'
-                  ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-purple-50'
+                  ? 'bg-purple-600/30 border-purple-400 shadow-[0_0_25px_rgba(168,85,247,0.3)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
               }`}
             >
-              <div className="font-black flex items-center gap-1.5 text-sm">
-                <span>2️⃣ شيت الامتحانات</span>
-                {activeTab === 'exams' && <span>👈 (أنت هنا)</span>}
+              <div className="flex items-center justify-between">
+                <span className="font-black text-sm text-white flex items-center gap-1.5">
+                  <span>2️⃣ شيت الامتحانات</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold">
+                  1120 درجة 📜
+                </span>
               </div>
-              <p className={`text-[11px] leading-relaxed ${activeTab === 'exams' ? 'text-purple-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                لرؤية درجات المواد الثمانية، حساب الترتيب، وطباعة بطاقات النتيجة.
+              <p className="text-[11px] text-purple-200/80 leading-relaxed">
+                درجات المواد الثمانية، حساب الترتيب آلياً، والتصحيح الإلكتروني ونماذج OMR.
               </p>
-            </button>
+              {activeTab === 'exams' && (
+                <div className="text-[10px] font-black text-purple-300 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />
+                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
+                </div>
+              )}
+            </div>
 
-            <button
-              type="button"
+            {/* Step 3: Teachers */}
+            <div
               onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
-              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
                 activeTab === 'teachers'
-                  ? 'bg-amber-600 text-white border-amber-700 shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'
+                  ? 'bg-amber-600/30 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.3)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
               }`}
             >
-              <div className="font-black flex items-center gap-1.5 text-sm">
-                <span>3️⃣ المعلمين ورموزهم</span>
-                {activeTab === 'teachers' && <span>👈 (أنت هنا)</span>}
+              <div className="flex items-center justify-between">
+                <span className="font-black text-sm text-white flex items-center gap-1.5">
+                  <span>3️⃣ المعلمين والحصص</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                  رموز سريعة 🔑
+                </span>
               </div>
-              <p className={`text-[11px] leading-relaxed ${activeTab === 'teachers' ? 'text-amber-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                لإضافة المعلمين وتحديد رموز دخول سهلة لهم وفصولهم.
+              <p className="text-[11px] text-purple-200/80 leading-relaxed">
+                إسناد الشعب، ضبط النصاب الأسبوعي، ودخول مباشر للمعلمين عبر الرمز الفريد.
               </p>
-            </button>
+              {activeTab === 'teachers' && (
+                <div className="text-[10px] font-black text-amber-300 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
+                </div>
+              )}
+            </div>
 
-            <button
-              type="button"
+            {/* Step 4: Attendance & Parent */}
+            <div
               onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
-              className={`p-3.5 rounded-2xl border text-right transition active:scale-95 space-y-1 ${
+              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
                 activeTab === 'attendance'
-                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50'
+                  ? 'bg-emerald-600/30 border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
               }`}
             >
-              <div className="font-black flex items-center gap-1.5 text-sm">
-                <span>4️⃣ متابعة الحضور</span>
-                {activeTab === 'attendance' && <span>👈 (أنت هنا)</span>}
+              <div className="flex items-center justify-between">
+                <span className="font-black text-sm text-white flex items-center gap-1.5">
+                  <span>4️⃣ الحضور والغياب</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                  تحضير بنقرة ⏱️
+                </span>
               </div>
-              <p className={`text-[11px] leading-relaxed ${activeTab === 'attendance' ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                لمعرفة الغياب اليومي وتحضير الجميع بنقرة واحدة.
+              <p className="text-[11px] text-purple-200/80 leading-relaxed">
+                رصد الغياب، التحضير الجماعي، وإرسال تنبيهات تلقائية لأولياء الأمور.
               </p>
-            </button>
+              {activeTab === 'attendance' && (
+                <div className="text-[10px] font-black text-emerald-300 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       )}

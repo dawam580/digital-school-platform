@@ -17,6 +17,7 @@ import {
   FileText
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
+import { useSchool } from '../../context/SchoolContext';
 
 interface ComprehensiveSystemGuideModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export const ComprehensiveSystemGuideModal: React.FC<ComprehensiveSystemGuideMod
   isOpen,
   onClose
 }) => {
+  const { startTour } = useSchool();
   const [activeSection, setActiveSection] = useState<string>('director');
 
   // Lock body scroll when modal is active to prevent background scrolling
@@ -328,16 +330,28 @@ export const ComprehensiveSystemGuideModal: React.FC<ComprehensiveSystemGuideMod
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
+        <div className="p-4 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0 gap-3 flex-wrap">
           <span className="text-xs text-slate-500">
             وزارة التربية والتعليم • دولة ليبيا • منظومة الإدارة المدرسية الرقمية
           </span>
-          <button
-            onClick={() => { onClose(); sound.playTap(); }}
-            className="px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs transition"
-          >
-            إغلاق الدليل
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                startTour();
+              }}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-xs transition shadow-sm flex items-center gap-1.5 active:scale-95 animate-pulse"
+            >
+              <span>🚀 تشغيل جولة 60fps التفاعلية (خطوة بخطوة)</span>
+            </button>
+            <button
+              onClick={() => { onClose(); sound.playTap(); }}
+              className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs transition"
+            >
+              إغلاق الدليل
+            </button>
+          </div>
         </div>
 
       </div>

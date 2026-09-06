@@ -19,7 +19,9 @@ import {
   Key,
   HeartHandshake,
   Building2,
-  LogOut
+  LogOut,
+  DollarSign,
+  Zap
 } from 'lucide-react';
 import { StudentExcelManager } from '../admin/StudentExcelManager';
 import { sound } from '../../utils/soundEffects';
@@ -35,7 +37,10 @@ export const Sidebar: React.FC = () => {
     setShowOperationalPlanModal,
     schoolProfile,
     setShowSchoolManagerModal,
-    logout
+    logout,
+    isTrialActive,
+    trialDaysRemaining,
+    setShowUpgradeModal
   } = useSchool();
   const [showExcelModal, setShowExcelModal] = useState(false);
 
@@ -78,6 +83,7 @@ export const Sidebar: React.FC = () => {
         return [
           { id: 'dashboard', label: 'لوحة تحكم الإدارة المدرسية', icon: Home },
           { id: 'school-manager', label: 'إدارة المدارس والنسخ المستقلة', icon: Building2, isCustomAction: true },
+          { id: 'finance', label: 'الشؤون المالية والرسوم والمصروفات', icon: DollarSign, badge: 'د.ل' },
           { id: 'counselor-dashboard', label: 'مكتب الخدمة الاجتماعية والنفسية', icon: HeartHandshake, badge: 'إرشاد' },
           { id: 'db-studio', label: 'استوديو قواعد البيانات (1000+ طالب)', icon: Database, badge: 'نشط' },
           { id: 'grades', label: 'الاعتماد وسجل الدرجات العام', icon: Award },
@@ -238,6 +244,31 @@ export const Sidebar: React.FC = () => {
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                 نسبة الحضور: <span className="font-bold text-emerald-600 dark:text-emerald-400">{selectedStudent.attendanceRate}%</span> • المعدل: <span className="font-bold text-blue-700 dark:text-blue-300">{selectedStudent.academicAverage}%</span>
               </p>
+            </div>
+          )}
+
+          {/* Free Trial Active Widget */}
+          {isTrialActive && (
+            <div className="rounded-2xl p-3.5 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/40 dark:to-indigo-950/40 border border-purple-200 dark:border-purple-800 text-right space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
+                  تجربة 7 أيام
+                </span>
+                <span className="text-[11px] font-mono font-black text-purple-700 dark:text-purple-300">
+                  {trialDaysRemaining} أيام متبقية
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                مدرسة تجريبية كاملة الصلاحيات
+              </p>
+              <button
+                type="button"
+                onClick={() => { setShowUpgradeModal(true); sound.playTap(); }}
+                className="w-full py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-[11px] transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95"
+              >
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>ترقية الحساب الرسمي 🚀</span>
+              </button>
             </div>
           )}
 

@@ -1,0 +1,191 @@
+import { FinancialTransaction, TuitionFeeRecord } from '../types';
+
+export const LIBYAN_CITIES = [
+  'بنغازي',
+  'طبرق',
+  'الجفرة',
+  'البريقة',
+  'طرابلس',
+  'اوباري',
+  'سبها',
+  'البيضاء',
+  'درنة',
+  'ترهونة',
+  'صبراتة',
+  'القطرون',
+  'سرت',
+  'غريان',
+  'جالو',
+  'توكرة',
+  'سلوق',
+  'الخمس',
+  'زليتن',
+  'الجبل الغربي',
+  'مصراتة',
+  'خارج ليبيا'
+];
+
+export const INITIAL_TUITION_RECORDS: TuitionFeeRecord[] = [
+  {
+    id: 'fee-1',
+    studentId: 'std-1',
+    studentName: 'محمد أحمد الفيتوري',
+    gradeLevel: 'الصف الأول الابتدائي',
+    className: '1/أ',
+    guardianPhone: '0912345678',
+    totalFee: 1800,
+    paidAmount: 1800,
+    remainingAmount: 0,
+    status: 'paid',
+    lastPaymentDate: '2026-09-01'
+  },
+  {
+    id: 'fee-2',
+    studentId: 'std-2',
+    studentName: 'فاطمة عمر الورفلي',
+    gradeLevel: 'الصف الثاني الابتدائي',
+    className: '2/ب',
+    guardianPhone: '0923456789',
+    totalFee: 1900,
+    paidAmount: 1200,
+    remainingAmount: 700,
+    status: 'partial',
+    lastPaymentDate: '2026-09-03'
+  },
+  {
+    id: 'fee-3',
+    studentId: 'std-3',
+    studentName: 'عبدالرحمن سالم المقرحي',
+    gradeLevel: 'الصف الثالث الإعدادي',
+    className: '3/ج',
+    guardianPhone: '0918765432',
+    totalFee: 2200,
+    paidAmount: 2200,
+    remainingAmount: 0,
+    status: 'paid',
+    lastPaymentDate: '2026-08-28'
+  },
+  {
+    id: 'fee-4',
+    studentId: 'std-4',
+    studentName: 'سارة خالد الزوي',
+    gradeLevel: 'الصف الأول الثانوي',
+    className: '1/علمي',
+    guardianPhone: '0929988776',
+    totalFee: 2500,
+    paidAmount: 0,
+    remainingAmount: 2500,
+    status: 'unpaid'
+  },
+  {
+    id: 'fee-5',
+    studentId: 'std-5',
+    studentName: 'علي إبراهيم الترهوني',
+    gradeLevel: 'الصف الثاني الثانوي',
+    className: '2/علمي',
+    guardianPhone: '0915544332',
+    totalFee: 2600,
+    paidAmount: 1500,
+    remainingAmount: 1100,
+    status: 'partial',
+    lastPaymentDate: '2026-09-02'
+  },
+  {
+    id: 'fee-6',
+    studentId: 'std-6',
+    studentName: 'مريم الصادق الغرياني',
+    gradeLevel: 'الصف التاسع الأساسي',
+    className: '9/أ',
+    guardianPhone: '0914433221',
+    totalFee: 2100,
+    paidAmount: 2100,
+    remainingAmount: 0,
+    status: 'paid',
+    lastPaymentDate: '2026-08-30'
+  }
+];
+
+export const INITIAL_FINANCIAL_TRANSACTIONS: FinancialTransaction[] = [
+  {
+    id: 'tx-101',
+    type: 'income',
+    title: 'سداد القسط الأول - رسوم دراسية (محمد الفيتوري)',
+    category: 'tuition',
+    amount: 1800,
+    date: '2026-09-01',
+    referenceNumber: 'REC-2026-0891',
+    paymentMethod: 'sadad',
+    studentName: 'محمد أحمد الفيتوري',
+    studentId: 'std-1',
+    recordedBy: 'أ. فتحي الشريف (المدير)',
+    notes: 'تم الدفع عبر سداد الإلكتروني',
+    status: 'completed'
+  },
+  {
+    id: 'tx-102',
+    type: 'income',
+    title: 'دفعة رسوم دراسية جزئية (فاطمة الورفلي)',
+    category: 'tuition',
+    amount: 1200,
+    date: '2026-09-03',
+    referenceNumber: 'REC-2026-0892',
+    paymentMethod: 'cash',
+    studentName: 'فاطمة عمر الورفلي',
+    studentId: 'std-2',
+    recordedBy: 'الشؤون المالية',
+    notes: 'دفعة نقدية بالخزينة',
+    status: 'completed'
+  },
+  {
+    id: 'tx-103',
+    type: 'expense',
+    title: 'شراء ورق A4 وأحبار طباعة نماذج الامتحانات والتصحيح',
+    category: 'supplies',
+    amount: 850,
+    date: '2026-09-04',
+    referenceNumber: 'EXP-2026-0312',
+    paymentMethod: 'cash',
+    recordedBy: 'أ. فتحي الشريف (المدير)',
+    notes: 'مكتبة قرطاج - طرابلس',
+    status: 'completed'
+  },
+  {
+    id: 'tx-104',
+    type: 'expense',
+    title: 'صيانة وتجهيز معمل الحاسوب والتصحيح الآلي',
+    category: 'maintenance',
+    amount: 1450,
+    date: '2026-09-05',
+    referenceNumber: 'EXP-2026-0313',
+    paymentMethod: 'bank_transfer',
+    recordedBy: 'أ. فتحي الشريف (المدير)',
+    notes: 'تركيب أجهزة المسح الضوئي للكنترول',
+    status: 'completed'
+  },
+  {
+    id: 'tx-105',
+    type: 'income',
+    title: 'تسليم الكتب المدرسية والزي المدرسي الموحد',
+    category: 'books',
+    amount: 3400,
+    date: '2026-09-05',
+    referenceNumber: 'REC-2026-0893',
+    paymentMethod: 'cash',
+    recordedBy: 'أمين المخزن',
+    notes: 'مبيعات الزي والكتب للفصل الأول',
+    status: 'completed'
+  },
+  {
+    id: 'tx-106',
+    type: 'expense',
+    title: 'سلفة مكافآت كنترول الامتحانات التجريبية',
+    category: 'salaries',
+    amount: 2000,
+    date: '2026-09-06',
+    referenceNumber: 'EXP-2026-0314',
+    paymentMethod: 'cash',
+    recordedBy: 'أ. فتحي الشريف (المدير)',
+    notes: 'دفعة لمعلمي لجان التصحيح الإلكتروني',
+    status: 'completed'
+  }
+];

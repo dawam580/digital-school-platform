@@ -25,6 +25,10 @@ import { ParentDashboard } from './pages/parent/ParentDashboard';
 import { CustomCodeModal } from './components/admin/CustomCodeModal';
 import { SuperAdminDashboard } from './pages/superadmin/SuperAdminDashboard';
 import { ExamCoordinatorDashboard } from './pages/exams/ExamCoordinatorDashboard';
+import { FreeTrialModal } from './components/trial/FreeTrialModal';
+import { UpgradeModal } from './components/trial/UpgradeModal';
+import { FinancePage } from './pages/finance/FinancePage';
+import { WindowsTitleBar } from './components/desktop/WindowsTitleBar';
 
 const MainContent: React.FC = () => {
   const {
@@ -40,7 +44,11 @@ const MainContent: React.FC = () => {
     showPdfImporterModal,
     setShowPdfImporterModal,
     showCustomCodeModal,
-    setShowCustomCodeModal
+    setShowCustomCodeModal,
+    showFreeTrialModal,
+    setShowFreeTrialModal,
+    showUpgradeModal,
+    setShowUpgradeModal
   } = useSchool();
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
@@ -50,6 +58,10 @@ const MainContent: React.FC = () => {
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}
+        />
+        <FreeTrialModal
+          isOpen={showFreeTrialModal}
+          onClose={() => setShowFreeTrialModal(false)}
         />
       </>
     );
@@ -62,6 +74,10 @@ const MainContent: React.FC = () => {
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}
+        />
+        <FreeTrialModal
+          isOpen={showFreeTrialModal}
+          onClose={() => setShowFreeTrialModal(false)}
         />
       </>
     );
@@ -119,6 +135,8 @@ const MainContent: React.FC = () => {
         return <DatabaseStudio />;
       case 'daily-report':
         return <DailyReport />;
+      case 'finance':
+        return <FinancePage />;
       case 'link-student':
         return <LinkStudent />;
       case 'notifications':
@@ -154,6 +172,14 @@ const MainContent: React.FC = () => {
         isOpen={showCustomCodeModal}
         onClose={() => setShowCustomCodeModal(false)}
       />
+      <FreeTrialModal
+        isOpen={showFreeTrialModal}
+        onClose={() => setShowFreeTrialModal(false)}
+      />
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </>
   );
 };
@@ -161,6 +187,7 @@ const MainContent: React.FC = () => {
 export function App() {
   return (
     <SchoolProvider>
+      <WindowsTitleBar />
       <MainContent />
     </SchoolProvider>
   );

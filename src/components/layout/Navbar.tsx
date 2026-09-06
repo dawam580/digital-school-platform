@@ -23,13 +23,18 @@ import {
   HeartHandshake,
   Building2,
   Tag,
-  HelpCircle
+  HelpCircle,
+  Smartphone,
+  Printer,
+  FolderOpen
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
 import { DirectorInviteModal } from '../common/DirectorInviteModal';
 import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
+import { MobileCompanionModal } from '../mobile/MobileCompanionModal';
+import { isWindowsDesktop, executeNativePrint, openSchoolDocumentsFolder } from '../../services/native/windowsBridge';
 
 interface NavbarProps {
   onOpenMobileMenu?: () => void;
@@ -68,6 +73,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showDirectorInviteModal, setShowDirectorInviteModal] = useState(false);
   const [showComprehensiveGuide, setShowComprehensiveGuide] = useState(false);
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const isDesktop = isWindowsDesktop();
 
   const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     { id: 'admin', label: 'مدير المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
@@ -317,6 +324,41 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               <span>📚 دليل المنظومة الشامل</span>
             </button>
 
+            {/* Mobile Companion / PWA Button */}
+            <button
+              type="button"
+              onClick={() => { setShowMobileModal(true); sound.playTap(); }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-black border border-emerald-200 dark:border-emerald-800 transition active:scale-95 shadow-sm"
+              title="فتح وتثبيت تطبيق الهاتف وتوليد باركود QR"
+            >
+              <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="hidden sm:inline">📱 تطبيق الهاتف</span>
+            </button>
+
+            {/* Desktop Native Print & Folder Buttons (Only when in Windows Electron) */}
+            {isDesktop && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => { executeNativePrint(); sound.playTap(); }}
+                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-black border border-blue-200 dark:border-blue-800 transition active:scale-95 shadow-sm"
+                  title="طباعة الصفحة مباشرة عبر طابعة الويندوز"
+                >
+                  <Printer className="w-4 h-4 text-blue-600" />
+                  <span>طباعة</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { openSchoolDocumentsFolder(); sound.playTap(); }}
+                  className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs font-black border border-amber-200 dark:border-amber-800 transition active:scale-95 shadow-sm"
+                  title="فتح مجلد مستندات وتقارير المدرسة في ويندوز"
+                >
+                  <FolderOpen className="w-4 h-4 text-amber-600" />
+                  <span>المستندات</span>
+                </button>
+              </>
+            )}
+
             {/* Director Invite & Role Links Button */}
             <button
               type="button"
@@ -380,6 +422,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       <ComprehensiveSystemGuideModal
         isOpen={showComprehensiveGuide}
         onClose={() => setShowComprehensiveGuide(false)}
+      />
+
+      {/* Mobile Companion PWA Modal */}
+      <MobileCompanionModal
+        isOpen={showMobileModal}
+        onClose={() => setShowMobileModal(false)}
       />
     </header>
   );

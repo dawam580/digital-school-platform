@@ -17,8 +17,20 @@ import {
   StudentInfraction,
   AutoSummonCard,
   StudentFollowUpForm,
-  SchoolProfile
+  SchoolProfile,
+  FinancialTransaction,
+  TuitionFeeRecord,
+  StaffMember,
+  StaffDocumentChecklist
 } from '../types';
+import {
+  INITIAL_FINANCIAL_TRANSACTIONS,
+  INITIAL_TUITION_RECORDS
+} from '../data/mockFinanceData';
+import {
+  INITIAL_STAFF_MEMBERS,
+  STAFF_ROLE_LABELS
+} from '../data/mockStaffData';
 import {
   db,
   SEED_STUDENTS,
@@ -166,6 +178,36 @@ interface SchoolContextType {
   showCustomCodeModal: boolean;
   setShowCustomCodeModal: (open: boolean) => void;
   updateTeacherCode: (teacherId: string, newCode: string) => boolean;
+
+  // Free Trial System (21st.dev Experience)
+  isTrialActive: boolean;
+  trialDaysRemaining: number;
+  showFreeTrialModal: boolean;
+  setShowFreeTrialModal: (open: boolean) => void;
+  showUpgradeModal: boolean;
+  setShowUpgradeModal: (open: boolean) => void;
+  createTrialSchool: (trialData: {
+    schoolName: string;
+    city: string;
+    studentCount: string;
+    isInternational: boolean;
+    phone: string;
+    address: string;
+    username: string;
+    seedRichData: boolean;
+  }) => void;
+  extendTrialDays: (extraDays: number) => void;
+
+  // School Financial Management
+  financialTransactions: FinancialTransaction[];
+  tuitionFees: TuitionFeeRecord[];
+  addFinancialTransaction: (tx: Omit<FinancialTransaction, 'id' | 'date'>) => void;
+  updateTuitionPayment: (feeId: string, paidAmountToAdd: number) => void;
+
+  // 60fps & 21st.dev Interactive Guided Tour
+  isTourOpen: boolean;
+  setIsTourOpen: (open: boolean) => void;
+  startTour: () => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -261,6 +303,31 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showSchoolManagerModal, setShowSchoolManagerModal] = useState(false);
   const [showPdfImporterModal, setShowPdfImporterModal] = useState(false);
   const [showCustomCodeModal, setShowCustomCodeModal] = useState(false);
+  const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  const startTour = () => {
+    setIsTourOpen(true);
+    sound.playFanfare();
+  };
+
+  // Financial transactions & tuition fees
+  const [financialTransactions, setFinancialTransactions] = useState<FinancialTransaction[]>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_finance_tx');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_FINANCIAL_TRANSACTIONS;
+  });
+
+  const [tuitionFees, setTuitionFees] = useState<TuitionFeeRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_tuition_fees');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_TUITION_RECORDS;
+  });
   const [isLargeFontMode, setIsLargeFontMode] = useState(() => {
     try {
       return localStorage.getItem('madrasa_large_font_mode') === 'true';
@@ -1397,6 +1464,161 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return true;
   };
 
+  // Free Trial Calculations
+  const trialDaysRemaining = React.useMemo(() => {
+    if (!schoolProfile.isTrial) return 0;
+    const startDate = new Date(schoolProfile.trialStartDate || Date.now()).getTime();
+    const durationDays = schoolProfile.trialDurationDays || 7;
+    const msPassed = Date.now() - startDate;
+    const daysPassed = msPassed / (1000 * 60 * 60 * 24);
+    return Math.max(0, Math.ceil(durationDays - daysPassed));
+  }, [schoolProfile.isTrial, schoolProfile.trialStartDate, schoolProfile.trialDurationDays]);
+
+  const isTrialActive = Boolean(schoolProfile.isTrial);
+
+  const extendTrialDays = (extraDays: number) => {
+    const currentDuration = schoolProfile.trialDurationDays || 7;
+    const updatedProfile: SchoolProfile = {
+      ...schoolProfile,
+      trialDurationDays: currentDuration + extraDays
+    };
+    setSchoolProfileState(updatedProfile);
+    saveSchoolProfile(updatedProfile);
+    setSavedSchoolsState(prev => prev.map(s => s.id === updatedProfile.id ? updatedProfile : s));
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم تمديد التجربة المجانية ⏱️', `تمت إضافة ${extraDays} أيام إضافية لصلاحية مدرستك بنجاح!`);
+  };
+
+  const createTrialSchool = (trialData: {
+    schoolName: string;
+    city: string;
+    studentCount: string;
+    isInternational: boolean;
+    phone: string;
+    address: string;
+    username: string;
+    seedRichData: boolean;
+  }) => {
+    // Snapshot current school
+    try {
+      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
+        students,
+        classes,
+        teachers,
+        financialTransactions,
+        tuitionFees
+      }));
+    } catch {}
+
+    const newId = `school-trial-${Date.now()}`;
+    const newTrialSchool: SchoolProfile = {
+      id: newId,
+      name: trialData.schoolName,
+      code: `TRIAL-LIB-${Math.floor(100 + Math.random() * 900)}`,
+      district: `مراقبة التربية والتعليم - ${trialData.city}`,
+      directorName: trialData.username || 'مدير المدرسة',
+      directorPhone: trialData.phone || '0922465676',
+      academicYear: '2025 - 2026 م',
+      isCustom: true,
+      isTrial: true,
+      trialStartDate: new Date().toISOString(),
+      trialDurationDays: 7,
+      city: trialData.city,
+      studentCountEstimate: trialData.studentCount,
+      isInternational: trialData.isInternational,
+      address: trialData.address,
+      adminUsername: trialData.username
+    };
+
+    setSchoolProfileState(newTrialSchool);
+    saveSchoolProfile(newTrialSchool);
+
+    setSavedSchoolsState(prev => {
+      const list = [...prev, newTrialSchool];
+      try {
+        localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+      } catch {}
+      return list;
+    });
+
+    if (trialData.seedRichData) {
+      const initialSeed = (LIBYAN_BAOUR_STUDENTS && LIBYAN_BAOUR_STUDENTS.length > 0)
+        ? LIBYAN_BAOUR_STUDENTS
+        : SEED_STUDENTS;
+      setStudents(initialSeed);
+      db.saveStudents(initialSeed);
+      setFinancialTransactions(INITIAL_FINANCIAL_TRANSACTIONS);
+      setTuitionFees(INITIAL_TUITION_RECORDS);
+      try {
+        localStorage.setItem('madrasa_finance_tx', JSON.stringify(INITIAL_FINANCIAL_TRANSACTIONS));
+        localStorage.setItem('madrasa_tuition_fees', JSON.stringify(INITIAL_TUITION_RECORDS));
+      } catch {}
+    } else {
+      setStudents([]);
+      db.saveStudents([]);
+      setFinancialTransactions([]);
+      setTuitionFees([]);
+      try {
+        localStorage.setItem('madrasa_finance_tx', JSON.stringify([]));
+        localStorage.setItem('madrasa_tuition_fees', JSON.stringify([]));
+      } catch {}
+    }
+
+    // Set phone for admin login
+    setCurrentUserPhoneState(trialData.phone || '0922465676');
+    try {
+      localStorage.setItem('madrasa_admin_phone', trialData.phone || '0922465676');
+    } catch {}
+
+    setCurrentRole('admin');
+    setIsAuthenticated(true);
+    setActiveTab('dashboard');
+
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم تجهيز بيئتك التجريبية بنجاح 🌟', `مرحباً بك في مدرسة ${trialData.schoolName}! لديك 7 أيام تجربة مجانية كاملة.`);
+  };
+
+  const addFinancialTransaction = (tx: Omit<FinancialTransaction, 'id' | 'date'>) => {
+    const newTx: FinancialTransaction = {
+      ...tx,
+      id: `tx-${Date.now()}`,
+      date: new Date().toISOString().split('T')[0]
+    };
+    const updated = [newTx, ...financialTransactions];
+    setFinancialTransactions(updated);
+    try {
+      localStorage.setItem('madrasa_finance_tx', JSON.stringify(updated));
+    } catch {}
+    sound.playSuccess();
+    showToast('gold', 'تم تسجيل المعاملة المالية 💰', `تم قيد ${newTx.type === 'income' ? 'إيراد' : 'مصروف'} بقيمة ${newTx.amount} د.ل`);
+  };
+
+  const updateTuitionPayment = (feeId: string, paidAmountToAdd: number) => {
+    const updated = tuitionFees.map(fee => {
+      if (fee.id === feeId) {
+        const newPaid = Math.min(fee.totalFee, fee.paidAmount + paidAmountToAdd);
+        const newRemaining = Math.max(0, fee.totalFee - newPaid);
+        return {
+          ...fee,
+          paidAmount: newPaid,
+          remainingAmount: newRemaining,
+          status: (newRemaining === 0 ? 'paid' : (newPaid > 0 ? 'partial' : 'unpaid')) as 'paid' | 'partial' | 'unpaid',
+          lastPaymentDate: new Date().toISOString().split('T')[0]
+        };
+      }
+      return fee;
+    });
+    setTuitionFees(updated);
+    try {
+      localStorage.setItem('madrasa_tuition_fees', JSON.stringify(updated));
+    } catch {}
+    sound.playSuccess();
+    triggerConfetti();
+    showToast('gold', 'تم تحديث سداد الرسوم 🧾', `تم قيد دفعة بمبلغ ${paidAmountToAdd} د.ل`);
+  };
+
   return (
     <SchoolContext.Provider
       value={{
@@ -1483,6 +1705,24 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         markNotificationAsRead,
         markAllNotificationsAsRead,
         resetDatabase,
+        // Free trial & 21st.dev Experience
+        isTrialActive,
+        trialDaysRemaining,
+        showFreeTrialModal,
+        setShowFreeTrialModal,
+        showUpgradeModal,
+        setShowUpgradeModal,
+        createTrialSchool,
+        extendTrialDays,
+        // Finance Management
+        financialTransactions,
+        tuitionFees,
+        addFinancialTransaction,
+        updateTuitionPayment,
+        // 60fps & 21st.dev Interactive Tour
+        isTourOpen,
+        setIsTourOpen,
+        startTour,
       }}
     >
       {children}

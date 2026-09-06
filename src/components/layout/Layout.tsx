@@ -1,6 +1,8 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
+import { TrialBanner } from '../trial/TrialBanner';
+import { InteractiveSystemTour } from '../guided-tour/InteractiveSystemTour';
 import { useSchool } from '../../context/SchoolContext';
 import {
   LayoutDashboard,
@@ -66,6 +68,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors">
+      <TrialBanner />
       <Navbar />
       
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
@@ -108,6 +111,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </nav>
       )}
+
+      {/* 60fps & 21st.dev Interactive Guided Tour Overlay */}
+      <InteractiveSystemTour />
     </div>
   );
 };

@@ -10,6 +10,17 @@ export interface SchoolProfile {
   academicYear: string; // "2025 - 2026 م"
   logo?: string;
   isCustom?: boolean;
+  // Free Trial System Fields
+  isTrial?: boolean;
+  trialStartDate?: string;
+  trialDurationDays?: number;
+  city?: string;
+  studentCountEstimate?: string;
+  isInternational?: boolean;
+  address?: string;
+  schoolAddress?: string;
+  workingHours?: string; // ساعات العمل e.g. "من 08:00 صباحاً إلى 01:30 ظهراً"
+  adminUsername?: string;
 }
 
 export interface TeacherAccount {
@@ -205,6 +216,19 @@ export interface Student {
     icon: string;
     date: string;
     description: string;
+  }[];
+  documents?: {
+    birthCert: boolean; // شهادة الميلاد / كتيب العائلة
+    healthRecord: boolean; // الملف الصحي والتطعيمات
+    photos: boolean; // صور شخصية حديثة (4×6)
+    parentConsent: boolean; // إقرار ولي الأمر ورقم الطوارئ
+    transferCert: boolean; // استمارة النقل / إخلاء طرف
+  };
+  transferHistory?: {
+    fromClass: string;
+    toClass: string;
+    date: string;
+    reason?: string;
   }[];
 }
 
@@ -407,6 +431,85 @@ export interface StudentFollowUpForm {
   parentReceivedDate?: string;
   parentAcknowledged: boolean;
 }
+
+// School Financial Management Types
+export interface FinancialTransaction {
+  id: string;
+  type: 'income' | 'expense';
+  title: string;
+  category: 'tuition' | 'uniform' | 'books' | 'activities' | 'salaries' | 'utilities' | 'maintenance' | 'supplies' | 'other';
+  amount: number; // in LYD (دينار ليبي)
+  date: string;
+  referenceNumber: string;
+  paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'sadad';
+  studentName?: string;
+  studentId?: string;
+  recordedBy: string;
+  notes?: string;
+  status: 'completed' | 'pending';
+}
+
+export interface TuitionFeeRecord {
+  id: string;
+  studentId: string;
+  studentName: string;
+  gradeLevel: string;
+  className: string;
+  guardianPhone: string;
+  totalFee: number; // LYD
+  paidAmount: number;
+  remainingAmount: number;
+  status: 'paid' | 'partial' | 'unpaid';
+  lastPaymentDate?: string;
+}
+
+export interface FinancialSummary {
+  totalRevenue: number;
+  totalExpenses: number;
+  netBalance: number;
+  totalCollectedTuition: number;
+  totalOutstandingTuition: number;
+  collectionRate: number;
+}
+
+// Staff & Employees Management Types
+export type StaffRole =
+  | 'admin'
+  | 'supervisor'
+  | 'teacher'
+  | 'cleaner'
+  | 'gardener'
+  | 'student_affairs'
+  | 'maintenance';
+
+export interface StaffDocumentChecklist {
+  contract: boolean; // عقد العمل / قرار التعيين
+  healthCert: boolean; // الشهادة الصحية
+  qualification: boolean; // المؤهل العلمي
+  nationalIdCopy: boolean; // صورة الرقم الوطني
+  criminalClearance: boolean; // شهادة الحالة الجنائية (خلو سوابق)
+  personalPhotos: boolean; // صور شخصية
+}
+
+export interface StaffMember {
+  id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  fullName: string;
+  nationalNumber: string; // 12-digit Libyan National Number
+  gender: 'male' | 'female';
+  phone: string;
+  birthDate: string; // YYYY-MM-DD
+  role: StaffRole;
+  roleLabel: string;
+  hireDate: string;
+  documents: StaffDocumentChecklist;
+  notes?: string;
+  avatar?: string;
+}
+
+
 
 
 

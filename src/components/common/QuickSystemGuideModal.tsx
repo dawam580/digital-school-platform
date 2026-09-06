@@ -16,6 +16,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
+import { useSchool } from '../../context/SchoolContext';
 
 interface QuickSystemGuideModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const { startTour } = useSchool();
   const [selectedRoleGuide, setSelectedRoleGuide] = useState<'admin' | 'teacher' | 'parent'>('admin');
 
   // Lock body scroll when modal is active to prevent background scrolling
@@ -261,17 +263,29 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
           )}
 
           {/* Exit Helper Button */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
             <span className="text-xs text-slate-400">
               💡 يمكنك فتح هذا الدليل في أي وقت بالضغط على زر "دليل الاستخدام" في أعلى الشاشة.
             </span>
-            <button
-              type="button"
-              onClick={() => { onClose(); sound.playTap(); }}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs shadow-md transition active:scale-95"
-            >
-              فهمت، إغلاق الشرح ✓
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  startTour();
+                }}
+                className="px-4 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-xl font-black text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 animate-pulse"
+              >
+                <span>🚀 جولة 60fps تفاعلية (التالي والخطوات)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { onClose(); sound.playTap(); }}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs shadow-md transition active:scale-95"
+              >
+                إغلاق الشرح ✓
+              </button>
+            </div>
           </div>
 
         </div>

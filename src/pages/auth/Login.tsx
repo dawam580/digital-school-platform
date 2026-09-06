@@ -36,7 +36,8 @@ export const Login: React.FC = () => {
     teachers,
     currentUserPhone,
     schoolProfile,
-    setShowSchoolManagerModal
+    setShowSchoolManagerModal,
+    setShowFreeTrialModal
   } = useSchool();
 
   const [loginMode, setLoginMode] = useState<'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('admin');
@@ -216,6 +217,36 @@ export const Login: React.FC = () => {
             >
               <Building2 className="w-3.5 h-3.5 text-blue-600" />
               <span>إضافة أو تبديل مدرسة 🏫</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 21st.dev Aesthetic Free Trial 7-Days Hero Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-5 sm:p-6 text-white shadow-xl border border-purple-500/30">
+          <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-purple-500/30 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1.5 text-center sm:text-right">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-[11px] font-black shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 fill-current" />
+                <span>تجربة مجانية 7 أيام • مرحباً بك</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black tracking-tight">
+                جرّب مدرسة تجريبية كاملة — بدون التزام
+              </h3>
+              <p className="text-xs text-purple-200/90 leading-relaxed max-w-md">
+                مدرسة متكاملة مع طلاب وفصول وبيانات غنية. وصول فوري لأقسام الامتحانات، التواصل، المنظومة المالية، والتصحيح الإلكتروني.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => { setShowFreeTrialModal(true); sound.playSuccess(); }}
+              className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-xs shadow-lg transition active:scale-95 flex items-center justify-center gap-2 shrink-0 animate-pulse"
+            >
+              <span>أنشئ حسابك التجريبي (7 أيام) 🚀</span>
+              <ArrowLeft className="w-4 h-4" />
             </button>
           </div>
         </div>
