@@ -1,4 +1,5 @@
 import { Student } from '../types';
+import { getCleanAvatar } from './avatarHelper';
 
 /**
  * Generates and downloads an Arabic-encoded Libyan Official School Excel file (.csv with UTF-8 BOM)
@@ -161,9 +162,7 @@ export function parseStudentsCsv(csvText: string): Partial<Student>[] {
         nationalId,
         studentNumber,
         linkCode: `SCH-2026-${name.charAt(0).toUpperCase()}${i}`,
-        avatar: gender === 'female'
-          ? 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80'
-          : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
+        avatar: getCleanAvatar(name, gender),
         grade,
         className: `${grade.includes('السادس') ? 'سادس' : grade.includes('الرابع') ? 'رابع' : 'خامس'} / ${section}`,
         gender,

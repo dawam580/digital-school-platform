@@ -3,6 +3,7 @@ import { X, UserPlus, Save, Sparkles, User, Hash, Calendar, Phone, Heart, Users 
 import { Student, AttendanceStatus } from '../../types';
 import { useSchool } from '../../context/SchoolContext';
 import { sound } from '../../utils/soundEffects';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 interface StudentManagerModalProps {
   isOpen: boolean;
@@ -130,9 +131,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
         nationalId: finalNationalNumber,
         studentNumber: studentNumber.trim(),
         linkCode: `SCH-${finalNationalNumber.slice(-4)}`,
-        avatar: gender === 'male'
-          ? `https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80`
-          : `https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80`,
+        avatar: getCleanAvatar(name.trim(), gender),
         gender,
         parentName: parentName.trim() || `ولي أمر ${name.trim()}`,
         parentPhone: parentPhone.trim(),

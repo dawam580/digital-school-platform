@@ -7,6 +7,7 @@
  */
 
 import { Student, TeacherAccount } from '../../types';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 export interface SmartValidationResult {
   isValid: boolean;
@@ -149,9 +150,7 @@ export class SmartDataEngine {
       appreciation: 'ممتاز',
       behaviorRating: 'ممتاز',
       behaviorPointsTotal: 25,
-      avatar: validation.inferredGender === 'female'
-        ? 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      avatar: getCleanAvatar(cleanName, validation.inferredGender),
       competencies: [],
       behaviorPoints: [],
       subjects: [
@@ -180,7 +179,7 @@ export class SmartDataEngine {
       subject: raw.subject || 'الرياضيات',
       subjectCode: raw.subjectCode || 'MATH',
       assignedClasses: raw.assignedClasses && raw.assignedClasses.length > 0 ? raw.assignedClasses : ['7/أ', '7/ب'],
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+      avatar: getCleanAvatar(cleanName, 'teacher'),
       email: raw.email || `teacher.${index + 1}@school.edu.ly`,
       nationalNumber,
       fileNumber: raw.fileNumber || `WSH-${8000 + index}`,

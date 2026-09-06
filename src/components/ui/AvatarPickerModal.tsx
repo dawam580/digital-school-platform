@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Camera, Upload, Check, X, User } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 interface AvatarPickerModalProps {
   isOpen: boolean;
@@ -21,16 +22,16 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
 
   const [selected, setSelected] = useState(currentAvatar);
 
-  // Curated modern avatars
+  // Curated clean vector badges
   const presetAvatars = [
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=200&auto=format&fit=crop&q=80',
+    getCleanAvatar('طالب', 'male'),
+    getCleanAvatar('طالبة', 'female'),
+    getCleanAvatar('معلم', 'teacher'),
+    getCleanAvatar('إدارة', 'admin'),
+    getCleanAvatar('أحمد', 'male'),
+    getCleanAvatar('فاطمة', 'female'),
+    getCleanAvatar('عمر', 'male'),
+    getCleanAvatar('مريم', 'female'),
   ];
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

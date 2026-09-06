@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 import { SAMPLE_GRADES_RAYAN } from '../../services/db';
 import { studentRepository } from '../../services/repositories';
 import { auditLogger } from '../../services/audit/auditLogger';
@@ -201,9 +202,7 @@ export const SmartExcelStudentImporter: React.FC<SmartExcelStudentImporterProps>
         nationalId: row.nationalId,
         studentNumber: row.studentNumber,
         linkCode: row.linkCode,
-        avatar: row.gender === 'female'
-          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
-          : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+        avatar: getCleanAvatar(row.name, row.gender),
         grade: row.grade,
         className: row.className,
         gender: row.gender,

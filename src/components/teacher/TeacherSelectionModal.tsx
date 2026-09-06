@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { TeacherAccount } from '../../types';
 import { sound } from '../../utils/soundEffects';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 interface TeacherSelectionModalProps {
   isOpen: boolean;
@@ -197,11 +198,11 @@ export const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center font-black text-base shadow-sm shrink-0 overflow-hidden">
-                          {teacher.avatar ? (
-                            <img src={teacher.avatar} alt={teacher.name} className="w-full h-full object-cover" />
-                          ) : (
-                            teacher.name.charAt(2) || 'م'
-                          )}
+                          <img
+                            src={(teacher.avatar && !teacher.avatar.includes('unsplash.com')) ? teacher.avatar : getCleanAvatar(teacher.name, teacher.subjectCode === 'COUNSEL' ? 'counselor' : 'teacher')}
+                            alt={teacher.name}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div>
                           <div className="font-black text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">

@@ -35,29 +35,10 @@ import { ExamStorageService, ExamGradeRecord } from '../../services/exams/examSt
 import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
 import { TeacherSelectionModal } from '../../components/teacher/TeacherSelectionModal';
 
-export const normalizeClassQuery = (cls: string): string => {
-  if (!cls) return '';
-  return cls
-    .replace(/\/أ/g, '/1')
-    .replace(/\/ب/g, '/2')
-    .replace(/\/ج/g, '/3')
-    .replace(/\/د/g, '/4')
-    .replace(/\/هـ/g, '/5')
-    .trim();
-};
+import { normalizeClassQuery, matchesClass, formatClassDisplayName } from '../../utils/classMatcher';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
-export const matchesClass = (studentClass: string | undefined, targetClass: string): boolean => {
-  if (!studentClass || !targetClass) return false;
-  if (studentClass === targetClass || studentClass.includes(targetClass)) return true;
-  
-  const normS = normalizeClassQuery(studentClass);
-  const normT = normalizeClassQuery(targetClass);
-  
-  const targetBase = normT.split(' ')[0];
-  const studentBase = normS.split(' ')[0];
-  
-  return normS.includes(normT) || (targetBase.length > 0 && studentBase === targetBase);
-};
+export { normalizeClassQuery, matchesClass, formatClassDisplayName };
 
 export const ALL_LIBYAN_PERIODS = [
   'الحصة الأولى',
@@ -386,8 +367,16 @@ export const TeacherQuickDashboard: React.FC = () => {
       {/* Friendly Top Welcome Card (Optimized for Older Teachers) */}
       <div className="p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 p-1 border-2 border-emerald-400/40 shrink-0 shadow-inner flex items-center justify-center text-3xl">
-            👨‍🏫
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 p-1 border-2 border-emerald-400/40 shrink-0 shadow-inner flex items-center justify-center overflow-hidden">
+            {currentTeacher ? (
+              <img
+                src={currentTeacher.avatar || getCleanAvatar(currentTeacher.name, 'teacher')}
+                alt={currentTeacher.name}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            ) : (
+              <span className="text-3xl">👨‍🏫</span>
+            )}
           </div>
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-200 text-xs sm:text-sm font-black border border-emerald-400/30 mb-1">
@@ -821,7 +810,7 @@ export const TeacherQuickDashboard: React.FC = () => {
                         </td>
                         <td className="p-3">
                           <div className="flex items-center gap-2.5">
-                            <img src={st.avatar} alt={st.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border" />
+                            <img src={getCleanAvatar(st.name, st.gender)} alt={st.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border" />
                             <div>
                               <strong className="block text-slate-900 dark:text-white">{st.name}</strong>
                               <span className="font-mono text-[11px] text-slate-400">قيد: {st.studentNumber || st.nationalNumber || st.id}</span>
@@ -925,7 +914,7 @@ export const TeacherQuickDashboard: React.FC = () => {
                         </span>
 
                         <img
-                          src={student.avatar}
+                          src={getCleanAvatar(student.name, student.gender)}
                           alt={student.name}
                           className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
                         />
@@ -1165,7 +1154,7 @@ export const TeacherQuickDashboard: React.FC = () => {
                         <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">{idx + 1}</td>
                         <td className="py-3 px-3">
                           <div className="flex items-center gap-2.5">
-                            <img src={st.avatar} alt={st.name} className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                            <img src={getCleanAvatar(st.name, st.gender)} alt={st.name} className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
                             <div>
                               <span className="font-black text-slate-900 dark:text-white text-sm block">{st.name}</span>
                               <span className="text-[10px] text-slate-400 font-mono">{st.nationalNumber || st.nationalId}</span>
@@ -1337,7 +1326,7 @@ export const TeacherQuickDashboard: React.FC = () => {
           {/* Target Student */}
           <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-3xl border border-blue-200 dark:border-blue-800 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src={activeStudent?.avatar} alt={activeStudent?.name} className="w-12 h-12 rounded-2xl object-cover border-2 border-blue-400 shrink-0" />
+              <img src={getCleanAvatar(activeStudent?.name || '', activeStudent?.gender)} alt={activeStudent?.name} className="w-12 h-12 rounded-2xl object-cover border-2 border-blue-400 shrink-0" />
               <div>
                 <span className="text-xs font-bold text-blue-700 dark:text-blue-300 block">إرسال تنبيه لولي أمر الطالب:</span>
                 <h4 className="font-black text-base text-slate-900 dark:text-white">{activeStudent?.name}</h4>

@@ -14,6 +14,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 interface TeacherManagerModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
   onClose,
   teacherToEdit
 }) => {
-  const { teachers, setTeachers, showToast } = useSchool();
+  const { teachers, setTeachers, selectTeacher, showToast } = useSchool();
 
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -85,12 +86,15 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
               subject: subject.trim(),
               subjectCode: subjectCodeMap[subject.trim()] || 'GEN',
               phone: phone.trim(),
-              assignedClasses: classes.length > 0 ? classes : ['9/أ']
+              assignedClasses: classes.length > 0 ? classes : ['9/أ'],
+              avatar: getCleanAvatar(name.trim(), 'teacher')
             }
           : t
       );
       setTeachers(updated);
       db.saveTeachers(updated);
+      const edited = updated.find(t => t.id === teacherToEdit.id);
+      if (edited) selectTeacher(edited);
       showToast('gold', 'تم تحديث بيانات المعلم 🌟', `تم حفظ بيانات ${name} بالرمز الجديد: ${code}`);
     } else {
       // Add new teacher
@@ -102,13 +106,14 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
         subjectCode: subjectCodeMap[subject.trim()] || 'GEN',
         phone: phone.trim(),
         assignedClasses: classes.length > 0 ? classes : ['9/أ'],
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        avatar: getCleanAvatar(name.trim(), 'teacher'),
         email: `${code.toLowerCase()}@school.edu.ly`
       };
       const updated = [...teachers, newTeacher];
       setTeachers(updated);
       db.saveTeachers(updated);
-      showToast('gold', 'تمت إضافة المعلم بنجاح 👨‍🏫', `تم تسجيل المعلم ${name} برمز دخول: ${code}`);
+      selectTeacher(newTeacher);
+      showToast('gold', 'تمت إضافة المعلم وتفعيله 👨‍🏫', `تم تسجيل وتفعيل المعلم ${name} برمز دخول: ${code}`);
     }
 
     sound.playSuccess();
@@ -229,18 +234,21 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
               placeholder="مثال: 9/أ, 9/ب, 3/أ"
               className="w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold focus:outline-none"
             />
-            <div className="flex gap-1.5 pt-1">
-              {['9/أ, 9/ب', '9/ج, 9/د', '3/أ, 3/ب', 'الكل'].map(preset => (
+            <div className="flex gap-1.5 pt-1 flex-wrap">
+              {[
+                { label: '9/أ (تاسع أ)', val: '9/أ' },
+                { label: 'الصف 9 كاملاً', val: '9/أ, 9/ب, 9/ج, 9/د' },
+                { label: 'الصف 8 كاملاً', val: '8/أ, 8/ب, 8/ج, 8/د' },
+                { label: 'الصف 7 كاملاً', val: '7/أ, 7/ب, 7/ج, 7/د' },
+                { label: 'الصف 3 (مسائي)', val: '3/أ, 3/ب' },
+              ].map(preset => (
                 <button
-                  key={preset}
+                  key={preset.label}
                   type="button"
-                  onClick={() => {
-                    if (preset === 'الكل') setAssignedClassesText('9/أ, 9/ب, 9/ج, 9/د');
-                    else setAssignedClassesText(preset);
-                  }}
-                  className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                  onClick={() => setAssignedClassesText(preset.val)}
+                  className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 dark:bg-slate-800 dark:hover:bg-blue-900/30 text-[10px] font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition active:scale-95"
                 >
-                  {preset}
+                  {preset.label}
                 </button>
               ))}
             </div>

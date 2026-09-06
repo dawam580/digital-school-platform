@@ -54,7 +54,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -120,7 +120,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -186,7 +186,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -252,7 +252,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -318,7 +318,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -384,7 +384,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -450,7 +450,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -516,7 +516,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -582,7 +582,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -648,7 +648,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -714,7 +714,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -780,7 +780,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -846,7 +846,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -912,7 +912,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -978,7 +978,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1044,7 +1044,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1110,7 +1110,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1176,7 +1176,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1242,7 +1242,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1308,7 +1308,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1374,7 +1374,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1440,7 +1440,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1506,7 +1506,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1572,7 +1572,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1638,7 +1638,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1704,7 +1704,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1770,7 +1770,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1836,7 +1836,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1902,7 +1902,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -1968,7 +1968,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2034,7 +2034,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2100,7 +2100,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2166,7 +2166,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2232,7 +2232,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2298,7 +2298,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2364,7 +2364,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2430,7 +2430,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2496,7 +2496,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2562,7 +2562,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2628,7 +2628,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2694,7 +2694,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2760,7 +2760,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2826,7 +2826,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2892,7 +2892,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -2958,7 +2958,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3024,7 +3024,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3090,7 +3090,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3156,7 +3156,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3222,7 +3222,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3288,7 +3288,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3354,7 +3354,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3420,7 +3420,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3486,7 +3486,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3552,7 +3552,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3618,7 +3618,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3684,7 +3684,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3750,7 +3750,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3816,7 +3816,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3882,7 +3882,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -3948,7 +3948,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4014,7 +4014,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4080,7 +4080,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4146,7 +4146,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4212,7 +4212,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4278,7 +4278,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4344,7 +4344,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4410,7 +4410,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4476,7 +4476,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4542,7 +4542,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4608,7 +4608,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4674,7 +4674,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4740,7 +4740,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4806,7 +4806,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4872,7 +4872,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -4938,7 +4938,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5004,7 +5004,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5070,7 +5070,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5136,7 +5136,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5202,7 +5202,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5268,7 +5268,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5334,7 +5334,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5400,7 +5400,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5466,7 +5466,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5532,7 +5532,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5598,7 +5598,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5664,7 +5664,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5730,7 +5730,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5796,7 +5796,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5862,7 +5862,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5928,7 +5928,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -5994,7 +5994,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6060,7 +6060,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6126,7 +6126,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6192,7 +6192,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6258,7 +6258,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6324,7 +6324,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6390,7 +6390,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6456,7 +6456,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6522,7 +6522,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6588,7 +6588,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6654,7 +6654,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6720,7 +6720,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6786,7 +6786,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6852,7 +6852,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6918,7 +6918,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -6984,7 +6984,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7050,7 +7050,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7116,7 +7116,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7182,7 +7182,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7248,7 +7248,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7314,7 +7314,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7380,7 +7380,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7446,7 +7446,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7512,7 +7512,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7578,7 +7578,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7644,7 +7644,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7710,7 +7710,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7776,7 +7776,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7842,7 +7842,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7908,7 +7908,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -7974,7 +7974,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8040,7 +8040,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8106,7 +8106,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8172,7 +8172,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8238,7 +8238,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8304,7 +8304,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8370,7 +8370,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8436,7 +8436,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8502,7 +8502,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8568,7 +8568,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8634,7 +8634,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8700,7 +8700,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8766,7 +8766,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8832,7 +8832,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8898,7 +8898,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -8964,7 +8964,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9030,7 +9030,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9096,7 +9096,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9162,7 +9162,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9228,7 +9228,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9294,7 +9294,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9360,7 +9360,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9426,7 +9426,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9492,7 +9492,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9558,7 +9558,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9624,7 +9624,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9690,7 +9690,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9756,7 +9756,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9822,7 +9822,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9888,7 +9888,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -9954,7 +9954,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10020,7 +10020,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10086,7 +10086,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10152,7 +10152,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10218,7 +10218,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10284,7 +10284,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10350,7 +10350,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10416,7 +10416,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10482,7 +10482,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10548,7 +10548,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10614,7 +10614,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10680,7 +10680,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10746,7 +10746,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10812,7 +10812,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10878,7 +10878,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -10944,7 +10944,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11010,7 +11010,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11076,7 +11076,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11142,7 +11142,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11208,7 +11208,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11274,7 +11274,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11340,7 +11340,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11406,7 +11406,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11472,7 +11472,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11538,7 +11538,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11604,7 +11604,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11670,7 +11670,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11736,7 +11736,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11802,7 +11802,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11868,7 +11868,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -11934,7 +11934,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12000,7 +12000,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12066,7 +12066,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12132,7 +12132,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12198,7 +12198,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12264,7 +12264,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12330,7 +12330,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12396,7 +12396,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12462,7 +12462,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12528,7 +12528,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12594,7 +12594,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12660,7 +12660,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12726,7 +12726,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12792,7 +12792,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12858,7 +12858,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12924,7 +12924,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -12990,7 +12990,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13056,7 +13056,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13122,7 +13122,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13188,7 +13188,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13254,7 +13254,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13320,7 +13320,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13386,7 +13386,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13452,7 +13452,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13518,7 +13518,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13584,7 +13584,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13650,7 +13650,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13716,7 +13716,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13782,7 +13782,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13848,7 +13848,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13914,7 +13914,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -13980,7 +13980,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14046,7 +14046,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14112,7 +14112,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14178,7 +14178,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14244,7 +14244,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14310,7 +14310,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14376,7 +14376,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14442,7 +14442,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14508,7 +14508,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14574,7 +14574,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14640,7 +14640,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14706,7 +14706,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14772,7 +14772,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14838,7 +14838,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14904,7 +14904,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -14970,7 +14970,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15036,7 +15036,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15102,7 +15102,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15168,7 +15168,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15234,7 +15234,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15300,7 +15300,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15366,7 +15366,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15432,7 +15432,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15498,7 +15498,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15564,7 +15564,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15630,7 +15630,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15696,7 +15696,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15762,7 +15762,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15828,7 +15828,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15894,7 +15894,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -15960,7 +15960,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16026,7 +16026,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16092,7 +16092,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16158,7 +16158,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16224,7 +16224,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16290,7 +16290,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16356,7 +16356,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16422,7 +16422,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16488,7 +16488,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16554,7 +16554,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16620,7 +16620,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16686,7 +16686,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16752,7 +16752,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16818,7 +16818,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16884,7 +16884,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -16950,7 +16950,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17016,7 +17016,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17082,7 +17082,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17148,7 +17148,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17214,7 +17214,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17280,7 +17280,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17346,7 +17346,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17412,7 +17412,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17478,7 +17478,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17544,7 +17544,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17610,7 +17610,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17676,7 +17676,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17742,7 +17742,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17808,7 +17808,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17874,7 +17874,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -17940,7 +17940,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18006,7 +18006,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18072,7 +18072,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18138,7 +18138,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18204,7 +18204,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18270,7 +18270,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18336,7 +18336,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18402,7 +18402,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18468,7 +18468,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18534,7 +18534,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18600,7 +18600,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18666,7 +18666,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18732,7 +18732,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18798,7 +18798,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18864,7 +18864,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18930,7 +18930,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -18996,7 +18996,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19062,7 +19062,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19128,7 +19128,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19194,7 +19194,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19260,7 +19260,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19326,7 +19326,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19392,7 +19392,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19458,7 +19458,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19524,7 +19524,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19590,7 +19590,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19656,7 +19656,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19722,7 +19722,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19788,7 +19788,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19854,7 +19854,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19920,7 +19920,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -19986,7 +19986,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20052,7 +20052,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20118,7 +20118,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20184,7 +20184,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20250,7 +20250,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20316,7 +20316,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20382,7 +20382,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20448,7 +20448,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20514,7 +20514,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20580,7 +20580,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20646,7 +20646,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20712,7 +20712,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20778,7 +20778,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20844,7 +20844,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20910,7 +20910,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -20976,7 +20976,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21042,7 +21042,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21108,7 +21108,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21174,7 +21174,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21240,7 +21240,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21306,7 +21306,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21372,7 +21372,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21438,7 +21438,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21504,7 +21504,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21570,7 +21570,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21636,7 +21636,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21702,7 +21702,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21768,7 +21768,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21834,7 +21834,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21900,7 +21900,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -21966,7 +21966,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22032,7 +22032,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22098,7 +22098,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22164,7 +22164,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22230,7 +22230,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22296,7 +22296,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22362,7 +22362,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22428,7 +22428,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22494,7 +22494,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22560,7 +22560,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22626,7 +22626,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22692,7 +22692,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22758,7 +22758,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22824,7 +22824,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22890,7 +22890,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -22956,7 +22956,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23022,7 +23022,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23088,7 +23088,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23154,7 +23154,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23220,7 +23220,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23286,7 +23286,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23352,7 +23352,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23418,7 +23418,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23484,7 +23484,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23550,7 +23550,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23616,7 +23616,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23682,7 +23682,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23748,7 +23748,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23814,7 +23814,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23880,7 +23880,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -23946,7 +23946,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24012,7 +24012,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24078,7 +24078,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24144,7 +24144,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24210,7 +24210,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24276,7 +24276,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24342,7 +24342,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24408,7 +24408,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24474,7 +24474,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24540,7 +24540,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24606,7 +24606,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24672,7 +24672,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24738,7 +24738,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24804,7 +24804,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24870,7 +24870,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -24936,7 +24936,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25002,7 +25002,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25068,7 +25068,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25134,7 +25134,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25200,7 +25200,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25266,7 +25266,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25332,7 +25332,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25398,7 +25398,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25464,7 +25464,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25530,7 +25530,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25596,7 +25596,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25662,7 +25662,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25728,7 +25728,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25794,7 +25794,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25860,7 +25860,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25926,7 +25926,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -25992,7 +25992,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26058,7 +26058,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26124,7 +26124,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26190,7 +26190,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26256,7 +26256,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26322,7 +26322,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26388,7 +26388,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26454,7 +26454,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26520,7 +26520,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26586,7 +26586,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26652,7 +26652,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26718,7 +26718,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26784,7 +26784,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26850,7 +26850,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26916,7 +26916,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -26982,7 +26982,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27048,7 +27048,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27114,7 +27114,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27180,7 +27180,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27246,7 +27246,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27312,7 +27312,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27378,7 +27378,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27444,7 +27444,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27510,7 +27510,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27576,7 +27576,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27642,7 +27642,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27708,7 +27708,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27774,7 +27774,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27840,7 +27840,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27906,7 +27906,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -27972,7 +27972,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28038,7 +28038,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28104,7 +28104,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28170,7 +28170,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28236,7 +28236,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28302,7 +28302,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28368,7 +28368,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28434,7 +28434,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28500,7 +28500,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28566,7 +28566,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28632,7 +28632,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28698,7 +28698,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28764,7 +28764,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28830,7 +28830,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28896,7 +28896,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -28962,7 +28962,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29028,7 +29028,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29094,7 +29094,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29160,7 +29160,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29226,7 +29226,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29292,7 +29292,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29358,7 +29358,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29424,7 +29424,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29490,7 +29490,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29556,7 +29556,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29622,7 +29622,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29688,7 +29688,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29754,7 +29754,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29820,7 +29820,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29886,7 +29886,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -29952,7 +29952,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30018,7 +30018,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30084,7 +30084,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30150,7 +30150,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30216,7 +30216,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30282,7 +30282,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30348,7 +30348,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30414,7 +30414,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30480,7 +30480,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30546,7 +30546,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30612,7 +30612,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30678,7 +30678,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30744,7 +30744,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30810,7 +30810,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30876,7 +30876,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -30942,7 +30942,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31008,7 +31008,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31074,7 +31074,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31140,7 +31140,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31206,7 +31206,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31272,7 +31272,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31338,7 +31338,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31404,7 +31404,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31470,7 +31470,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31536,7 +31536,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31602,7 +31602,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31668,7 +31668,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31734,7 +31734,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31800,7 +31800,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31866,7 +31866,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31932,7 +31932,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -31998,7 +31998,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32064,7 +32064,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32130,7 +32130,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32196,7 +32196,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32262,7 +32262,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32328,7 +32328,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32394,7 +32394,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32460,7 +32460,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32526,7 +32526,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32592,7 +32592,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32658,7 +32658,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32724,7 +32724,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32790,7 +32790,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32856,7 +32856,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32922,7 +32922,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -32988,7 +32988,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33054,7 +33054,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33120,7 +33120,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33186,7 +33186,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33252,7 +33252,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33318,7 +33318,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33384,7 +33384,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33450,7 +33450,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33516,7 +33516,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33582,7 +33582,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33648,7 +33648,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33714,7 +33714,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33780,7 +33780,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33846,7 +33846,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33912,7 +33912,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -33978,7 +33978,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34044,7 +34044,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34110,7 +34110,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34176,7 +34176,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34242,7 +34242,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34308,7 +34308,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34374,7 +34374,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34440,7 +34440,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34506,7 +34506,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34572,7 +34572,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34638,7 +34638,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34704,7 +34704,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34770,7 +34770,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34836,7 +34836,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34902,7 +34902,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -34968,7 +34968,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35034,7 +35034,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35100,7 +35100,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35166,7 +35166,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35232,7 +35232,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35298,7 +35298,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35364,7 +35364,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35430,7 +35430,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35496,7 +35496,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35562,7 +35562,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35628,7 +35628,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35694,7 +35694,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35760,7 +35760,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35826,7 +35826,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35892,7 +35892,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -35958,7 +35958,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36024,7 +36024,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36090,7 +36090,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36156,7 +36156,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36222,7 +36222,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36288,7 +36288,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36354,7 +36354,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36420,7 +36420,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36486,7 +36486,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36552,7 +36552,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36618,7 +36618,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36684,7 +36684,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36750,7 +36750,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36816,7 +36816,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36882,7 +36882,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -36948,7 +36948,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37014,7 +37014,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37080,7 +37080,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37146,7 +37146,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37212,7 +37212,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37278,7 +37278,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37344,7 +37344,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37410,7 +37410,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37476,7 +37476,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37542,7 +37542,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37608,7 +37608,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37674,7 +37674,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37740,7 +37740,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37806,7 +37806,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37872,7 +37872,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -37938,7 +37938,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38004,7 +38004,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38070,7 +38070,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38136,7 +38136,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38202,7 +38202,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38268,7 +38268,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38334,7 +38334,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38400,7 +38400,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38466,7 +38466,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38532,7 +38532,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38598,7 +38598,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38664,7 +38664,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38730,7 +38730,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38796,7 +38796,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38862,7 +38862,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38928,7 +38928,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -38994,7 +38994,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39060,7 +39060,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39126,7 +39126,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39192,7 +39192,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39258,7 +39258,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39324,7 +39324,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39390,7 +39390,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39456,7 +39456,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39522,7 +39522,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39588,7 +39588,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39654,7 +39654,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39720,7 +39720,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39786,7 +39786,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39852,7 +39852,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39918,7 +39918,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -39984,7 +39984,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40050,7 +40050,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40116,7 +40116,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40182,7 +40182,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40248,7 +40248,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40314,7 +40314,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40380,7 +40380,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40446,7 +40446,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40512,7 +40512,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40578,7 +40578,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40644,7 +40644,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40710,7 +40710,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40776,7 +40776,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40842,7 +40842,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40908,7 +40908,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -40974,7 +40974,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41040,7 +41040,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41106,7 +41106,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41172,7 +41172,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41238,7 +41238,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41304,7 +41304,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41370,7 +41370,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41436,7 +41436,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41502,7 +41502,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41568,7 +41568,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41634,7 +41634,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41700,7 +41700,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41766,7 +41766,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41832,7 +41832,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41898,7 +41898,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -41964,7 +41964,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42030,7 +42030,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42096,7 +42096,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42162,7 +42162,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42228,7 +42228,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42294,7 +42294,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42360,7 +42360,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42426,7 +42426,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42492,7 +42492,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42558,7 +42558,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42624,7 +42624,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42690,7 +42690,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42756,7 +42756,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42822,7 +42822,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42888,7 +42888,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -42954,7 +42954,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43020,7 +43020,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43086,7 +43086,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43152,7 +43152,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43218,7 +43218,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43284,7 +43284,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43350,7 +43350,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43416,7 +43416,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43482,7 +43482,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43548,7 +43548,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43614,7 +43614,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43680,7 +43680,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43746,7 +43746,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43812,7 +43812,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43878,7 +43878,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -43944,7 +43944,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44010,7 +44010,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44076,7 +44076,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44142,7 +44142,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44208,7 +44208,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44274,7 +44274,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44340,7 +44340,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44406,7 +44406,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44472,7 +44472,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44538,7 +44538,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44604,7 +44604,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44670,7 +44670,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44736,7 +44736,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44802,7 +44802,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44868,7 +44868,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -44934,7 +44934,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45000,7 +45000,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45066,7 +45066,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45132,7 +45132,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45198,7 +45198,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45264,7 +45264,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45330,7 +45330,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45396,7 +45396,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45462,7 +45462,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45528,7 +45528,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45594,7 +45594,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45660,7 +45660,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45726,7 +45726,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45792,7 +45792,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45858,7 +45858,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45924,7 +45924,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -45990,7 +45990,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46056,7 +46056,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46122,7 +46122,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46188,7 +46188,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46254,7 +46254,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46320,7 +46320,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46386,7 +46386,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46452,7 +46452,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46518,7 +46518,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46584,7 +46584,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46650,7 +46650,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46716,7 +46716,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46782,7 +46782,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46848,7 +46848,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46914,7 +46914,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -46980,7 +46980,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47046,7 +47046,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47112,7 +47112,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47178,7 +47178,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47244,7 +47244,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47310,7 +47310,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47376,7 +47376,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47442,7 +47442,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47508,7 +47508,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47574,7 +47574,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47640,7 +47640,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47706,7 +47706,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47772,7 +47772,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47838,7 +47838,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47904,7 +47904,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -47970,7 +47970,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48036,7 +48036,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48102,7 +48102,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48168,7 +48168,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48234,7 +48234,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48300,7 +48300,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48366,7 +48366,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48432,7 +48432,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48498,7 +48498,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48564,7 +48564,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48630,7 +48630,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48696,7 +48696,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48762,7 +48762,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48828,7 +48828,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48894,7 +48894,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -48960,7 +48960,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49026,7 +49026,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49092,7 +49092,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49158,7 +49158,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49224,7 +49224,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49290,7 +49290,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49356,7 +49356,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49422,7 +49422,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49488,7 +49488,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49554,7 +49554,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49620,7 +49620,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49686,7 +49686,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49752,7 +49752,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49818,7 +49818,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49884,7 +49884,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -49950,7 +49950,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50016,7 +50016,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50082,7 +50082,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50148,7 +50148,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50214,7 +50214,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50280,7 +50280,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50346,7 +50346,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50412,7 +50412,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50478,7 +50478,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50544,7 +50544,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50610,7 +50610,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50676,7 +50676,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50742,7 +50742,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50808,7 +50808,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50874,7 +50874,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -50940,7 +50940,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51006,7 +51006,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51072,7 +51072,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51138,7 +51138,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51204,7 +51204,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51270,7 +51270,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51336,7 +51336,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51402,7 +51402,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51468,7 +51468,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51534,7 +51534,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51600,7 +51600,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51666,7 +51666,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51732,7 +51732,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51798,7 +51798,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51864,7 +51864,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51930,7 +51930,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -51996,7 +51996,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52062,7 +52062,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52128,7 +52128,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52194,7 +52194,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52260,7 +52260,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52326,7 +52326,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52392,7 +52392,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52458,7 +52458,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52524,7 +52524,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52590,7 +52590,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52656,7 +52656,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52722,7 +52722,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52788,7 +52788,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52854,7 +52854,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52920,7 +52920,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -52986,7 +52986,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53052,7 +53052,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53118,7 +53118,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53184,7 +53184,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53250,7 +53250,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53316,7 +53316,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53382,7 +53382,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53448,7 +53448,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53514,7 +53514,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53580,7 +53580,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53646,7 +53646,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53712,7 +53712,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53778,7 +53778,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53844,7 +53844,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53910,7 +53910,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -53976,7 +53976,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54042,7 +54042,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54108,7 +54108,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54174,7 +54174,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54240,7 +54240,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54306,7 +54306,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54372,7 +54372,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54438,7 +54438,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54504,7 +54504,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54570,7 +54570,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54636,7 +54636,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54702,7 +54702,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54768,7 +54768,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54834,7 +54834,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54900,7 +54900,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -54966,7 +54966,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55032,7 +55032,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55098,7 +55098,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55164,7 +55164,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55230,7 +55230,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55296,7 +55296,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55362,7 +55362,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55428,7 +55428,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55494,7 +55494,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55560,7 +55560,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55626,7 +55626,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55692,7 +55692,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55758,7 +55758,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55824,7 +55824,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55890,7 +55890,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -55956,7 +55956,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56022,7 +56022,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56088,7 +56088,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56154,7 +56154,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56220,7 +56220,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56286,7 +56286,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56352,7 +56352,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56418,7 +56418,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56484,7 +56484,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56550,7 +56550,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56616,7 +56616,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56682,7 +56682,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56748,7 +56748,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56814,7 +56814,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56880,7 +56880,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -56946,7 +56946,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57012,7 +57012,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57078,7 +57078,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57144,7 +57144,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57210,7 +57210,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57276,7 +57276,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57342,7 +57342,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57408,7 +57408,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57474,7 +57474,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57540,7 +57540,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [
@@ -57606,7 +57606,7 @@ export const LIBYAN_BAOUR_STUDENTS: Student[] = [
     "appreciation": "ممتاز",
     "behaviorRating": "ممتاز",
     "behaviorPointsTotal": 25,
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "",
     "competencies": [],
     "behaviorPoints": [],
     "subjects": [

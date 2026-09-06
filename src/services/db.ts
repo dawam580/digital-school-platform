@@ -20,6 +20,7 @@ import {
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
 import { CryptoVaultService } from './security/cryptoVault';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
+import { getCleanAvatar } from '../utils/avatarHelper';
 
 export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
 export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
@@ -50,7 +51,7 @@ export const saveSchoolProfile = (profile: SchoolProfile) => {
 };
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
-const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v3';
+const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v4';
 const STORAGE_KEY_CLASSES = 'madrasa_db_classes_v3';
 const STORAGE_KEY_NOTIFICATIONS = 'madrasa_db_notifications_v3';
 const STORAGE_KEY_REPORTS = 'madrasa_db_reports_v3';
@@ -63,57 +64,78 @@ const STORAGE_KEY_INFRACTIONS = 'madrasa_db_infractions_v3';
 const STORAGE_KEY_AUTO_SUMMON_CARDS = 'madrasa_db_auto_summon_cards_v3';
 const STORAGE_KEY_FOLLOWUP_FORMS = 'madrasa_db_followup_forms_v3';
 
-// Libyan Teachers Directory
+// Libyan Teachers Directory - Structured distinctly by Educational Stage & Grade
 export const SEED_TEACHERS: TeacherAccount[] = [
+  // --- الصف التاسع (Grade 9 - شهادة إتمام مرحلة التعليم الأساسي) ---
+  {
+    id: 't-adam-09',
+    code: 'LIB-COMP-09',
+    name: 'أ. أدم المنصوري',
+    phone: '0915544332',
+    subject: 'الحاسوب',
+    subjectCode: 'COMP',
+    assignedClasses: ['9/1 صباح', '9/2 صباح', '9/3 صباح', '9/4 صباح'],
+    avatar: getCleanAvatar('أدم', 'teacher'),
+    email: 'adam.mansouri@school.edu.ly',
+    nationalNumber: '119900088771',
+    fileNumber: 'WSH-1099',
+    qualification: 'بكالوريوس هندسة حاسوب ونظم معلومات',
+    specialization: 'الخوارزميات والبرمجة والتحول الرقمي',
+    teachingQuota: 18,
+    assignedPeriodsCount: 16,
+    appointmentDate: '2019-09-01',
+    status: 'active',
+    notes: 'معلم مادة الحاسوب وتقنية المعلومات لطلبة الشهادة الإعدادية (الصف التاسع)'
+  },
   {
     id: 't-1',
-    code: 'LIB-MATH-01',
+    code: 'LIB-MATH-09',
     name: 'أ. طارق الفيتوري',
     phone: '0912345678',
     subject: 'الرياضيات',
     subjectCode: 'MATH',
-    assignedClasses: ['7/أ', '7/ب', '8/أ', '3/أ'],
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['9/1 صباح', '9/2 صباح', '9/3 صباح', '9/4 صباح'],
+    avatar: getCleanAvatar('طارق الفيتوري', 'teacher'),
     email: 'tariq.fitouri@school.edu.ly',
     nationalNumber: '119820045671',
     fileNumber: 'WSH-8841',
-    qualification: 'بكالوريوس علوم ورياضيات (جامعة طرابلس)',
+    qualification: 'بكالوريوس علوم ورياضيات (جامعة بنغازي)',
     specialization: 'الرياضيات البحتة والتطبيقية',
     teachingQuota: 20,
     assignedPeriodsCount: 18,
     appointmentDate: '2012-10-01',
     status: 'active',
-    notes: 'معلم متميز - رئيس قسم الرياضيات بالمدرسة'
+    notes: 'معلم أول ورئيس قسم الرياضيات - تخصص الشهادة الإعدادية'
   },
   {
     id: 't-2',
-    code: 'LIB-ARA-02',
+    code: 'LIB-ARA-09',
     name: 'أ. عبدالسلام الورفلي',
     phone: '0923456789',
     subject: 'اللغة العربية',
     subjectCode: 'ARA',
-    assignedClasses: ['7/أ', '7/ب', '6/أ', '3/أ'],
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['9/1 صباح', '9/2 صباح', '9/3 صباح', '9/4 صباح'],
+    avatar: getCleanAvatar('عبدالسلام الورفلي', 'teacher'),
     email: 'abdulsalam.werfelli@school.edu.ly',
     nationalNumber: '119790012345',
     fileNumber: 'WSH-6520',
     qualification: 'ليسانس لغة عربية ودراسات إسلامية',
-    specialization: 'النحو والصرف والأدب العربي',
+    specialization: 'النحو والصرف والبلاغة والأدب العربي',
     teachingQuota: 22,
     assignedPeriodsCount: 20,
     appointmentDate: '2008-09-15',
     status: 'active',
-    notes: 'معلم أول لغة عربية'
+    notes: 'معلم أول لغة عربية للصف التاسع'
   },
   {
     id: 't-3',
-    code: 'LIB-SCI-03',
+    code: 'LIB-SCI-09',
     name: 'أ. مريم الترهوني',
     phone: '0945678901',
     subject: 'العلوم الطبيعية',
     subjectCode: 'SCI',
-    assignedClasses: ['7/أ', '7/ب', '6/أ', '4/أ'],
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['9/1 صباح', '9/2 صباح', '9/3 صباح', '9/4 صباح'],
+    avatar: getCleanAvatar('مريم الترهوني', 'female'),
     email: 'maryam.tarhouni@school.edu.ly',
     nationalNumber: '219850067890',
     fileNumber: 'WSH-9310',
@@ -123,57 +145,17 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     assignedPeriodsCount: 18,
     appointmentDate: '2015-11-20',
     status: 'active',
-    notes: 'مشرفة معمل العلوم المدرسية'
-  },
-  {
-    id: 't-4',
-    code: 'LIB-COMP-04',
-    name: 'أ. أسامة المقريف',
-    phone: '0916789012',
-    subject: 'الحاسوب وتقنية المعلومات',
-    subjectCode: 'COMP',
-    assignedClasses: ['7/أ', '8/أ', '9/أ', '6/أ'],
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    email: 'osama.megrahi@school.edu.ly',
-    nationalNumber: '119880098765',
-    fileNumber: 'WSH-1044',
-    qualification: 'بكالوريوس تقنية معلومات وهندسة حاسوب',
-    specialization: 'البرمجة والشبكات ونظم التعليم الإلكتروني',
-    teachingQuota: 18,
-    assignedPeriodsCount: 16,
-    appointmentDate: '2018-02-10',
-    status: 'active',
-    notes: 'مسؤول المنظومة الرقمية ومعمل الحاسوب'
-  },
-  {
-    id: 't-5',
-    code: 'LIB-ISL-05',
-    name: 'أ. محمود السويحلي',
-    phone: '0927890123',
-    subject: 'التربية الإسلامية',
-    subjectCode: 'ISL',
-    assignedClasses: ['7/أ', '7/ب', '8/أ', '4/أ'],
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    email: 'mahmoud.sweihli@school.edu.ly',
-    nationalNumber: '119810054321',
-    fileNumber: 'WSH-7712',
-    qualification: 'ليسانس شريعة إسلامية ودراسات قرآنية',
-    specialization: 'أصول الفقه والتلاوة والتجويد',
-    teachingQuota: 20,
-    assignedPeriodsCount: 18,
-    appointmentDate: '2010-09-01',
-    status: 'active',
-    notes: 'إشراف النشاط الديني ومسابقات القرآن الكريم'
+    notes: 'مشرفة معمل العلوم - معلمة الصف التاسع'
   },
   {
     id: 't-6',
-    code: 'LIB-ENG-06',
+    code: 'LIB-ENG-09',
     name: 'أ. فاطمة الزوي',
     phone: '0948901234',
     subject: 'اللغة الإنجليزية',
     subjectCode: 'ENG',
-    assignedClasses: ['7/أ', '7/ب', '8/أ', '6/أ'],
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['9/1 صباح', '9/2 صباح', '9/3 صباح', '9/4 صباح'],
+    avatar: getCleanAvatar('فاطمة الزوي', 'female'),
     email: 'fatima.zway@school.edu.ly',
     nationalNumber: '219860087654',
     fileNumber: 'WSH-9923',
@@ -183,17 +165,59 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     assignedPeriodsCount: 19,
     appointmentDate: '2016-10-15',
     status: 'active',
-    notes: 'معلمة متميزة في التخاطب الصفي'
+    notes: 'معلمة متميزة في اللغة الإنجليزية للصف التاسع'
+  },
+
+  // --- الصف الثامن (Grade 8 Specialists) ---
+  {
+    id: 't-4',
+    code: 'LIB-COMP-08',
+    name: 'أ. أسامة المقريف',
+    phone: '0916789012',
+    subject: 'الحاسوب وتقنية المعلومات',
+    subjectCode: 'COMP',
+    assignedClasses: ['8/1 صباح', '8/2 صباح', '8/3 صباح', '8/4 صباح'],
+    avatar: getCleanAvatar('أسامة المقريف', 'teacher'),
+    email: 'osama.megrahi@school.edu.ly',
+    nationalNumber: '119880098765',
+    fileNumber: 'WSH-1044',
+    qualification: 'بكالوريوس تقنية معلومات وهندسة حاسوب',
+    specialization: 'البرمجة والشبكات ونظم التعليم الإلكتروني',
+    teachingQuota: 18,
+    assignedPeriodsCount: 16,
+    appointmentDate: '2018-02-10',
+    status: 'active',
+    notes: 'معلم الحاسوب للصف الثامن'
+  },
+  {
+    id: 't-8-math',
+    code: 'LIB-MATH-08',
+    name: 'أ. خليل الزنتاني',
+    phone: '0925566778',
+    subject: 'الرياضيات',
+    subjectCode: 'MATH',
+    assignedClasses: ['8/1 صباح', '8/2 صباح', '8/3 صباح', '8/4 صباح'],
+    avatar: getCleanAvatar('خليل الزنتاني', 'teacher'),
+    email: 'khalil.zentani@school.edu.ly',
+    nationalNumber: '119830055441',
+    fileNumber: 'WSH-7720',
+    qualification: 'بكالوريوس تربية ورياضيات',
+    specialization: 'الجبر والهندسة التحليلية',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2014-09-10',
+    status: 'active',
+    notes: 'معلم الرياضيات لطلبة الصف الثامن'
   },
   {
     id: 't-7',
-    code: 'LIB-SOC-07',
+    code: 'LIB-SOC-08',
     name: 'أ. وليد المصراتي',
     phone: '0919012345',
     subject: 'الدراسات الاجتماعية',
     subjectCode: 'SOC',
-    assignedClasses: ['7/أ', '7/ب', '8/أ', '4/أ'],
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['8/1 صباح', '8/2 صباح', '8/3 صباح', '8/4 صباح'],
+    avatar: getCleanAvatar('وليد المصراتي', 'teacher'),
     email: 'walid.misrati@school.edu.ly',
     nationalNumber: '119840032109',
     fileNumber: 'WSH-8501',
@@ -203,8 +227,52 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     assignedPeriodsCount: 20,
     appointmentDate: '2013-11-05',
     status: 'active',
-    notes: 'مشرف الرحلات الاستكشافية والنشاط الميداني'
+    notes: 'معلم الدراسات الاجتماعية للصف الثامن'
   },
+
+  // --- الصف السابع (Grade 7 Specialists) ---
+  {
+    id: 't-7-math',
+    code: 'LIB-MATH-07',
+    name: 'أ. ناصر الدرسي',
+    phone: '0917788990',
+    subject: 'الرياضيات',
+    subjectCode: 'MATH',
+    assignedClasses: ['7/1 صباح', '7/2 صباح', '7/3 صباح', '7/4 صباح'],
+    avatar: getCleanAvatar('ناصر الدرسي', 'teacher'),
+    email: 'nasser.dersi@school.edu.ly',
+    nationalNumber: '119800066772',
+    fileNumber: 'WSH-6630',
+    qualification: 'بكالوريوس علوم ورياضيات',
+    specialization: 'تدريس الرياضيات للمرحلة الإعدادية',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2011-10-01',
+    status: 'active',
+    notes: 'معلم الرياضيات لطلبة الصف السابع'
+  },
+  {
+    id: 't-5',
+    code: 'LIB-ISL-07',
+    name: 'أ. محمود السويحلي',
+    phone: '0927890123',
+    subject: 'التربية الإسلامية',
+    subjectCode: 'ISL',
+    assignedClasses: ['7/1 صباح', '7/2 صباح', '7/3 صباح', '7/4 صباح'],
+    avatar: getCleanAvatar('محمود السويحلي', 'teacher'),
+    email: 'mahmoud.sweihli@school.edu.ly',
+    nationalNumber: '119810054321',
+    fileNumber: 'WSH-7712',
+    qualification: 'ليسانس شريعة إسلامية ودراسات قرآنية',
+    specialization: 'أصول الفقه والتلاوة والتجويد',
+    teachingQuota: 20,
+    assignedPeriodsCount: 18,
+    appointmentDate: '2010-09-01',
+    status: 'active',
+    notes: 'معلم التربية الإسلامية والقرآن الكريم للصف السابع'
+  },
+
+  // --- الأخصائي الاجتماعي العام ---
   {
     id: 't-8',
     code: 'LIB-SOC-01',
@@ -212,8 +280,8 @@ export const SEED_TEACHERS: TeacherAccount[] = [
     phone: '0922465676',
     subject: 'الإرشاد الاجتماعي والنفسي',
     subjectCode: 'COUNSEL',
-    assignedClasses: ['كافة الفصول والمراحل (4-9)'],
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    assignedClasses: ['كافة الفصول والمراحل (1-9)'],
+    avatar: getCleanAvatar('نجوى القماطي', 'counselor'),
     email: 'najwa.gammati@school.edu.ly',
     nationalNumber: '219800043210',
     fileNumber: 'WSH-6019',
@@ -415,7 +483,7 @@ export const SEED_CONVERSATIONS: TeacherConversation[] = [
     teacherId: 't-1',
     teacherName: 'أ. طارق الفيتوري',
     subject: 'معلم الرياضيات',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('طارق الفيتوري', 'teacher'),
     lastMessage: 'السلام عليكم يا ولي الأمر، معتز أبدع اليوم في حل مسألة الحساب الذهني 🌟',
     lastMessageTime: '10:45 ص',
     unreadCount: 1,
@@ -520,7 +588,7 @@ export const SEED_STUDENTS: Student[] = [
     nationalNumber: '120081234567',
     studentNumber: '2025-0101',
     linkCode: 'SCH-2026-L1',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('معتز سالم الورفلي', 'male'),
     grade: 'الصف الثالث الأساسي',
     className: '3/أ',
     gender: 'male',
@@ -578,7 +646,7 @@ export const SEED_STUDENTS: Student[] = [
     nationalNumber: '220082345678',
     studentNumber: '2025-0102',
     linkCode: 'SCH-2026-L2',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('آية مصطفى الترهوني', 'female'),
     grade: 'الصف الثالث الأساسي',
     className: '3/أ',
     gender: 'female',
@@ -610,7 +678,7 @@ export const SEED_STUDENTS: Student[] = [
     nationalNumber: '120083456789',
     studentNumber: '2025-0103',
     linkCode: 'SCH-2026-L3',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('عبدالرحمن علي المقريف', 'male'),
     grade: 'الصف الثالث الأساسي',
     className: '3/ب',
     gender: 'male',
@@ -638,7 +706,7 @@ export const SEED_STUDENTS: Student[] = [
     nationalNumber: '220084567890',
     studentNumber: '2025-0104',
     linkCode: 'SCH-2026-L4',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('سارة عمر الفيتوري', 'female'),
     grade: 'الصف الثاني الأساسي',
     className: '2/أ',
     gender: 'female',
@@ -666,7 +734,7 @@ export const SEED_STUDENTS: Student[] = [
     nationalNumber: '120085678901',
     studentNumber: '2025-0105',
     linkCode: 'SCH-2026-L5',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
+    avatar: getCleanAvatar('يوسف فتحي السويحلي', 'male'),
     grade: 'الصف الأول الأساسي',
     className: '1/أ',
     gender: 'male',
@@ -1081,7 +1149,23 @@ export const db = {
   getTeachers(): TeacherAccount[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY_TEACHERS);
-      return data ? JSON.parse(data) : SEED_TEACHERS;
+      let list: TeacherAccount[] = data ? JSON.parse(data) : SEED_TEACHERS;
+      if (!Array.isArray(list) || list.length === 0) list = SEED_TEACHERS;
+
+      // Auto-heal: Ensure Teacher Adam (LIB-COMP-09) is always present
+      const hasAdam = list.some(t => t.code === 'LIB-COMP-09' || t.name.includes('أدم'));
+      if (!hasAdam) {
+        const adam = SEED_TEACHERS.find(t => t.code === 'LIB-COMP-09');
+        if (adam) list = [adam, ...list];
+      }
+
+      // Guarantee clean vector avatars (never unsplash)
+      return list.map(t => ({
+        ...t,
+        avatar: (!t.avatar || t.avatar.includes('unsplash.com'))
+          ? getCleanAvatar(t.name, t.subjectCode === 'COUNSEL' ? 'counselor' : 'teacher')
+          : t.avatar
+      }));
     } catch {
       return SEED_TEACHERS;
     }
@@ -1101,15 +1185,28 @@ export const db = {
   getStudents(): Student[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
+      let list: Student[] = [];
       if (data) {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return CryptoVaultService.decryptStudentsBatch(parsed);
+          list = CryptoVaultService.decryptStudentsBatch(parsed);
         }
       }
-      return LIBYAN_BAOUR_STUDENTS;
+      if (!list || list.length === 0) {
+        list = LIBYAN_BAOUR_STUDENTS;
+      }
+      // Guarantee clean vector avatars (never unsplash)
+      return list.map(s => ({
+        ...s,
+        avatar: (!s.avatar || s.avatar.includes('unsplash.com'))
+          ? getCleanAvatar(s.name, s.gender)
+          : s.avatar
+      }));
     } catch {
-      return LIBYAN_BAOUR_STUDENTS;
+      return LIBYAN_BAOUR_STUDENTS.map(s => ({
+        ...s,
+        avatar: getCleanAvatar(s.name, s.gender)
+      }));
     }
   },
 
@@ -1334,7 +1431,7 @@ export const db = {
         nationalNumber: natId,
         studentNumber: `2025-${String(1000 + i).padStart(4, '0')}`,
         linkCode: `SCH-2026-L${i}`,
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+        avatar: getCleanAvatar(`${fn} ${ln}`, 'male'),
         grade,
         className: `${classNum}/${sec}`,
         gender: 'male',

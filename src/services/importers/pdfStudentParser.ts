@@ -1,4 +1,5 @@
 import { Student } from '../../types';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure pdfjs worker to load from CDN or bundled worker
@@ -641,10 +642,6 @@ export class LibyanPdfStudentParser {
    * Convert parsed student row to standard platform Student entity
    */
   static convertToStudentEntity(row: ParsedStudentRow, index: number): Student {
-    const avatarUrl = row.gender === 'male'
-      ? `https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80`
-      : `https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80`;
-
     return {
       id: `std-pdf-${Date.now()}-${index + 1}`,
       name: row.name,
@@ -652,7 +649,7 @@ export class LibyanPdfStudentParser {
       nationalNumber: row.nationalNumber,
       studentNumber: `LIB-2026-${String(index + 1).padStart(4, '0')}`,
       linkCode: `SCH-2026-P${index + 1}`,
-      avatar: avatarUrl,
+      avatar: getCleanAvatar(row.name, row.gender),
       grade: row.grade,
       className: row.className,
       gender: row.gender,

@@ -260,10 +260,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         try {
           const savedId = localStorage.getItem('madrasa_active_teacher_id');
           const found = savedId ? teachers.find(t => t.id === savedId) : null;
-          if (found) {
-            setCurrentTeacher(found);
-          }
-        } catch {}
+          setCurrentTeacher(found || teachers[0]);
+        } catch {
+          setCurrentTeacher(teachers[0]);
+        }
       }
     } else if (role === 'exams_coordinator') {
       setActiveTab('exams-coordinator-dashboard');
@@ -285,13 +285,16 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
   const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(() => {
     try {
+      const allTeachers = db.getTeachers();
       const savedId = localStorage.getItem('madrasa_active_teacher_id');
       if (savedId) {
-        const found = SEED_TEACHERS.find(t => t.id === savedId);
+        const found = allTeachers.find(t => t.id === savedId);
         if (found) return found;
       }
-    } catch {}
-    return null;
+      return allTeachers[0] || null;
+    } catch {
+      return null;
+    }
   });
 
   const [parentLinkedStudentId, setParentLinkedStudentId] = useState<string | null>(() => {

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { getCleanAvatar } from '../../utils/avatarHelper';
 
 interface QrPdfReaderModalProps {
   isOpen: boolean;
@@ -215,7 +216,7 @@ export const QrPdfReaderModal: React.FC<QrPdfReaderModalProps> = ({
       appreciation: 'ممتاز',
       behaviorRating: 'ممتاز',
       behaviorPointsTotal: 30,
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      avatar: getCleanAvatar(data.name || 'طالب', data.gender || 'male'),
       competencies: [],
       behaviorPoints: [],
       subjects: [

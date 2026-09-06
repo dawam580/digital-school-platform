@@ -1,4 +1,5 @@
 import { StaffMember, StaffRole } from '../types';
+import { getCleanAvatar } from '../utils/avatarHelper';
 
 export const STAFF_ROLE_LABELS: Record<StaffRole, string> = {
   admin: 'إداري',
@@ -33,7 +34,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'مسؤول القبول والتسجيل وشؤون الامتحانات',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'
+    avatar: getCleanAvatar('طارق عبدالرحمن الورفلي', 'admin')
   },
   {
     id: 'staff-2',
@@ -57,7 +58,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'إشراف على طابور الصباح والجناح الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150'
+    avatar: getCleanAvatar('سالم فرج المقرحي', 'staff')
   },
   {
     id: 'staff-3',
@@ -81,7 +82,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'متابعة أذونات الغياب والتواصل مع أمهات الطلاب',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150'
+    avatar: getCleanAvatar('هند مصطفى الزوي', 'female')
   },
   {
     id: 'staff-4',
@@ -105,7 +106,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'صيانة معامل الحاسوب والمولد والمرافق المدرسية',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150'
+    avatar: getCleanAvatar('عمر خليفة التائب', 'staff')
   },
   {
     id: 'staff-5',
@@ -129,7 +130,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: false // ناقص
     },
     notes: 'نظافة مكاتب الإدارة وجناح التعليم الأساسي',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150'
+    avatar: getCleanAvatar('مبروكة سليمان القذافي', 'female')
   },
   {
     id: 'staff-6',
@@ -153,7 +154,7 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'رعاية حديقة المدرسة وتشجير الفناء والمدخل',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150'
+    avatar: getCleanAvatar('رمضان عطية الشيباني', 'staff')
   },
   {
     id: 'staff-7',
@@ -177,6 +178,6 @@ export const INITIAL_STAFF_MEMBERS: StaffMember[] = [
       personalPhotos: true
     },
     notes: 'مدرس أول لمادة اللغة العربية للصف التاسع',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150'
+    avatar: getCleanAvatar('فتحي محمد الطرابلسي', 'teacher')
   }
 ];
