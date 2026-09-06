@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   X,
@@ -27,6 +27,16 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
   onClose
 }) => {
   const [selectedRoleGuide, setSelectedRoleGuide] = useState<'admin' | 'teacher' | 'parent'>('admin');
+
+  // Lock body scroll when modal is active to prevent background scrolling
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
