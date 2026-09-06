@@ -82,6 +82,7 @@ export const Sidebar: React.FC = () => {
       default:
         return [
           { id: 'dashboard', label: 'لوحة تحكم الإدارة المدرسية', icon: Home },
+          { id: 'staff', label: 'إدارة الموظفين والعمال والكوادر', icon: Users, badge: 'جديد' },
           { id: 'school-manager', label: 'إدارة المدارس والنسخ المستقلة', icon: Building2, isCustomAction: true },
           { id: 'finance', label: 'الشؤون المالية والرسوم والمصروفات', icon: DollarSign, badge: 'د.ل' },
           { id: 'counselor-dashboard', label: 'مكتب الخدمة الاجتماعية والنفسية', icon: HeartHandshake, badge: 'إرشاد' },

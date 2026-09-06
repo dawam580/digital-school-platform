@@ -24,7 +24,8 @@ import {
   Award,
   Printer,
   FileSpreadsheet,
-  HelpCircle
+  HelpCircle,
+  TrendingUp
 } from 'lucide-react';
 import { StudentManagerModal } from '../../components/admin/StudentManagerModal';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
@@ -39,6 +40,8 @@ import { DirectorInviteModal } from '../../components/common/DirectorInviteModal
 import { MinistryRosterModal } from '../../components/admin/MinistryRosterModal';
 import { SubjectManagementModal } from '../../components/admin/SubjectManagementModal';
 import { SecurityPinConfirmModal } from '../../components/common/SecurityPinConfirmModal';
+import { SchoolCensusAnalyticsView } from '../../components/admin/SchoolCensusAnalyticsView';
+import { AttractiveUserGuideBanner } from '../../components/common/AttractiveUserGuideBanner';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
@@ -65,11 +68,12 @@ export const AdminDashboard: React.FC = () => {
     markAllPresent,
     setCurrentRole,
     loginWithTeacherCode,
-    startTour
+    startTour,
+    setActiveTab: setGlobalActiveTab
   } = useSchool();
 
-  // Active Tab: 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'
-  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'>('students');
+  // Active Tab: 'analytics' | 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'
+  const [activeTab, setActiveTab] = useState<'analytics' | 'students' | 'teachers' | 'attendance' | 'exams' | 'schedule'>('analytics');
 
   // Students Tab State
   const [studentSearch, setStudentSearch] = useState('');
@@ -309,6 +313,16 @@ export const AdminDashboard: React.FC = () => {
             <span>استيراد إكسل 📊</span>
           </button>
 
+          {/* Staff & Employees Management Button */}
+          <button
+            onClick={() => { setGlobalActiveTab('staff'); sound.playTap(); }}
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="إدارة الموظفين والعمال والكوادر وتتبع ملفاتهم ومستنداتهم"
+          >
+            <Users className="w-4 h-4 text-white shrink-0" />
+            <span>شؤون الموظفين والعمال 👥</span>
+          </button>
+
           {/* Comprehensive System Guide Button */}
           <button
             onClick={() => { setShowGuideModal(true); sound.playTap(); }}
@@ -363,175 +377,12 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* SupaHero & 60fps Interactive Step Banner */}
-      {showGuideBanner && (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white p-6 sm:p-7 border border-indigo-500/30 shadow-2xl space-y-4 animate-in fade-in transition-all duration-300">
-          {/* Ambient Glows */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -z-0" />
-
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-amber-300 text-xs font-black">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                <Sparkles className="w-3.5 h-3.5 fill-current" />
-                <span>دليل المنظومة الذكي • تجربة 60fps التفاعلية</span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                كيف تدير مدرستك باحترافية وسلاسة في 4 محطات رئيسية؟
-              </h3>
-              <p className="text-xs text-purple-200/80 max-w-xl leading-relaxed">
-                انقر على أي محطة للانتقال الفوري، أو شغّل الجولة الحية لتتبع الخطوات (التالي والسابق) كما في أرقى التطبيقات العالمية.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                onClick={() => { startTour(); sound.playFanfare(); }}
-                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 text-xs font-black shadow-lg transition-all duration-200 active:scale-95 flex items-center gap-2 animate-pulse"
-              >
-                <span>🚀 تشغيل الجولة التفاعلية (خطوة بخطوة)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { setShowGuideModal(true); sound.playTap(); }}
-                className="px-3.5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-black border border-white/20 transition active:scale-95 flex items-center gap-1.5"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-blue-300" />
-                <span>الدليل الشامل 📖</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowGuideBanner(false)}
-                className="p-2 text-white/50 hover:text-white rounded-xl hover:bg-white/10 transition"
-                title="إخفاء هذا الشريط"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-
-          {/* 4 Interactive 60fps Step Cards */}
-          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 text-xs">
-            
-            {/* Step 1: Students & AI */}
-            <div
-              onClick={() => { setActiveTab('students'); sound.playTap(); }}
-              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
-                activeTab === 'students'
-                  ? 'bg-blue-600/30 border-blue-400 shadow-[0_0_25px_rgba(59,130,246,0.3)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-black text-sm text-white flex items-center gap-1.5">
-                  <span>1️⃣ كشف الطلاب</span>
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold">
-                  ذكاء اصطناعي ⚡
-                </span>
-              </div>
-              <p className="text-[11px] text-purple-200/80 leading-relaxed">
-                استيراد PDF فوري بالذكاء الاصطناعي، توليد بطاقات QR الذكية، وتصدير إكسل الوزارة.
-              </p>
-              {activeTab === 'students' && (
-                <div className="text-[10px] font-black text-blue-300 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
-                </div>
-              )}
-            </div>
-
-            {/* Step 2: Exams & Control */}
-            <div
-              onClick={() => { setActiveTab('exams'); sound.playTap(); }}
-              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
-                activeTab === 'exams'
-                  ? 'bg-purple-600/30 border-purple-400 shadow-[0_0_25px_rgba(168,85,247,0.3)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-black text-sm text-white flex items-center gap-1.5">
-                  <span>2️⃣ شيت الامتحانات</span>
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold">
-                  1120 درجة 📜
-                </span>
-              </div>
-              <p className="text-[11px] text-purple-200/80 leading-relaxed">
-                درجات المواد الثمانية، حساب الترتيب آلياً، والتصحيح الإلكتروني ونماذج OMR.
-              </p>
-              {activeTab === 'exams' && (
-                <div className="text-[10px] font-black text-purple-300 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />
-                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
-                </div>
-              )}
-            </div>
-
-            {/* Step 3: Teachers */}
-            <div
-              onClick={() => { setActiveTab('teachers'); sound.playTap(); }}
-              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
-                activeTab === 'teachers'
-                  ? 'bg-amber-600/30 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.3)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-black text-sm text-white flex items-center gap-1.5">
-                  <span>3️⃣ المعلمين والحصص</span>
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
-                  رموز سريعة 🔑
-                </span>
-              </div>
-              <p className="text-[11px] text-purple-200/80 leading-relaxed">
-                إسناد الشعب، ضبط النصاب الأسبوعي، ودخول مباشر للمعلمين عبر الرمز الفريد.
-              </p>
-              {activeTab === 'teachers' && (
-                <div className="text-[10px] font-black text-amber-300 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
-                </div>
-              )}
-            </div>
-
-            {/* Step 4: Attendance & Parent */}
-            <div
-              onClick={() => { setActiveTab('attendance'); sound.playTap(); }}
-              className={`p-4 rounded-2xl border-2 text-right cursor-pointer transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-95 space-y-2 relative ${
-                activeTab === 'attendance'
-                  ? 'bg-emerald-600/30 border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-black text-sm text-white flex items-center gap-1.5">
-                  <span>4️⃣ الحضور والغياب</span>
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
-                  تحضير بنقرة ⏱️
-                </span>
-              </div>
-              <p className="text-[11px] text-purple-200/80 leading-relaxed">
-                رصد الغياب، التحضير الجماعي، وإرسال تنبيهات تلقائية لأولياء الأمور.
-              </p>
-              {activeTab === 'attendance' && (
-                <div className="text-[10px] font-black text-emerald-300 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>👈 أنت تتصفح هذا القسم حالياً</span>
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Attractive User Guide Banner with 4 Role Perspectives & Quick Actions */}
+      <AttractiveUserGuideBanner
+        onOpenComprehensiveGuide={() => setShowGuideModal(true)}
+        onOpenDirectorInvite={() => setShowInviteModal(true)}
+        onSelectAnalyticsTab={() => setActiveTab('analytics')}
+      />
 
       {/* 5 Main Stat Cards (Clean & Balanced Responsive Grid) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -653,8 +504,20 @@ export const AdminDashboard: React.FC = () => {
 
       </div>
 
-      {/* Big Main Tab Selector Pills (5 Tabs - Non-Colliding Responsive Grid) */}
-      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 border border-slate-200 dark:border-slate-700">
+      {/* Big Main Tab Selector Pills (6 Tabs - Responsive Grid) */}
+      <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 border border-slate-200 dark:border-slate-700">
+        <button
+          onClick={() => { setActiveTab('analytics'); sound.playTap(); }}
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
+            activeTab === 'analytics'
+              ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+          }`}
+        >
+          <TrendingUp className="w-4 h-4 shrink-0 text-blue-600" />
+          <span>📊 رؤية المدرسة</span>
+        </button>
+
         <button
           onClick={() => { setActiveTab('students'); sound.playTap(); }}
           className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
@@ -664,7 +527,7 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <Users className="w-4 h-4 shrink-0" />
-          <span>1. كشف الطلاب ({students.length})</span>
+          <span>1. الطلاب ({students.length})</span>
         </button>
 
         <button
@@ -676,7 +539,7 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <Award className="w-4 h-4 shrink-0" />
-          <span>2. شيت الامتحانات 📑</span>
+          <span>2. الامتحانات 📑</span>
         </button>
 
         <button
@@ -705,7 +568,7 @@ export const AdminDashboard: React.FC = () => {
 
         <button
           onClick={() => { setActiveTab('schedule'); sound.playTap(); }}
-          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 col-span-2 sm:col-span-1 ${
+          className={`py-3 px-3 rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'schedule'
               ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -715,6 +578,13 @@ export const AdminDashboard: React.FC = () => {
           <span>5. الجداول الذكية AI ⚡</span>
         </button>
       </div>
+
+      {/* ========================================================================= */}
+      {/* TAB 0: SCHOOL CENSUS & EXECUTIVE ANALYTICS                                */}
+      {/* ========================================================================= */}
+      {activeTab === 'analytics' && (
+        <SchoolCensusAnalyticsView />
+      )}
 
       {/* ========================================================================= */}
       {/* TAB 1: REGISTERED & IMPORTED STUDENTS LIST                                */}

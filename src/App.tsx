@@ -28,6 +28,7 @@ import { ExamCoordinatorDashboard } from './pages/exams/ExamCoordinatorDashboard
 import { FreeTrialModal } from './components/trial/FreeTrialModal';
 import { UpgradeModal } from './components/trial/UpgradeModal';
 import { FinancePage } from './pages/finance/FinancePage';
+import { StaffManagementPage } from './pages/admin/StaffManagementPage';
 import { WindowsTitleBar } from './components/desktop/WindowsTitleBar';
 
 const MainContent: React.FC = () => {
@@ -137,6 +138,8 @@ const MainContent: React.FC = () => {
         return <DailyReport />;
       case 'finance':
         return <FinancePage />;
+      case 'staff':
+        return <StaffManagementPage />;
       case 'link-student':
         return <LinkStudent />;
       case 'notifications':

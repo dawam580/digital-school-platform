@@ -18,7 +18,11 @@ import {
   ChevronLeft,
   TrendingUp,
   ShieldCheck,
-  Star
+  Star,
+  ArrowRight,
+  ArrowRightLeft,
+  FileWarning,
+  FileCheck2
 } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -28,10 +32,21 @@ import { RadarChart } from '../../components/ui/RadarChart';
 import { CertificateModal } from '../../components/ui/CertificateModal';
 import { BehaviorPointsModal } from '../../components/ui/BehaviorPointsModal';
 import { AvatarPickerModal } from '../../components/ui/AvatarPickerModal';
+import { TransferClassModal } from '../../components/students/TransferClassModal';
+import { StudentDossierModal } from '../../components/students/StudentDossierModal';
 import { sound } from '../../utils/soundEffects';
 
 export const StudentProfile: React.FC = () => {
-  const { selectedStudent, updateAttendance, addNotification, setActiveTab, addBehaviorPoint, updateStudentAvatar, currentRole } = useSchool();
+  const { 
+    selectedStudent, 
+    updateAttendance, 
+    addNotification, 
+    setActiveTab, 
+    addBehaviorPoint, 
+    updateStudentAvatar, 
+    currentRole,
+    updateStudentDocuments
+  } = useSchool();
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'competencies' | 'academic' | 'attendance' | 'points'>('overview');
   
   // Modals
@@ -40,6 +55,8 @@ export const StudentProfile: React.FC = () => {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showExcuseModal, setShowExcuseModal] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showDossierModal, setShowDossierModal] = useState(false);
   const [excuseDate, setExcuseDate] = useState('2026-09-01');
   const [excuseReason, setExcuseReason] = useState('');
   const [excuseSubmitted, setExcuseSubmitted] = useState(false);
@@ -65,6 +82,43 @@ export const StudentProfile: React.FC = () => {
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-5xl mx-auto pb-10">
       
+      {/* Top Back Navigation Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-1 font-tajawal">
+        <button
+          onClick={() => {
+            sound.playTap();
+            setActiveTab('dashboard');
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold transition-all shadow-sm active:scale-95 group"
+        >
+          <ArrowRight className="w-4 h-4 text-slate-400 group-hover:-translate-x-0.5 transition-transform" />
+          <span>الرجوع إلى القسم السابق (لوحة التحكم وكشف الطلاب)</span>
+        </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              sound.playTap();
+              setShowTransferModal(true);
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold hover:bg-teal-100 transition-all active:scale-95"
+          >
+            <ArrowRightLeft className="w-3.5 h-3.5" />
+            <span>نقل إلى فصل آخر</span>
+          </button>
+          <button
+            onClick={() => {
+              sound.playTap();
+              setShowDossierModal(true);
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold hover:bg-blue-100 transition-all active:scale-95"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>تقرير الطالب الشامل</span>
+          </button>
+        </div>
+      </div>
+
       {/* 1. Student Hero Banner Card with Gradient & Glass Accents */}
       <div className="bg-gradient-to-r from-[#00288e] via-blue-800 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-soft-lg relative overflow-hidden">
         <div className="absolute top-0 left-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
@@ -420,6 +474,168 @@ export const StudentProfile: React.FC = () => {
         </div>
       )}
 
+      {/* 5. Professional Student Options & Missing Documents Tracker (بيانات الطالب وتتبع المستندات الناقصة) */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-soft space-y-5 font-tajawal">
+        {/* Card Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+          <div className="flex items-center gap-3">
+            <div className={`p-2.5 rounded-2xl ${
+              (selectedStudent.documents && Object.values(selectedStudent.documents).filter(Boolean).length === 5)
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600'
+                : 'bg-amber-50 dark:bg-amber-950/50 text-amber-600'
+            }`}>
+              {(selectedStudent.documents && Object.values(selectedStudent.documents).filter(Boolean).length === 5) ? (
+                <FileCheck2 className="w-6 h-6" />
+              ) : (
+                <FileWarning className="w-6 h-6" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                ملفات ومستندات الطالب المدرسية وتتبع النواقص
+                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                  (selectedStudent.documents && Object.values(selectedStudent.documents).filter(Boolean).length === 5)
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
+                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200'
+                }`}>
+                  {(selectedStudent.documents && Object.values(selectedStudent.documents).filter(Boolean).length === 5)
+                    ? 'ملفات مكتملة (5 / 5) ✅'
+                    : `ملفات ناقصة (${5 - (selectedStudent.documents ? Object.values(selectedStudent.documents).filter(Boolean).length : 0)} متبقية) ⚠️`}
+                </span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                تتبع واستلام الأوراق الثبوتية الخاصة بملف الطالب {selectedStudent.name}، انقر لتحديث حالة التسليم فوراً
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Documents Interactive Checklist */}
+        {(() => {
+          const docs = selectedStudent.documents || {
+            birthCert: false,
+            healthRecord: false,
+            photos: false,
+            parentConsent: false,
+            transferCert: false
+          };
+          const checklistItems = [
+            { key: 'birthCert' as const, label: 'شهادة الميلاد الرقمية', desc: 'مستخرج رقم وطني رسمي أو شهادة ميلاد' },
+            { key: 'healthRecord' as const, label: 'الملف والشهادة الصحية', desc: 'كشف طبي معتمد وفصيلة الدم' },
+            { key: 'photos' as const, label: 'الصور الشخصية (4 صور)', desc: 'خلفية بيضاء حديثة لبطاقة الطالب' },
+            { key: 'parentConsent' as const, label: 'إقرار وتعهد ولي الأمر', desc: 'توقيع اللائحة المدرسية والالتزام' },
+            { key: 'transferCert' as const, label: 'شهادة النقل وإخلاء الطرف', desc: 'من المدرسة السابقة للطلبة المنقولين' },
+          ];
+
+          return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {checklistItems.map((item) => {
+                const isChecked = docs[item.key];
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => {
+                      sound.playTap();
+                      updateStudentDocuments(selectedStudent.id, { [item.key]: !isChecked });
+                    }}
+                    className={`flex items-start gap-3 p-3.5 rounded-2xl border text-right transition-all group ${
+                      isChecked
+                        ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800/60 shadow-xs'
+                        : 'bg-rose-50/60 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/40 hover:border-rose-300'
+                    }`}
+                  >
+                    <div className={`mt-0.5 p-1 rounded-lg transition-colors ${
+                      isChecked
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-white dark:bg-slate-800 border border-rose-300 text-rose-500'
+                    }`}>
+                      {isChecked ? <CheckCircle2 className="w-4 h-4" /> : <FileWarning className="w-4 h-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-xs font-bold ${
+                          isChecked
+                            ? 'text-emerald-900 dark:text-emerald-200'
+                            : 'text-rose-900 dark:text-rose-300'
+                        }`}>
+                          {item.label}
+                        </span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          isChecked
+                            ? 'bg-emerald-200/60 text-emerald-800 dark:bg-emerald-800/50 dark:text-emerald-200'
+                            : 'bg-rose-200/60 text-rose-800 dark:bg-rose-800/50 dark:text-rose-200'
+                        }`}>
+                          {isChecked ? 'مُسلَّم' : 'ناقص'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
+
+        {/* Transfer History Preview if Available */}
+        {selectedStudent.transferHistory && selectedStudent.transferHistory.length > 0 && (
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
+            <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
+              سجل النقل وتغيير الفصل لهذا الطالب:
+            </span>
+            <div className="space-y-1">
+              {selectedStudent.transferHistory.map((t, idx) => (
+                <div key={idx} className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
+                  <span>تم النقل من <b>{t.fromClass}</b> إلى <b>{t.toClass}</b></span>
+                  <span>{t.date} — السبب: {t.reason || 'إداري'}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Options & Action Bar (خيارات أسفل بيانات الطالب) */}
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+          <button
+            onClick={() => {
+              sound.playTap();
+              setActiveTab('dashboard');
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all active:scale-95"
+          >
+            <ArrowRight className="w-4 h-4 text-slate-500" />
+            <span>الرجوع إلى القسم السابق</span>
+          </button>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => {
+                sound.playTap();
+                setShowTransferModal(true);
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white text-xs font-bold shadow-md shadow-teal-600/20 active:scale-95 transition-all"
+            >
+              <ArrowRightLeft className="w-4 h-4" />
+              <span>نقل الطالب إلى فصل آخر</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sound.playTap();
+                setShowDossierModal(true);
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-blue-600/20 active:scale-95 transition-all"
+            >
+              <FileText className="w-4 h-4" />
+              <span>تقرير الطالب الشامل المعتمد</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Modals */}
       <CertificateModal
         isOpen={showCertificateModal}
@@ -520,6 +736,20 @@ export const StudentProfile: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Transfer Class Modal */}
+      <TransferClassModal
+        isOpen={showTransferModal}
+        onClose={() => setShowTransferModal(false)}
+        student={selectedStudent}
+      />
+
+      {/* Comprehensive Student Dossier Modal */}
+      <StudentDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        student={selectedStudent}
+      />
 
     </div>
   );

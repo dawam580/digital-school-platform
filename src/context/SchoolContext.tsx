@@ -208,6 +208,17 @@ interface SchoolContextType {
   isTourOpen: boolean;
   setIsTourOpen: (open: boolean) => void;
   startTour: () => void;
+
+  // Student Transfer & Documents
+  transferStudentClass: (studentId: string, newClassName: string, reason?: string) => boolean;
+  updateStudentDocuments: (studentId: string, docs: Partial<NonNullable<Student['documents']>>) => void;
+
+  // Staff & Employees Management
+  staffMembers: StaffMember[];
+  addStaffMember: (staff: Omit<StaffMember, 'id'>) => void;
+  updateStaffMember: (id: string, updatedFields: Partial<StaffMember>) => void;
+  deleteStaffMember: (id: string) => void;
+  updateStaffDocuments: (id: string, docs: Partial<StaffDocumentChecklist>) => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -1619,6 +1630,143 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('gold', 'تم تحديث سداد الرسوم 🧾', `تم قيد دفعة بمبلغ ${paidAmountToAdd} د.ل`);
   };
 
+  // Staff Members Management
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_staff_members');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_STAFF_MEMBERS;
+  });
+
+  const saveStaffToStorage = (updated: StaffMember[]) => {
+    setStaffMembers(updated);
+    try {
+      localStorage.setItem('madrasa_staff_members', JSON.stringify(updated));
+    } catch {}
+  };
+
+  const addStaffMember = (staff: Omit<StaffMember, 'id'>) => {
+    const newMember: StaffMember = {
+      ...staff,
+      id: `staff-${Date.now()}`
+    };
+    const updated = [newMember, ...staffMembers];
+    saveStaffToStorage(updated);
+    sound.playSuccess();
+    showToast('success', 'تمت إضافة الموظف/العامل بنجاح 👤', `${staff.firstName} ${staff.lastName} (${STAFF_ROLE_LABELS[staff.role] || staff.role})`);
+  };
+
+  const updateStaffMember = (id: string, updatedFields: Partial<StaffMember>) => {
+    const updated = staffMembers.map(m => m.id === id ? { ...m, ...updatedFields } : m);
+    saveStaffToStorage(updated);
+    sound.playSuccess();
+    showToast('success', 'تم تحديث بيانات الموظف ✏️', 'تم حفظ التعديلات بنجاح');
+  };
+
+  const deleteStaffMember = (id: string) => {
+    const target = staffMembers.find(m => m.id === id);
+    const updated = staffMembers.filter(m => m.id !== id);
+    saveStaffToStorage(updated);
+    sound.playAlert();
+    showToast('info', 'تم حذف السجل 🗑️', `تم حذف ملف ${target ? target.firstName + ' ' + target.lastName : 'الموظف'}`);
+  };
+
+  const updateStaffDocuments = (id: string, docs: Partial<StaffDocumentChecklist>) => {
+    const updated = staffMembers.map(m => {
+      if (m.id === id) {
+        return {
+          ...m,
+          documents: { ...m.documents, ...docs }
+        };
+      }
+      return m;
+    });
+    saveStaffToStorage(updated);
+    sound.playSuccess();
+    showToast('success', 'تم تحديث مستندات الموظف 📁', 'تم تعديل حالة المستندات بنجاح');
+  };
+
+  // Student Class Transfer & Documents
+  const transferStudentClass = (studentId: string, newClassName: string, reason?: string): boolean => {
+    const targetStudent = students.find(s => s.id === studentId);
+    if (!targetStudent) return false;
+    const oldClass = targetStudent.className;
+    if (oldClass === newClassName) {
+      showToast('warning', 'تنبيه النقل ⚠️', 'الطالب مسجل بالفعل في هذا الفصل');
+      return false;
+    }
+
+    const transferRecord = {
+      fromClass: oldClass,
+      toClass: newClassName,
+      date: new Date().toISOString().split('T')[0],
+      reason: reason || 'طلب نقل إداري'
+    };
+
+    const updatedStudents = students.map(s => {
+      if (s.id === studentId) {
+        const history = s.transferHistory ? [...s.transferHistory, transferRecord] : [transferRecord];
+        return {
+          ...s,
+          className: newClassName,
+          transferHistory: history
+        };
+      }
+      return s;
+    });
+
+    setStudents(updatedStudents);
+    db.saveStudents(updatedStudents);
+
+    if (selectedStudent && selectedStudent.id === studentId) {
+      setSelectedStudent({
+        ...selectedStudent,
+        className: newClassName,
+        transferHistory: selectedStudent.transferHistory ? [...selectedStudent.transferHistory, transferRecord] : [transferRecord]
+      });
+    }
+
+    sound.playSuccess();
+    triggerConfetti();
+    showToast('success', 'تم نقل الطالب بنجاح 🔄', `تم نقل ${targetStudent.name} من ${oldClass} إلى ${newClassName}`);
+    return true;
+  };
+
+  const updateStudentDocuments = (studentId: string, docs: Partial<NonNullable<Student['documents']>>) => {
+    const defaultDocs = {
+      birthCert: false,
+      healthRecord: false,
+      photos: false,
+      parentConsent: false,
+      transferCert: false
+    };
+
+    const updatedStudents = students.map(s => {
+      if (s.id === studentId) {
+        const currentDocs = s.documents || defaultDocs;
+        return {
+          ...s,
+          documents: { ...currentDocs, ...docs }
+        };
+      }
+      return s;
+    });
+
+    setStudents(updatedStudents);
+    db.saveStudents(updatedStudents);
+
+    if (selectedStudent && selectedStudent.id === studentId) {
+      setSelectedStudent({
+        ...selectedStudent,
+        documents: { ...(selectedStudent.documents || defaultDocs), ...docs }
+      });
+    }
+
+    sound.playSuccess();
+    showToast('success', 'تم تحديث مستندات الطالب 📁', 'تم حفظ حالة ملف الطالب والمستندات المسلمة');
+  };
+
   return (
     <SchoolContext.Provider
       value={{
@@ -1723,6 +1871,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isTourOpen,
         setIsTourOpen,
         startTour,
+        // Student Transfer & Documents
+        transferStudentClass,
+        updateStudentDocuments,
+        // Staff & Employees Management
+        staffMembers,
+        addStaffMember,
+        updateStaffMember,
+        deleteStaffMember,
+        updateStaffDocuments,
       }}
     >
       {children}

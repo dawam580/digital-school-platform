@@ -15,7 +15,9 @@ import {
   Shield,
   FileJson,
   Layers,
-  ArrowRight
+  ArrowRight,
+  MapPin,
+  Clock
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -44,6 +46,8 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
   const [currentDistrict, setCurrentDistrict] = useState(schoolProfile.district);
   const [currentDirector, setCurrentDirector] = useState(schoolProfile.directorName);
   const [currentPhone, setCurrentPhone] = useState(schoolProfile.directorPhone);
+  const [currentAddress, setCurrentAddress] = useState(schoolProfile.schoolAddress || (schoolProfile as any).address || 'طرابلس، شارع عمر المختار');
+  const [currentWorkingHours, setCurrentWorkingHours] = useState(schoolProfile.workingHours || 'من 08:00 صباحاً إلى 01:30 ظهراً (الأحد - الخميس)');
 
   // Form states for creating a new school for a friend
   const [activeTab, setActiveTab] = useState<'current' | 'new' | 'list'>('current');
@@ -62,9 +66,12 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
       name: currentName,
       district: currentDistrict,
       directorName: currentDirector,
-      directorPhone: currentPhone
+      directorPhone: currentPhone,
+      schoolAddress: currentAddress,
+      workingHours: currentWorkingHours
     });
     triggerConfetti();
+    showToast('success', 'تم حفظ إعدادات المدرسة بنجاح ✅', 'تم تحديث اسم وعنوان وهاتف وساعات عمل المدرسة');
     onClose();
   };
 
@@ -114,9 +121,21 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                sound.playTap();
+                onClose();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all border border-white/20 active:scale-95"
+            >
+              <ArrowRight className="w-4 h-4" />
+              <span>الرجوع إلى القسم السابق</span>
+            </button>
+            <button onClick={onClose} className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Action Tabs */}
@@ -212,16 +231,58 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
                       className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                      عنوان ومقر المدرسة الرسمي:
+                    </label>
+                    <input
+                      type="text"
+                      value={currentAddress}
+                      onChange={e => setCurrentAddress(e.target.value)}
+                      placeholder="مثال: طرابلس، شارع عمر المختار - بالقرب من الميدان"
+                      className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-blue-500" />
+                      ساعات العمل والدوام الرسمي:
+                    </label>
+                    <input
+                      type="text"
+                      value={currentWorkingHours}
+                      onChange={e => setCurrentWorkingHours(e.target.value)}
+                      placeholder="مثال: من 08:00 صباحاً إلى 01:30 ظهراً (الأحد - الخميس)"
+                      className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                   <span className="text-[11px] text-slate-500">العام الدراسي المعتمد: {schoolProfile.academicYear}</span>
-                  <button
-                    type="submit"
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition active:scale-95"
-                  >
-                    حفظ التعديلات في المنظومة
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sound.playTap();
+                        onClose();
+                      }}
+                      className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition active:scale-95 text-xs flex items-center gap-1.5"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>الرجوع للقسم السابق</span>
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition active:scale-95 text-xs flex items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>حفظ التعديلات في المنظومة</span>
+                    </button>
+                  </div>
                 </div>
               </form>
 

@@ -232,6 +232,69 @@ export class SecurityEngine {
       message: `رمز الأمان غير صحيح. المحاولات المتبقية: (${3 - this.failedAttempts})`
     };
   }
+
+  // ================= SUPER ADMIN MASTER SECURITY PIN ================= //
+  private static STORAGE_KEY_SUPER_PIN = 'madrasa_superadmin_pin_sec';
+  private static superFailedAttempts = 0;
+  private static superLockoutUntil = 0;
+
+  public static getSuperAdminPin(): string {
+    try {
+      return localStorage.getItem(this.STORAGE_KEY_SUPER_PIN) || '9988';
+    } catch {
+      return '9988';
+    }
+  }
+
+  public static setSuperAdminPin(newPin: string): boolean {
+    if (!newPin || newPin.length < 4) return false;
+    try {
+      localStorage.setItem(this.STORAGE_KEY_SUPER_PIN, newPin);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public static isSuperAdminLockedOut(): { isLocked: boolean; remainingSeconds: number } {
+    const now = Date.now();
+    if (now < this.superLockoutUntil) {
+      const remaining = Math.ceil((this.superLockoutUntil - now) / 1000);
+      return { isLocked: true, remainingSeconds: remaining };
+    }
+    return { isLocked: false, remainingSeconds: 0 };
+  }
+
+  public static verifySuperAdminPin(inputPin: string): { valid: boolean; message: string } {
+    const lockout = this.isSuperAdminLockedOut();
+    if (lockout.isLocked) {
+      return {
+        valid: false,
+        message: `تم تجميد محاولات الدخول للسوبر أدمن مؤقتاً. يرجى الانتظار (${lockout.remainingSeconds}) ثانية.`
+      };
+    }
+
+    const expected = this.getSuperAdminPin();
+    if (inputPin.trim() === expected.trim()) {
+      this.superFailedAttempts = 0;
+      this.superLockoutUntil = 0;
+      return { valid: true, message: 'تم التحقق من هوية المدير العام السوبر بنجاح' };
+    }
+
+    this.superFailedAttempts++;
+    if (this.superFailedAttempts >= 3) {
+      this.superLockoutUntil = Date.now() + 45000; // 45s lockout
+      return {
+        valid: false,
+        message: 'تم استنفاد 3 محاولات خاطئة. تم قفل الوصول لبوابة السوبر أدمن لمدة 45 ثانية لحماية المنظومة.'
+      };
+    }
+
+    return {
+      valid: false,
+      message: `رمز الماستر غير صحيح. المحاولات المتبقية: (${3 - this.superFailedAttempts})`
+    };
+  }
 }
 
 export { CryptoVaultService } from './cryptoVault';

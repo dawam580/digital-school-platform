@@ -34,6 +34,7 @@ import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
 import { DirectorInviteModal } from '../common/DirectorInviteModal';
 import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
 import { MobileCompanionModal } from '../mobile/MobileCompanionModal';
+import { SuperAdminLockModal } from '../common/SuperAdminLockModal';
 import { isWindowsDesktop, executeNativePrint, openSchoolDocumentsFolder } from '../../services/native/windowsBridge';
 
 interface NavbarProps {
@@ -74,17 +75,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showDirectorInviteModal, setShowDirectorInviteModal] = useState(false);
   const [showComprehensiveGuide, setShowComprehensiveGuide] = useState(false);
   const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showSuperAdminLock, setShowSuperAdminLock] = useState(false);
   const isDesktop = isWindowsDesktop();
 
-  const roles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
+  // Internal School Staff Cluster (مدير، كنترول، معلمين، أخصائي)
+  const staffRoles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     { id: 'admin', label: 'مدير المدرسة', icon: <Shield className="w-4 h-4" />, color: 'bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300' },
     { id: 'exams_coordinator', label: 'منسق الامتحانات والكنترول', icon: <Award className="w-4 h-4" />, color: 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300' },
-    { id: 'superadmin', label: 'المدير العام (سوبر أدمن)', icon: <Building2 className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
     { id: 'teacher', label: 'المعلم', icon: <GraduationCap className="w-4 h-4" />, color: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300' },
     { id: 'counselor', label: 'الأخصائي الاجتماعي', icon: <HeartHandshake className="w-4 h-4" />, color: 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300' },
   ];
 
-  const currentRoleInfo = roles.find(r => r.id === currentRole) || roles[0];
+  const allRoles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
+    ...staffRoles,
+    { id: 'superadmin', label: 'المدير العام (سوبر أدمن)', icon: <Building2 className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
+    { id: 'parent', label: 'ولي الأمر', icon: <Users className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' }
+  ];
+
+  const isStaffMember = ['admin', 'exams_coordinator', 'teacher', 'counselor', 'superadmin'].includes(currentRole);
+  const currentRoleInfo = allRoles.find(r => r.id === currentRole) || staffRoles[0];
 
   const toggleSound = () => {
     const nextState = !soundEnabled;
@@ -198,13 +207,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </div>
             )}
 
-            {/* Admin Role Switcher */}
-            {currentRole === 'admin' && (
+            {/* School Staff Switcher (Director, Exams, Teacher, Counselor) */}
+            {isStaffMember && (
               <div className="relative">
                 <button
                   onClick={() => { setShowRoleMenu(!showRoleMenu); setShowNotifMenu(false); setShowStudentMenu(false); sound.playTap(); }}
                   className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl text-xs font-bold transition-all border ${currentRoleInfo.color} border-current/20 shadow-sm`}
-                  title="الإشراف وتبديل العرض"
+                  title="التبديل بين طاقم المدرسة الداخلي"
                 >
                   {currentRoleInfo.icon}
                   <span className="hidden sm:inline">{currentRoleInfo.label}</span>
@@ -212,19 +221,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 </button>
 
                 {showRoleMenu && (
-                  <div className="absolute left-0 mt-2 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95">
-                    <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
-                      الإشراف الإداري المتبادل
+                  <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95 font-cairo">
+                    <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                      <span>طاقم المدرسة الداخلي</span>
+                      <span className="text-[10px] bg-purple-50 dark:bg-purple-950 text-purple-600 px-1.5 py-0.5 rounded font-bold">إدارة</span>
                     </div>
-                    {roles.map(role => (
+                    {staffRoles.map(role => (
                       <button
                         key={role.id}
                         onClick={() => {
                           setCurrentRole(role.id);
                           setShowRoleMenu(false);
                           sound.playSuccess();
-                          if (role.id === 'teacher') setActiveTab('attendance');
+                          if (role.id === 'teacher') setActiveTab('teacher-quick');
                           else if (role.id === 'counselor') setActiveTab('counselor-dashboard');
+                          else if (role.id === 'exams_coordinator') setActiveTab('exams-coordinator-dashboard');
                           else setActiveTab('dashboard');
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
@@ -238,6 +249,29 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                         {currentRole === role.id && <Check className="w-4 h-4 text-purple-600" />}
                       </button>
                     ))}
+
+                    {/* Master Super Admin Locked Entry */}
+                    <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-700">
+                      <button
+                        onClick={() => {
+                          setShowRoleMenu(false);
+                          setShowSuperAdminLock(true);
+                          sound.playTap();
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-300 transition-colors group"
+                        title="منطقة المالك والمطور فقط (محمية برمز سري)"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="p-1 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">
+                            <Building2 className="w-3.5 h-3.5" />
+                          </span>
+                          <span className="font-bold">المدير العام (سوبر أدمن)</span>
+                        </div>
+                        <span className="text-[10px] bg-blue-500/20 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                          <span>🔒 مقفل</span>
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -428,6 +462,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       <MobileCompanionModal
         isOpen={showMobileModal}
         onClose={() => setShowMobileModal(false)}
+      />
+
+      {/* Super Admin Security PIN Lock Modal */}
+      <SuperAdminLockModal
+        isOpen={showSuperAdminLock}
+        onClose={() => setShowSuperAdminLock(false)}
+        onSuccess={() => {
+          setCurrentRole('superadmin');
+          setActiveTab('superadmin-dashboard');
+        }}
       />
     </header>
   );

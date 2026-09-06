@@ -131,12 +131,12 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
     },
     {
       key: 'superadmin',
-      title: 'رابط المدير العام / السوبر أدمن (مراقبة التعليم)',
+      title: 'رابط المدير العام / السوبر أدمن (المالك والمطور)',
       role: 'superadmin' as const,
       icon: <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />,
       color: 'border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/30 text-blue-950 dark:text-blue-200',
-      badge: 'مراقبة التعليم وإضافة المدارس 🌐',
-      desc: 'الإشراف على كافة المدارس التابعة للبلدية أو المراقبة وإدارتها مركزياً.'
+      badge: 'خاص بمالك المنظومة 🔒 (محمي برمز سري Master PIN)',
+      desc: 'إدارة وتفعيل رخص المدارس المركزية، محمي برمز سري ولا يشارك مع المعلمين أو أولياء الأمور.'
     },
     {
       key: 'parent',
