@@ -37,6 +37,7 @@ import { PhotoCaptureModal } from '../../components/common/PhotoCaptureModal';
 import { SchedulePage } from '../schedule/SchedulePage';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { MinistryRosterModal } from '../../components/admin/MinistryRosterModal';
+import { SubjectManagementModal } from '../../components/admin/SubjectManagementModal';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
 import {
   LibyanExamEngine,
@@ -94,6 +95,7 @@ export const AdminDashboard: React.FC = () => {
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [photoTarget, setPhotoTarget] = useState<{ id: string; name: string; type: 'student' | 'teacher' } | null>(null);
   const [showMinistryRosterModal, setShowMinistryRosterModal] = useState<boolean>(false);
+  const [showSubjectModal, setShowSubjectModal] = useState<boolean>(false);
 
   // Manual Student Manager Modal State
   const [showStudentModal, setShowStudentModal] = useState<boolean>(false);
@@ -319,6 +321,16 @@ export const AdminDashboard: React.FC = () => {
             title="إرسال رسالة دعوة وتوزيع الروابط المستقلة للأدوار"
           >
             <span>✉️ دعوة المدراء وقص الروابط</span>
+          </button>
+
+          {/* Libyan Subjects & Passing Marks Management */}
+          <button
+            onClick={() => { setShowSubjectModal(true); sound.playTap(); }}
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="إدارة المقررات الدراسية وتوزيع الدرجات الصغرى والكبرى والمعلمين"
+          >
+            <BookOpen className="w-4 h-4 text-amber-300 shrink-0" />
+            <span>📚 إدارة المقررات والدرجات</span>
           </button>
 
           {/* Direct Switch to Exam Coordinator Portal */}
@@ -1593,6 +1605,13 @@ export const AdminDashboard: React.FC = () => {
       <MinistryRosterModal
         isOpen={showMinistryRosterModal}
         onClose={() => setShowMinistryRosterModal(false)}
+      />
+
+      {/* Libyan Subjects & Passing Marks Management Modal */}
+      <SubjectManagementModal
+        isOpen={showSubjectModal}
+        onClose={() => setShowSubjectModal(false)}
+        showToast={showToast}
       />
 
     </div>

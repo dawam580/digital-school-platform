@@ -6,7 +6,7 @@
  */
 
 const DB_NAME = 'MadrasaDigitalSchoolDB_v4';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export interface StorageResult<T> {
   success: boolean;
@@ -74,6 +74,32 @@ class IndexedDBManager {
         if (!db.objectStoreNames.contains('system_settings')) {
           db.createObjectStore('system_settings', { keyPath: 'key' });
         }
+
+        // 7. Exam Subjects Store
+        if (!db.objectStoreNames.contains('exam_subjects')) {
+          const subStore = db.createObjectStore('exam_subjects', { keyPath: 'code' });
+          subStore.createIndex('grade', 'grade', { unique: false });
+        }
+
+        // 8. Exam Grade Records Store (Comprehensive per student & subject)
+        if (!db.objectStoreNames.contains('exam_grade_records')) {
+          const recStore = db.createObjectStore('exam_grade_records', { keyPath: 'id' });
+          recStore.createIndex('studentId', 'studentId', { unique: false });
+          recStore.createIndex('className', 'className', { unique: false });
+          recStore.createIndex('subjectCode', 'subjectCode', { unique: false });
+        }
+
+        // 9. Exam Committees & Seating Store
+        if (!db.objectStoreNames.contains('exam_committees')) {
+          const commStore = db.createObjectStore('exam_committees', { keyPath: 'id' });
+          commStore.createIndex('roomNumber', 'roomNumber', { unique: false });
+        }
+
+        // 10. Exam Control Locks Store
+        if (!db.objectStoreNames.contains('exam_locks')) {
+          const lockStore = db.createObjectStore('exam_locks', { keyPath: 'id' });
+          lockStore.createIndex('className', 'className', { unique: false });
+        }
       };
 
       request.onsuccess = (event: Event) => {
@@ -110,6 +136,23 @@ class IndexedDBManager {
       const fallbackKey = `madrasa_db_${storeName}_v3`;
       const fallback = localStorage.getItem(fallbackKey);
       return fallback ? JSON.parse(fallback) : [];
+    }
+  }
+
+  // Generic Get by Key
+  public async get<T>(storeName: string, key: IDBValidKey): Promise<T | undefined> {
+    try {
+      const db = await this.getDatabase();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const request = store.get(key);
+
+        request.onsuccess = () => resolve(request.result as T | undefined);
+        request.onerror = () => reject(request.error);
+      });
+    } catch {
+      return undefined;
     }
   }
 

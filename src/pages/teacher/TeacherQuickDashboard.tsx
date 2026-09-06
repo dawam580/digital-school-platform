@@ -31,6 +31,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { db } from '../../services/db';
 import { LibyanExamEngine } from '../../services/exams/libyanExamEngine';
+import { ExamStorageService, ExamGradeRecord } from '../../services/exams/examStorageService';
 import { QuickSystemGuideModal } from '../../components/common/QuickSystemGuideModal';
 
 export const TeacherQuickDashboard: React.FC = () => {
@@ -182,6 +183,38 @@ export const TeacherQuickDashboard: React.FC = () => {
 
     setStudents(updatedStudents);
     db.saveStudents(updatedStudents, true);
+
+    // Synchronize directly with ExamStorageService for Exam Coordinator & Control Sheet
+    try {
+      const subCode = currentTeacher?.subjectCode || 'ARB';
+      const examBatch: ExamGradeRecord[] = classStudents.map(st => {
+        const score = classScores[st.id] || getStudentScore(st.id);
+        const total = score.coursework + score.exam;
+        return {
+          id: `${st.id}_${subCode}`,
+          studentId: st.id,
+          studentNationalId: st.nationalId || st.studentNumber || '',
+          studentName: st.name,
+          className: st.className || selectedClass,
+          subjectCode: subCode,
+          subjectName: teacherSubject,
+          courseworkScore: score.coursework,
+          examScore: score.exam,
+          totalScore: total,
+          isPassed: total >= 50,
+          isSecondRound: total < 50,
+          appreciation: LibyanExamEngine.getAppreciation((total / 100) * 100),
+          detailedBreakdown: {
+            attendanceScore: score.t1 ?? Math.round(score.coursework * 0.25),
+            homeworkScore: score.hw ?? Math.round(score.coursework * 0.25),
+            midtermTestScore: score.mid ?? Math.round(score.coursework * 0.50)
+          },
+          updatedAt: new Date().toISOString(),
+          updatedBy: currentTeacher?.name || 'معلم المادة'
+        };
+      });
+      ExamStorageService.saveGradeRecordsBatch(examBatch).catch(() => {});
+    } catch {}
 
     addNotification(
       `📑 تم رصد درجات ${teacherSubject} لفصل (${selectedClass})`,

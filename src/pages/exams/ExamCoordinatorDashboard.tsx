@@ -2,32 +2,34 @@ import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import {
   Award,
-  CheckCircle2,
   FileSpreadsheet,
-  Printer,
-  Search,
-  Filter,
   Users,
-  Shield,
-  Clock,
-  Sparkles,
-  ExternalLink,
-  ChevronLeft,
-  AlertTriangle,
-  HelpCircle,
-  FileText,
   Building2,
-  LogOut
+  AlertTriangle,
+  BookOpen,
+  LogOut,
+  Sparkles,
+  ChevronLeft,
+  Share2,
+  Lock,
+  Printer
 } from 'lucide-react';
 import { Student } from '../../types';
 import { sound } from '../../utils/soundEffects';
-import { triggerConfetti } from '../../utils/confetti';
-import { LibyanExamEngine, StudentFullExamReport } from '../../services/exams/libyanExamEngine';
-import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
+import { MasterControlSheet } from '../../components/exams/MasterControlSheet';
+import { SecondRoundManager } from '../../components/exams/SecondRoundManager';
+import { SeatingAndCommitteesManager } from '../../components/exams/SeatingAndCommitteesManager';
+import { OfficialReportCardModal } from '../../components/exams/OfficialReportCardModal';
+import { GoldenCertificateModal } from '../../components/exams/GoldenCertificateModal';
+import { SubjectManagementModal } from '../../components/admin/SubjectManagementModal';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
+import { StudentFullExamReport, LibyanExamEngine } from '../../services/exams/libyanExamEngine';
 
 export const ExamCoordinatorDashboard: React.FC = () => {
-  const { schoolProfile, students, showToast, setCurrentRole, logout } = useSchool();
+  const { schoolProfile, students, showToast, addNotification, setCurrentRole, logout } = useSchool();
+
+  // Active Tab
+  const [activeTab, setActiveTab] = useState<'master_sheet' | 'seating_committees' | 'second_round'>('master_sheet');
 
   // Selected Class for Control Sheet
   const availableClasses = useMemo(() => {
@@ -36,511 +38,212 @@ export const ExamCoordinatorDashboard: React.FC = () => {
       if (s.className) set.add(s.className.trim());
     });
     if (set.size === 0) {
-      ['9/1 صباح', '9/2 صباح', '8/1 صباح', '7/1 صباح', '6/1 صباح'].forEach(c => set.add(c));
+      ['9/1 صباح', '9/2 صباح', '8/1 صباح', '7/1 صباح', '1/1 مساء'].forEach(c => set.add(c));
     }
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'ar', { numeric: true }));
   }, [students]);
 
-  const [selectedExamClass, setSelectedExamClass] = useState<string>('9/1 صباح');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterResult, setFilterResult] = useState<'all' | 'passed' | 'makeup'>('all');
+  const [selectedExamClass, setSelectedExamClass] = useState<string>(() => {
+    return availableClasses[0] || '9/1 صباح';
+  });
 
-  // Modal states
-  const [selectedStudentForCard, setSelectedStudentForCard] = useState<Student | null>(null);
-  const [selectedStudentRank, setSelectedStudentRank] = useState<number>(1);
-  const [showGradeCardModal, setShowGradeCardModal] = useState<boolean>(false);
-  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
-  const [showRollCallModal, setShowRollCallModal] = useState<boolean>(false);
+  // Modals
+  const [reportCardStudent, setReportCardStudent] = useState<Student | null>(null);
+  const [reportCardReport, setReportCardReport] = useState<StudentFullExamReport | null>(null);
+  const [goldenStudent, setGoldenStudent] = useState<Student | null>(null);
+  const [goldenReport, setGoldenReport] = useState<StudentFullExamReport | null>(null);
+  const [showSubjectModal, setShowSubjectModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // Filter students for current class
+  // Compute all class reports for batch report card printing
   const classStudents = useMemo(() => {
-    const list = students.filter(s => s.className === selectedExamClass || (s.className && s.className.startsWith(selectedExamClass.split('/')[0])));
-    return list.length > 0 ? list : students.slice(0, 35);
+    return students.filter(s => (s.className || '').trim() === selectedExamClass.trim());
   }, [students, selectedExamClass]);
 
-  // Compute Official Libyan Rankings & 1120 Scores
-  const examReports: StudentFullExamReport[] = useMemo(() => {
+  const allClassReports = useMemo(() => {
     return LibyanExamEngine.calculateClassRankings(classStudents);
   }, [classStudents]);
 
-  // Filtered reports
-  // Filtered reports
-  const filteredReports = useMemo(() => {
-    return examReports.filter(r => {
-      const matchSearch = r.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.nationalNumber.includes(searchQuery) ||
-        (r.seatNumber && r.seatNumber.includes(searchQuery));
-
-      const matchStatus =
-        filterResult === 'all'
-          ? true
-          : filterResult === 'passed'
-          ? (r.status === 'passed' || r.status === 'passed_honors')
-          : r.status === 'makeup_exam';
-
-      return matchSearch && matchStatus;
-    });
-  }, [examReports, searchQuery, filterResult]);
-
-  // KPIs
-  const totalClass = examReports.length;
-  const passedCount = examReports.filter(r => r.status === 'passed' || r.status === 'passed_honors').length;
-  const makeupCount = examReports.filter(r => r.status === 'makeup_exam').length;
-  const passRate = totalClass > 0 ? Math.round((passedCount / totalClass) * 100) : 0;
-
-  // Helper for subject score
-  const getSubScore = (report: StudentFullExamReport, code: string) => {
-    const it = report.results.find(res => res.subjectCode === code);
-    return it ? it.totalScore : 0;
+  // Open Official Report Card Modal
+  const handleOpenReportCard = (student: Student, rank: number) => {
+    const found = allClassReports.find(r => r.studentId === student.id);
+    const rep = found || LibyanExamEngine.calculateStudentExamReport(student);
+    setReportCardStudent(student);
+    setReportCardReport(rep);
   };
 
-  // Export Excel
-  const handleExportControlExcel = () => {
-    sound.playTap();
-    const headers = [
-      'الترتيب',
-      'رقم الجلوس',
-      'رقم القيد',
-      'اسم التلميذ',
-      'عربي (240)',
-      'رياضيات (200)',
-      'علوم (160)',
-      'إنجليزي (160)',
-      'إسلامية (120)',
-      'تاريخ (80)',
-      'جغرافيا (80)',
-      'حاسوب (80)',
-      'المجموع الكلي (1120)',
-      'النسبة المئوية',
-      'النتيجة والتقدير'
-    ];
-
-    const rows = examReports.map((r, i) => [
-      i + 1,
-      r.seatNumber || (1000 + i + 1),
-      r.nationalNumber,
-      `"${r.studentName}"`,
-      getSubScore(r, 'ARB'),
-      getSubScore(r, 'MATH'),
-      getSubScore(r, 'SCI'),
-      getSubScore(r, 'ENG'),
-      getSubScore(r, 'ISL'),
-      getSubScore(r, 'HIST'),
-      getSubScore(r, 'GEOG'),
-      getSubScore(r, 'COMP'),
-      r.totalEarnedScore,
-      `${r.percentage}%`,
-      `"${r.generalAppreciation}"`
-    ].join(','));
-
-    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `شيت_كنترول_${selectedExamClass}_${schoolProfile.name}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast('success', 'تم تصدير شيت الكنترول 📊', `تم تصدير كشف درجات (${selectedExamClass}) بنجاح.`);
+  // Open Golden Distinction Certificate Modal
+  const handleOpenGoldenCertificate = (student: Student, rep: StudentFullExamReport) => {
+    setGoldenStudent(student);
+    setGoldenReport(rep);
   };
-
-  const certStatus = LibyanExamEngine.getCertificationStatus(selectedExamClass);
-  const isApproved = certStatus.status === 'approved_by_admin';
 
   return (
-    <div className="space-y-6 animate-in fade-in text-right font-cairo max-w-7xl mx-auto pb-16">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-cairo p-3 sm:p-6 space-y-6">
       
-      {/* Top Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-900 via-purple-950 to-slate-900 text-white shadow-xl border border-amber-500/30 relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-amber-400/20 text-amber-300 flex items-center justify-center text-3xl border border-amber-400/40 shadow-inner shrink-0">
-              📜
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">
-                  لجنة النظام والمراقبة (الكنترول المركزي)
-                </span>
-                <span className="text-xs text-amber-200/80">
-                  لائحة الامتحانات رقم (1013) لسنة 2022م
-                </span>
-              </div>
-              <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
-                بوابة منسق الامتحانات والتقويم: {schoolProfile.name}
-              </h1>
-              <p className="text-xs text-amber-100/70 mt-1 max-w-2xl">
-                رصد أعمال السنة والامتحانات النهائية بمجموع (1120 درجة)، استخراج كشوفات المناداة وأرقام الجلوس، واعتماد وطباعة بطاقات الدرجات والشهادات A4.
-              </p>
-            </div>
+      {/* Top Main Navigation & School Header */}
+      <header className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 text-xl font-black">
+            📋
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
-            {/* Direct Return to Admin Dashboard Button */}
-            <button
-              type="button"
-              onClick={() => {
-                sound.playTap();
-                setCurrentRole('admin');
-                showToast('info', 'لوحة تحكم المدير 🏛️', 'تم الرجوع إلى لوحة الإدارة العامة لمدرسة الباعور.');
-              }}
-              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 border border-purple-400/50"
-              title="الرجوع إلى لوحة تحكم مدير المدرسة"
-            >
-              <Building2 className="w-4 h-4" />
-              <span>⬅️ لوحة تحكم المدير</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleExportControlExcel}
-              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5"
-            >
-              <FileSpreadsheet className="w-4 h-4" />
-              <span>تصدير Excel</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { sound.playTap(); window.print(); }}
-              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-black text-xs border border-white/30 transition flex items-center justify-center gap-1.5"
-            >
-              <Printer className="w-4 h-4" />
-              <span>طباعة الشيت A4</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowRollCallModal(true)}
-              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition flex items-center justify-center gap-1.5"
-            >
-              <span>📋 كشف المناداة والجلوس</span>
-            </button>
-
-            {/* Logout Button */}
-            <button
-              type="button"
-              onClick={() => { logout(); sound.playTap(); }}
-              className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 border border-rose-400/40"
-              title="تسجيل الخروج"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>خروج</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Official Exam Certification Banner */}
-      <div className={`p-4 rounded-3xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
-        isApproved
-          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-950 dark:text-emerald-200'
-          : 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 text-amber-950 dark:text-amber-200'
-      }`}>
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{isApproved ? '🏛️' : '⏳'}</span>
           <div>
-            <strong className="block text-sm font-black">
-              {isApproved
-                ? `✓ تم قفل واعتماد شيت درجات (${selectedExamClass}) رسمياً بختم الكنترول والوزارة 🔒`
-                : `حالة شيت فصل (${selectedExamClass}): مسودة قيد الرصد الميداني والمراجعة`}
-            </strong>
-            <span className="text-xs opacity-80 block">
-              {isApproved
-                ? `معتمد برقم إقفال رسمي • معتمد بواسطة: ${certStatus.adminSign} بتاريخ ${certStatus.approvedAt}`
-                : 'اضغط على زر الاعتماد بالأسفل لإقفال الكنترول وطباعة الشهادات المعتمدة.'}
-            </span>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-black text-slate-900 dark:text-white">
+                منظومة الكنترول وشؤون الامتحانات المدرسية
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-black border border-emerald-300 dark:border-emerald-800">
+                المنهج الليبي الرسمي
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {schoolProfile.name} • {schoolProfile.district} • {schoolProfile.academicYear}
+            </p>
           </div>
         </div>
 
-        {!isApproved && (
+        {/* Action Controls & Role Switcher */}
+        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
           <button
             type="button"
-            onClick={() => {
-              LibyanExamEngine.certifyAndLockGrades(selectedExamClass, schoolProfile.directorName);
-              sound.playFanfare();
-              triggerConfetti();
-              showToast('gold', 'تم اعتماد النتيجة رسمياً 🏛️', `تم إقفال واعتماد شيت فصل (${selectedExamClass}) بنجاح.`);
-            }}
-            className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition active:scale-95 shrink-0"
+            onClick={() => setShowSubjectModal(true)}
+            className="px-3.5 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center gap-1.5 transition"
           >
-            <span>🏛️ اعتماد النتيجة وقفل الكنترول</span>
+            <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>إدارة المواد وقواعد الرصد</span>
           </button>
-        )}
-      </div>
 
-      {/* Class Selector & Key Performance Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {/* Class Picker */}
-        <div className="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
-          <span className="text-xs font-bold text-slate-500 block">اختر الفصل الدراسي:</span>
-          <select
-            value={selectedExamClass}
-            onChange={e => { setSelectedExamClass(e.target.value); sound.playTap(); }}
-            className="w-full py-2.5 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-black text-purple-700 dark:text-purple-300 focus:outline-none"
+          <button
+            type="button"
+            onClick={() => setShowInviteModal(true)}
+            className="px-3.5 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1.5 transition border border-indigo-200 dark:border-indigo-800"
           >
-            {availableClasses.map(cls => (
-              <option key={cls} value={cls}>فصل ({cls})</option>
-            ))}
-          </select>
-        </div>
+            <Share2 className="w-4 h-4" />
+            <span>روابط المنظومة والدعوة</span>
+          </button>
 
-        {/* Metric 1: Pass Rate */}
-        <div className="p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
-          <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">نسبة النجاح العامة</span>
-          <span className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-200 font-mono mt-1 block">
-            {passRate}%
-          </span>
+          <button
+            type="button"
+            onClick={() => { sound.playTap(); setCurrentRole('admin'); }}
+            className="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition active:scale-95 shadow-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>لوحة تحكم المدير</span>
+          </button>
         </div>
+      </header>
 
-        {/* Metric 2: Passed Count */}
-        <div className="p-4 rounded-3xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-center">
-          <span className="text-xs font-bold text-blue-800 dark:text-blue-300 block">الناجحون دور أول 🟢</span>
-          <span className="text-2xl sm:text-3xl font-black text-blue-700 dark:text-blue-200 font-mono mt-1 block">
-            {passedCount} طالب
-          </span>
-        </div>
+      {/* Main Tabs Navigation Bar */}
+      <div className="flex p-1.5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm gap-1 overflow-x-auto">
+        <button
+          type="button"
+          onClick={() => { setActiveTab('master_sheet'); sound.playTap(); }}
+          className={`flex-1 min-w-[170px] py-3 px-4 rounded-2xl font-black text-xs transition flex items-center justify-center gap-2 ${
+            activeTab === 'master_sheet'
+              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 scale-[1.01]'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <FileSpreadsheet className="w-4 h-4" />
+          <span>شيت الكنترول المجمع (الدرجات)</span>
+        </button>
 
-        {/* Metric 3: Makeup Count */}
-        <div className="p-4 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-center">
-          <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block">الدور الثاني (رسوب مواد) 🟡</span>
-          <span className="text-2xl sm:text-3xl font-black text-amber-700 dark:text-amber-200 font-mono mt-1 block">
-            {makeupCount} طالب
-          </span>
-        </div>
+        <button
+          type="button"
+          onClick={() => { setActiveTab('seating_committees'); sound.playTap(); }}
+          className={`flex-1 min-w-[170px] py-3 px-4 rounded-2xl font-black text-xs transition flex items-center justify-center gap-2 ${
+            activeTab === 'seating_committees'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 scale-[1.01]'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Building2 className="w-4 h-4" />
+          <span>أرقام الجلوس ولجان الامتحانات</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => { setActiveTab('second_round'); sound.playTap(); }}
+          className={`flex-1 min-w-[170px] py-3 px-4 rounded-2xl font-black text-xs transition flex items-center justify-center gap-2 ${
+            activeTab === 'second_round'
+              ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20 scale-[1.01]'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <AlertTriangle className="w-4 h-4" />
+          <span>امتحانات الدور الثاني (المستحقون)</span>
+        </button>
       </div>
 
-      {/* Filter Bar */}
-      <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-        <div className="relative flex-1 w-full sm:w-auto">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="بحث بالاسم، رقم القيد، أو رقم الجلوس..."
-            className="w-full py-2 px-3.5 pr-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+      {/* Main Tab Content */}
+      <main>
+        {activeTab === 'master_sheet' && (
+          <MasterControlSheet
+            students={students}
+            availableClasses={availableClasses}
+            selectedClass={selectedExamClass}
+            onSelectClass={cls => setSelectedExamClass(cls)}
+            onOpenReportCard={handleOpenReportCard}
+            onOpenGoldenCertificate={handleOpenGoldenCertificate}
+            showToast={showToast}
+            addNotification={addNotification}
           />
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        </div>
+        )}
 
-        <div className="flex items-center gap-1.5 w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={() => setFilterResult('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-              filterResult === 'all'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-            }`}
-          >
-            الكل ({examReports.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterResult('passed')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-              filterResult === 'passed'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-            }`}
-          >
-            الناجحون ({passedCount})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterResult('makeup')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-              filterResult === 'makeup'
-                ? 'bg-amber-600 text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-            }`}
-          >
-            الدور الثاني ({makeupCount})
-          </button>
-        </div>
-      </div>
+        {activeTab === 'seating_committees' && (
+          <SeatingAndCommitteesManager
+            students={students}
+            availableClasses={availableClasses}
+            schoolName={schoolProfile.name}
+            showToast={showToast}
+          />
+        )}
 
-      {/* Central Control Sheet Table (1120 Scores) */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs min-w-[1250px]">
-            <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black border-b border-slate-300 dark:border-slate-700">
-              <tr>
-                <th className="py-3 px-2 text-center whitespace-nowrap">الترتيب</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">رقم الجلوس</th>
-                <th className="py-3 px-3 whitespace-nowrap">اسم التلميذ</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">عربي (240)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">رياضيات (200)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">علوم (160)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">إنجليزي (160)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">إسلامية (120)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">تاريخ (80)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">جغرافيا (80)</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">حاسوب (80)</th>
-                <th className="py-3 px-2 text-center bg-purple-100 dark:bg-purple-950/60 font-black text-purple-900 dark:text-purple-200 whitespace-nowrap">
-                  المجموع (1120)
-                </th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">النسبة</th>
-                <th className="py-3 px-3 text-center whitespace-nowrap">النتيجة والتقدير</th>
-                <th className="py-3 px-2 text-center whitespace-nowrap">الشهادة A4</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
-              {filteredReports.length === 0 ? (
-                <tr>
-                  <td colSpan={15} className="py-12 text-center text-slate-400">
-                    لا يوجد تلاميذ مطابقون في هذا الفصل
-                  </td>
-                </tr>
-              ) : (
-                filteredReports.map((r, idx) => {
-                  const originalStudent = students.find(s => s.id === r.studentId) || students[0];
+        {activeTab === 'second_round' && (
+          <SecondRoundManager
+            students={students}
+            availableClasses={availableClasses}
+            showToast={showToast}
+            onOpenReportCard={handleOpenReportCard}
+          />
+        )}
+      </main>
 
-                  return (
-                    <tr key={r.studentId} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">
-                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center font-black text-[11px] ${
-                          idx === 0
-                            ? 'bg-amber-100 text-amber-900 font-black ring-2 ring-amber-400'
-                            : idx === 1
-                            ? 'bg-slate-200 text-slate-800'
-                            : idx === 2
-                            ? 'bg-amber-50 text-amber-800'
-                            : 'text-slate-400'
-                        }`}>
-                          {idx + 1}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2 text-center font-mono text-purple-700 dark:text-purple-300 font-black whitespace-nowrap">
-                        {r.seatNumber}
-                      </td>
-                      <td className="py-3 px-3 whitespace-nowrap">
-                        <span className="font-black text-slate-900 dark:text-white text-xs block whitespace-nowrap">
-                          {r.studentName}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">
-                          قيد: {r.nationalNumber || '-'}
-                        </span>
-                      </td>
+      {/* ================= MODALS ================= */}
 
-                      {/* Subjects */}
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ARB')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'MATH')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'SCI')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ENG')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'ISL')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'HIST')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'GEOG')}</td>
-                      <td className="py-3 px-2 text-center font-mono whitespace-nowrap">{getSubScore(r, 'COMP')}</td>
-
-                      {/* Total */}
-                      <td className="py-3 px-2 text-center font-mono font-black bg-purple-50/50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-200 whitespace-nowrap">
-                        {r.totalEarnedScore}
-                      </td>
-
-                      {/* Percentage */}
-                      <td className="py-3 px-2 text-center font-mono font-black text-slate-800 dark:text-white whitespace-nowrap">
-                        {r.percentage}%
-                      </td>
-
-                      {/* Result */}
-                      <td className="py-3 px-3 text-center whitespace-nowrap">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black inline-block whitespace-nowrap ${
-                          r.status === 'passed' || r.status === 'passed_honors'
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
-                            : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
-                        }`}>
-                          {r.status === 'passed' || r.status === 'passed_honors' ? `ناجح (${r.generalAppreciation})` : 'دور ثان (مواد رسوب)'}
-                        </span>
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3 px-2 text-center whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedStudentForCard(originalStudent);
-                            setSelectedStudentRank(idx + 1);
-                            setShowGradeCardModal(true);
-                            sound.playTap();
-                          }}
-                          className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 text-blue-700 dark:text-blue-300 transition"
-                          title="طباعة إخطار الدرجات والشهادة A4"
-                        >
-                          <FileText className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Roll Call Sheet Modal */}
-      {showRollCallModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-900/80 backdrop-blur-md font-cairo">
-          <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-3xl shadow-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-black text-base">كشف المناداة وأرقام الجلوس: فصل ({selectedExamClass})</h3>
-              <button
-                type="button"
-                onClick={() => setShowRollCallModal(false)}
-                className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold"
-              >
-                إغلاق
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              {examReports.map((r, i) => (
-                <div key={r.studentId} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-800 font-mono font-black flex items-center justify-center text-[10px]">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <strong className="block text-slate-900 dark:text-white">{r.studentName}</strong>
-                      <span className="text-[10px] text-slate-400 font-mono">قيد: {r.nationalNumber}</span>
-                    </div>
-                  </div>
-                  <div className="text-left font-mono">
-                    <span className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-black border border-purple-200">
-                      رقم الجلوس: {r.seatNumber}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-3 border-t flex justify-end">
-              <button
-                type="button"
-                onClick={() => { sound.playTap(); window.print(); }}
-                className="px-5 py-2 rounded-xl bg-purple-600 text-white font-black text-xs"
-              >
-                طباعة كشف المناداة A4 🖨️
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Grade Card / Certificate Modal */}
-      {selectedStudentForCard && (
-        <PrintableStudentGradeCard
-          isOpen={showGradeCardModal}
-          onClose={() => { setShowGradeCardModal(false); setSelectedStudentForCard(null); }}
-          student={selectedStudentForCard}
-          rank={selectedStudentRank}
+      {/* 1. Official Report Card Modal */}
+      {reportCardStudent && reportCardReport && (
+        <OfficialReportCardModal
+          isOpen={!!reportCardStudent}
+          onClose={() => { setReportCardStudent(null); setReportCardReport(null); }}
+          student={reportCardStudent}
+          report={reportCardReport}
+          allClassReports={allClassReports}
+          schoolName={schoolProfile.name}
+          directorName={schoolProfile.directorName}
         />
       )}
 
-      {/* Director Invite Modal */}
+      {/* 2. Golden Certificate Modal */}
+      {goldenStudent && goldenReport && (
+        <GoldenCertificateModal
+          isOpen={!!goldenStudent}
+          onClose={() => { setGoldenStudent(null); setGoldenReport(null); }}
+          student={goldenStudent}
+          report={goldenReport}
+          schoolName={schoolProfile.name}
+          directorName={schoolProfile.directorName}
+        />
+      )}
+
+      {/* 3. Subject Management Modal */}
+      <SubjectManagementModal
+        isOpen={showSubjectModal}
+        onClose={() => setShowSubjectModal(false)}
+        showToast={showToast}
+      />
+
+      {/* 4. Director Invite Modal */}
       <DirectorInviteModal
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
