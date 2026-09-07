@@ -204,6 +204,15 @@ export const Login: React.FC = () => {
           <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
             <button
               type="button"
+              onClick={() => { setActiveTab('landing'); sound.playTap(); }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-black shadow-md transition active:scale-95"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>استعراض المنظومة والأسعار 🌟</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => { setShowInviteModal(true); sound.playTap(); }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-md transition active:scale-95"
             >

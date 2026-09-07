@@ -30,6 +30,7 @@ import { UpgradeModal } from './components/trial/UpgradeModal';
 import { FinancePage } from './pages/finance/FinancePage';
 import { StaffManagementPage } from './pages/admin/StaffManagementPage';
 import { WindowsTitleBar } from './components/desktop/WindowsTitleBar';
+import { LandingPage } from './pages/landing/LandingPage';
 
 const MainContent: React.FC = () => {
   const {
@@ -51,6 +52,26 @@ const MainContent: React.FC = () => {
     showUpgradeModal,
     setShowUpgradeModal
   } = useSchool();
+
+  if (activeTab === 'landing') {
+    return (
+      <>
+        <LandingPage />
+        <SchoolManagerModal
+          isOpen={showSchoolManagerModal}
+          onClose={() => setShowSchoolManagerModal(false)}
+        />
+        <FreeTrialModal
+          isOpen={showFreeTrialModal}
+          onClose={() => setShowFreeTrialModal(false)}
+        />
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+        />
+      </>
+    );
+  }
 
   if (!isAuthenticated && activeTab !== 'parent-signup') {
     return (
@@ -146,6 +167,8 @@ const MainContent: React.FC = () => {
         return <NotificationCenter />;
       case 'teacher-quick':
         return <TeacherQuickDashboard />;
+      case 'landing':
+        return <LandingPage />;
       default:
         return <AdminDashboard />;
     }

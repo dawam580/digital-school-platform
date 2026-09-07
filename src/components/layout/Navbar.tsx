@@ -348,6 +348,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             </div>
 
             {/* Director Invite & Role Links Button */}
+            {/* Landing Page & Pricing Showcase */}
+            <button
+              type="button"
+              onClick={() => { setActiveTab('landing'); sound.playTap(); }}
+              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black border border-amber-200 dark:border-amber-800 transition active:scale-95 shadow-sm"
+              title="استعراض صفحة مميزات المنظومة وباقات الاشتراك"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>باقات الاشتراك والأسعار 🌟</span>
+            </button>
+
             {/* Comprehensive System Guide Button */}
             <button
               type="button"
