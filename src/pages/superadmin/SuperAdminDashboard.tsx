@@ -25,6 +25,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { getRoleLink, copyTextToClipboard } from '../../utils/inviteMessageHelper';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
+import { SuperAdminLicenseManager } from '../../components/licensing/SuperAdminLicenseManager';
 
 export const SuperAdminDashboard: React.FC = () => {
   const {
@@ -43,6 +44,7 @@ export const SuperAdminDashboard: React.FC = () => {
   const [showAddSchoolModal, setShowAddSchoolModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [copiedSchoolId, setCopiedSchoolId] = useState<string | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<'licensing' | 'schools'>('licensing');
 
   // New School Form State
   const [newSchoolName, setNewSchoolName] = useState('');
@@ -206,8 +208,39 @@ export const SuperAdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Schools Directory & Search Bar */}
-      <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Sub-Tab Navigation */}
+      <div className="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/60 rounded-2xl w-fit">
+        <button
+          type="button"
+          onClick={() => { setActiveSubTab('licensing'); sound.playTap(); }}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
+            activeSubTab === 'licensing'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <span>🔑 إدارة التراخيص والاشتراكات السحابية</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => { setActiveSubTab('schools'); sound.playTap(); }}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
+            activeSubTab === 'schools'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <span>🏛️ دليل المدارس والفروع المسجلة</span>
+        </button>
+      </div>
+
+      {activeSubTab === 'licensing' ? (
+        <SuperAdminLicenseManager />
+      ) : (
+        <>
+          {/* Schools Directory & Search Bar */}
+          <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full sm:w-auto">
           <input
             type="text"
@@ -320,6 +353,8 @@ export const SuperAdminDashboard: React.FC = () => {
           );
         })}
       </div>
+      </>
+      )}
 
       {/* Add New School Modal */}
       {showAddSchoolModal && (

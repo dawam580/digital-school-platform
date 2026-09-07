@@ -57,6 +57,10 @@ import { auditLogger } from '../services/audit/auditLogger';
 import { SecurityEngine } from '../services/security/securityEngine';
 import { studentRepository } from '../services/repositories';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
+import { LicenseService } from '../services/licensing/licenseService';
+import { LicenseVerificationResult } from '../services/licensing/licenseTypes';
+import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
+import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -219,6 +223,13 @@ interface SchoolContextType {
   updateStaffMember: (id: string, updatedFields: Partial<StaffMember>) => void;
   deleteStaffMember: (id: string) => void;
   updateStaffDocuments: (id: string, docs: Partial<StaffDocumentChecklist>) => void;
+
+  // Cloud Licensing & Subscription
+  licenseInfo: LicenseVerificationResult | null;
+  isSubscriptionLocked: boolean;
+  checkLicense: () => Promise<LicenseVerificationResult>;
+  showActivationModal: boolean;
+  setShowActivationModal: (open: boolean) => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -320,6 +331,37 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
+
+  // Cloud Licensing & Subscription State
+  const [licenseInfo, setLicenseInfo] = useState<LicenseVerificationResult | null>(null);
+  const [showActivationModal, setShowActivationModal] = useState(false);
+
+  // Periodic and on-demand check handler
+  const checkLicense = useCallback(async () => {
+    const res = await LicenseService.checkSubscription();
+    setLicenseInfo(res);
+    return res;
+  }, []);
+
+  useEffect(() => {
+    try {
+      const rawKey = localStorage.getItem('madrasa_active_license_key');
+      if (!rawKey) {
+        setShowActivationModal(true);
+      }
+    } catch {}
+
+    checkLicense();
+
+    // Recheck subscription every 1 hour if online
+    const timer = setInterval(() => {
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        checkLicense();
+      }
+    }, 3600000);
+
+    return () => clearInterval(timer);
+  }, [checkLicense]);
 
   const startTour = () => {
     setIsTourOpen(true);
@@ -1883,10 +1925,49 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateStaffMember,
         deleteStaffMember,
         updateStaffDocuments,
+        // Cloud Licensing & Subscription
+        licenseInfo,
+        isSubscriptionLocked: licenseInfo ? !licenseInfo.isValid : false,
+        checkLicense,
+        showActivationModal,
+        setShowActivationModal,
       }}
     >
       {children}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
+      {/* First-time License Activation Modal */}
+      <LicenseActivationModal
+        isOpen={showActivationModal}
+        onSuccess={(doc) => {
+          setShowActivationModal(false);
+          setLicenseInfo({
+            isValid: true,
+            status: doc.subscription_status,
+            schoolName: doc.school_name,
+            licenseKey: doc.license_key,
+            daysRemaining: 14,
+            isOfflineGrace: false,
+            licenseDoc: doc
+          });
+        }}
+      />
+
+      {/* Subscription Expired / Locked Overlay */}
+      {licenseInfo && !licenseInfo.isValid && (
+        <SubscriptionExpiredOverlay
+          result={licenseInfo}
+          onRecheck={async () => {
+            const res = await checkLicense();
+            setLicenseInfo(res);
+          }}
+          onEnterNewLicense={() => setShowActivationModal(true)}
+          onOpenSuperAdmin={() => {
+            setCurrentRole('superadmin');
+            setActiveTab('superadmin-dashboard');
+          }}
+        />
+      )}
     </SchoolContext.Provider>
   );
 };
