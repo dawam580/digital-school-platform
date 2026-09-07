@@ -35,7 +35,6 @@ import { DirectorInviteModal } from '../common/DirectorInviteModal';
 import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
 import { MobileCompanionModal } from '../mobile/MobileCompanionModal';
 import { SuperAdminLockModal } from '../common/SuperAdminLockModal';
-import { AiSchoolCopilotModal } from '../ai/AiSchoolCopilotModal';
 import { isWindowsDesktop, executeNativePrint, openSchoolDocumentsFolder } from '../../services/native/windowsBridge';
 
 interface NavbarProps {
@@ -77,7 +76,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showComprehensiveGuide, setShowComprehensiveGuide] = useState(false);
   const [showMobileModal, setShowMobileModal] = useState(false);
   const [showSuperAdminLock, setShowSuperAdminLock] = useState(false);
-  const [showCopilotModal, setShowCopilotModal] = useState(false);
   const isDesktop = isWindowsDesktop();
 
   // Internal School Staff Cluster (مدير، كنترول، معلمين، أخصائي)
@@ -395,18 +393,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </>
             )}
 
-            {/* AI Copilot (Claude Opus 4.8) Button */}
-            <button
-              type="button"
-              onClick={() => { setShowCopilotModal(true); sound.playTap(); }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 hover:from-indigo-500/20 hover:to-pink-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-black border border-indigo-200 dark:border-indigo-800 transition active:scale-95 shadow-sm"
-              title="المساعد الذكي لبناء وإدارة المنظومة (Claude Opus 4.8)"
-            >
-              <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-pulse" />
-              <span className="hidden xs:inline">المساعد الذكي</span>
-              <span className="px-1.5 py-0.5 rounded-md bg-indigo-600 text-white text-[10px] font-mono font-bold">Opus 4.8</span>
-            </button>
-
             {/* Director Invite & Role Links Button */}
             <button
               type="button"
@@ -486,12 +472,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
           setCurrentRole('superadmin');
           setActiveTab('superadmin-dashboard');
         }}
-      />
-
-      {/* AI School Copilot Modal (Claude Opus 4.8) */}
-      <AiSchoolCopilotModal
-        isOpen={showCopilotModal}
-        onClose={() => setShowCopilotModal(false)}
       />
     </header>
   );

@@ -24,19 +24,12 @@ export interface AiCredentials {
 }
 
 const DEFAULT_AI_CREDENTIALS: AiCredentials = {
-  keyId: 'seekai-claude-opus',
-  keySecret: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
-  rawToken: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
-  seekAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
-  seekAiBaseUrl: 'https://seekai.cc',
-  seekAiModel: 'claude-opus-4-8',
-  openAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
-  nvidiaApiKey: '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',
-  nvidiaModel: 'deepseek-ai/deepseek-v4-pro-0813',
-  nvidiaBaseUrl: 'https://integrate.api.nvidia.com/v1',
+  keyId: '',
+  keySecret: '',
+  rawToken: '',
   activeProvider: 'auto',
-  status: 'active',
-  provider: 'SeekAI Claude Opus 4.8 & NVIDIA NIM DeepSeek Hybrid GPU Cloud',
+  status: 'inactive',
+  provider: 'محرك المعالجة المحلي المستقل (Offline First)',
   lastConnectedAt: new Date().toISOString()
 };
 

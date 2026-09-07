@@ -222,29 +222,30 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
             )}
           </div>
 
-          {/* Section 3: AI API Key Integration */}
+          {/* Section 3: AI API Key Integration (Optional for Clients) */}
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>محرك الذكاء الاصطناعي (Claude Opus 4.8 / SeekAI)</span>
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span>الربط السحابي ومفتاح المعالجة الذكية (اختياري)</span>
               </label>
-              <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 text-[10px] font-bold flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <span>Claude Opus 4.8 ⚡ متصل</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 ${
+                aiToken ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${aiToken ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                <span>{aiToken ? 'مفتاح مخصص مفعّل ⚡' : 'محرك محلي مستقل (Offline Ready)'}</span>
               </span>
             </div>
             <textarea
               rows={2}
               value={aiToken}
               onChange={e => setAiToken(e.target.value)}
-              placeholder="ضع مفتاح الذكاء الاصطناعي هنا..."
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
+              placeholder="ضع مفتاح API مخصص إذا رغبت في التفعيل السحابي (اختياري)..."
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
             />
-            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-              <span>النموذج النشط: <strong className="text-indigo-600 dark:text-indigo-400">Claude Opus 4.8 (SeekAI)</strong></span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">⚡ مع التبديل السحابي التلقائي (Auto-Failover)</span>
-            </div>
+            <p className="text-[11px] text-slate-400">
+              تعمل المنظومة افتراضياً بمحرك محلي فائق السرعة ومستقل (100% Offline) لقراءة وتوزيع كشوفات الطلاب والدرجات دون الحاجة لأي اشتراك خارجي.
+            </p>
           </div>
 
           {/* Action Buttons */}
