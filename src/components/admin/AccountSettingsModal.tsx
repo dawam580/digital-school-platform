@@ -227,11 +227,11 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
             <div className="flex items-center justify-between">
               <label className="block text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>مفتاح الذكاء الاصطناعي (AI API Key / Token)</span>
+                <span>محرك الذكاء الاصطناعي (Claude Opus 4.8 / SeekAI)</span>
               </label>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>متصل ومعتمد ⚡</span>
+              <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 text-[10px] font-bold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span>Claude Opus 4.8 ⚡ متصل</span>
               </span>
             </div>
             <textarea
@@ -241,9 +241,10 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
               placeholder="ضع مفتاح الذكاء الاصطناعي هنا..."
               className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
             />
-            <p className="text-[11px] text-slate-400">
-              يُستخدم هذا المفتاح في المعالجة السحابية وقراءة كشوفات الـ PDF وتوزيع الطلاب والجداول آلياً.
-            </p>
+            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+              <span>النموذج النشط: <strong className="text-indigo-600 dark:text-indigo-400">Claude Opus 4.8 (SeekAI)</strong></span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">⚡ مع التبديل السحابي التلقائي (Auto-Failover)</span>
+            </div>
           </div>
 
           {/* Action Buttons */}

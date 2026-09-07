@@ -86,20 +86,72 @@ async function askClaudeOpus(userPrompt, systemPrompt = 'أنت مساعد ذك�
   }
 }
 
+/**
+ * Fallback to NVIDIA NIM DeepSeek-V4 Cloud if SeekAI Claude Opus channel is in maintenance
+ */
+async function askNvidiaDeepSeek(userPrompt, systemPrompt) {
+  const NVIDIA_KEY = process.env.NVIDIA_API_KEY || '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';
+  const NVIDIA_MODEL = 'deepseek-ai/deepseek-v4-pro-0813';
+  const url = 'https://integrate.api.nvidia.com/v1/chat/completions';
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${NVIDIA_KEY}`
+      },
+      body: JSON.stringify({
+        model: NVIDIA_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 600
+      })
+    });
+    clearTimeout(timeoutId);
+    const json = await res.json();
+    if (json.choices && json.choices[0] && json.choices[0].message) {
+      return {
+        text: json.choices[0].message.content,
+        model: 'NVIDIA NIM DeepSeek-V4 Pro (Cloud Failover)'
+      };
+    }
+    throw new Error(JSON.stringify(json));
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
 // CLI usage
 if (require.main === module) {
   const query = process.argv.slice(2).join(' ') || 'مرحبا! اشرح لي بإيجاز دورك كمساعد في منصة المدرسة.';
-  console.log(`\n🧠 [Claude Opus 4.8] جاري التفكير ومعالجة الطلب: "${query}"...\n`);
+  console.log(`\n🧠 [المساعد الذكي] جاري التفكير ومعالجة الطلب عبر Claude Opus 4.8 / Hybrid AI: "${query}"...\n`);
   
   askClaudeOpus(query)
     .then((response) => {
-      console.log('--- رد Claude Opus 4.8 ---');
+      console.log('--- رد المساعد الذكي (Claude Opus 4.8) ---');
       console.log(response);
-      console.log('--------------------------\n');
+      console.log('-----------------------------------------\n');
     })
-    .catch((err) => {
-      console.error('❌ خطأ في الاتصال:', err.message);
+    .catch(async (err) => {
+      console.log(`⚠️ تعذر الاتصال بـ SeekAI (${err.message})، جاري التبديل التلقائي إلى السحابة الهجينة NVIDIA NIM DeepSeek-V4...`);
+      try {
+        const fallbackRes = await askNvidiaDeepSeek(query, 'أنت مساعد ذكاء اصطناعي خبير لمنظومة المدرسة الرقمية.');
+        console.log(`\n--- رد السحابة الذكية (${fallbackRes.model}) ---`);
+        console.log(fallbackRes.text);
+        console.log('---------------------------------------------------\n');
+      } catch (fbErr) {
+        console.error('❌ خطأ في الاتصال:', fbErr.message);
+      }
     });
 }
 
-module.exports = { askClaudeOpus };
+module.exports = { askClaudeOpus, askNvidiaDeepSeek };

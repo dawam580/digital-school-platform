@@ -68,19 +68,21 @@ export class OpenAiPdfExtractor {
 ]`;
 
     try {
-      // Determine primary & secondary AI providers
+      // Determine AI providers in priority order
+      const hasSeekAi = !!(creds.seekAiApiKey || (creds.openAiApiKey && creds.openAiApiKey.startsWith('sk-')));
+      const seekKey = creds.seekAiApiKey || creds.openAiApiKey || '';
       const hasNvidia = !!(creds.nvidiaApiKey && creds.nvidiaApiKey.startsWith('nvapi-'));
-      const hasOpenAi = !!(creds.openAiApiKey && creds.openAiApiKey.startsWith('sk-'));
+      const hasOpenAiDirect = !!(creds.openAiApiKey && creds.openAiApiKey.startsWith('sk-proj-'));
 
-    if (!hasNvidia && !hasOpenAi) {
-      return {
-        success: false,
-        students: [],
-        totalParsed: 0,
-        message: 'مفتاح الذكاء الاصطناعي السحابي غير متوفر (يرجى إدخال مفتاح NVIDIA أو OpenAI في الإعدادات).',
-        error: 'NO_API_KEY'
-      };
-    }
+      if (!hasSeekAi && !hasNvidia && !hasOpenAiDirect) {
+        return {
+          success: false,
+          students: [],
+          totalParsed: 0,
+          message: 'مفتاح الذكاء الاصطناعي السحابي غير متوفر (يرجى إدخال مفتاح SeekAI أو NVIDIA في الإعدادات).',
+          error: 'NO_API_KEY'
+        };
+      }
 
     // Helper to call OpenAI-compatible completion endpoint with timeout
     const callCompletion = async (
@@ -130,8 +132,22 @@ export class OpenAiPdfExtractor {
     let content = '';
     let lastError = '';
 
-    // Attempt 1: NVIDIA NIM (DeepSeek GPU-Accelerated)
-    if (hasNvidia && creds.activeProvider !== 'openai') {
+    // Attempt 1: SeekAI Claude Opus 4.8
+    if (hasSeekAi && creds.activeProvider !== 'nvidia') {
+      try {
+        content = await callCompletion(
+          'https://seekai.cc/v1/chat/completions',
+          seekKey,
+          creds.seekAiModel || 'claude-opus-4-8'
+        );
+      } catch (seekErr: any) {
+        console.warn('SeekAI Claude Opus attempt fallback:', seekErr.message);
+        lastError = seekErr.message || 'SeekAI request failed';
+      }
+    }
+
+    // Attempt 2: NVIDIA NIM (DeepSeek GPU-Accelerated)
+    if (!content && hasNvidia) {
       try {
         content = await callCompletion(
           'https://integrate.api.nvidia.com/v1/chat/completions',
@@ -145,8 +161,8 @@ export class OpenAiPdfExtractor {
       }
     }
 
-    // Attempt 2: OpenAI Fallback (or Primary if selected)
-    if (!content && hasOpenAi) {
+    // Attempt 3: OpenAI Direct (if standard OpenAI key)
+    if (!content && hasOpenAiDirect) {
       try {
         content = await callCompletion(
           'https://api.openai.com/v1/chat/completions',

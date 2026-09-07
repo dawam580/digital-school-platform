@@ -11,26 +11,32 @@ export interface AiCredentials {
   keySecret: string;
   rawToken: string;
   openAiApiKey?: string;
+  seekAiApiKey?: string;
+  seekAiBaseUrl?: string;
+  seekAiModel?: string;
   nvidiaApiKey?: string;
   nvidiaModel?: string;
   nvidiaBaseUrl?: string;
-  activeProvider: 'nvidia' | 'openai' | 'auto';
+  activeProvider: 'seekai' | 'nvidia' | 'openai' | 'auto';
   status: 'active' | 'inactive' | 'testing';
   provider: string;
   lastConnectedAt?: string;
 }
 
 const DEFAULT_AI_CREDENTIALS: AiCredentials = {
-  keyId: 'nvidia-nim-deepseek',
-  keySecret: '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',
-  rawToken: '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',
+  keyId: 'seekai-claude-opus',
+  keySecret: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
+  rawToken: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
+  seekAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
+  seekAiBaseUrl: 'https://seekai.cc',
+  seekAiModel: 'claude-opus-4-8',
   openAiApiKey: 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy',
   nvidiaApiKey: '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',
   nvidiaModel: 'deepseek-ai/deepseek-v4-pro-0813',
   nvidiaBaseUrl: 'https://integrate.api.nvidia.com/v1',
-  activeProvider: 'nvidia',
+  activeProvider: 'auto',
   status: 'active',
-  provider: 'NVIDIA NIM & DeepSeek AI GPU Cloud (Libyan Schools Edition)',
+  provider: 'SeekAI Claude Opus 4.8 & NVIDIA NIM DeepSeek Hybrid GPU Cloud',
   lastConnectedAt: new Date().toISOString()
 };
 
@@ -44,7 +50,7 @@ export class AiConfigService {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        return { ...DEFAULT_AI_CREDENTIALS, ...JSON.parse(saved) };
       }
     } catch {}
     return DEFAULT_AI_CREDENTIALS;
@@ -69,9 +75,12 @@ export class AiConfigService {
         updated.activeProvider = 'nvidia';
         updated.provider = 'NVIDIA NIM & DeepSeek AI GPU Cloud';
       } else if (token.startsWith('sk-')) {
+        updated.seekAiApiKey = token;
         updated.openAiApiKey = token;
-        updated.activeProvider = 'openai';
-        updated.provider = 'OpenAI Cloud Intelligence';
+        updated.seekAiBaseUrl = 'https://seekai.cc';
+        updated.seekAiModel = 'claude-opus-4-8';
+        updated.activeProvider = 'auto';
+        updated.provider = 'SeekAI Claude Opus 4.8 & NVIDIA NIM Hybrid Cloud';
       }
     }
 
