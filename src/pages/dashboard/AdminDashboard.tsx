@@ -55,6 +55,7 @@ import { triggerConfetti } from '../../utils/confetti';
 import { TeacherAccount, Student } from '../../types';
 import { db } from '../../services/db';
 import { StatCard } from '../../components/ui/StatCard';
+import { CollapsibleSection } from '../../components/ui/CollapsibleSection';
 import { AppErrorBoundary } from '../../components/common/AppErrorBoundary';
 
 // لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
@@ -314,7 +315,8 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Primary Action Buttons (Clear, High-Contrast & Streamlined for School Director) */}
+        {/* Primary Action Buttons — داخل قسم قابل للطي لتخفيف الازدحام */}
+        <CollapsibleSection id="admin-actions" title="إجراءات سريعة" subtitle="استيراد، موظفون، أدلة، كنترول" className="w-full xl:w-auto xl:min-w-[320px]">
         <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto justify-start xl:justify-end">
           {/* OpenAI PDF Importer Button */}
           <button
@@ -398,6 +400,7 @@ export const AdminDashboard: React.FC = () => {
             <span>⬅️ خروج</span>
           </button>
         </div>
+        </CollapsibleSection>
       </div>
 
       {/* Attractive User Guide Banner with 4 Role Perspectives & Quick Actions */}
@@ -407,7 +410,8 @@ export const AdminDashboard: React.FC = () => {
         onSelectAnalyticsTab={() => setActiveTab('analytics')}
       />
 
-      {/* 5 Main Stat Cards (21st.dev style — موحدة عبر StatCard) */}
+      {/* 5 Main Stat Cards — نظرة عامة قابلة للطي (تُحفظ حالتها) */}
+      <CollapsibleSection id="admin-overview" title="نظرة عامة سريعة" subtitle="المؤشرات الخمسة — اضغط أي بطاقة للانتقال">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <StatCard
           title="إجمالي الطلاب المسجلين"
@@ -459,6 +463,7 @@ export const AdminDashboard: React.FC = () => {
           onClick={() => setActiveTab('schedule')}
         />
       </div>
+      </CollapsibleSection>
 
       {/* Big Main Tab Selector Pills (6 Tabs - Responsive Grid) */}
       <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 border border-slate-200 dark:border-slate-700">
