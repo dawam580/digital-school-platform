@@ -1394,6 +1394,7 @@ export const TeacherQuickDashboard: React.FC = () => {
         onClose={() => setShowTeacherSelectModal(false)}
         teachers={teachers}
         currentTeacher={currentTeacher}
+        requireCode
         onSelectTeacher={teacher => {
           // الأخصائي الاجتماعي لا يُدخل بالنقرة — برمزه الخاص فقط (منع الترقية الجانبية)
           if (teacher.code === 'LIB-SOC-01' || teacher.subjectCode === 'COUNSEL') {

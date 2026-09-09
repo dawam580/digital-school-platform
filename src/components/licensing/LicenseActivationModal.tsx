@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { KeyRound, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Building2, Phone } from 'lucide-react';
 import { LicenseService, DEFAULT_INITIAL_LICENSE } from '../../services/licensing/licenseService';
 import { SchoolLicenseDoc } from '../../services/licensing/licenseTypes';
+import { useSchool } from '../../context/SchoolContext';
 import { DEV_MODE } from '../../config/devMode';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
@@ -13,6 +14,7 @@ interface LicenseActivationModalProps {
 }
 
 export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ isOpen, onSuccess }) => {
+  const { setShowActivationModal, setShowFreeTrialModal } = useSchool();
   const [licenseKey, setLicenseKey] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -134,6 +136,16 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
               <span>تفعيل ترخيص مدرسة الشهيد امحمد الباعور (تجريبي)</span>
             </button>
             )}
+
+            {/* Self-serve trial bridge: prospect without a key is never stuck */}
+            <button
+              type="button"
+              onClick={() => { sound.playTap(); setShowActivationModal(false); setShowFreeTrialModal(true); }}
+              className="w-full py-2.5 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center justify-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>ليس لديك مفتاح؟ ابدأ تجربة مجانية (7 أيام)</span>
+            </button>
           </div>
 
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex items-center justify-between text-[11px] text-slate-400">

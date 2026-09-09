@@ -24,6 +24,8 @@ interface TeacherSelectionModalProps {
   teachers: TeacherAccount[];
   currentTeacher: TeacherAccount | null;
   onSelectTeacher: (teacher: TeacherAccount) => void;
+  /** عند التفعيل: تقمص هوية معلم آخر يتطلب إدخال رمزه الخاص (عزل المعلمين) */
+  requireCode?: boolean;
 }
 
 export const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
@@ -31,14 +33,23 @@ export const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
   onClose,
   teachers,
   currentTeacher,
-  onSelectTeacher
+  onSelectTeacher,
+  requireCode = false
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
+  const [pendingTeacher, setPendingTeacher] = useState<TeacherAccount | null>(null);
+  const [codeInput, setCodeInput] = useState('');
+  const [codeError, setCodeError] = useState('');
 
   // Lock body scroll when modal is active
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setPendingTeacher(null);
+      setCodeInput('');
+      setCodeError('');
+      return;
+    }
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -73,9 +84,32 @@ export const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
   if (!isOpen) return null;
 
   const handleSelect = (teacher: TeacherAccount) => {
-    sound.playSuccess();
-    onSelectTeacher(teacher);
-    onClose();
+    // الهوية الحالية حرة، وأي هوية أخرى تستلزم رمزها (عند تفعيل العزل)
+    if (!requireCode || (currentTeacher && teacher.id === currentTeacher.id)) {
+      sound.playSuccess();
+      onSelectTeacher(teacher);
+      onClose();
+      return;
+    }
+    sound.playTap();
+    setPendingTeacher(teacher);
+    setCodeInput('');
+    setCodeError('');
+  };
+
+  const handleConfirmCode = () => {
+    if (!pendingTeacher) return;
+    if (codeInput.trim().toUpperCase() === pendingTeacher.code.trim().toUpperCase()) {
+      sound.playSuccess();
+      const t = pendingTeacher;
+      setPendingTeacher(null);
+      setCodeInput('');
+      onSelectTeacher(t);
+      onClose();
+    } else {
+      sound.playAlert();
+      setCodeError('الرمز غير صحيح — هذا الحساب يخص معلماً آخر.');
+    }
   };
 
   const modalContent = (
@@ -259,6 +293,39 @@ export const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
         </div>
 
         {/* Footer */}
+        {pendingTeacher && (
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border-t-2 border-amber-300 dark:border-amber-700 space-y-2.5 animate-in fade-in">
+            <p className="text-xs font-black text-amber-900 dark:text-amber-200">
+              🔒 الدخول لحساب ({pendingTeacher.name}) يتطلب رمزه الخاص:
+            </p>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                autoFocus
+                value={codeInput}
+                onChange={e => { setCodeInput(e.target.value.toUpperCase()); setCodeError(''); }}
+                onKeyDown={e => { if (e.key === 'Enter') handleConfirmCode(); }}
+                placeholder="رمز المعلم"
+                className="flex-1 px-3.5 py-2.5 rounded-xl border-2 border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-sm font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+              <button
+                type="button"
+                onClick={handleConfirmCode}
+                className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95"
+              >
+                تأكيد الدخول
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPendingTeacher(null); setCodeInput(''); sound.playTap(); }}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                إلغاء
+              </button>
+            </div>
+            {codeError && <p className="text-[11px] font-bold text-rose-600">{codeError}</p>}
+          </div>
+        )}
         <div className="p-4 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
           <span className="text-xs text-slate-500">
             يمكنك تبديل حساب المعلم في أي وقت بنقرة واحدة من أعلى لوحة التحكم.

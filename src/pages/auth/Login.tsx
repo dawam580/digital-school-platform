@@ -34,6 +34,7 @@ export const Login: React.FC = () => {
     loginWithTeacherCode,
     unlockSuperAdmin,
     enterSuperAdmin,
+    isAuthenticated,
     setActiveTab,
     setCurrentRole,
     students,
@@ -262,6 +263,8 @@ export const Login: React.FC = () => {
               <span>✉️ رسالة دعوة المدير والروابط 🔗</span>
             </button>
 
+            {/* إدارة المدارس: للجلسات المصادقة فقط — الغرباء عبر التجربة المجانية */}
+            {isAuthenticated && (
             <button
               type="button"
               onClick={() => { setShowSchoolManagerModal(true); sound.playTap(); }}
@@ -270,6 +273,7 @@ export const Login: React.FC = () => {
               <Building2 className="w-3.5 h-3.5 text-blue-600" />
               <span>إضافة أو تبديل مدرسة 🏫</span>
             </button>
+            )}
           </div>
         </div>
 

@@ -47,6 +47,7 @@ import {
   getSchoolProfile,
   saveSchoolProfile,
   DEFAULT_SCHOOL_PROFILE,
+  STORAGE_KEY_SCHOOL_PROFILE,
   STORAGE_KEY_SAVED_SCHOOLS
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
@@ -62,7 +63,7 @@ import { PinRotationModal } from '../components/common/PinRotationModal';
 import { studentRepository } from '../services/repositories';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 import { LicenseService } from '../services/licensing/licenseService';
-import { LicenseVerificationResult } from '../services/licensing/licenseTypes';
+import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensing/licenseTypes';
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
 import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
 
@@ -332,6 +333,30 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return true;
   };
 
+  // إدارة المدارس (إنشاء/تبديل/استيراد حزم): هوية مدير أو سوبر (بجلسة ماستر) ومن واجهتها الحية فقط.
+  // تُغلق إنشاء المدارس من البوابة العامة والمعاينة وحسابات الطاقم الأدنى.
+  const requireSchoolManager = (actionAr: string): boolean => {
+    const privileged =
+      isAuthenticated &&
+      (authenticatedRole === 'admin' ||
+        (authenticatedRole === 'superadmin' && superUnlocked)) &&
+      currentRole === authenticatedRole;
+    if (!privileged) {
+      sound.playAlert();
+      showToast('error', '⛔ صلاحية إدارة المدارس', `لا يمكن ${actionAr} — خاص بمدير المدرسة (أو المدير العام) من واجهته.`);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'ACCESS_DENIED_SCHOOL_MANAGE',
+        entity: 'Security',
+        details: `محاولة ${actionAr} مرفوضة (الهوية: ${authenticatedRole}، العرض: ${currentRole})`,
+        severity: 'WARN'
+      });
+      return false;
+    }
+    return true;
+  };
+
   const applyRole = (role: UserRole) => {
     setCurrentRoleState(role);
     try {
@@ -436,6 +461,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setAuthenticatedRole('superadmin');
     setSuperUnlocked(true);
     setIsAuthenticated(true);
+    markSession();
     applyRole('superadmin');
     sound.playSuccess();
     triggerConfetti();
@@ -455,9 +481,41 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSuperUnlocked(false);
     setAuthenticatedRole('admin');
     setIsAuthenticated(true);
+    markSession();
     applyRole('admin');
   };
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // نموذج الجلسة (بوابة عامة للغرباء / دخول مباشر لصاحب الجهاز):
+  // الرابط العام على جهاز غريب = لا جلسة ولا إعداد سابق → شاشة الدخول (لا لوحة مدير مباشرة).
+  // جهاز المدرسة (سبق الدخول أو الترخيص أو الإعداد) → استعادة الجلسة والدخول المباشر محفوظ.
+  const SESSION_KEY = 'madrasa_session_active';
+
+  const hasPriorSetup = (): boolean => {
+    try {
+      // جلسة قائمة (لم تُسجَّل خروجاً) أو أي بصمة استخدام حقيقي على هذا الجهاز.
+      // ملاحظة: مفتاح الترخيص مستثنى عمداً لأنه يُزرع تلقائياً عند أول فحص.
+      if (localStorage.getItem(SESSION_KEY) === '1') return true;
+      if (localStorage.getItem('madrasa_auth_role')) return true;
+      if (localStorage.getItem('madrasa_active_role')) return true;
+      if (localStorage.getItem(STORAGE_KEY_SCHOOL_PROFILE)) return true;
+      if (localStorage.getItem('madrasa_db_students_v3')) return true;
+      if (localStorage.getItem(STORAGE_KEY_SAVED_SCHOOLS)) return true;
+    } catch {}
+    return false;
+  };
+
+  const markSession = () => {
+    try {
+      localStorage.setItem(SESSION_KEY, '1');
+    } catch {}
+  };
+
+  const clearSession = () => {
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch {}
+  };
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => hasPriorSetup());
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
     try {
       return localStorage.getItem('madrasa_admin_phone') || '0922465676';
@@ -1094,6 +1152,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (role !== 'superadmin') setSuperUnlocked(false);
     applyRole(role);
     setIsAuthenticated(true);
+    markSession();
     if (role === 'parent') {
       setCurrentTeacher(null);
       setActiveTab('parent-dashboard');
@@ -1145,6 +1204,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setActiveTab('teacher-quick');
       }
       setIsAuthenticated(true);
+      markSession();
       sound.playSuccess();
       showToast('gold', `مرحباً ${foundTeacher.name}`, `تم الدخول بنجاح بصفتك ${foundTeacher.subject} (الرمز: ${foundTeacher.code})`);
       auditLogger.log({
@@ -1165,6 +1225,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const logout = () => {
     setIsAuthenticated(false);
     setSuperUnlocked(false);
+    clearSession();
     setCurrentTeacher(null);
     setActiveTab('login');
     sound.playTap();
@@ -1660,6 +1721,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const createNewSchool = (name: string, district: string, directorName: string, directorPhone: string, startFresh: boolean) => {
+    if (!requireSchoolManager('إنشاء مدرسة جديدة')) return;
     // 1. Snapshot current school data
     try {
       localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
@@ -1703,6 +1765,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const switchSchool = (schoolId: string) => {
+    if (!requireSchoolManager('التبديل بين المدارس')) return;
     const target = savedSchools.find(s => s.id === schoolId);
     if (!target) return;
 
@@ -1754,6 +1817,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const importSchoolPackage = (jsonContent: string): boolean => {
+    if (!requireSchoolManager('استيراد حزمة مدرسة')) return false;
     try {
       const pkg = JSON.parse(jsonContent);
       if (!pkg.schoolProfile || !pkg.schoolProfile.name) {
@@ -2155,6 +2219,36 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setSchoolProfileState(newTrialSchool);
     saveSchoolProfile(newTrialSchool);
+    // ترخيص تجريبي 7 أيام مرتبط بالمدرسة: يمنع ظهور بوابة التفعيل كل إقلاع،
+    // وتنتهي صلاحيته تلقائياً ليدخل مسار التجديد الرسمي (حلقة مغلقة).
+    // نفس الهوية = نفس الترخيص الأصلي (لا مفتاح جديد ولا أيام جديدة).
+    try {
+      const registry = LicenseService.getAdminRegisteredSchools();
+      const prior = registry.find(s =>
+        (s.school_name || '').trim() === cleanName &&
+        (s.admin_phone || '').replace(/\D/g, '') === cleanPhone &&
+        cleanPhone.length >= 9
+      );
+      const trialDoc: SchoolLicenseDoc = prior
+        ? { ...prior, last_verified_at: new Date().toISOString() }
+        : {
+          license_key: LicenseService.generateLicenseKey(),
+          school_name: cleanName,
+          subscription_status: 'trial',
+          trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          created_at: inheritedStart || new Date().toISOString(),
+          admin_phone: cleanPhone,
+          notes: 'تجربة ذاتية 7 أيام من داخل المنظومة',
+          offline_grace_allowed_days: 7,
+          last_verified_at: new Date().toISOString()
+        };
+      LicenseService.setActiveLicenseKey(trialDoc.license_key);
+      LicenseService.setCachedLicense(trialDoc);
+      const reg = registry.filter(s => s.license_key !== trialDoc.license_key);
+      reg.unshift(trialDoc);
+      LicenseService.saveAdminRegisteredSchools(reg);
+      LicenseService.pushToFirestore(trialDoc).catch(() => {});
+    } catch {}
     // ختم المرآة بالهوية الثابتة (المدرسة+الهاتف) — طبقة ضد مسح المتصفح
     writeTrialUsedMirror(trialIdentityKey(newTrialSchool.id, newTrialSchool.directorPhone));
     // ختم الجهاز (مرة واحدة): أول تفعيل يؤرخ بداية التجربة الوحيدة لهذا الجهاز
@@ -2210,6 +2304,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setAuthenticatedRole('admin');
     setSuperUnlocked(false);
     setIsAuthenticated(true);
+    markSession();
     setActiveTab('dashboard');
 
     sound.playFanfare();

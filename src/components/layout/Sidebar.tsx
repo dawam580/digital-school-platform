@@ -32,6 +32,7 @@ export const Sidebar: React.FC = () => {
     setActiveTab,
     unreadCount,
     currentRole,
+    viewAs,
     currentTeacher,
     selectedStudent,
     setShowOperationalPlanModal,
@@ -142,7 +143,10 @@ export const Sidebar: React.FC = () => {
                     key={item.id}
                     onClick={() => {
                       sound.playTap();
-                      if (item.id === 'school-manager') {
+                      // عناصر التقاطع بين الواجهات تعاين الدور (لا تبويب ميت يُرتد)
+                      if (item.id === 'counselor-dashboard') {
+                        viewAs('counselor');
+                      } else if (item.id === 'school-manager') {
                         setShowSchoolManagerModal(true);
                       } else if (item.isCustomAction) {
                         setShowExcelModal(true);

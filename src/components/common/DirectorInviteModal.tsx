@@ -34,7 +34,7 @@ interface DirectorInviteModalProps {
 }
 
 export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen, onClose }) => {
-  const { schoolProfile, showToast, setCurrentRole } = useSchool();
+  const { schoolProfile, showToast, setCurrentRole, isAuthenticated } = useSchool();
 
   const [directorName, setDirectorName] = useState('الأستاذ الفاضل مدير المدرسة');
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
@@ -69,6 +69,12 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
   };
 
   const handleDirectSwitch = (role: typeof roleCards[number]['role'], title: string) => {
+    // روابط الدعوة للنسخ عامة، لكن القفز المباشر يتطلب جلسة (يمنع فتح الواجهات من البوابة العامة)
+    if (!isAuthenticated) {
+      sound.playTap();
+      showToast('info', 'سجّل الدخول أولاً 🔑', 'الانتقال المباشر للبوابات يتطلب تسجيل الدخول.');
+      return;
+    }
     sound.playSuccess();
     setCurrentRole(role);
     onClose();
