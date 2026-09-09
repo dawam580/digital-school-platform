@@ -105,7 +105,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       )}
     >
       {/* توهج علوي ناعم */}
-      <div aria-hidden className={twMerge('pointer-events-none absolute -top-16 -left-16 h-44 w-44 rounded-full bg-gradient-to-br blur-3xl opacity-70 transition-opacity duration-300 group-hover:opacity-100', t.glow)} />
+      <div aria-hidden className={twMerge('pointer-events-none absolute -top-16 -left-16 h-44 w-44 rounded-full bg-gradient-to-br blur-3xl opacity-50 transition-opacity duration-300 group-hover:opacity-75', t.glow)} />
       {/* شريط التمييز السفلي عند التفعيل */}
       {active && <div aria-hidden className={twMerge('absolute bottom-0 right-5 left-5 h-1 rounded-full bg-gradient-to-l', t.bar)} />}
 

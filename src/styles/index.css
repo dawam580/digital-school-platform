@@ -7,29 +7,106 @@
     border-color: #e2e8f0;
   }
   body {
-    background-color: #f8f9ff;
-    color: #0b1c30;
+    background-color: #f6f7f9;
+    color: #1e293b;
     font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
-/* Custom Scrollbar for Arabic RTL */
+/* ========================================================================= */
+/* EYE-COMFORT FOUNDATION (مريحة للعين — إضاءة ناعمة + تباين هادئ)            */
+/* ========================================================================= */
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  /* خلفية دافئة هادئة بدل الأبيض الصارخ + شبكة ضوئية خافتة بأسلوب 21st.dev */
+  background-color: #f6f7f9;
+  background-image:
+    radial-gradient(42rem 22rem at 85% -5%, rgba(99, 102, 241, 0.07), transparent 60%),
+    radial-gradient(36rem 20rem at 8% 4%, rgba(56, 189, 248, 0.06), transparent 60%),
+    radial-gradient(30rem 18rem at 50% 110%, rgba(245, 158, 11, 0.05), transparent 60%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  /* كحلي عميق ناعم بدل الأسود الصارخ — أرحم للعين ليلاً */
+  background-color: #0a0f1e;
+  background-image:
+    radial-gradient(42rem 22rem at 85% -5%, rgba(99, 102, 241, 0.10), transparent 60%),
+    radial-gradient(36rem 20rem at 8% 4%, rgba(56, 189, 248, 0.07), transparent 60%),
+    radial-gradient(30rem 18rem at 50% 110%, rgba(245, 158, 11, 0.05), transparent 60%);
+}
+
+::selection {
+  background-color: rgba(99, 102, 241, 0.22);
+}
+
+/* حلقة تركيز هادئة ومرئية (وصولية) */
+:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.65);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* احترام تقليل الحركة (راحة العين وإمكانية الوصول) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Scrollbar for Arabic RTL — نحيف وهادئ مع نسخة ليلية */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+  background-clip: content-box;
+  border: 2px solid transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  background-clip: content-box;
+  border: 2px solid transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+  background-clip: content-box;
+  border: 2px solid transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.dark * {
+  scrollbar-color: #334155 transparent;
 }
 
 /* Smooth badge pulses & card transitions */

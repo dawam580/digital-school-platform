@@ -67,7 +67,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const showSidebar = currentRole === 'counselor';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors">
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white flex flex-col transition-colors">
       <TrialBanner />
       <Navbar />
       

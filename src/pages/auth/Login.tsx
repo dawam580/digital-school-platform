@@ -219,16 +219,16 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40 dark:from-slate-950 dark:to-slate-900 flex flex-col justify-center items-center p-4 sm:p-6 text-right font-cairo transition-colors">
+    <div className="min-h-screen bg-transparent flex flex-col justify-center items-center p-4 sm:p-6 text-right font-cairo transition-colors">
       
-      {/* Background Ambience Glow */}
-      <div className="absolute top-10 right-1/2 translate-x-1/2 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Background Ambience Glow — خافت وهادئ */}
+      <div className="absolute top-10 right-1/2 translate-x-1/2 w-96 h-96 bg-indigo-400/[0.07] dark:bg-indigo-500/[0.08] rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="w-full max-w-lg space-y-6">
         
         {/* Top Centered Logo & Branding */}
         <div className="text-center space-y-3">
-          <div className="inline-flex p-3.5 rounded-3xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200/80 dark:border-slate-700">
+          <div className="inline-flex p-3.5 rounded-3xl bg-white dark:bg-slate-800 shadow-[0_16px_40px_-20px_rgba(15,23,42,0.25)] border border-slate-200/80 dark:border-slate-700">
             <img src={logoImg} alt="شعار منصة المدرسة" className="h-16 w-auto object-contain mx-auto" />
           </div>
 
