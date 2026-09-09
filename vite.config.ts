@@ -111,10 +111,14 @@ export default defineConfig({
           if (id.includes('libyanBaourSchoolDataset')) return 'baour-data';
           if (id.includes('node_modules/pdfjs-dist')) return 'pdf-vendor';
           if (id.includes('node_modules/xlsx')) return 'excel-vendor';
+          // clsx مشتركة بين الباندل الرئيسي وRecharts — تُثبَّت في vendor صراحةً
+          // لمنع حافة vendor→charts-vendor (دائرة TDZ = صفحة بيضاء).
+          if (id.includes('node_modules/clsx')) return 'vendor';
           // مكتبة الرسوم (Recharts v3 + شجرتها الحصرية) في chunk صريح غير متزامن:
           // إسناد اسمي (لا undefined) لأن Rollup قد يرفع الوحدات الآلية للـvendor.
           // القائمة حصرية بـrecharts (تحقق npm ls) — لا يشاركها الباندل الرئيسي.
-          if (/node_modules\/(recharts|d3-[a-z-]+|internmap|decimal\.js-light|eventemitter3|react-is|tiny-invariant|redux|redux-thunk|react-redux|immer|reselect|es-toolkit|victory-vendor|use-sync-external-store)\//.test(id)) return 'charts-vendor';
+          // تنبيه: الحزم ذات النطاق (@reduxjs/toolkit) لا تطابق اسمها المجرد — تُذكر صراحةً.
+          if (/node_modules\/(@reduxjs|recharts|d3-[a-z-]+|internmap|decimal\.js-light|eventemitter3|react-is|tiny-invariant|redux|redux-thunk|react-redux|immer|reselect|es-toolkit|victory-vendor|use-sync-external-store)\//.test(id)) return 'charts-vendor';
           if (id.includes('node_modules')) return 'vendor';
         },
       },
