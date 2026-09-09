@@ -288,12 +288,14 @@ const MainContent: React.FC = () => {
 
 export function App() {
   return (
-    <SchoolProvider>
-      <AppErrorBoundary>
-        <WindowsTitleBar />
-        <MainContent />
-      </AppErrorBoundary>
-    </SchoolProvider>
+    <AppErrorBoundary title="تعذر تشغيل المنظومة مؤقتاً">
+      <SchoolProvider>
+        <AppErrorBoundary>
+          <WindowsTitleBar />
+          <MainContent />
+        </AppErrorBoundary>
+      </SchoolProvider>
+    </AppErrorBoundary>
   );
 }
 
