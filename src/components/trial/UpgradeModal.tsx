@@ -34,6 +34,12 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   const handleExtend = () => {
+    // لا تمديد مجاني بعد الاستهلاك — الزر يتحول لطلب تفعيل رسمي عبر واتساب (يستجيب دائماً)
+    if (trialFreeExtendsLeft <= 0) {
+      sound.playTap();
+      window.open(whatsappActivationUrl, '_blank', 'noopener');
+      return;
+    }
     const ok = extendTrialDays(7);
     if (ok) onClose();
   };
@@ -46,6 +52,8 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
   const whatsappMessage = encodeURIComponent(
     `السلام عليكم، أود تفعيل النسخة الرسمية لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}\nالمدينة: ${schoolProfile.city || schoolProfile.district}\nرقم الهاتف: ${schoolProfile.directorPhone}`
   );
+
+  const whatsappActivationUrl = `https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%B7%D9%84%D8%A8%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%B1%D8%B3%D9%85%D9%8A`;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto font-cairo">
@@ -84,20 +92,20 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
         <div className="p-6 sm:p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             
-            {/* Plan 1: Basic */}
+            {/* Plan 1: Semester */}
             <div className="rounded-3xl p-5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col justify-between space-y-4">
               <div>
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">
-                  التعليم الأساسي
+                  اشتراك الفصل الدراسي
                 </span>
                 <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1">
-                  الباقة الأساسية 🏫
+                  باقة الفصل الدراسي ⚡
                 </h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">1,500</span>
-                  <span className="text-xs font-bold text-slate-500">دينار ليبي / سنوياً</span>
+                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">1,200</span>
+                  <span className="text-xs font-bold text-slate-500">دينار ليبي / للفصل الواحد</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">مثالية للمدارس الصغرى حتى 300 طالب</p>
+                <p className="text-xs text-slate-400 mt-1">مرونة الدفع الفصلي بكامل المميزات</p>
 
                 <ul className="mt-4 space-y-2 text-xs text-slate-600 dark:text-slate-300">
                   <li className="flex items-center gap-2">
@@ -106,53 +114,53 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>رصد الدرجات وكشوفات الطلاب الرسمية</span>
+                    <span>رصد الدرجات وشيت الكنترول وكشوفات الطلاب</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>تصدير شهادات الطلاب المعتمدة</span>
+                    <span>بوابة أولياء الأمور وشهادات الطلاب</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>دعم فني عبر الواتساب</span>
+                    <span>دعم فني عبر الواتساب طيلة الفصل</span>
                   </li>
                 </ul>
               </div>
 
               <a
-                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A9`}
+                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D8%B5%D9%84%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs text-center transition block"
               >
-                اختيار الباقة الأساسية
+                اختيار اشتراك الفصل
               </a>
             </div>
 
-            {/* Plan 2: Pro (Most Popular) */}
+            {/* Plan 2: Annual (Most Popular) */}
             <div className="rounded-3xl p-5 border-2 border-purple-600 bg-purple-50/40 dark:bg-purple-950/30 flex flex-col justify-between space-y-4 relative shadow-xl">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center gap-1">
                 <Sparkles className="w-3 h-3 fill-current" />
-                <span>الأكثر طلباً للمدارس النموذجية</span>
+                <span>الأكثر طلباً — وفّر 400 دينار</span>
               </div>
 
               <div>
                 <span className="text-xs font-bold text-purple-600 dark:text-purple-400 block pt-1">
-                  المنظومة المتكاملة 360
+                  اشتراك العام الدراسي الكامل
                 </span>
                 <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1">
-                  الباقة الذكية المتطورة 🌟
+                  الباقة السنوية المعتمدة 🌟
                 </h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-purple-700 dark:text-purple-300 font-mono">2,800</span>
-                  <span className="text-xs font-bold text-slate-500">دينار ليبي / سنوياً</span>
+                  <span className="text-3xl font-black text-purple-700 dark:text-purple-300 font-mono">2,000</span>
+                  <span className="text-xs font-bold text-slate-500">دينار ليبي / للسنة الكاملة</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">شاملة حتى 1,000 طالب وكافة الكوادر</p>
+                <p className="text-xs text-slate-400 mt-1">ترخيص سنوي معتمد بكود فريد لمدرستك</p>
 
                 <ul className="mt-4 space-y-2 text-xs text-slate-700 dark:text-slate-200">
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-purple-600 shrink-0" />
-                    <span className="font-bold">كافة مميزات الباقة الأساسية</span>
+                    <span className="font-bold">كافة مميزات اشتراك الفصل وزيادة</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-purple-600 shrink-0" />
@@ -164,22 +172,22 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-purple-600 shrink-0" />
-                    <span>بوابة أولياء الأمور وتطبيق المعلم الميسر</span>
+                    <span>استوديو قواعد البيانات والاستيراد الذكي</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-purple-600 shrink-0" />
-                    <span>استوديو قواعد البيانات والاستيراد الذكي</span>
+                    <span>تحديثات مجانية طيلة العام الدراسي</span>
                   </li>
                 </ul>
               </div>
 
               <a
-                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%AA%D8%B7%D9%88%D8%B1%D8%A9`}
+                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%B9%D8%A7%D9%85%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs text-center shadow-lg transition block active:scale-95"
               >
-                تفعيل الباقة الذكية الآن 🚀
+                تفعيل الاشتراك السنوي 🚀
               </a>
             </div>
 
@@ -234,12 +242,10 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
           <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 flex items-center justify-between gap-4 flex-wrap">
             <div className="space-y-0.5">
               <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
-                هل تحتاج وقتاً إضافياً لاستكمال التجربة؟ ⏱️
+                انتهت الفترة التجريبية؟ ⏱️
               </span>
               <span className="text-[11px] text-amber-700/80 dark:text-amber-300/80">
-                {trialFreeExtendsLeft > 0
-                  ? `تمديد مجاني واحد متبقٍ (+7 أيام)، أو نزّل نسختك الاحتياطية بدون قيود.`
-                  : `استُنفدت حصة التمديد المجاني — فعّل النسخة الرسمية للاستمرار، أو نزّل نسختك الاحتياطية.`}
+                اطلب التفعيل الرسمي عبر واتساب ليصلك مفتاح الترخيص، أو نزّل نسخة احتياطية من بياناتك أولاً.
               </span>
             </div>
 
@@ -248,18 +254,20 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                 type="button"
                 onClick={handleExtend}
                 className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-black transition flex items-center gap-1.5 active:scale-95"
+                title="يفتح واتساب برسالة طلب تفعيل جاهزة فيها اسم مدرستك"
               >
                 <Clock className="w-3.5 h-3.5" />
-                <span>{trialFreeExtendsLeft > 0 ? 'تمديد التجربة (+7 أيام مجاناً)' : 'طلب التفعيل الرسمي 🚀'}</span>
+                <span>طلب التفعيل الرسمي 🚀</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleExport}
+                title="ينزّل ملفاً واحداً فيه كل بيانات مدرستك (طلاب، درجات، حضور) — احتفظ به في مكان آمن"
                 className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>تصدير حزمة المدرسة (JSON) 📦</span>
+                <span>تنزيل نسخة احتياطية من بيانات مدرستك 💾</span>
               </button>
             </div>
           </div>

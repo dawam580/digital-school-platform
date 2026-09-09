@@ -73,10 +73,10 @@ export const LandingPage: React.FC = () => {
       name: 'باقة التجربة المجانية 🎁',
       tagline: 'للمدارس الراغبة في التقييم',
       price: '0',
-      period: 'دينار / 14 يوماً مجاناً',
+      period: 'دينار / 7 أيام مجاناً',
       description: 'تجربة كافة إمكانيات المنظومة بجميع صلاحيات المدير والمعلم والكنترول دون أي التزام مالي.',
       features: [
-        'تجربة مجانية كاملة لمدة 14 يوماً',
+        'تجربة مجانية كاملة لمدة 7 أيام',
         'استيراد كشوفات الطلاب من ملفات PDF',
         'إدارة حتى 1,000 طالب و 40 فصلاً',
         'شيت رصد الدرجات وحساب المعدلات تلقائياً',
@@ -95,7 +95,7 @@ export const LandingPage: React.FC = () => {
       id: 'annual',
       name: 'الباقة السنوية المعتمدة 🏆',
       tagline: 'الأكثر طلباً للمدارس الليبية',
-      price: '1,500',
+      price: '2,000',
       period: 'دينار ليبي / للعام الدراسي الكامل',
       description: 'الترخيص الرسمي الدائم للمدرسة شاملاً جميع البوابات الست، التحديثات، والدعم الفني المباشر.',
       features: [
@@ -122,7 +122,7 @@ export const LandingPage: React.FC = () => {
       id: 'semester',
       name: 'باقة الفصل الدراسي ⚡',
       tagline: 'مرونة عالية للدفع الفصلي',
-      price: '850',
+      price: '1,200',
       period: 'دينار ليبي / للفصل الدراسي الواحد',
       description: 'خيار مرن يتيح للمدارس الخاصة والعامة إدارة الفصل الدراسي والامتحانات بنظام فصلي سهل.',
       features: [
@@ -312,7 +312,7 @@ export const LandingPage: React.FC = () => {
               className="px-4 sm:px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-black shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition active:scale-95 flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4" />
-              <span>تجربة 14 يوماً مجاناً</span>
+              <span>تجربة 7 أيام مجاناً</span>
             </button>
           </div>
 
@@ -355,7 +355,7 @@ export const LandingPage: React.FC = () => {
                 onClick={() => { sound.playFanfare(); setShowFreeTrialModal(true); }}
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-black shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35 transition active:scale-95 flex items-center gap-2"
               >
-                <span>ابدأ تجربة مجانية لمدرستك (14 يوماً)</span>
+                <span>ابدأ تجربة مجانية لمدرستك (7 أيام)</span>
                 <ArrowLeft className="w-5 h-5 rtl:rotate-0 ltr:rotate-180" />
               </button>
 
