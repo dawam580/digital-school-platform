@@ -54,7 +54,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
   const [newSchoolName, setNewSchoolName] = useState('');
   const [newDistrict, setNewDistrict] = useState('مراقبة التربية والتعليم');
   const [newDirector, setNewDirector] = useState('مدير المدرسة');
-  const [newPhone, setNewPhone] = useState('0910000000');
+  const [newPhone, setNewPhone] = useState('');
   const [startFresh, setStartFresh] = useState(true);
 
   if (!isOpen) return null;
@@ -81,6 +81,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
       showToast('error', 'تنبيه', 'يرجى كتابة اسم المدرسة أولاً.');
       return;
     }
+    // لا هواتف مختلقة: رقم حقيقي أو يُترك فارغاً (يُستكمل لاحقاً من الإعدادات)
     createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), newPhone.trim(), startFresh);
     onClose();
   };

@@ -20,6 +20,7 @@ import {
   downloadSampleExcelTemplate,
   parseStudentsCsv
 } from '../../utils/excelHelper';
+import { db } from '../../services/db';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 
@@ -82,8 +83,9 @@ export const StudentExcelManager: React.FC<StudentExcelManagerProps> = ({ isOpen
     // Remove duplicates by national ID
     const uniqueStudents = Array.from(new Map(merged.map(s => [s.nationalId, s])).values());
 
-    // Update global state through custom context or direct local storage & sync
-    localStorage.setItem('madrasa_db_students_v2', JSON.stringify(uniqueStudents));
+    // Update global store through the versioned DB layer (v3 + encryption).
+    // BUGFIX: كان يكتب لمفتاح قديم مهجور (madrasa_db_students_v2) فيضيع الاستيراد بعد التحديث.
+    db.saveStudents(uniqueStudents, true);
     
     // Broadcast update via API if running with local node server
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {

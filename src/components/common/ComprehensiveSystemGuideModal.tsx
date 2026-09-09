@@ -246,7 +246,7 @@ export const ComprehensiveSystemGuideModal: React.FC<ComprehensiveSystemGuideMod
                   <span>دور المعلم في المنظومة:</span>
                 </h3>
                 <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80">
-                  واجهة سريعة مجهزة للدخول بالرمز الفريد (مثل LIB-MATH-01) لمتابعة الحصص ورصد أعمال السنة.
+                  واجهة سريعة مجهزة للدخول بالرمز الفريد (مثال: LIB-XXX-00) لمتابعة الحصص ورصد أعمال السنة.
                 </p>
               </div>
 

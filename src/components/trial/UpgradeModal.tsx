@@ -26,6 +26,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
   const {
     schoolProfile,
     extendTrialDays,
+    trialFreeExtendsLeft,
     exportSchoolPackage,
     trialDaysRemaining
   } = useSchool();
@@ -33,8 +34,8 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   const handleExtend = () => {
-    sound.playSuccess();
-    extendTrialDays(7);
+    const ok = extendTrialDays(7);
+    if (ok) onClose();
   };
 
   const handleExport = () => {
@@ -236,7 +237,9 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                 هل تحتاج وقتاً إضافياً لاستكمال التجربة؟ ⏱️
               </span>
               <span className="text-[11px] text-amber-700/80 dark:text-amber-300/80">
-                يمكنك تمديد التجربة لمدة 7 أيام أخرى مجاناً، أو تنزيل نسختك الاحتياطية بدون قيود.
+                {trialFreeExtendsLeft > 0
+                  ? `تمديد مجاني واحد متبقٍ (+7 أيام)، أو نزّل نسختك الاحتياطية بدون قيود.`
+                  : `استُنفدت حصة التمديد المجاني — فعّل النسخة الرسمية للاستمرار، أو نزّل نسختك الاحتياطية.`}
               </span>
             </div>
 
@@ -247,7 +250,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                 className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-black transition flex items-center gap-1.5 active:scale-95"
               >
                 <Clock className="w-3.5 h-3.5" />
-                <span>تمديد التجربة (+7 أيام مجاناً)</span>
+                <span>{trialFreeExtendsLeft > 0 ? 'تمديد التجربة (+7 أيام مجاناً)' : 'طلب التفعيل الرسمي 🚀'}</span>
               </button>
 
               <button

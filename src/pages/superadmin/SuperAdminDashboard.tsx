@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
 import {
   Building2,
   Plus,
@@ -39,6 +40,9 @@ export const SuperAdminDashboard: React.FC = () => {
     setActiveTab,
     showToast
   } = useSchool();
+
+  // حارس الدور الإلزامي: هذه الشاشة للمدير العام فقط (جلسة ماستر مفتوحة)
+  const allowed = useRequireRole('superadmin');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddSchoolModal, setShowAddSchoolModal] = useState(false);
@@ -107,6 +111,8 @@ export const SuperAdminDashboard: React.FC = () => {
   const totalSchools = Math.max(savedSchools.length, 1);
   const totalStudents = students.length;
   const totalTeachers = teachers.length;
+
+  if (!allowed) return null;
 
   return (
     <div className="space-y-6 animate-in fade-in text-right font-cairo">

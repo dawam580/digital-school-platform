@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { KeyRound, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Building2, Phone } from 'lucide-react';
 import { LicenseService, DEFAULT_INITIAL_LICENSE } from '../../services/licensing/licenseService';
 import { SchoolLicenseDoc } from '../../services/licensing/licenseTypes';
+import { DEV_MODE } from '../../config/devMode';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 
@@ -122,7 +123,8 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
               )}
             </button>
 
-            {/* Quick Demo Option for Baour School */}
+            {/* Quick Demo Option for Baour School — DEV_MODE فقط (تفعيل فوري بلا تحقق، محذوف من الإنتاج) */}
+            {DEV_MODE && (
             <button
               type="button"
               onClick={handleQuickBaour}
@@ -131,6 +133,7 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>تفعيل ترخيص مدرسة الشهيد امحمد الباعور (تجريبي)</span>
             </button>
+            )}
           </div>
 
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex items-center justify-between text-[11px] text-slate-400">

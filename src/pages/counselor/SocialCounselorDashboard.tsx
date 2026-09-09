@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
 import {
   HeartHandshake,
   Users,
@@ -196,6 +197,10 @@ export const SocialCounselorDashboard: React.FC = () => {
       setReportSubTab('weekly');
     }, 600);
   };
+
+  // حارس الدور الإلزامي: هذه الشاشة للأخصائي الاجتماعي (والمدير/السوبر المعاينين) فقط
+  const allowed = useRequireRole('counselor');
+  if (!allowed) return null;
 
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-5xl mx-auto pb-12 font-cairo">

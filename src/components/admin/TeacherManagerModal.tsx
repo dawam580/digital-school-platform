@@ -176,7 +176,7 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
                 type="text"
                 value={code}
                 onChange={e => setCode(e.target.value)}
-                placeholder="مثال: أستاذ-طارق أو LIB-MATH-01"
+                placeholder="مثال: LIB-XXX-00"
                 className="w-full py-2.5 px-3.5 pl-10 rounded-xl border-2 border-amber-400 bg-amber-50/50 dark:bg-slate-800 text-sm font-black text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                 required
               />

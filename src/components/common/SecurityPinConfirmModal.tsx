@@ -150,7 +150,7 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
         <div className="mt-5 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            يتطلب هذا الإجراء تأكيداً برمز الأمان الإداري لمدير المدرسة لمنع أي تعديل أو مسح غير مصرح به (الرمز الافتراضي: <strong className="font-mono">2026</strong>).
+            يتطلب هذا الإجراء تأكيداً برمز الأمان الإداري لمدير المدرسة لمنع أي تعديل أو مسح غير مصرح به (الرمز معروف لإدارة المدرسة فقط).
           </p>
         </div>
 

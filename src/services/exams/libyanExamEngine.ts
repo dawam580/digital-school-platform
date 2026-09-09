@@ -41,6 +41,8 @@ export interface StudentExamResultItem {
   isPassed: boolean;
   isSecondRound: boolean;
   appreciation: string;
+  /** درجة تقديرية (لم تُرصد فعلياً — قيمة افتراضية للعرض فقط، لا تُعتمد رسمياً) */
+  isEstimated?: boolean;
   // Detailed coursework breakdown (optional)
   testScore?: number;       // 20
   homeworkScore?: number;   // 10
@@ -64,6 +66,8 @@ export interface StudentFullExamReport {
   status: 'passed_honors' | 'passed' | 'passed_makeup' | 'makeup_exam' | 'failed';
   statusLabel: string;
   failedSubjects: string[];
+  /** عدد المواد التقديرية في الكشف (0 = كشف مرصود بالكامل) */
+  estimatedCount?: number;
 }
 
 export class LibyanExamEngine {
@@ -103,6 +107,8 @@ export class LibyanExamEngine {
       let coursework = 35; // Default realistic seed
       let exam = 52;
       let makeupScore: number | undefined = undefined;
+      // أمانة البيانات: القيمة الافتراضية تُوسم "تقديرية" ما لم يوجد رصد فعلي
+      let isEstimated = true;
 
       const recordKey = `${student.id}_${sub.code}`;
       if (savedRecordsMap && savedRecordsMap.has(recordKey)) {
@@ -110,6 +116,7 @@ export class LibyanExamEngine {
         coursework = rec.courseworkScore;
         exam = rec.examScore;
         makeupScore = rec.makeupExamScore;
+        isEstimated = false;
       } else if (student.subjects && student.subjects.length > 0) {
         const existing = student.subjects.find(
           s => s.code === sub.code || s.name === sub.name
@@ -117,6 +124,8 @@ export class LibyanExamEngine {
         if (existing) {
           coursework = existing.courseworkScore ?? Math.round((existing.score ?? 85) * 0.4);
           exam = existing.examScore ?? Math.round((existing.score ?? 85) * 0.6);
+          // رصد جزئي من ملف الطالب (درجة كلية مُشتقة) — يبقى تقديرياً حتى الرصد الرسمي
+          isEstimated = existing.courseworkScore === undefined && existing.examScore === undefined;
         }
       }
 
@@ -159,6 +168,7 @@ export class LibyanExamEngine {
         makeupExamScore: makeupScore,
         isPassed,
         isSecondRound,
+        isEstimated,
         appreciation: this.getAppreciation(pct)
       };
     });
@@ -210,7 +220,8 @@ export class LibyanExamEngine {
       appreciation: generalAppreciation,
       status,
       statusLabel,
-      failedSubjects
+      failedSubjects,
+      estimatedCount: results.filter(r => r.isEstimated).length
     };
   }
 

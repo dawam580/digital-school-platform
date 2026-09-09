@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { databaseEngine, TableMeta, DATABASE_SCHEMA_SQL } from '../../services/databaseEngine';
-import { auditLogger, AuditLogEntry } from '../../services/audit/auditLogger';
+import { auditLogger, AuditLogger, AuditLogEntry } from '../../services/audit/auditLogger';
 import { SecurityEngine } from '../../services/security/securityEngine';
 import { db } from '../../services/db';
 import {
@@ -34,7 +34,7 @@ import {
 import { sound } from '../../utils/soundEffects';
 
 export const DatabaseStudio: React.FC = () => {
-  const { resetDatabase, students, classes, notifications, conversations, schedule, teachers, setShowOperationalPlanModal, showToast } = useSchool();
+  const { resetDatabase, students, classes, notifications, conversations, schedule, teachers, setShowOperationalPlanModal, showToast, restoreAutoBackup, listAutoBackups } = useSchool();
   const [selectedTable, setSelectedTable] = useState<string>('students');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'tables' | 'benchmark' | 'teachers' | 'sql' | 'audit' | 'integrity' | 'backup'>('tables');
@@ -631,7 +631,7 @@ export const DatabaseStudio: React.FC = () => {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                   {auditLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-                      <td className="p-3 font-mono text-slate-400 whitespace-nowrap">{new Date(log.timestamp).toLocaleTimeString('ar-SA')}</td>
+                      <td className="p-3 font-mono text-slate-400 whitespace-nowrap">{AuditLogger.formatTimestamp(log.timestamp)}</td>
                       <td className="p-3 font-bold text-slate-800 dark:text-white">{log.actorName}</td>
                       <td className="p-3">
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
@@ -762,6 +762,43 @@ export const DatabaseStudio: React.FC = () => {
               {importStatus}
             </div>
           )}
+
+          {/* اللقطات التلقائية: تُؤخذ يومياً بصمت (فتحتان دوّارتان) + لقطة أمان قبل كل استعادة */}
+          <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <h3 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-2">
+              <History className="w-4 h-4 text-purple-600" />
+              <span>اللقطات التلقائية (حماية يومية صامتة)</span>
+            </h3>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              تُحفظ لقطة تلقائياً عند الإقلاع (مرة كل ~20 ساعة). الاستعادة تنقل حالتك الحالية أولاً إلى «لقطة الأمان» فلا ضياع أبداً.
+            </p>
+            <div className="space-y-2">
+              {listAutoBackups().length === 0 && (
+                <p className="text-[11px] text-slate-400 font-bold text-center py-3">لا توجد لقطات بعد — ستُؤخذ الأولى تلقائياً خلال يوم.</p>
+              )}
+              {listAutoBackups().map(b => (
+                <div key={b.index} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  <div className="text-[11px]">
+                    <p className="font-black text-slate-800 dark:text-white">
+                      {b.index === 99 ? '🛟 لقطة الأمان (ما قبل آخر استعادة)' : '💾 لقطة تلقائية'}
+                    </p>
+                    <p className="text-slate-500 font-mono" dir="ltr">{new Date(b.takenAt).toLocaleString('ar-LY')}</p>
+                    <p className="text-slate-500">{b.students} طالب • {b.teachers} معلم • {b.classes} فصل</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`استعادة لقطة (${new Date(b.takenAt).toLocaleDateString('ar-LY')})؟ ستحفظ حالتك الحالية في لقطة الأمان أولاً.`)) {
+                        restoreAutoBackup(b.index);
+                      }
+                    }}
+                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-black shadow-sm transition active:scale-95 shrink-0"
+                  >
+                    استعادة
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

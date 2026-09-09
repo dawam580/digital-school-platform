@@ -14,12 +14,17 @@ import {
   Phone,
   Power,
   Lock,
-  Sparkles
+  Sparkles,
+  Send,
+  CheckCircle2,
+  XCircle,
+  Inbox
 } from 'lucide-react';
 import { LicenseService } from '../../services/licensing/licenseService';
-import { SchoolLicenseDoc, SubscriptionStatus } from '../../services/licensing/licenseTypes';
+import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest } from '../../services/licensing/licenseTypes';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { auditLogger } from '../../services/audit/auditLogger';
 
 export const SuperAdminLicenseManager: React.FC = () => {
   const [schools, setSchools] = useState<SchoolLicenseDoc[]>([]);
@@ -36,11 +41,50 @@ export const SuperAdminLicenseManager: React.FC = () => {
 
   useEffect(() => {
     loadSchools();
+    loadRenewals();
   }, []);
 
   const loadSchools = () => {
     const list = LicenseService.getAdminRegisteredSchools();
     setSchools(list);
+  };
+
+  // طلبات التجديد المعلقة (محلية + سحابية)
+  const [renewals, setRenewals] = useState<RenewalRequest[]>([]);
+  const [isLoadingRenewals, setIsLoadingRenewals] = useState(false);
+
+  const loadRenewals = async () => {
+    setIsLoadingRenewals(true);
+    try {
+      await LicenseService.fetchRemoteRenewals().catch(() => []);
+    } finally {
+      setRenewals(LicenseService.getRenewalRequests());
+      setIsLoadingRenewals(false);
+    }
+  };
+
+  const pendingRenewals = renewals.filter(r => r.status === 'pending');
+
+  const handleResolveRenewal = async (id: string, approve: boolean) => {
+    sound.playTap();
+    if (!approve && !window.confirm('هل أنت متأكد من رفض طلب التجديد هذا؟')) return;
+    const resolved = await LicenseService.resolveRenewalRequest(id, approve);
+    if (resolved) {
+      if (approve) {
+        sound.playSuccess();
+        triggerConfetti();
+      }
+      auditLogger.log({
+        actorName: 'المدير العام',
+        actorRole: 'superadmin',
+        action: approve ? 'RENEWAL_APPROVED' : 'RENEWAL_REJECTED',
+        entity: 'Licensing',
+        details: `${approve ? 'قبول' : 'رفض'} طلب تجديد (${resolved.school_name} — ${resolved.license_key})`,
+        severity: 'WARN'
+      });
+      loadRenewals();
+      loadSchools();
+    }
   };
 
   const handleCopy = (key: string) => {
@@ -131,6 +175,70 @@ export const SuperAdminLicenseManager: React.FC = () => {
           <Plus className="w-4 h-4" />
           <span>تسجيل مدرسة جديدة وتوليد ترخيص ➕</span>
         </button>
+      </div>
+
+      {/* Renewal Requests Inbox (طلبات التجديد المعلقة) */}
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <span>طلبات تجديد الاشتراك</span>
+            {pendingRenewals.length > 0 && (
+              <span className="bg-rose-500 text-white text-[11px] font-black px-2.5 py-0.5 rounded-full animate-pulse">
+                {pendingRenewals.length} معلّق
+              </span>
+            )}
+          </h2>
+          <button
+            onClick={() => { loadRenewals(); sound.playTap(); }}
+            className="px-3 py-1.5 rounded-xl text-[11px] font-bold text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 flex items-center gap-1.5 transition"
+          >
+            <RotateCw className={`w-3.5 h-3.5 ${isLoadingRenewals ? 'animate-spin' : ''}`} />
+            <span>تحديث الطلبات</span>
+          </button>
+        </div>
+
+        {pendingRenewals.length === 0 ? (
+          <p className="text-xs text-slate-400 font-bold text-center py-4">
+            {isLoadingRenewals ? 'جاري جلب الطلبات...' : 'لا توجد طلبات تجديد معلقة حالياً ✅'}
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            {pendingRenewals.map(req => (
+              <div key={req.id} className="p-4 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-950/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <p className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-indigo-600" />
+                    <span>{req.school_name}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-mono" dir="ltr">{req.license_key} • {req.id}</p>
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1" dir="ltr">
+                    <Phone className="w-3 h-3" /> {req.admin_phone}
+                    <span className="font-bold">• {new Date(req.created_at).toLocaleDateString('ar-LY')}</span>
+                  </p>
+                  {req.message && <p className="text-[11px] text-slate-600 dark:text-slate-300">«{req.message}»</p>}
+                </div>
+                <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                  <button
+                    onClick={() => handleResolveRenewal(req.id, true)}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center gap-1.5"
+                    title="تفعيل اشتراك سنة كاملة فوراً"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>قبول وتفعيل سنة ⚡</span>
+                  </button>
+                  <button
+                    onClick={() => handleResolveRenewal(req.id, false)}
+                    className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800 hover:bg-rose-50 text-rose-600 text-xs font-black transition active:scale-95 flex items-center gap-1.5"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    <span>رفض</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Metrics Row */}

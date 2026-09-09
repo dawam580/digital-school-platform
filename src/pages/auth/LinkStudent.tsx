@@ -73,7 +73,7 @@ export const LinkStudent: React.FC = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="أدخل كود الربط (مثال: SCH-2026-R1)"
+                placeholder="أدخل كود الربط المسلم من إدارة المدرسة (مثال: SCH-XXXX-XX)"
                 value={linkCode}
                 onChange={e => setLinkCode(e.target.value)}
                 className="w-full px-4 py-3.5 pr-11 text-base font-mono rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:font-sans placeholder:text-slate-400 uppercase"

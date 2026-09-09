@@ -55,6 +55,10 @@ import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
 import { auditLogger } from '../services/audit/auditLogger';
 import { SecurityEngine } from '../services/security/securityEngine';
+import { autoBackupService } from '../services/storage/autoBackup';
+import { ROLE_HOME, mayViewInterface } from '../services/security/roleAccess';
+import { SuperAdminLockModal } from '../components/common/SuperAdminLockModal';
+import { PinRotationModal } from '../components/common/PinRotationModal';
 import { studentRepository } from '../services/repositories';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 import { LicenseService } from '../services/licensing/licenseService';
@@ -66,6 +70,24 @@ interface SchoolContextType {
   // Auth & Roles
   currentRole: UserRole;
   setCurrentRole: (role: UserRole) => void;
+  /** الهوية الحقيقية المسجلة (لا تتغير بالتصفح) — فصل الواجهات */
+  authenticatedRole: UserRole;
+  /** هل الواجهة المعروضة مختلفة عن الهوية؟ (وضع المعاينة/الانتحال المشروع) */
+  isImpersonating: boolean;
+  /** هل جلسة الماستر مفتوحة برمز السوبر؟ (تُفقد عند إعادة التحميل) */
+  superUnlocked: boolean;
+  /** معاينة واجهة دور آخر — مسموحة فقط حسب مصفوفة mayViewInterface */
+  viewAs: (role: UserRole) => void;
+  /** العودة من المعاينة إلى واجهة الهوية الحقيقية */
+  stopImpersonating: () => void;
+  /** فتح جلسة الماستر برمز السوبر (4 أرقام) */
+  unlockSuperAdmin: (pin: string) => boolean;
+  /** الدخول الكامل للسوبر بعد التحقق من الرمز مباشرة */
+  enterSuperAdmin: () => void;
+  /** الخروج من بوابة السوبر إلى مدير المدرسة (بعد إعادة التحميل) */
+  exitSuperAdminGate: () => void;
+  /** وضع المعاينة = قراءة فقط (الواجهة المعروضة غير الهوية) */
+  isReadOnlyPreview: boolean;
   isAuthenticated: boolean;
   currentUserPhone: string;
   currentTeacher: TeacherAccount | null;
@@ -169,6 +191,9 @@ interface SchoolContextType {
   savedSchools: SchoolProfile[];
   exportSchoolPackage: () => void;
   importSchoolPackage: (jsonContent: string) => boolean;
+  /** استعادة لقطة تلقائية (index من listAutoBackups — و99 للقطة الأمان) */
+  restoreAutoBackup: (index: number) => boolean;
+  listAutoBackups: () => import('../services/storage/autoBackup').AutoBackupMeta[];
   showSchoolManagerModal: boolean;
   setShowSchoolManagerModal: (open: boolean) => void;
 
@@ -199,8 +224,10 @@ interface SchoolContextType {
     address: string;
     username: string;
     seedRichData: boolean;
-  }) => void;
-  extendTrialDays: (extraDays: number) => void;
+  }) => boolean;
+  extendTrialDays: (extraDays: number) => boolean;
+  /** حصة التمديد المجاني المتبقية (0 = استُنفدت → التفعيل الرسمي) */
+  trialFreeExtendsLeft: number;
 
   // School Financial Management
   financialTransactions: FinancialTransaction[];
@@ -252,7 +279,60 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return 'admin';
   });
 
-  const setCurrentRole = (role: UserRole) => {
+  // الهوية الحقيقية: من سجّل الدخول فعلاً (تُحفظ بين الجلسات، ولا تتأثر بالتصفح)
+  const [authenticatedRole, setAuthenticatedRoleState] = useState<UserRole>(() => {
+    try {
+      const saved = localStorage.getItem('madrasa_auth_role');
+      if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
+        return saved as UserRole;
+      }
+    } catch {}
+    return 'admin';
+  });
+
+  const setAuthenticatedRole = (role: UserRole) => {
+    setAuthenticatedRoleState(role);
+    try {
+      localStorage.setItem('madrasa_auth_role', role);
+    } catch {}
+  };
+
+  // جلسة الماستر: تُفتح برمز السوبر فقط، ولا تُحفظ (تنتهي بإعادة التحميل)
+  const [superUnlocked, setSuperUnlocked] = useState(false);
+
+  const denyRoleSwitch = (target: UserRole) => {
+    sound.playAlert();
+    showToast('error', '⛔ منطقة محظورة', `لا تملك صلاحية فتح واجهة (${target}). هذا الإجراء مسجل في سجل التدقيق.`);
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'ACCESS_DENIED_ROLE_SWITCH',
+      entity: 'Security',
+      details: `محاولة انتقال مرفوضة من (${authenticatedRole}) إلى (${target})`,
+      severity: 'WARN'
+    });
+  };
+
+  // بوابة الكتابة: المعاينة قراءة فقط — أي طفرة أثناء عرض واجهة غير الهوية تُمنع
+  // (تمنع: رصد حضور/درجات باسم معلم آخر، إرسال رسائل منتحلة، تصفير من واجهة دخيلة)
+  const requireLiveMode = (actionAr: string): boolean => {
+    if (currentRole !== authenticatedRole) {
+      sound.playAlert();
+      showToast('warning', '👁 وضع المعاينة — قراءة فقط', `لا يمكن ${actionAr} أثناء معاينة واجهة أخرى. عُد إلى واجهتك للتنفيذ.`);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'PREVIEW_WRITE_BLOCKED',
+        entity: 'Security',
+        details: `مُنع ${actionAr} في وضع المعاينة (العرض: ${currentRole})`,
+        severity: 'WARN'
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const applyRole = (role: UserRole) => {
     setCurrentRoleState(role);
     try {
       localStorage.setItem('madrasa_active_role', role);
@@ -285,6 +365,97 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } else if (role === 'parent') {
       setActiveTab('parent-dashboard');
     }
+  };
+
+  // التبديل المحروس: أي انتقال بين الواجهات يمر من هنا (يغلق ثغرة ?role= والترقية الذاتية)
+  const setCurrentRole = (role: UserRole) => {
+    if (role === currentRole) {
+      applyRole(role);
+      return;
+    }
+    if (!isAuthenticated) {
+      applyRole(role);
+      return;
+    }
+    if (mayViewInterface(authenticatedRole, superUnlocked, role)) {
+      if (role !== authenticatedRole) {
+        auditLogger.log({
+          actorName: currentUserPhone,
+          actorRole: authenticatedRole,
+          action: 'ROLE_VIEW_AS',
+          entity: 'Security',
+          details: `معاينة واجهة (${role}) من هوية (${authenticatedRole})`,
+          severity: 'INFO'
+        });
+      }
+      applyRole(role);
+      return;
+    }
+    denyRoleSwitch(role);
+  };
+
+  // معاينة صريحة (زر "تصفح كـ" + مبدّل Navbar) — نفس الحراسة بتسمية أوضح
+  const viewAs = (role: UserRole) => {
+    setCurrentRole(role);
+  };
+
+  const stopImpersonating = () => {
+    applyRole(authenticatedRole);
+    sound.playTap();
+    showToast('info', 'عودة للواجهة الرئيسية', 'تم الرجوع إلى واجهتك الأصلية.');
+  };
+
+  // فتح جلسة الماستر برمز السوبر (مع قفل تخمين 45 ثانية داخل المحرك)
+  const unlockSuperAdmin = (pin: string): boolean => {
+    const res = SecurityEngine.verifySuperAdminPin(pin);
+    if (res.valid) {
+      setSuperUnlocked(true);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'SUPERADMIN_UNLOCK',
+        entity: 'Security',
+        details: 'تم فتح جلسة الماستر برمز السوبر بنجاح',
+        severity: 'WARN'
+      });
+      return true;
+    }
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'SUPERADMIN_UNLOCK_FAILED',
+      entity: 'Security',
+      details: res.message,
+      severity: 'WARN'
+    });
+    return false;
+  };
+
+  // الدخول الكامل للسوبر (يُستدعى فقط بعد نجاح التحقق من الرمز في المودال/الفورم)
+  const enterSuperAdmin = () => {
+    setAuthenticatedRole('superadmin');
+    setSuperUnlocked(true);
+    setIsAuthenticated(true);
+    applyRole('superadmin');
+    sound.playSuccess();
+    triggerConfetti();
+    showToast('gold', 'مرحباً أيها المدير العام 🌐', 'تم الدخول لبوابة السوبر — يمكنك التصفح بين جميع الواجهات والأقسام.');
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: 'superadmin',
+      action: 'SUPERADMIN_ENTER',
+      entity: 'Security',
+      details: 'دخول المدير العام بعد التحقق من رمز الماستر',
+      severity: 'WARN'
+    });
+  };
+
+  // الخروج من بوابة السوبر (تُعرض بعد إعادة التحميل عندما تكون الهوية سوبر والجلسة مقفلة)
+  const exitSuperAdminGate = () => {
+    setSuperUnlocked(false);
+    setAuthenticatedRole('admin');
+    setIsAuthenticated(true);
+    applyRole('admin');
   };
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
@@ -330,6 +501,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showCustomCodeModal, setShowCustomCodeModal] = useState(false);
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  // مودال فتح السوبر على مستوى المزوّد (للمسارات التي لا تملك مودالها الخاص)
+  const [showSuperUnlockModal, setShowSuperUnlockModal] = useState(false);
+  // تدوير الرموز الافتراضية إجباري (مرة واحدة — يُذكَّر كل إقلاع حتى التغيير)
+  const [showPinRotation, setShowPinRotation] = useState(false);
+  const [pinRotationNeeds, setPinRotationNeeds] = useState({ super: false, director: false });
   const [isTourOpen, setIsTourOpen] = useState(false);
 
   // Cloud Licensing & Subscription State
@@ -362,6 +538,49 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     return () => clearInterval(timer);
   }, [checkLicense]);
+
+  // شفاء ذاتي عند الإقلاع: أي واجهة مخزنة/ممررة بالرابط أعلى من الهوية تُعاد لبيتها فوراً
+  // (يغلق ثغرة ?role=superadmin والعبث بـ localStorage من الجذور)
+  useEffect(() => {
+    if (!mayViewInterface(authenticatedRole, superUnlocked, currentRole)) {
+      applyRole(authenticatedRole);
+    }
+    // لقطة النسخ الاحتياطي التلقائي (صامتة، مرة كل ~20 ساعة، فتحتان دوّارتان)
+    try {
+      if (autoBackupService.isDue()) {
+        autoBackupService.take({ schoolProfile, students, teachers, classes, notifications, conversations, schedule });
+      }
+    } catch {}
+    // ختم الزمن الرتيب + فضح إرجاع الساعة
+    try {
+      const last = Number(localStorage.getItem(CLOCK_SKEW_KEY) || 0);
+      localStorage.setItem(CLOCK_SKEW_KEY, String(Math.max(Date.now(), last)));
+      if (clockTampered) {
+        sound.playAlert();
+        showToast('error', '⛔ اشتباه تلاعب بساعة الجهاز', 'ساعة الجهاز مرجعة للوراء — أوقفنا الفترة التجريبية مؤقتاً. صحح التاريخ والوقت ثم أعد الفتح.');
+        auditLogger.log({
+          actorName: currentUserPhone,
+          actorRole: authenticatedRole,
+          action: 'CLOCK_TAMPER_DETECTED',
+          entity: 'Security',
+          details: 'الإقلاع بطابع أقدم من آخر طابع مسجل — تجميد التجربة',
+          severity: 'CRITICAL'
+        });
+      }
+    } catch {}
+    // تدوير الرموز الافتراضية: من يملك الإدارة/السوبر وتُركت رموزه مصنعية يُطالَب بالتغيير
+    try {
+      if (authenticatedRole === 'admin' || authenticatedRole === 'superadmin') {
+        const needSuper = authenticatedRole === 'superadmin' && SecurityEngine.getSuperAdminPin() === '9988';
+        const needDirector = SecurityEngine.getDirectorPin() === '2026';
+        if (needSuper || needDirector) {
+          setPinRotationNeeds({ super: needSuper, director: needDirector });
+          setShowPinRotation(true);
+        }
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const startTour = () => {
     setIsTourOpen(true);
@@ -454,9 +673,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   // Persistent Students (Libyan Official Al-Baour Roster 873 Students)
+  // تهيئة بالقائمة الكاملة الخام: حالة الذاكرة مرجع الكتابة، والنطاق يُفرض عند العرض والجلب المباشر
   const [students, setStudents] = useState<Student[]>(() => {
     try {
-      const data = db.getStudents();
+      const data = db.getAllStudents();
       if (data && data.length > 5) return data;
       if (data && data.length > 0 && data[0]?.id !== 'std-1') return data;
       return LIBYAN_BAOUR_STUDENTS;
@@ -467,7 +687,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
     try {
-      const all = db.getStudents();
+      const all = db.getAllStudents();
       const list = (all && all.length > 5) ? all : LIBYAN_BAOUR_STUDENTS;
       return list[0];
     } catch {
@@ -707,7 +927,19 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   const selectTeacher = useCallback((teacher: TeacherAccount) => {
-    setCurrentTeacher(teacher);
+    setCurrentTeacher(prev => {
+      if (prev && prev.id !== teacher.id) {
+        auditLogger.log({
+          actorName: prev.name,
+          actorRole: 'teacher',
+          action: 'TEACHER_IDENTITY_SWITCH',
+          entity: 'Auth',
+          details: `تبديل هوية المعلم من (${prev.name}) إلى (${teacher.name})`,
+          severity: 'WARN'
+        });
+      }
+      return teacher;
+    });
     try {
       localStorage.setItem('madrasa_active_teacher_id', teacher.id);
     } catch {}
@@ -842,8 +1074,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const login = (phoneOrId: string, role: UserRole) => {
+    // بوابة السوبر لا تُفتح إلا برمز الماستر عبر unlockSuperAdmin/enterSuperAdmin
+    if (role === 'superadmin' && !superUnlocked) {
+      sound.playAlert();
+      showToast('error', '🔒 يلزم رمز الماستر', 'دخول المدير العام محمي برمز السوبر (4 أرقام).');
+      auditLogger.log({
+        actorName: phoneOrId,
+        actorRole: role,
+        action: 'ACCESS_DENIED_SUPERADMIN_DIRECT',
+        entity: 'Security',
+        details: 'محاولة دخول سوبر مباشرة بدون رمز الماستر',
+        severity: 'WARN'
+      });
+      return;
+    }
     setCurrentUserPhoneState(phoneOrId);
-    setCurrentRole(role);
+    // تثبيت الهوية الحقيقية أولاً ثم فتح واجهتها مباشرة (تجاوز الحارس عمداً — هذه بوابة الدخول)
+    setAuthenticatedRole(role);
+    if (role !== 'superadmin') setSuperUnlocked(false);
+    applyRole(role);
     setIsAuthenticated(true);
     if (role === 'parent') {
       setCurrentTeacher(null);
@@ -885,10 +1134,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setCurrentTeacher(foundTeacher);
       setCurrentUserPhoneState(foundTeacher.phone);
       if (foundTeacher.code === 'LIB-SOC-01' || foundTeacher.subjectCode === 'COUNSEL') {
-        setCurrentRole('counselor');
+        setAuthenticatedRole('counselor');
+        setSuperUnlocked(false);
+        applyRole('counselor');
         setActiveTab('counselor-dashboard');
       } else {
-        setCurrentRole('teacher');
+        setAuthenticatedRole('teacher');
+        setSuperUnlocked(false);
+        applyRole('teacher');
         setActiveTab('teacher-quick');
       }
       setIsAuthenticated(true);
@@ -905,12 +1158,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return true;
     }
     sound.playAlert();
-    showToast('error', 'رمز الدخول غير صحيح', 'تأكد من الرمز الصادر من الإدارة (مثال: LIB-MATH-01 أو LIB-SOC-01)');
+    showToast('error', 'رمز الدخول غير صحيح', 'تأكد من الرمز المسلم لك من إدارة المدرسة.');
     return false;
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    setSuperUnlocked(false);
     setCurrentTeacher(null);
     setActiveTab('login');
     sound.playTap();
@@ -919,19 +1173,28 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const updateAttendance = (studentId: string, status: AttendanceStatus, note?: string) => {
     SecurityEngine.assertPermission(currentRole, 'TAKE_ATTENDANCE');
+    if (!requireLiveMode('تسجيل الحضور')) return;
+    // سجل الحضور التراكمي: قيد اليوم يُستبدل عند إعادة الرصد (لا تكرار)، ويُحفظ بحد 120 قيداً.
+    // النسبة تُحسب من السجل الفعلي (حاضر+متأخر = أيام مداومة) بدل الأرقام الثابتة المختلقة سابقاً.
+    const todayISO = new Date().toISOString().split('T')[0];
+    const cleanNote = note ? SecurityEngine.sanitizeString(note) : undefined;
+    const calcRate = (history: { status: AttendanceStatus }[], fallback: number): number => {
+      if (history.length === 0) return fallback;
+      const attended = history.filter(r => r.status === 'present' || r.status === 'late').length;
+      return Math.round((attended / history.length) * 1000) / 10;
+    };
     const updated = students.map(s => {
       if (s.id === studentId) {
-        const totalDays = 20;
-        let newPresent = 19;
-        if (status === 'unexcused') newPresent = 17;
-        else if (status === 'late') newPresent = 18;
-        const newRate = Math.round((newPresent / totalDays) * 100);
-
+        const history = [
+          { date: todayISO, status, ...(cleanNote ? { note: cleanNote } : {}) },
+          ...((s.recentAttendance || []).filter(r => r.date !== todayISO))
+        ].slice(0, 120);
         return {
           ...s,
           status,
-          attendanceNote: note ? SecurityEngine.sanitizeString(note) : undefined,
-          attendanceRate: newRate,
+          attendanceNote: cleanNote,
+          recentAttendance: history,
+          attendanceRate: calcRate(history, s.attendanceRate ?? 0),
           lastAttendanceUpdate: 'اليوم'
         };
       }
@@ -992,12 +1255,20 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const markAllPresent = (classId?: string) => {
     SecurityEngine.assertPermission(currentRole, 'TAKE_ATTENDANCE');
+    if (!requireLiveMode('التحضير الجماعي')) return;
+    const todayISO = new Date().toISOString().split('T')[0];
     const updated = students.map(s => {
       if (!classId || s.className.includes(classId)) {
+        const history = [
+          { date: todayISO, status: 'present' as AttendanceStatus },
+          ...((s.recentAttendance || []).filter(r => r.date !== todayISO))
+        ].slice(0, 120);
+        const attended = history.filter(r => r.status === 'present' || r.status === 'late').length;
         return {
           ...s,
           status: 'present' as AttendanceStatus,
-          attendanceRate: 100,
+          recentAttendance: history,
+          attendanceRate: history.length > 0 ? Math.round((attended / history.length) * 1000) / 10 : 100,
           lastAttendanceUpdate: 'اليوم'
         };
       }
@@ -1029,6 +1300,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const linkStudent = (studentCodeOrId: string): boolean => {
+    if (!requireLiveMode('ربط الطلاب')) return false;
     const cleanCode = SecurityEngine.cleanText(studentCodeOrId);
     const found = students.find(
       s => s.linkCode.toLowerCase() === cleanCode.toLowerCase() || s.nationalId === cleanCode
@@ -1063,6 +1335,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const addBehaviorPoint = (studentId: string, point: BehaviorPoint) => {
+    if (!requireLiveMode('منح النقاط السلوكية')) return;
     const updated = students.map(s => {
       if (s.id === studentId) {
         const currentPoints = s.behaviorPointsTotal || 0;
@@ -1103,6 +1376,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const updateStudentAvatar = (studentId: string, avatarUrl: string) => {
+    if (!requireLiveMode('تغيير الصور الشخصية')) return;
     const updated = students.map(s => {
       if (s.id === studentId) {
         return { ...s, avatar: avatarUrl };
@@ -1122,6 +1396,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const updateStudentGrade = (studentId: string, gradeId: string, updatedFields: Partial<SubjectGrade>) => {
     SecurityEngine.assertPermission(currentRole, 'EDIT_GRADES');
+    if (!requireLiveMode('تعديل الدرجات')) return;
     const updated = students.map(s => {
       if (s.id === studentId && s.grades) {
         const updatedGrades = s.grades.map(g => {
@@ -1221,6 +1496,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     voiceDuration?: string,
     imageUrl?: string
   ) => {
+    // منع انتحال الهوية: لا إرسال باسم دور آخر أثناء المعاينة
+    if (!requireLiveMode('إرسال الرسائل')) return;
     const cleanText = text ? SecurityEngine.cleanText(text) : undefined;
     const newMsg = {
       id: `msg-${Date.now()}`,
@@ -1330,6 +1607,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const resetDatabase = () => {
     SecurityEngine.assertPermission(currentRole, 'RESET_SYSTEM');
+    if (!requireLiveMode('تصفير قاعدة البيانات')) return;
     db.resetAllData();
     setStudents(LIBYAN_BAOUR_STUDENTS);
     setSelectedStudent(LIBYAN_BAOUR_STUDENTS[0]);
@@ -1345,7 +1623,16 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setFollowUpForms(SEED_FOLLOWUP_FORMS);
     setInfractions(SEED_INFRACTIONS);
     setAutoSummonCards(SEED_AUTO_SUMMON_CARDS);
+    // نزاهة التدقيق: التصفير لا يمحو أثره — يُمسح السجل ثم يُختم بقيد التصفير نفسه (شاهد)
     auditLogger.clearLogs();
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'SYSTEM_RESET',
+      entity: 'Database',
+      details: 'تصفير قاعدة البيانات واستعادة البذور — قيد شاهد بعد المسح',
+      severity: 'CRITICAL'
+    });
     sound.playSuccess();
     showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
   };
@@ -1472,6 +1759,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (!pkg.schoolProfile || !pkg.schoolProfile.name) {
         throw new Error('ملف الحزمة غير صالح أو لا يحتوي على بيانات مدرسة.');
       }
+      // شبكة أمان: حفظ الحالة الحالية قبل الاستيراد (رجوع بنقرة من النسخ والترميم)
+      autoBackupService.stashSafety({ schoolProfile, students, teachers, classes, notifications, conversations, schedule });
       setSchoolProfileState(pkg.schoolProfile);
       saveSchoolProfile(pkg.schoolProfile);
       if (Array.isArray(pkg.students)) {
@@ -1495,6 +1784,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       sound.playFanfare();
       triggerConfetti();
       showToast('gold', 'تم استيراد المدرسة بنجاح 🌟', `تم تحميل بيانات ${pkg.schoolProfile.name} بالكامل.`);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'SCHOOL_PACKAGE_IMPORT',
+        entity: 'Backup',
+        details: `استيراد حزمة (${pkg.schoolProfile.name}) — الحالة السابقة محفوظة في لقطة الأمان`,
+        severity: 'WARN'
+      });
       return true;
     } catch (err: any) {
       showToast('error', 'خطأ في الاستيراد', err.message || 'فشل في قراءة ملف حزمة المدرسة.');
@@ -1502,10 +1799,71 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
+  const listAutoBackups = () => autoBackupService.list();
+
+  // استعادة لقطة تلقائية مع التحقق وشبكة الرجوع (لقطة الأمان تُحفظ أولاً)
+  const restoreAutoBackup = (index: number): boolean => {
+    if (!requireLiveMode('استعادة النسخ الاحتياطية')) return false;
+    const snap = autoBackupService.get(index);
+    if (!snap || !Array.isArray(snap.students) || snap.students.length === 0) {
+      showToast('error', 'لقطة غير صالحة', 'تعذر قراءة هذه النسخة الاحتياطية.');
+      return false;
+    }
+    try {
+      autoBackupService.stashSafety({ schoolProfile, students, teachers, classes, notifications, conversations, schedule });
+      const s = snap.students as Student[];
+      const t = (snap.teachers as TeacherAccount[]) || [];
+      const c = (snap.classes as SchoolClass[]) || [];
+      const n = (snap.notifications as NotificationItem[]) || [];
+      const cv = (snap.conversations as TeacherConversation[]) || [];
+      const sc = (snap.schedule as DaySchedule[]) || [];
+      setStudents(s); db.saveStudents(s, true);
+      if (t.length > 0) { setTeachers(t); db.saveTeachers(t); }
+      if (c.length > 0) { setClasses(c); db.saveClasses(c); }
+      setNotifications(n); db.saveNotifications(n);
+      setConversations(cv); db.saveConversations(cv);
+      if (sc.length > 0) { setSchedule(sc); db.saveSchedule(sc); }
+      if (snap.schoolProfile && (snap.schoolProfile as SchoolProfile).name) {
+        setSchoolProfileState(snap.schoolProfile as SchoolProfile);
+        saveSchoolProfile(snap.schoolProfile as SchoolProfile);
+      }
+      sound.playSuccess();
+      showToast('gold', 'تمت الاستعادة بنجاح 💾', `استُعيدت لقطة بتاريخ ${new Date(snap.takenAt).toLocaleDateString('ar-LY')} — والحالة السابقة محفوظة في لقطة الأمان.`);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'AUTOBACKUP_RESTORE',
+        entity: 'Backup',
+        details: `استعادة لقطة (${snap.takenAt}) بعدد ${s.length} طالباً`,
+        severity: 'CRITICAL'
+      });
+      return true;
+    } catch {
+      showToast('error', 'فشلت الاستعادة', 'تعذر تطبيق النسخة — بياناتك الحالية لم تُمس.');
+      return false;
+    }
+  };
+
   const updateTeacherCode = (teacherId: string, newCode: string): boolean => {
-    const clean = newCode.trim();
-    if (!clean) {
-      showToast('error', 'خطأ في الرمز', 'يرجى إدخال رمز صحيح غير فارغ.');
+    if (!requireLiveMode('تغيير رموز الدخول')) return false;
+    const clean = newCode.trim().toUpperCase();
+    if (!clean || clean.length < 4) {
+      showToast('error', 'خطأ في الرمز', 'يرجى إدخال رمز من 4 أحرف على الأقل.');
+      return false;
+    }
+    // فرادة الرمز: التكرار يعني دخولاً لحساب زميل آخر (find الأول يفوز) — مرفوض
+    const clash = teachers.find(t => t.id !== teacherId && t.code.trim().toUpperCase() === clean);
+    if (clash) {
+      sound.playAlert();
+      showToast('error', '⛔ الرمز مستخدم مسبقاً', `الرمز (${clean}) مسجل باسم (${clash.name}). اختر رمزاً فريداً.`);
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'TEACHER_CODE_CLASH',
+        entity: 'Auth',
+        details: `محاولة تعيين رمز مكرر (${clean}) الموجود لدى (${clash.name})`,
+        severity: 'WARN'
+      });
       return false;
     }
     const updated = teachers.map(t => t.id === teacherId ? { ...t, code: clean } : t);
@@ -1520,8 +1878,26 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return true;
   };
 
+  // كشف التلاعب بساعة الجهاز: الساعة للوراء = تجميد التجربة عمداً.
+  // يُحفظ أعلى طابع زمني شوهد؛ أي إقلاع بطابع أقدم بفارق مريب = عبث.
+  const CLOCK_SKEW_KEY = 'madrasa_last_seen_ts';
+  const CLOCK_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
+  const detectClockTamper = (): boolean => {
+    try {
+      const last = Number(localStorage.getItem(CLOCK_SKEW_KEY) || 0);
+      if (!last) return false;
+      return Date.now() < last - CLOCK_SKEW_TOLERANCE_MS;
+    } catch {
+      return false;
+    }
+  };
+
+  const [clockTampered] = useState<boolean>(() => detectClockTamper());
+
   // Free Trial Calculations
   const trialDaysRemaining = React.useMemo(() => {
+    if (clockTampered) return 0; // ساعة مرجعة للوراء = التجربة موقوفة حتى تصحيح الساعة
     if (!schoolProfile.isTrial) return 0;
     const startDate = new Date(schoolProfile.trialStartDate || Date.now()).getTime();
     const durationDays = schoolProfile.trialDurationDays || 7;
@@ -1532,18 +1908,168 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const isTrialActive = Boolean(schoolProfile.isTrial);
 
-  const extendTrialDays = (extraDays: number) => {
-    const currentDuration = schoolProfile.trialDurationDays || 7;
+  // سياسة التجربة المجانية (صارمة — بلا تمديد مجاني متكرر):
+  // trial_used يُكتب true مرة واحدة عند أول تفعيل لكل مدرسة/حساب (مربوط بهوية المدرسة+الهاتف)،
+  // وأي ضغطة "تمديد مجاني" بعده مرفوضة تماماً مع دعوة للترقية. لا سقف يُعاد فتحه.
+  const TRIAL_FREE_EXTEND_DAYS = 7;
+  const TRIAL_MAX_FREE_EXTENDS = 0;
+  const TRIAL_ABSOLUTE_MAX_DAYS = 30;
+  const TRIAL_EXT_MIRROR_KEY = 'madrasa_trial_ext_v1';
+  const TRIAL_USED_MIRROR_KEY = 'madrasa_trial_used_v1';
+
+  const trialIdentityKey = (schoolId: string, phone: string): string =>
+    `${(schoolId || '').trim().toLowerCase()}::${(phone || '').replace(/\D/g, '')}`;
+
+  const readTrialUsedMirror = (): Record<string, { used: boolean; at: string }> => {
+    try {
+      const raw = localStorage.getItem(TRIAL_USED_MIRROR_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
+    } catch {}
+    return {};
+  };
+
+  const writeTrialUsedMirror = (key: string) => {
+    try {
+      const map = readTrialUsedMirror();
+      map[key] = { used: true, at: new Date().toISOString() };
+      localStorage.setItem(TRIAL_USED_MIRROR_KEY, JSON.stringify(map));
+    } catch {}
+  };
+
+  /** هل استُهلكت التجربة لهذه الهوية؟ (الملف + المرآة + سجل المدارس — طبقات ضد مسح المتصفح) */
+  const isTrialUsed = (profile: SchoolProfile): boolean => {
+    if (profile.trial_used === true) return true;
+    try {
+      const mirror = readTrialUsedMirror();
+      if (mirror[trialIdentityKey(profile.id, profile.directorPhone)]?.used) return true;
+      // طبقة السجل: مدرسة سابقة بنفس الهاتف والاسم استهلكت تجربتها
+      const duplicates = savedSchools.filter(s =>
+        s.id !== profile.id &&
+        s.trial_used === true &&
+        (s.directorPhone || '').replace(/\D/g, '') === (profile.directorPhone || '').replace(/\D/g, '') &&
+        (s.directorPhone || '').replace(/\D/g, '').length >= 9 &&
+        (s.name || '').trim() === (profile.name || '').trim()
+      );
+      if (duplicates.length > 0) return true;
+    } catch {}
+    return false;
+  };
+
+  const getTrialExtendsUsed = (profile: SchoolProfile): number => {
+    let mirror = 0;
+    try {
+      const raw = localStorage.getItem(TRIAL_EXT_MIRROR_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        mirror = Number(parsed?.[profile.id]) || 0;
+      }
+    } catch {}
+    return Math.max(Number(profile.trialFreeExtendsUsed) || 0, mirror);
+  };
+
+  const setTrialExtendsUsed = (profileId: string, used: number) => {
+    try {
+      const raw = localStorage.getItem(TRIAL_EXT_MIRROR_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      parsed[profileId] = used;
+      localStorage.setItem(TRIAL_EXT_MIRROR_KEY, JSON.stringify(parsed));
+    } catch {}
+  };
+
+  const trialFreeExtendsLeft = schoolProfile.isTrial && !isTrialUsed(schoolProfile)
+    ? Math.max(0, TRIAL_MAX_FREE_EXTENDS - getTrialExtendsUsed(schoolProfile))
+    : 0;
+
+  const extendTrialDays = (extraDays: number): boolean => {
+    if (!schoolProfile.isTrial) {
+      showToast('info', 'المنظومة مفعلة رسمياً ✅', 'نسختك الرسمية سارية — لا حاجة لأي تمديد.');
+      return true;
+    }
+    // القاعدة الصارمة: التجربة تُستهلك مرة واحدة — لا منح بعد أول تفعيل
+    if (isTrialUsed(schoolProfile)) {
+      sound.playAlert();
+      showToast('warning', 'انتهت التجربة المجانية ⏳', 'سبق استخدام التجربة المجانية لهذه المدرسة — فعّل النسخة الرسمية للاستمرار.');
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'TRIAL_EXTEND_DENIED',
+        entity: 'Licensing',
+        details: 'رفض تمديد مجاني: trial_used=true (التجربة مستهلكة مسبقاً)',
+        severity: 'WARN'
+      });
+      return false;
+    }
+    // مسار الهجرة فقط: ملف تجريبي قديم (قبل حقل trial_used) بلا ختم — يمنح مرة واحدة ثم يُختم نهائياً.
+    // TRIAL_MAX_FREE_EXTENDS = 0 اليوم = المسار مغلق تماماً للجميع.
+    const used = getTrialExtendsUsed(schoolProfile);
+    if (used >= TRIAL_MAX_FREE_EXTENDS) {
+      sound.playAlert();
+      showToast('warning', 'انتهت التجربة المجانية ⏳', 'سبق استخدام التجربة المجانية لهذه المدرسة — فعّل النسخة الرسمية للاستمرار.');
+      auditLogger.log({
+        actorName: currentUserPhone,
+        actorRole: authenticatedRole,
+        action: 'TRIAL_EXTEND_DENIED',
+        entity: 'Licensing',
+        details: `رفض تمديد مجاني: الحصة مستنفدة (${used}/${TRIAL_MAX_FREE_EXTENDS})`,
+        severity: 'WARN'
+      });
+      return false;
+    }
+    const grant = Math.min(Math.max(1, Math.floor(extraDays) || 0), TRIAL_FREE_EXTEND_DAYS);
+    const nextUsed = used + 1;
     const updatedProfile: SchoolProfile = {
       ...schoolProfile,
-      trialDurationDays: currentDuration + extraDays
+      trialDurationDays: Math.min((schoolProfile.trialDurationDays || 7) + grant, TRIAL_ABSOLUTE_MAX_DAYS),
+      trialFreeExtendsUsed: nextUsed,
+      trial_used: true
     };
     setSchoolProfileState(updatedProfile);
     saveSchoolProfile(updatedProfile);
     setSavedSchoolsState(prev => prev.map(s => s.id === updatedProfile.id ? updatedProfile : s));
+    setTrialExtendsUsed(updatedProfile.id, nextUsed);
+    writeTrialUsedMirror(trialIdentityKey(updatedProfile.id, updatedProfile.directorPhone));
     sound.playFanfare();
     triggerConfetti();
-    showToast('gold', 'تم تمديد التجربة المجانية ⏱️', `تمت إضافة ${extraDays} أيام إضافية لصلاحية مدرستك بنجاح!`);
+    showToast('gold', 'تم تمديد التجربة المجانية ⏱️', `تمت إضافة ${grant} أيام لمرة أخيرة — خُتمت التجربة، والقادم التفعيل الرسمي.`);
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'TRIAL_EXTENDED',
+      entity: 'Licensing',
+      details: `تمديد هجرة أخير (+${grant} أيام) مع ختم trial_used=true`,
+      severity: 'INFO'
+    });
+    return true;
+  };
+
+  // ختم الجهاز التجريبي: تجربة واحدة فقط لكل جهاز — يُكتب مرة واحدة ولا يُمسح بإنشاء ملفات جديدة.
+  // نفس الهوية (مدرسة+هاتف) = استعادة بنفس التاريخ الأصلي (لا أيام جديدة).
+  // هوية مختلفة = مرفوض (منع التسلسل بأسماء دوّارة) إلا بتجاوز المالك برمز الماستر.
+  const DEVICE_TRIAL_KEY = 'madrasa_device_trial_v1';
+
+  interface DeviceTrialSeal { firstTrialAt: string; schoolName: string; phone: string; count: number }
+
+  const readDeviceSeal = (): DeviceTrialSeal | null => {
+    try {
+      const raw = localStorage.getItem(DEVICE_TRIAL_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw);
+      if (p && p.firstTrialAt) return p as DeviceTrialSeal;
+    } catch {}
+    return null;
+  };
+
+  const normName = (s: string): string => (s || '').trim().replace(/\s+/g, ' ');
+  const normPhone = (s: string): string => (s || '').replace(/\D/g, '');
+
+  const sameTrialIdentity = (aName: string, aPhone: string, bName: string, bPhone: string): boolean => {
+    const np = normPhone(aPhone);
+    const samePhone = np.length >= 9 && np === normPhone(bPhone);
+    const sameName = normName(aName) !== '' && normName(aName) === normName(bName);
+    return samePhone && sameName;
   };
 
   const createTrialSchool = (trialData: {
@@ -1555,8 +2081,44 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     address: string;
     username: string;
     seedRichData: boolean;
-  }) => {
-    // Snapshot current school
+  }): boolean => {
+    if (!requireLiveMode('إنشاء بيئة تجريبية')) return false;
+    const cleanName = normName(trialData.schoolName) || 'مدرسة التجربة المجانية';
+    const cleanPhone = normPhone(trialData.phone) || '';
+
+    // بوابة الختم: هل سبق لهذا الجهاز تفعيل تجربة؟
+    const seal = readDeviceSeal();
+    let inheritedStart: string | null = null;
+    if (seal) {
+      const isSuperOverride = authenticatedRole === 'superadmin' && superUnlocked;
+      if (sameTrialIdentity(cleanName, cleanPhone, seal.schoolName, seal.phone)) {
+        // نفس الهوية (استعادة بعد مسح القائمة مثلاً): تُورَّث بداية التجربة الأصلية — صفر أيام جديدة
+        inheritedStart = seal.firstTrialAt;
+      } else if (!isSuperOverride) {
+        sound.playAlert();
+        showToast('warning', 'تجربة مستهلكة على هذا الجهاز ⏳', 'سُجلت تجربة مجانية سابقة على هذا الجهاز — فعّل النسخة الرسمية للاستمرار.');
+        auditLogger.log({
+          actorName: currentUserPhone,
+          actorRole: authenticatedRole,
+          action: 'TRIAL_CHAIN_DENIED',
+          entity: 'Licensing',
+          details: `رفض تجربة متسلسلة باسم (${cleanName}) — الختم السابق بتاريخ (${seal.firstTrialAt})`,
+          severity: 'CRITICAL'
+        });
+        setShowUpgradeModal(true);
+        return false;
+      } else {
+        auditLogger.log({
+          actorName: currentUserPhone,
+          actorRole: authenticatedRole,
+          action: 'TRIAL_OVERRIDE_BY_OWNER',
+          entity: 'Licensing',
+          details: `تجاوز المالك: تجربة جديدة باسم (${cleanName}) رغم الختم السابق`,
+          severity: 'WARN'
+        });
+      }
+    }
+    // لقطة أمان للحالة الحالية قبل التجهيز
     try {
       localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
         students,
@@ -1570,16 +2132,20 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newId = `school-trial-${Date.now()}`;
     const newTrialSchool: SchoolProfile = {
       id: newId,
-      name: trialData.schoolName,
+      name: cleanName,
       code: `TRIAL-LIB-${Math.floor(100 + Math.random() * 900)}`,
       district: `مراقبة التربية والتعليم - ${trialData.city}`,
       directorName: trialData.username || 'مدير المدرسة',
-      directorPhone: trialData.phone || '0922465676',
+      directorPhone: cleanPhone,
       academicYear: '2025 - 2026 م',
       isCustom: true,
       isTrial: true,
-      trialStartDate: new Date().toISOString(),
+      // توريث البداية الأصلية عند الاستعادة بنفس الهوية — لا أيام جديدة أبداً
+      trialStartDate: inheritedStart || new Date().toISOString(),
       trialDurationDays: 7,
+      trialFreeExtendsUsed: 0,
+      // ختم الاستهلاك لحظة أول تفعيل — لا تمديد مجاني بعده أبداً لهذه الهوية
+      trial_used: true,
       city: trialData.city,
       studentCountEstimate: trialData.studentCount,
       isInternational: trialData.isInternational,
@@ -1589,6 +2155,18 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setSchoolProfileState(newTrialSchool);
     saveSchoolProfile(newTrialSchool);
+    // ختم المرآة بالهوية الثابتة (المدرسة+الهاتف) — طبقة ضد مسح المتصفح
+    writeTrialUsedMirror(trialIdentityKey(newTrialSchool.id, newTrialSchool.directorPhone));
+    // ختم الجهاز (مرة واحدة): أول تفعيل يؤرخ بداية التجربة الوحيدة لهذا الجهاز
+    try {
+      const prev = readDeviceSeal();
+      localStorage.setItem(DEVICE_TRIAL_KEY, JSON.stringify({
+        firstTrialAt: prev?.firstTrialAt || newTrialSchool.trialStartDate,
+        schoolName: cleanName,
+        phone: cleanPhone,
+        count: (prev?.count || 0) + 1,
+      } as DeviceTrialSeal));
+    } catch {}
 
     setSavedSchoolsState(prev => {
       const list = [...prev, newTrialSchool];
@@ -1622,18 +2200,32 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     // Set phone for admin login
-    setCurrentUserPhoneState(trialData.phone || '0922465676');
+    setCurrentUserPhoneState(cleanPhone || currentUserPhone);
     try {
-      localStorage.setItem('madrasa_admin_phone', trialData.phone || '0922465676');
+      if (cleanPhone) localStorage.setItem('madrasa_admin_phone', cleanPhone);
     } catch {}
 
-    setCurrentRole('admin');
+    // تهيئة بيئة تجريبية جديدة = هوية مدير جديدة (تجاوز الحارس عمداً)
+    applyRole('admin');
+    setAuthenticatedRole('admin');
+    setSuperUnlocked(false);
     setIsAuthenticated(true);
     setActiveTab('dashboard');
 
     sound.playFanfare();
     triggerConfetti();
-    showToast('gold', 'تم تجهيز بيئتك التجريبية بنجاح 🌟', `مرحباً بك في مدرسة ${trialData.schoolName}! لديك 7 أيام تجربة مجانية كاملة.`);
+    showToast('gold', 'تم تجهيز بيئتك التجريبية بنجاح 🌟', `مرحباً بك في مدرسة ${cleanName}! لديك 7 أيام تجربة مجانية كاملة.`);
+    auditLogger.log({
+      actorName: cleanPhone,
+      actorRole: 'admin',
+      action: inheritedStart ? 'TRIAL_RECREATED_SAME_IDENTITY' : 'TRIAL_ACTIVATED',
+      entity: 'Licensing',
+      details: inheritedStart
+        ? `إعادة إنشاء بنفس الهوية — موروثة من (${inheritedStart}) بلا أيام جديدة`
+        : `تفعيل تجربة أولى باسم (${cleanName}) وختم الجهاز`,
+      severity: 'WARN'
+    });
+    return true;
   };
 
   const addFinancialTransaction = (tx: Omit<FinancialTransaction, 'id' | 'date'>) => {
@@ -1817,6 +2409,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       value={{
         currentRole,
         setCurrentRole,
+        authenticatedRole,
+        isImpersonating: currentRole !== authenticatedRole,
+        isReadOnlyPreview: currentRole !== authenticatedRole,
+        superUnlocked,
+        viewAs,
+        stopImpersonating,
+        unlockSuperAdmin,
+        enterSuperAdmin,
+        exitSuperAdminGate,
         isAuthenticated,
         currentUserPhone,
         setCurrentUserPhone: (phone: string) => setCurrentUserPhoneState(phone),
@@ -1907,6 +2508,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setShowUpgradeModal,
         createTrialSchool,
         extendTrialDays,
+        trialFreeExtendsLeft,
+        restoreAutoBackup,
+        listAutoBackups,
         // Finance Management
         financialTransactions,
         tuitionFees,
@@ -1963,11 +2567,41 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           }}
           onEnterNewLicense={() => setShowActivationModal(true)}
           onOpenSuperAdmin={() => {
-            setCurrentRole('superadmin');
-            setActiveTab('superadmin-dashboard');
+            // انتهاء الاشتراك: فتح السوبر يستلزم رمز الماستر (لا قفز مباشر)
+            setShowSuperUnlockModal(true);
           }}
         />
       )}
+
+      {/* بوابة الماستر على مستوى المزوّد (انتهاء الاشتراك وغيره) */}
+      <SuperAdminLockModal
+        isOpen={showSuperUnlockModal}
+        onClose={() => setShowSuperUnlockModal(false)}
+        onSuccess={() => {
+          setShowSuperUnlockModal(false);
+          enterSuperAdmin();
+        }}
+      />
+
+      {/* تدوير الرموز الافتراضية (أولوية قصوى — يظهر كل إقلاع حتى التغيير) */}
+      <PinRotationModal
+        isOpen={showPinRotation}
+        onClose={() => setShowPinRotation(false)}
+        needsSuper={pinRotationNeeds.super}
+        needsDirector={pinRotationNeeds.director}
+        onSaved={() => {
+          setPinRotationNeeds({ super: false, director: false });
+          showToast('gold', 'رموزك محمية الآن 🛡️', 'تم تغيير الرموز الافتراضية بنجاح — لا يعرفها سواك.');
+          auditLogger.log({
+            actorName: currentUserPhone,
+            actorRole: authenticatedRole,
+            action: 'SECURITY_PINS_ROTATED',
+            entity: 'Security',
+            details: 'تدوير الرموز الافتراضية (ماستر/مدير) عند أول تشغيل',
+            severity: 'CRITICAL'
+          });
+        }}
+      />
     </SchoolContext.Provider>
   );
 };

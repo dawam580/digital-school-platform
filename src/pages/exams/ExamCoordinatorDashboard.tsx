@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
 import {
   Award,
   FileSpreadsheet,
@@ -26,7 +27,7 @@ import { DirectorInviteModal } from '../../components/common/DirectorInviteModal
 import { StudentFullExamReport, LibyanExamEngine } from '../../services/exams/libyanExamEngine';
 
 export const ExamCoordinatorDashboard: React.FC = () => {
-  const { schoolProfile, students, showToast, addNotification, setCurrentRole, logout } = useSchool();
+  const { schoolProfile, students, showToast, addNotification, setCurrentRole, logout, isReadOnlyPreview } = useSchool();
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<'master_sheet' | 'seating_committees' | 'second_round'>('master_sheet');
@@ -78,6 +79,10 @@ export const ExamCoordinatorDashboard: React.FC = () => {
     setGoldenReport(rep);
   };
 
+  // حارس الدور الإلزامي: هذه الشاشة لمنسق الامتحانات (والمدير/السوبر المعاينين) فقط
+  const allowed = useRequireRole('exams_coordinator');
+  if (!allowed) return null;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-cairo p-3 sm:p-6 space-y-6">
       
@@ -122,6 +127,8 @@ export const ExamCoordinatorDashboard: React.FC = () => {
             <span>روابط المنظومة والدعوة</span>
           </button>
 
+          {/* يظهر فقط للمدير أثناء معاينة بوابة الكنترول — المنسق لا يملك دخول الإدارة */}
+          {isReadOnlyPreview && (
           <button
             type="button"
             onClick={() => { sound.playTap(); setCurrentRole('admin'); }}
@@ -130,6 +137,7 @@ export const ExamCoordinatorDashboard: React.FC = () => {
             <ChevronLeft className="w-4 h-4" />
             <span>لوحة تحكم المدير</span>
           </button>
+          )}
         </div>
       </header>
 

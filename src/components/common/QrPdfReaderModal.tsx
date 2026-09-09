@@ -205,8 +205,9 @@ export const QrPdfReaderModal: React.FC<QrPdfReaderModalProps> = ({
       className: data.className || '7/أ',
       gender: 'male',
       parentName: `ولي أمر ${data.name || 'الطالب'}`,
-      parentPhone: data.parentPhone || '0910000000',
-      parentEmail: 'parent@school.edu.ly',
+      // أمان الخصوصية: لا تُخترع أرقام هواتف أبداً (رسائل الواتساب قد تذهب لشخص خطأ)
+      parentPhone: data.parentPhone || '',
+      parentEmail: data.parentEmail || '',
       status: 'present',
       attendanceRate: 98,
       academicAverage: 92,

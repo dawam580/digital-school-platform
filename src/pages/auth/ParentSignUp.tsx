@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { User, Phone, ShieldCheck, ArrowLeft, ArrowRight, MessageSquare, CheckCircle2 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
+import { DEV_MODE } from '../../config/devMode';
+
+const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
 
 export const ParentSignUp: React.FC = () => {
   const { login, setActiveTab } = useSchool();
@@ -11,10 +14,17 @@ export const ParentSignUp: React.FC = () => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !phone) return;
+    if (!fullName.trim() || !phone.trim()) return;
+    // الإنتاج: رقم ليبي حقيقي الصيغة (التحقق الفعلي عبر SMS يتطلب خادماً — مسجل كقيد معماري)
+    if (!LIBYAN_PHONE_RE.test(phone.trim())) {
+      setFormError('رقم الهاتف غير صالح — أدخل رقماً ليبياً بصيغة 09xxxxxxxx.');
+      return;
+    }
+    setFormError('');
     setLoading(true);
     setTimeout(() => {
       setOtpSent(true);
@@ -155,6 +165,11 @@ export const ParentSignUp: React.FC = () => {
                 ))}
               </div>
 
+              {formError && (
+                <p className="text-xs text-red-600 font-bold text-center">{formError}</p>
+              )}
+
+              {DEV_MODE && (
               <button
                 type="button"
                 onClick={() => setOtp(['4', '8', '2', '1'])}
@@ -162,6 +177,7 @@ export const ParentSignUp: React.FC = () => {
               >
                 💡 إدخال الرمز التجريبي تلقائياً (4821)
               </button>
+              )}
 
               {/* Confirm Button */}
               <div className="space-y-2 pt-2">

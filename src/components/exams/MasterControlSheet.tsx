@@ -186,10 +186,13 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
   };
 
   const [showLockPinModal, setShowLockPinModal] = useState(false);
+  // وضع مودال الرمز: قفل/فتح الشيت أم نشر/سحب النتائج (النشر قرار رسمي يستلزم الرمز أيضاً)
+  const [lockModalMode, setLockModalMode] = useState<'lock' | 'release'>('lock');
 
   // Lock / Unlock control trigger
   const handleToggleLock = () => {
     sound.playTap();
+    setLockModalMode('lock');
     setShowLockPinModal(true);
   };
 
@@ -221,12 +224,25 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
     }
   };
 
-  // Release results to parents
-  const handleToggleReleaseToParents = async () => {
+  // Release results to parents (PIN-gated + audited — قرار نشر رسمي)
+  const handleToggleReleaseToParents = () => {
     if (!examLock) return;
     sound.playTap();
+    setLockModalMode('release');
+    setShowLockPinModal(true);
+  };
+
+  const executeToggleRelease = async () => {
+    if (!examLock) return;
 
     const newReleaseState = !examLock.isReleasedToParents;
+    // الأصول الليبية: لا نشر قبل الاعتماد والقفل
+    if (newReleaseState && !examLock.isLocked) {
+      sound.playAlert();
+      showToast('error', 'اعتمد الشيت أولاً 🔒', 'لا تُنشر النتائج قبل اعتماد وقفل شيت الكنترول رسمياً.');
+      return;
+    }
+
     const updatedLock: ExamLock = {
       ...examLock,
       isReleasedToParents: newReleaseState,
@@ -661,6 +677,14 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                     {/* Student Name */}
                     <td className="p-2.5 font-black text-slate-900 dark:text-white truncate">
                       {report.studentName}
+                      {(report.estimatedCount ?? 0) > 0 && (
+                        <span
+                          className="mr-1.5 px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-[10px] font-black whitespace-nowrap"
+                          title="بعض درجات هذا الطالب تقديرية (لم تُرصد رسمياً بعد)"
+                        >
+                          تقديري {report.estimatedCount}/{report.results.length}
+                        </span>
+                      )}
                     </td>
 
                     {/* Subject Score Inputs */}
@@ -686,8 +710,8 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                                 value={cwScore}
                                 onChange={e => studentObj && handleScoreChange(studentObj, sub, 'coursework', e.target.value)}
                                 onKeyDown={e => handleKeyDown(e, rIdx, `cw_${sub.code}`)}
-                                className="w-12 p-1 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-emerald-500 disabled:opacity-80"
-                                title={`أعمال السنة لمادة ${sub.name} (من ${sub.courseworkMax || 40})`}
+                                className={`w-12 p-1 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-emerald-500 disabled:opacity-80 ${item?.isEstimated ? 'border-dashed !border-amber-400 !bg-amber-50/60 dark:!bg-amber-950/30' : ''}`}
+                                title={item?.isEstimated ? `أعمال السنة لمادة ${sub.name} — قيمة تقديرية، عدّلها للرصد الرسمي` : `أعمال السنة لمادة ${sub.name} (من ${sub.courseworkMax || 40})`}
                               />
                             </td>
 
@@ -704,11 +728,13 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                                 onChange={e => studentObj && handleScoreChange(studentObj, sub, 'exam', e.target.value)}
                                 onKeyDown={e => handleKeyDown(e, rIdx, `ex_${sub.code}`)}
                                 className={`w-12 p-1 text-center font-mono font-bold rounded-lg border text-xs focus:ring-2 focus:ring-emerald-500 disabled:opacity-80 ${
-                                  !isSubPassed
-                                    ? 'border-rose-400 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
-                                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white'
+                                  item?.isEstimated
+                                  ? 'border-dashed border-amber-400 bg-amber-50/60 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300'
+                                  : !isSubPassed
+                                  ? 'border-rose-400 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white'
                                 }`}
-                                title={`امتحان نهاية الفصل لمادة ${sub.name} (من ${sub.examMax || 60})`}
+                                title={item?.isEstimated ? `امتحان ${sub.name} — قيمة تقديرية، عدّلها للرصد الرسمي` : `امتحان نهاية الفصل لمادة ${sub.name} (من ${sub.examMax || 60})`}
                               />
                             </td>
                           </React.Fragment>
@@ -717,9 +743,18 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                         // Total only
                         return (
                           <td key={sub.code} className="p-2 text-center border-r border-slate-100 dark:border-slate-800 font-mono font-bold">
-                            <span className={isSubPassed ? 'text-slate-800 dark:text-slate-200' : 'text-rose-600 font-black'}>
-                              {totScore}
-                            </span>
+                            {item?.isEstimated ? (
+                              <span
+                                className="text-amber-600 dark:text-amber-400"
+                                title="درجة تقديرية — لم تُرصد رسمياً بعد"
+                              >
+                                ~{totScore}
+                              </span>
+                            ) : (
+                              <span className={isSubPassed ? 'text-slate-800 dark:text-slate-200' : 'text-rose-600 font-black'}>
+                                {totScore}
+                              </span>
+                            )}
                           </td>
                         );
                       }
@@ -759,6 +794,14 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                       }`}>
                         {report.statusLabel}
                       </span>
+                      {(report.estimatedCount ?? 0) === report.results.length && report.results.length > 0 && (
+                        <span
+                          className="block mt-1 text-[10px] font-black text-amber-600 dark:text-amber-400"
+                          title="كل درجات هذا الكشف تقديرية — لا يُعتمد رسمياً قبل الرصد"
+                        >
+                          ⚠ كشف تقديري بالكامل
+                        </span>
+                      )}
                     </td>
 
                     {/* Actions */}
@@ -793,19 +836,25 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
         </div>
       </div>
 
-      {/* 2FA Security PIN Confirmation Modal for Exam Lock */}
+      {/* 2FA Security PIN Confirmation Modal for Exam Lock & Results Release */}
       <SecurityPinConfirmModal
         isOpen={showLockPinModal}
         onClose={() => setShowLockPinModal(false)}
-        onSuccess={executeToggleLock}
-        title={examLock?.isLocked ? 'إلغاء قفل شيت الكنترول' : 'اعتماد وقفل شيت الكنترول رسمياً'}
-        description={
-          examLock?.isLocked
+        onSuccess={() => { lockModalMode === 'release' ? executeToggleRelease() : executeToggleLock(); }}
+        title={lockModalMode === 'release'
+          ? (examLock?.isReleasedToParents ? 'سحب النتائج المنشورة' : 'نشر النتائج لأولياء الأمور رسمياً')
+          : (examLock?.isLocked ? 'إلغاء قفل شيت الكنترول' : 'اعتماد وقفل شيت الكنترول رسمياً')}
+        description={lockModalMode === 'release'
+          ? (examLock?.isReleasedToParents
+            ? `أنت على وشك سحب نتائج فصل (${selectedClass}) وحجبها عن أولياء الأمور.`
+            : `أنت على وشك نشر نتائج فصل (${selectedClass}) رسمياً لجميع أولياء الأمور. تأكد من اعتماد الشيت أولاً.`)
+          : (examLock?.isLocked
             ? `أنت على وشك إلغاء قفل شيت درجات فصل (${selectedClass}) وإعادة فتحه للتعديل. يرجى إدخال رمز أمان المدير العام للتأكيد.`
-            : `أنت على وشك اعتماد شيت درجات فصل (${selectedClass}) وقفله نهائياً وتثبيت النتائج الرسمية لمنع أي تعديل لاحق.`
-        }
-        actionBadge={examLock?.isLocked ? 'إلغاء قفل الكنترول 🔓' : 'اعتماد وقفل الكنترول 🔒'}
-        isDestructive={examLock?.isLocked}
+            : `أنت على وشك اعتماد شيت درجات فصل (${selectedClass}) وقفله نهائياً وتثبيت النتائج الرسمية لمنع أي تعديل لاحق.`)}
+        actionBadge={lockModalMode === 'release'
+          ? (examLock?.isReleasedToParents ? 'سحب النشر 🔒' : 'نشر رسمي 📢')
+          : (examLock?.isLocked ? 'إلغاء قفل الكنترول 🔓' : 'اعتماد وقفل الكنترول 🔒')}
+        isDestructive={lockModalMode === 'lock' && examLock?.isLocked}
       />
     </div>
   );

@@ -14,6 +14,13 @@ export interface SchoolProfile {
   isTrial?: boolean;
   trialStartDate?: string;
   trialDurationDays?: number;
+  /** عدد مرات التمديد المجاني المستهلكة (تدقيق تاريخي) */
+  trialFreeExtendsUsed?: number;
+  /**
+   * استُهلكت التجربة (boolean ثابت): يُكتب true مرة واحدة عند أول تفعيل لكل مدرسة/حساب،
+   * وأي طلب "تمديد مجاني" بعده مرفوض تماماً — الحصة المجانية لا تتجدد.
+   */
+  trial_used?: boolean;
   city?: string;
   studentCountEstimate?: string;
   isInternational?: boolean;

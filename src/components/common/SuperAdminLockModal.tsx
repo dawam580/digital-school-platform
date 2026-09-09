@@ -158,7 +158,7 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
           {/* Hint */}
           <div className="text-center mt-3">
             <span className="text-[11px] text-slate-400">
-              الرمز السري الافتراضي للمالك: <strong className="text-blue-300 font-mono">9988</strong>
+              🔒 رمز الماستر معروف للمالك فقط — لا تشاركه مع أي شخص
             </span>
           </div>
 

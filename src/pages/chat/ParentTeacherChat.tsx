@@ -3,12 +3,26 @@ import { useSchool } from '../../context/SchoolContext';
 import { CheckCheck, Image, Mic, Paperclip, Send, Smile, Sparkles, User, Volume2 } from 'lucide-react';
 
 export const ParentTeacherChat: React.FC = () => {
-  const { conversations, sendChatMessage, currentRole, selectedStudent } = useSchool();
-  const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || 'conv-1');
+  const { conversations, sendChatMessage, currentRole, currentTeacher, selectedStudent } = useSchool();
+  // عزل الخصوصية: المعلم يرى محادثات مواده فقط — المدير يرى الكل (متابعة رسائل أولياء الأمور)
+  const visibleConversations = currentRole === 'teacher' && currentTeacher
+    ? conversations.filter(c => c.teacherId === currentTeacher.id || c.teacherName === currentTeacher.name)
+    : conversations;
+  const [activeConvId, setActiveConvId] = useState<string>(visibleConversations[0]?.id || 'conv-1');
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
 
-  const activeConv = conversations.find(c => c.id === activeConvId) || conversations[0];
+  const activeConv = visibleConversations.find(c => c.id === activeConvId) || visibleConversations[0];
+
+  if (!activeConv) {
+    return (
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-10 text-center font-cairo">
+        <p className="text-2xl mb-2">💬</p>
+        <p className="text-sm font-black text-slate-800 dark:text-white">لا توجد محادثات واردة لموادك بعد</p>
+        <p className="text-xs text-slate-400 mt-1">ستظهر هنا رسائل أولياء أمور طلاب فصولك فور وصولها.</p>
+      </div>
+    );
+  }
 
   const handleSend = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -66,11 +80,11 @@ export const ParentTeacherChat: React.FC = () => {
         <div className="lg:col-span-4 border-l border-slate-100 dark:border-slate-800 p-4 space-y-3 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="px-2 py-1 flex items-center justify-between">
             <h2 className="font-black text-sm text-slate-900 dark:text-white">معلمو المواد الدراسية</h2>
-            <span className="text-[11px] font-bold text-slate-400">({conversations.length} معلمين)</span>
+            <span className="text-[11px] font-bold text-slate-400">({visibleConversations.length} معلمين)</span>
           </div>
 
           <div className="space-y-2">
-            {conversations.map((conv) => {
+            {visibleConversations.map((conv) => {
               const isActive = conv.id === activeConvId;
 
               return (

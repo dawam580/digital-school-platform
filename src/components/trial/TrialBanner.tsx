@@ -18,6 +18,7 @@ export const TrialBanner: React.FC = () => {
     schoolProfile,
     isTrialActive,
     trialDaysRemaining,
+    trialFreeExtendsLeft,
     setShowUpgradeModal,
     extendTrialDays,
     exportSchoolPackage
@@ -33,7 +34,11 @@ export const TrialBanner: React.FC = () => {
   };
 
   const handleQuickExtend = () => {
-    sound.playSuccess();
+    if (trialFreeExtendsLeft <= 0) {
+      sound.playTap();
+      setShowUpgradeModal(true);
+      return;
+    }
     extendTrialDays(7);
   };
 
@@ -92,11 +97,17 @@ export const TrialBanner: React.FC = () => {
             type="button"
             onClick={handleQuickExtend}
             className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition flex items-center gap-1.5 active:scale-95"
-            title="إضافة 7 أيام أخرى مجاناً"
+            title={trialFreeExtendsLeft > 0 ? `تمديد مجاني واحد متبقٍ (+7 أيام)` : 'انتهت حصة التمديد المجاني — فعّل النسخة الرسمية'}
           >
             <Clock className="w-3.5 h-3.5 text-blue-300" />
-            <span className="hidden sm:inline">طلب تمديد مجاني ⏱️</span>
-            <span className="sm:hidden">+7 أيام</span>
+            {trialFreeExtendsLeft > 0 ? (
+              <>
+                <span className="hidden sm:inline">طلب تمديد مجاني ⏱️ (متبقٍ {trialFreeExtendsLeft})</span>
+                <span className="sm:hidden">+7 أيام</span>
+              </>
+            ) : (
+              <span>تفعيل الرسمية 🚀</span>
+            )}
           </button>
 
           <button

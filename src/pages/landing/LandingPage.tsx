@@ -39,6 +39,7 @@ import {
   TailgridsAccordionItem
 } from '../../components/tailgrids/TailgridsKit';
 import { TailgridsPricingSection, PricingPlan } from '../../components/tailgrids/TailgridsPricing';
+import { DEV_MODE } from '../../config/devMode';
 
 export const LandingPage: React.FC = () => {
   const {
@@ -358,6 +359,7 @@ export const LandingPage: React.FC = () => {
                 <ArrowLeft className="w-5 h-5 rtl:rotate-0 ltr:rotate-180" />
               </button>
 
+              {DEV_MODE && (
               <button
                 type="button"
                 onClick={() => handleQuickLogin('admin')}
@@ -366,6 +368,7 @@ export const LandingPage: React.FC = () => {
                 <Shield className="w-5 h-5 text-purple-600" />
                 <span>دخول لوحة المدير (كشف 873 طالباً)</span>
               </button>
+              )}
 
               <a
                 href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9"
@@ -470,6 +473,7 @@ export const LandingPage: React.FC = () => {
                     </div>
                   </div>
 
+                  {DEV_MODE ? (
                   <button
                     type="button"
                     onClick={() => handleQuickLogin(currentP.id)}
@@ -478,6 +482,16 @@ export const LandingPage: React.FC = () => {
                     <span>الدخول وتجربة بوابة {currentP.title}</span>
                     <ArrowLeft className="w-4 h-4 rtl:rotate-0 ltr:rotate-180" />
                   </button>
+                  ) : (
+                  <button
+                    type="button"
+                    onClick={() => { sound.playTap(); setActiveTab('login'); }}
+                    className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-black shadow-md transition active:scale-95 flex items-center gap-2 self-start md:self-auto"
+                  >
+                    <span>الدخول عبر شاشة الدخول الآمنة</span>
+                    <ArrowLeft className="w-4 h-4 rtl:rotate-0 ltr:rotate-180" />
+                  </button>
+                  )}
                 </div>
 
                 <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed max-w-4xl font-normal">

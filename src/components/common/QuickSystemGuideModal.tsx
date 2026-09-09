@@ -16,6 +16,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
+import { DEV_MODE } from '../../config/devMode';
 import { useSchool } from '../../context/SchoolContext';
 
 interface QuickSystemGuideModalProps {
@@ -172,13 +173,15 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
 
               </div>
 
-              {/* Login Info Helper */}
+              {/* Login Info Helper — بيانات الدخول التجريبية في وضع التطوير فقط */}
+              {DEV_MODE && (
               <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-1">
                 <span className="font-black text-slate-800 dark:text-white block">📌 بيانات دخول المدير الافتراضية:</span>
                 <p className="text-slate-600 dark:text-slate-400">
                   رقم الهاتف: <strong className="font-mono text-slate-900 dark:text-white">0922465676</strong> | كلمة السر: <strong className="font-mono text-slate-900 dark:text-white">123456</strong>
                 </p>
               </div>
+              )}
             </div>
           )}
 
@@ -220,13 +223,15 @@ export const QuickSystemGuideModal: React.FC<QuickSystemGuideModalProps> = ({
 
               </div>
 
-              {/* Login Info Helper */}
+              {/* Login Info Helper — بيانات الدخول التجريبية في وضع التطوير فقط */}
+              {DEV_MODE && (
               <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-1">
                 <span className="font-black text-slate-800 dark:text-white block">📌 بيانات دخول المعلم التجريبي:</span>
                 <p className="text-slate-600 dark:text-slate-400">
                   رمز المعلم: <strong className="font-mono text-slate-900 dark:text-white">LIB-MATH-01</strong> (أو أي رمز تخصصه لنفسك) | كلمة السر: <strong className="font-mono text-slate-900 dark:text-white">123456</strong>
                 </p>
               </div>
+              )}
             </div>
           )}
 

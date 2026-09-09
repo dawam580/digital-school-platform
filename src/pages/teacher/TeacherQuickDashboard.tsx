@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
 import { AttendanceStatus } from '../../types';
 import {
   CheckCircle2,
@@ -19,7 +20,6 @@ import {
   ChevronDown,
   UserCheck,
   LogOut,
-  FileText,
   Calendar,
   Tag,
   Sliders,
@@ -64,8 +64,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     toggleLargeFontMode,
     logout,
     setShowCustomCodeModal,
-    setShowPdfImporterModal,
-    setCurrentRole
+    setCurrentRole,
+    isReadOnlyPreview
   } = useSchool();
 
   // Custom Attendance State
@@ -173,6 +173,11 @@ export const TeacherQuickDashboard: React.FC = () => {
   };
 
   const handleSaveAllGrades = () => {
+    if (isReadOnlyPreview) {
+      sound.playAlert();
+      showToast('warning', '👁 وضع المعاينة — قراءة فقط', 'رصد الدرجات متاح من واجهتك الأصلية فقط.');
+      return;
+    }
     sound.playFanfare();
     triggerConfetti();
 
@@ -361,6 +366,10 @@ export const TeacherQuickDashboard: React.FC = () => {
     showToast('gold', 'تم إرسال الرسالة ✉️', `تم إشعار ولي أمر الطالب ${activeStudent.name.split(' ')[0]} فوراً.`);
   };
 
+  // حارس الدور الإلزامي: هذه الشاشة للمعلم (والمدير/السوبر المعاينين) فقط
+  const allowed = useRequireRole('teacher');
+  if (!allowed) return null;
+
   return (
     <div className={`space-y-6 text-right animate-in fade-in max-w-5xl mx-auto pb-20 font-cairo ${isLargeFontMode ? 'text-lg' : 'text-base'}`}>
       
@@ -433,17 +442,10 @@ export const TeacherQuickDashboard: React.FC = () => {
             <span>🏷️ تخصيص رمزي</span>
           </button>
 
-          {/* Import PDF Button */}
-          <button
-            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm border border-teal-400/40 shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 animate-pulse"
-            title="استيراد كشف درجات وبيانات الطلبة من ملف PDF"
-          >
-            <FileText className="w-4 h-4 text-teal-200" />
-            <span>📄 استيراد PDF</span>
-          </button>
+          {/* Import PDF Button — محذوف من واجهة المعلم: استيراد الكشوفات صلاحية (IMPORT_DATA) للمدير والكنترول فقط، وتُدار من لوحة الإدارة */}
 
-          {/* Return to Admin Dashboard (For Directors Testing the Teacher View) */}
+          {/* Return to Admin Dashboard (يظهر فقط للمدير أثناء معاينة واجهة المعلم) */}
+          {isReadOnlyPreview && (
           <button
             type="button"
             onClick={() => {
@@ -457,6 +459,7 @@ export const TeacherQuickDashboard: React.FC = () => {
             <Building2 className="w-4 h-4" />
             <span>⬅️ لوحة تحكم المدير</span>
           </button>
+          )}
 
           {/* Prominent Back Button */}
           <button
@@ -1392,6 +1395,12 @@ export const TeacherQuickDashboard: React.FC = () => {
         teachers={teachers}
         currentTeacher={currentTeacher}
         onSelectTeacher={teacher => {
+          // الأخصائي الاجتماعي لا يُدخل بالنقرة — برمزه الخاص فقط (منع الترقية الجانبية)
+          if (teacher.code === 'LIB-SOC-01' || teacher.subjectCode === 'COUNSEL') {
+            sound.playAlert();
+            showToast('error', '⛔ دخول محمي', 'حساب الأخصائي الاجتماعي يتطلب رمز الدخول الخاص به من شاشة تسجيل الدخول.');
+            return;
+          }
           selectTeacher(teacher);
           if (teacher.assignedClasses && teacher.assignedClasses.length > 0) {
             setSelectedClass(teacher.assignedClasses[0]);

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
 import {
   Users,
   UserPlus,
@@ -53,6 +54,23 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { TeacherAccount, Student } from '../../types';
 import { db } from '../../services/db';
+import { StatCard } from '../../components/ui/StatCard';
+
+// لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
+const AnalyticsCharts = React.lazy(() =>
+  import('../../components/admin/AnalyticsCharts').then(m => ({ default: m.AnalyticsCharts }))
+);
+
+const AnalyticsFallback: React.FC = () => (
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" dir="rtl">
+    {[0, 1, 2].map(i => (
+      <div key={i} className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm animate-pulse">
+        <div className="h-5 w-32 rounded-lg bg-slate-200 dark:bg-slate-700 mb-4" />
+        <div className="h-52 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+      </div>
+    ))}
+  </div>
+);
 
 export const AdminDashboard: React.FC = () => {
   const {
@@ -274,6 +292,10 @@ export const AdminDashboard: React.FC = () => {
     showToast('success', 'تم تصدير الشيت 📊', `تم تنزيل شيت درجات فصل (${selectedExamClass}) المعتمد بنجاح.`);
   };
 
+  // حارس الدور الإلزامي: هذه الشاشة لمدير المدرسة (والسوبر المعاين) فقط
+  const allowed = useRequireRole('admin');
+  if (!allowed) return null;
+
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-7xl mx-auto pb-16 font-cairo">
       
@@ -384,124 +406,57 @@ export const AdminDashboard: React.FC = () => {
         onSelectAnalyticsTab={() => setActiveTab('analytics')}
       />
 
-      {/* 5 Main Stat Cards (Clean & Balanced Responsive Grid) */}
+      {/* 5 Main Stat Cards (21st.dev style — موحدة عبر StatCard) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        
-        {/* Card 1: Students Count */}
-        <div
+        <StatCard
+          title="إجمالي الطلاب المسجلين"
+          value={totalStudentsCount}
+          suffix="طالب"
+          hint="عرض الكشف الكامل ←"
+          icon={Users}
+          tone="blue"
+          active={activeTab === 'students'}
           onClick={() => setActiveTab('students')}
-          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
-            activeTab === 'students'
-              ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-500 shadow-blue-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-300'
-          }`}
-        >
-          <div>
-            <span className="text-xs font-bold text-slate-500 block">إجمالي الطلاب المسجلين</span>
-            <span className="text-3xl font-black text-slate-900 dark:text-white mt-1 block">
-              {totalStudentsCount} طالب
-            </span>
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-bold mt-1 inline-block">
-              عرض الكشف الكامل ←
-            </span>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center text-2xl">
-            👥
-          </div>
-        </div>
-
-        {/* Card 2: Exams & Master Sheet */}
-        <div
+        />
+        <StatCard
+          title="شيت الامتحانات والنتائج"
+          value={`${passRate}%`}
+          suffix="نجاح"
+          hint="كشف الرصد المعتمد ←"
+          icon={Award}
+          tone="purple"
+          active={activeTab === 'exams'}
           onClick={() => setActiveTab('exams')}
-          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
-            activeTab === 'exams'
-              ? 'bg-purple-50/80 dark:bg-purple-950/40 border-purple-500 shadow-purple-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-300'
-          }`}
-        >
-          <div>
-            <span className="text-xs font-bold text-slate-500 block">شيت الامتحانات والنتائج</span>
-            <span className="text-3xl font-black text-purple-700 dark:text-purple-300 mt-1 block">
-              {passRate}% نجاح
-            </span>
-            <span className="text-xs text-purple-600 dark:text-purple-400 font-bold mt-1 inline-block">
-              كشف الرصد المعتمد ←
-            </span>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 flex items-center justify-center text-2xl">
-            📑
-          </div>
-        </div>
-
-        {/* Card 3: Teachers Count */}
-        <div
+        />
+        <StatCard
+          title="التحكم في المعلمين"
+          value={teachers.length}
+          suffix="معلم"
+          hint="إدارة الرموز والفصول ←"
+          icon={BookOpen}
+          tone="amber"
+          active={activeTab === 'teachers'}
           onClick={() => setActiveTab('teachers')}
-          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
-            activeTab === 'teachers'
-              ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-500 shadow-amber-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-300'
-          }`}
-        >
-          <div>
-            <span className="text-xs font-bold text-slate-500 block">التحكم في المعلمين</span>
-            <span className="text-3xl font-black text-slate-900 dark:text-white mt-1 block">
-              {teachers.length} معلم
-            </span>
-            <span className="text-xs text-amber-600 dark:text-amber-400 font-bold mt-1 inline-block">
-              إدارة الرموز والفصول ←
-            </span>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center justify-center text-2xl">
-            👨‍🏫
-          </div>
-        </div>
-
-        {/* Card 4: Attendance Rate */}
-        <div
+        />
+        <StatCard
+          title="تسجيل الحضور اليومي"
+          value={`${attendancePercentage}%`}
+          hint={`${presentCount} حاضر • ${absentCount} غائب`}
+          icon={UserCheck}
+          tone="emerald"
+          active={activeTab === 'attendance'}
           onClick={() => setActiveTab('attendance')}
-          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
-            activeTab === 'attendance'
-              ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500 shadow-emerald-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-300'
-          }`}
-        >
-          <div>
-            <span className="text-xs font-bold text-slate-500 block">تسجيل الحضور اليومي</span>
-            <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
-              {attendancePercentage}%
-            </span>
-            <span className="text-xs text-emerald-700 dark:text-emerald-300 font-bold mt-1 inline-block">
-              {presentCount} حاضر • {absentCount} غائب
-            </span>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-2xl">
-            📊
-          </div>
-        </div>
-
-        {/* Card 5: Smart Timetable Builder */}
-        <div
+        />
+        <StatCard
+          title="الجداول المدرسية الذكية"
+          value="توزيع الحصص"
+          suffix="AI ⚡"
+          hint="بناء وتصدير الجداول ←"
+          icon={Sparkles}
+          tone="indigo"
+          active={activeTab === 'schedule'}
           onClick={() => setActiveTab('schedule')}
-          className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between shadow-sm active:scale-95 ${
-            activeTab === 'schedule'
-              ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-indigo-500 shadow-indigo-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-300'
-          }`}
-        >
-          <div>
-            <span className="text-xs font-bold text-slate-500 block">الجداول المدرسية الذكية</span>
-            <span className="text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1 block">
-              توزيع الحصص AI ⚡
-            </span>
-            <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-1 inline-block">
-              بناء وتصدير الجداول ←
-            </span>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-2xl">
-            ⏰
-          </div>
-        </div>
-
+        />
       </div>
 
       {/* Big Main Tab Selector Pills (6 Tabs - Responsive Grid) */}
@@ -583,7 +538,12 @@ export const AdminDashboard: React.FC = () => {
       {/* TAB 0: SCHOOL CENSUS & EXECUTIVE ANALYTICS                                */}
       {/* ========================================================================= */}
       {activeTab === 'analytics' && (
-        <SchoolCensusAnalyticsView />
+        <div className="space-y-4 animate-in fade-in">
+          <React.Suspense fallback={<AnalyticsFallback />}>
+            <AnalyticsCharts />
+          </React.Suspense>
+          <SchoolCensusAnalyticsView />
+        </div>
       )}
 
       {/* ========================================================================= */}

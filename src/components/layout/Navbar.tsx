@@ -35,6 +35,7 @@ import { DirectorInviteModal } from '../common/DirectorInviteModal';
 import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
 import { MobileCompanionModal } from '../mobile/MobileCompanionModal';
 import { SuperAdminLockModal } from '../common/SuperAdminLockModal';
+import { mayViewInterface } from '../../services/security/roleAccess';
 import { isWindowsDesktop, executeNativePrint, openSchoolDocumentsFolder } from '../../services/native/windowsBridge';
 
 interface NavbarProps {
@@ -44,7 +45,10 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const {
     currentRole,
-    setCurrentRole,
+    authenticatedRole,
+    superUnlocked,
+    viewAs,
+    enterSuperAdmin,
     currentTeacher,
     unreadCount,
     notifications,
@@ -94,6 +98,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
 
   const isStaffMember = ['admin', 'exams_coordinator', 'teacher', 'counselor', 'superadmin'].includes(currentRole);
   const currentRoleInfo = allRoles.find(r => r.id === currentRole) || staffRoles[0];
+
+  // إخفاء الواجهات عن بعضها: كل هوية ترى في القائمة ما يحق لها فتحه فقط
+  // (المعلم يرى واجهته فقط فتختفي القائمة، المدير يرى الطاقم، السوبر يرى الكل)
+  const visibleStaffRoles = staffRoles.filter(r => mayViewInterface(authenticatedRole, superUnlocked, r.id));
 
   const toggleSound = () => {
     const nextState = !soundEnabled;
@@ -207,8 +215,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </div>
             )}
 
-            {/* School Staff Switcher (Director, Exams, Teacher, Counselor) */}
-            {isStaffMember && (
+            {/* School Staff Switcher (يظهر فقط لمن يملك أكثر من واجهة — مخفي عن المعلم/المنسق/الأخصائي) */}
+            {isStaffMember && visibleStaffRoles.length > 1 && (
               <div className="relative">
                 <button
                   onClick={() => { setShowRoleMenu(!showRoleMenu); setShowNotifMenu(false); setShowStudentMenu(false); sound.playTap(); }}
@@ -226,17 +234,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                       <span>طاقم المدرسة الداخلي</span>
                       <span className="text-[10px] bg-purple-50 dark:bg-purple-950 text-purple-600 px-1.5 py-0.5 rounded font-bold">إدارة</span>
                     </div>
-                    {staffRoles.map(role => (
+                    {visibleStaffRoles.map(role => (
                       <button
                         key={role.id}
                         onClick={() => {
-                          setCurrentRole(role.id);
+                          viewAs(role.id);
                           setShowRoleMenu(false);
                           sound.playSuccess();
-                          if (role.id === 'teacher') setActiveTab('teacher-quick');
-                          else if (role.id === 'counselor') setActiveTab('counselor-dashboard');
-                          else if (role.id === 'exams_coordinator') setActiveTab('exams-coordinator-dashboard');
-                          else setActiveTab('dashboard');
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
                           currentRole === role.id ? 'bg-purple-50 dark:bg-purple-900/40 font-bold text-purple-700 dark:text-purple-300' : 'text-slate-700 dark:text-slate-300'
@@ -480,8 +484,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         isOpen={showSuperAdminLock}
         onClose={() => setShowSuperAdminLock(false)}
         onSuccess={() => {
-          setCurrentRole('superadmin');
-          setActiveTab('superadmin-dashboard');
+          enterSuperAdmin();
         }}
       />
     </header>

@@ -21,7 +21,7 @@ export interface AuditLogEntry {
 
 const AUDIT_STORAGE_KEY = 'madrasa_db_audit_logs_v4';
 
-class AuditLogger {
+export class AuditLogger {
   private inMemoryLogs: AuditLogEntry[] = [];
 
   constructor() {
@@ -32,28 +32,23 @@ class AuditLogger {
     try {
       const stored = localStorage.getItem(AUDIT_STORAGE_KEY);
       if (stored) {
-        this.inMemoryLogs = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // هجرة الطوابع القديمة (نصوص عرض عربية) إلى ISO مرة واحدة
+        this.inMemoryLogs = (Array.isArray(parsed) ? parsed : []).map((e: AuditLogEntry) => ({
+          ...e,
+          timestamp: AuditLogger.toISO(e.timestamp),
+        })).filter((e: AuditLogEntry) => e && e.id && e.action);
       } else {
-        // Seed some initial audit records
+        // نزاهة السجل: لا قيود مختلقة — قيد إقلاع حقيقي واحد فقط
         this.inMemoryLogs = [
           {
-            id: 'AUD-001',
-            timestamp: new Date(Date.now() - 3600000).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-            actorName: 'إدارة المدرسة (النظام)',
+            id: `AUD-${Date.now().toString(36).toUpperCase()}`,
+            timestamp: new Date().toISOString(),
+            actorName: 'النظام',
             actorRole: 'admin',
-            action: 'INITIALIZE_SECURITY_MATRIX',
+            action: 'SYSTEM_BOOT',
             entity: 'System',
-            details: 'تم تفعيل منظومة الأمان والتشفير الثلاثي وحماية قواعد البيانات بنجاح.',
-            severity: 'INFO'
-          },
-          {
-            id: 'AUD-002',
-            timestamp: new Date(Date.now() - 1800000).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-            actorName: 'أ. خالد الشهري',
-            actorRole: 'teacher',
-            action: 'UPDATE_GRADES',
-            entity: 'SubjectGrade',
-            details: 'رصد درجات الفترة الأولى لمادة الرياضيات لفصل 3/أ.',
+            details: 'تهيئة سجل التدقيق على هذا الجهاز.',
             severity: 'INFO'
           }
         ];
@@ -61,6 +56,26 @@ class AuditLogger {
       }
     } catch {
       this.inMemoryLogs = [];
+    }
+  }
+
+  /** تحويل أي طابع قديم إلى ISO، مع إبقاء الأصل عند الفشل */
+  private static toISO(ts: unknown): string {
+    if (typeof ts !== 'string' || !ts) return new Date().toISOString();
+    const d = new Date(ts);
+    if (!isNaN(d.getTime()) && /^\d{4}-\d{2}-\d{2}/.test(ts)) return ts;
+    if (!isNaN(d.getTime())) return d.toISOString();
+    return ts; // نص عرض قديم غير قابل للتحويل — يُعرض كما هو
+  }
+
+  /** عرض آمن للطابع في الواجهات (ISO → عربي، والقديم كما هو) */
+  public static formatTimestamp(ts: string): string {
+    try {
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return ts;
+      return d.toLocaleString('ar-SA', { dateStyle: 'medium', timeStyle: 'short' } as Intl.DateTimeFormatOptions);
+    } catch {
+      return ts;
     }
   }
 
@@ -75,7 +90,7 @@ class AuditLogger {
     const newEntry: AuditLogEntry = {
       ...entry,
       id: `AUD-${Date.now().toString(36).toUpperCase()}`,
-      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      timestamp: new Date().toISOString()
     };
 
     this.inMemoryLogs.unshift(newEntry);

@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import { SchoolLicenseDoc, LicenseVerificationResult, SubscriptionStatus } from './licenseTypes';
+import { SchoolLicenseDoc, LicenseVerificationResult, SubscriptionStatus, RenewalRequest } from './licenseTypes';
 
 export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDSR-Wu-95GoJ_Y63gHGy4IWpbtMvqCNYk",
@@ -20,6 +20,7 @@ const STORAGE_KEYS = {
   ACTIVE_LICENSE_KEY: 'madrasa_active_license_key',
   CACHED_LICENSE_DOC: 'madrasa_cached_license_doc_v1',
   LOCAL_SCHOOLS_REGISTRY: 'madrasa_admin_schools_registry_v1',
+  RENEWAL_REQUESTS: 'madrasa_renewal_requests_v1',
 };
 
 // Initial default license for existing school (مدرسة الشهيد امحمد الباعور)
@@ -401,6 +402,157 @@ export class LicenseService {
 
     this.pushToFirestore(school).catch(() => {});
     return school;
+  }
+
+  // --- Renewal Request Loop (حلقة طلب التجديد المغلقة) ---
+
+  /**
+   * قراءة طلبات التجديد المحلية
+   */
+  static getRenewalRequests(): RenewalRequest[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.RENEWAL_REQUESTS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  }
+
+  static saveRenewalRequests(list: RenewalRequest[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.RENEWAL_REQUESTS, JSON.stringify(list));
+    } catch {}
+  }
+
+  /**
+   * هل يوجد طلب معلّق لهذا الترخيص؟ (منع الإزعاج والتكرار)
+   */
+  static hasPendingRenewal(licenseKey: string): boolean {
+    const key = licenseKey.trim().toUpperCase();
+    return this.getRenewalRequests().some(r => r.license_key === key && r.status === 'pending');
+  }
+
+  /**
+   * إرسال طلب تجديد من المدرسة إلى المدير العام.
+   * يُحفظ محلياً دائماً، ويُزامَن مع Firestore عند توفر الإنترنت (best-effort).
+   */
+  static async requestRenewal(params: {
+    licenseKey: string;
+    schoolName: string;
+    adminPhone: string;
+    message?: string;
+  }): Promise<{ ok: boolean; request?: RenewalRequest; error?: string }> {
+    const licenseKey = params.licenseKey.trim().toUpperCase();
+    const schoolName = params.schoolName.trim();
+    const adminPhone = params.adminPhone.trim();
+    if (!licenseKey || !schoolName || !adminPhone) {
+      return { ok: false, error: 'بيانات الطلب ناقصة (المدرسة / الترخيص / الهاتف).' };
+    }
+    if (this.hasPendingRenewal(licenseKey)) {
+      return { ok: false, error: 'يوجد طلب تجديد معلّق مسبقاً لهذا الترخيص بانتظار المدير العام.' };
+    }
+
+    const req: RenewalRequest = {
+      id: `REQ-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+      license_key: licenseKey,
+      school_name: schoolName,
+      admin_phone: adminPhone,
+      message: params.message?.trim().slice(0, 500),
+      status: 'pending',
+      created_at: new Date().toISOString(),
+    };
+
+    const list = [req, ...this.getRenewalRequests()].slice(0, 200);
+    this.saveRenewalRequests(list);
+    this.pushRenewalToFirestore(req).catch(() => {});
+    return { ok: true, request: req };
+  }
+
+  /**
+   * حسم طلب تجديد (قبول = تفعيل سنة كاملة، رفض = أرشفة) — للمدير العام فقط
+   */
+  static async resolveRenewalRequest(id: string, approve: boolean): Promise<RenewalRequest | null> {
+    const list = this.getRenewalRequests();
+    const idx = list.findIndex(r => r.id === id);
+    if (idx === -1) return null;
+
+    list[idx] = {
+      ...list[idx],
+      status: approve ? 'approved' : 'rejected',
+      resolved_at: new Date().toISOString(),
+    };
+    this.saveRenewalRequests(list);
+
+    if (approve) {
+      await this.updateStatus(list[idx].license_key, 'active');
+    }
+    this.pushRenewalToFirestore(list[idx]).catch(() => {});
+    return list[idx];
+  }
+
+  /**
+   * جلب الطلبات المعلقة من Firestore (لجهاز المدير العام) ودمجها مع المحلية
+   */
+  static async fetchRemoteRenewals(): Promise<RenewalRequest[]> {
+    // لا شبكة = لا طلب (يمنع ضجيج 403 في الكونسول عند العمل أوفلاين)
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return [];
+    try {
+      const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/renewals?pageSize=100&key=${FIREBASE_CONFIG.apiKey}`;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
+      if (!res.ok) return [];
+      const json = await res.json();
+      const docs = json.documents || [];
+      const remote: RenewalRequest[] = docs.map((d: any) => this.parseRenewalFields(d.fields || {})).filter((r: RenewalRequest) => r.id && r.status === 'pending');
+      if (remote.length > 0) {
+        const local = this.getRenewalRequests();
+        const ids = new Set(local.map(r => r.id));
+        const merged = [...remote.filter(r => !ids.has(r.id)), ...local].slice(0, 200);
+        this.saveRenewalRequests(merged);
+      }
+      return remote;
+    } catch {
+      return [];
+    }
+  }
+
+  private static async pushRenewalToFirestore(req: RenewalRequest): Promise<boolean> {
+    try {
+      const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/renewals/${encodeURIComponent(req.id)}?key=${FIREBASE_CONFIG.apiKey}`;
+      const payload = {
+        fields: {
+          id: { stringValue: req.id },
+          license_key: { stringValue: req.license_key },
+          school_name: { stringValue: req.school_name },
+          admin_phone: { stringValue: req.admin_phone },
+          message: { stringValue: req.message || '' },
+          status: { stringValue: req.status },
+          created_at: { stringValue: req.created_at },
+          resolved_at: req.resolved_at ? { stringValue: req.resolved_at } : { nullValue: null },
+        }
+      };
+      const res = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  private static parseRenewalFields(fields: any): RenewalRequest {
+    return {
+      id: fields.id?.stringValue || '',
+      license_key: fields.license_key?.stringValue || '',
+      school_name: fields.school_name?.stringValue || '',
+      admin_phone: fields.admin_phone?.stringValue || '',
+      message: fields.message?.stringValue,
+      status: (fields.status?.stringValue === 'approved' || fields.status?.stringValue === 'rejected') ? fields.status.stringValue : 'pending',
+      created_at: fields.created_at?.stringValue || new Date().toISOString(),
+      resolved_at: fields.resolved_at?.stringValue,
+    };
   }
 
   private static findInAdminRegistry(licenseKey: string): SchoolLicenseDoc | undefined {

@@ -165,10 +165,10 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                 type="text"
                 value={teacherCode}
                 onChange={e => setTeacherCode(e.target.value.toUpperCase())}
-                placeholder="LIB-MATH-01"
+                placeholder="LIB-XXX-00"
                 className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none text-blue-600 dark:text-blue-400"
               />
-              <p className="text-[11px] text-slate-400 mt-1">الرمز الفريد لدخول بوابة المعلمين (مثال: LIB-MATH-01, LIB-ARA-02).</p>
+              <p className="text-[11px] text-slate-400 mt-1">الرمز الفريد لدخول بوابة المعلمين (صيغة: LIB-XXX-00).</p>
             </div>
           </div>
 

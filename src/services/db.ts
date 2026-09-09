@@ -1146,8 +1146,7 @@ export const db = {
     } catch {}
   },
 
-  getTeachers(): TeacherAccount[] {
-    try {
+  getTeachers(): TeacherAccount[] {    try {
       const data = localStorage.getItem(STORAGE_KEY_TEACHERS);
       let list: TeacherAccount[] = data ? JSON.parse(data) : SEED_TEACHERS;
       if (!Array.isArray(list) || list.length === 0) list = SEED_TEACHERS;
@@ -1182,6 +1181,64 @@ export const db = {
     } catch {}
   },
 
+  /**
+   * هوية القارئ من التخزين المحلي (لفرض النطاق على مستوى البيانات نفسها،
+   * بحيث استدعاء دوال الجلب مباشرة من الكونسول لا يُرجع إلا نطاق الهوية).
+   * null = لا هوية محفوظة (Node/الاختبارات/أول إقلاع) → القائمة الكاملة.
+   */
+  readIdentityScope(): { role: string; teacherId: string | null; linkedIds: string[]; phone: string | null } | null {
+    try {
+      if (typeof localStorage === 'undefined') return null;
+      const role = localStorage.getItem('madrasa_auth_role');
+      if (!role) return null;
+      let linkedIds: string[] = [];
+      try {
+        const raw = localStorage.getItem('madrasa_parent_linked_ids');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) linkedIds = parsed;
+        }
+      } catch {}
+      return {
+        role,
+        teacherId: localStorage.getItem('madrasa_active_teacher_id'),
+        linkedIds,
+        phone: localStorage.getItem('madrasa_admin_phone'),
+      };
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * تصفية الصفوف حسب الهوية (tenant/role scoping على مستوى البيانات):
+   * - مدير/سوبر/كنترول/أخصائي: النطاق الكامل (مهامهم المؤسسية تتطلبه — موثق).
+   * - معلم: طلاب فصوله المسندة فقط.
+   * - ولي أمر: أبناؤه المربوطون (+ المطابق لهاتف حسابه) فقط.
+   */
+  scopeStudents(list: Student[]): Student[] {
+    const scope = this.readIdentityScope();
+    if (!scope || !scope.role) return list;
+    if (scope.role === 'admin' || scope.role === 'superadmin' ||
+        scope.role === 'exams_coordinator' || scope.role === 'counselor') {
+      return list;
+    }
+    if (scope.role === 'teacher') {
+      if (!scope.teacherId) return [];
+      const me = this.getTeachers().find(t => t.id === scope.teacherId);
+      const classes = me?.assignedClasses || [];
+      if (classes.length === 0) return [];
+      return list.filter(s =>
+        classes.some(c => (s.className || '').includes(c) || c.includes(s.className || ''))
+      );
+    }
+    if (scope.role === 'parent') {
+      const ids = new Set(scope.linkedIds || []);
+      return list.filter(s => ids.has(s.id) || (scope.phone != null && s.parentPhone === scope.phone));
+    }
+    return [];
+  },
+
   getStudents(): Student[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
@@ -1196,6 +1253,39 @@ export const db = {
         list = LIBYAN_BAOUR_STUDENTS;
       }
       // Guarantee clean vector avatars (never unsplash)
+      const cleaned = list.map(s => ({
+        ...s,
+        avatar: (!s.avatar || s.avatar.includes('unsplash.com'))
+          ? getCleanAvatar(s.name, s.gender)
+          : s.avatar
+      }));
+      // فرض النطاق على مستوى البيانات (الرفض هنا لا في العرض فقط)
+      return this.scopeStudents(cleaned);
+    } catch {
+      return LIBYAN_BAOUR_STUDENTS.map(s => ({
+        ...s,
+        avatar: getCleanAvatar(s.name, s.gender)
+      }));
+    }
+  },
+
+  /**
+   * القائمة الكاملة الخام — لمسارات تأسيس الهوية (تهيئة الحالة، البحث برقم وطني/كود
+   * حيث السر نفسه هو التفويض) ومسارات الكتابة. لا تُستخدم للعرض المباشر.
+   */
+  getAllStudents(): Student[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
+      let list: Student[] = [];
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          list = CryptoVaultService.decryptStudentsBatch(parsed);
+        }
+      }
+      if (!list || list.length === 0) {
+        list = LIBYAN_BAOUR_STUDENTS;
+      }
       return list.map(s => ({
         ...s,
         avatar: (!s.avatar || s.avatar.includes('unsplash.com'))

@@ -23,11 +23,17 @@ import {
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
+import { DEV_MODE } from '../../config/devMode';
+
+// صيغة الهاتف الليبي المعتمدة (09xxxxxxxx — 091/092/093/094)
+const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
 
 export const Login: React.FC = () => {
   const {
     login,
     loginWithTeacherCode,
+    unlockSuperAdmin,
+    enterSuperAdmin,
     setActiveTab,
     setCurrentRole,
     students,
@@ -58,24 +64,26 @@ export const Login: React.FC = () => {
     } catch {}
   }, []);
 
-  // Parent Form (Libyan 12-digit National Number or 4-digit code)
-  const [studentNationalId, setStudentNationalId] = useState('120081234567');
-  const [parentPassword, setParentPassword] = useState('123456');
+  // Parent Form (Libyan 12-digit National Number or link code)
+  // الإنتاج: حقول فارغة ولا أسرار معروضة — التعبئة المسبقة في وضع التطوير فقط
+  const [studentNationalId, setStudentNationalId] = useState(DEV_MODE ? '120081234567' : '');
+  const [parentPassword, setParentPassword] = useState(DEV_MODE ? '123456' : '');
 
   // Teacher Form (Libyan Unique Teacher Code)
-  const [teacherCode, setTeacherCode] = useState('LIB-MATH-01');
-  const [teacherPassword, setTeacherPassword] = useState('123456');
+  const [teacherCode, setTeacherCode] = useState(DEV_MODE ? 'LIB-MATH-01' : '');
+  const [teacherPassword, setTeacherPassword] = useState(DEV_MODE ? '123456' : '');
 
   // Admin Form (Libyan Management Phone)
-  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '0922465676');
-  const [adminPassword, setAdminPassword] = useState('123456');
+  const [adminPhone, setAdminPhone] = useState(DEV_MODE ? (currentUserPhone || '0922465676') : '');
+  const [adminPassword, setAdminPassword] = useState(DEV_MODE ? '123456' : '');
 
   // Exams Coordinator Form
-  const [examsPhone, setExamsPhone] = useState('0912345678');
-  const [examsPassword, setExamsPassword] = useState('123456');
+  const [examsPhone, setExamsPhone] = useState(DEV_MODE ? '0912345678' : '');
+  const [examsPassword, setExamsPassword] = useState(DEV_MODE ? '123456' : '');
 
   // Super Admin Form
-  const [superAdminCode, setSuperAdminCode] = useState('DISTRICT-SUPER-01');
+  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE ? 'DISTRICT-SUPER-01' : '');
+  const [superMasterPin, setSuperMasterPin] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,8 +100,31 @@ export const Login: React.FC = () => {
   };
 
   const handleQuickSuperAdminDemo = () => {
-    sound.playSuccess();
-    login('0910000000', 'superadmin');
+    sound.playTap();
+    setLoginMode('superadmin');
+    setErrorMessage('');
+  };
+
+  const handleSuperAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage('');
+
+    setTimeout(() => {
+      if (!superAdminCode.trim()) {
+        setErrorMessage('يرجى إدخال رمز تفويض المدير العام.');
+        setLoading(false);
+        return;
+      }
+      // بوابة السوبر: لا دخول بدون رمز الماستر (4 أرقام، افتراضي 9988)
+      if (!unlockSuperAdmin(superMasterPin)) {
+        setErrorMessage('رمز الماستر غير صحيح — تم تسجيل المحاولة في سجل التدقيق.');
+        setLoading(false);
+        return;
+      }
+      enterSuperAdmin();
+      setLoading(false);
+    }, 300);
   };
 
   const handleQuickTeacherDemo = () => {
@@ -118,14 +149,16 @@ export const Login: React.FC = () => {
 
     setTimeout(() => {
       const cleanInput = studentNationalId.trim();
+      // أمن: لا بديل تلقائي — الرقم غير المسجل يجب أن يفشل صراحة (كان || students[0] يدخل أي شخص لحساب أول طالب)
       const foundStudent = students.find(
         s => (s.nationalNumber && s.nationalNumber === cleanInput) ||
              s.nationalId === cleanInput ||
              s.studentNumber === cleanInput ||
-             s.linkCode.toLowerCase() === cleanInput.toLowerCase() ||
-             (cleanInput === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101')) ||
-             (cleanInput === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))
-      ) || students[0];
+             (s.linkCode && s.linkCode.toLowerCase() === cleanInput.toLowerCase()) ||
+             // أكواد الباب الخلفي 1001/1002 — DEV_MODE فقط، ميتة في الإنتاج
+             (DEV_MODE && ((cleanInput === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101')) ||
+             (cleanInput === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))))
+      );
 
       if (foundStudent) {
         setSelectedStudent(foundStudent);
@@ -146,7 +179,7 @@ export const Login: React.FC = () => {
     setTimeout(() => {
       const success = loginWithTeacherCode(teacherCode);
       if (!success) {
-        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز الصادر من إدارة المدرسة (مثل LIB-MATH-01).');
+        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز المسلم من إدارة المدرسة.');
       }
       setLoading(false);
     }, 300);
@@ -158,18 +191,28 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      login(adminPhone, 'admin');
+      if (!LIBYAN_PHONE_RE.test(adminPhone.trim())) {
+        setErrorMessage('رقم الهاتف غير صالح — أدخل رقماً ليبياً بصيغة 09xxxxxxxx.');
+        setLoading(false);
+        return;
+      }
+      login(adminPhone.trim(), 'admin');
       setLoading(false);
     }, 300);
   };
 
-  const handleSuperAdminLogin = (e: React.FormEvent) => {
+  const handleExamsLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage('');
 
     setTimeout(() => {
-      login('0910000000', 'superadmin');
+      if (!LIBYAN_PHONE_RE.test(examsPhone.trim())) {
+        setErrorMessage('رقم الهاتف غير صالح — أدخل رقماً ليبياً بصيغة 09xxxxxxxx.');
+        setLoading(false);
+        return;
+      }
+      login(examsPhone.trim(), 'exams_coordinator');
       setLoading(false);
     }, 300);
   };
@@ -342,7 +385,8 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">إدارة الطلاب (873 طالب)، المعلمين، الفصول، الحضور، واعتماد الكنترول</p>
               </div>
 
-              {/* Instant 1-Click Demo Button for Testing Directors */}
+              {/* Instant 1-Click Demo Button for Testing Directors — DEV_MODE فقط، محذوف من الإنتاج */}
+              {DEV_MODE && (
               <div className="p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-black text-purple-900 dark:text-purple-200 block">
@@ -360,6 +404,7 @@ export const Login: React.FC = () => {
                   دخول فوري كمدير ⚡
                 </button>
               </div>
+              )}
 
               <form onSubmit={handleAdminLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -369,7 +414,7 @@ export const Login: React.FC = () => {
                   <div className="relative">
                     <input
                       type="tel"
-                      placeholder="0922465676"
+                      placeholder="09xxxxxxxx"
                       value={adminPhone}
                       onChange={e => setAdminPhone(e.target.value)}
                       className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -377,9 +422,12 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">💡 الرقم المعتمد للتجربة: <span className="font-mono font-bold text-purple-600">0922465676</span></p>
+                  )}
                 </div>
 
+                {DEV_MODE && (
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     كلمة المرور:
@@ -396,6 +444,7 @@ export const Login: React.FC = () => {
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                 </div>
+                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
@@ -426,7 +475,8 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">شيت الكنترول المركزي (1120 درجة)، رصد أعمال السنة، وأرقام الجلوس والشهادات</p>
               </div>
 
-              {/* Instant 1-Click Demo Button */}
+              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
+              {DEV_MODE && (
               <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
@@ -444,8 +494,9 @@ export const Login: React.FC = () => {
                   دخول الكنترول 📜
                 </button>
               </div>
+              )}
 
-              <form onSubmit={(e) => { e.preventDefault(); handleQuickExamCoordinatorDemo(); }} className="space-y-4">
+              <form onSubmit={handleExamsLogin} className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     رقم هاتف منسق الامتحانات:
@@ -463,6 +514,7 @@ export const Login: React.FC = () => {
                   <p className="text-[11px] text-slate-400">💡 معتمد وفق لائحة الامتحانات رقم (1013) لسنة 2022م</p>
                 </div>
 
+                {DEV_MODE && (
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     كلمة المرور:
@@ -479,6 +531,7 @@ export const Login: React.FC = () => {
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                 </div>
+                )}
 
                 <button
                   type="submit"
@@ -503,7 +556,8 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">لوحة مراقبة التعليم لإدارة ديوان المدارس، إضافة مدارس جديدة، والإشراف العام</p>
               </div>
 
-              {/* Instant 1-Click Demo Button */}
+              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
+              {DEV_MODE && (
               <div className="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-black text-blue-900 dark:text-blue-200 block">
@@ -521,6 +575,7 @@ export const Login: React.FC = () => {
                   دخول السوبر أدمن 🌐
                 </button>
               </div>
+              )}
 
               <form onSubmit={handleSuperAdminLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -538,6 +593,26 @@ export const Login: React.FC = () => {
                     <Key className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                   <p className="text-[11px] text-slate-400">💡 يتيح للمراقب إضافة وتعيين مدراء المدارس ومتابعة الإحصائيات المركزية</p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    🔒 رمز الماستر للمدير العام (4 أرقام):
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="••••"
+                      value={superMasterPin}
+                      onChange={e => setSuperMasterPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono font-bold tracking-[0.5em] text-center rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/40 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                  </div>
+                  <p className="text-[11px] text-slate-400">🛡️ بعد 3 محاولات خاطئة تُجمَّد البوابة 45 ثانية وتُسجَّل المحاولة.</p>
                 </div>
 
                 <button
@@ -563,7 +638,8 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">الدخول بالرمز الخاص لرصد أعمال السنة، جداول الحصص، واعتماد الامتحانات</p>
               </div>
 
-              {/* Instant 1-Click Demo Button */}
+              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
+              {DEV_MODE && (
               <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-black text-emerald-900 dark:text-emerald-200 block">
@@ -581,6 +657,7 @@ export const Login: React.FC = () => {
                   دخول فوري كمعلم ⚡
                 </button>
               </div>
+              )}
 
               <form onSubmit={handleTeacherLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -590,7 +667,7 @@ export const Login: React.FC = () => {
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="LIB-MATH-01"
+                      placeholder="رمز المعلم الخاص (مثال: LIB-XXX-00)"
                       value={teacherCode}
                       onChange={e => setTeacherCode(e.target.value.toUpperCase())}
                       className="w-full px-4 py-3 pr-10 text-sm font-mono uppercase font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -599,7 +676,8 @@ export const Login: React.FC = () => {
                     <Key className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                   
-                  {/* Quick teacher demo pills */}
+                  {/* Quick teacher demo pills — DEV_MODE فقط (رموز حقيقية لا تُعرض في الإنتاج) */}
+                  {DEV_MODE && (
                   <div className="space-y-1 pt-1">
                     <p className="text-[11px] text-slate-400 font-bold">💡 رموز المعلمين للتجربة:</p>
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -615,8 +693,10 @@ export const Login: React.FC = () => {
                       ))}
                     </div>
                   </div>
+                  )}
                 </div>
 
+                {DEV_MODE && (
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     كلمة المرور:
@@ -633,6 +713,7 @@ export const Login: React.FC = () => {
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                 </div>
+                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
@@ -663,7 +744,8 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">متابعة الأبناء فقط: الحضور، الدرجات، الإخطارات الفصلية، والتواصل مع المعلم</p>
               </div>
 
-              {/* Instant 1-Click Demo Button */}
+              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
+              {DEV_MODE && (
               <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
@@ -681,6 +763,7 @@ export const Login: React.FC = () => {
                   دخول فوري كولي أمر 👨‍👩‍👧
                 </button>
               </div>
+              )}
 
               <form onSubmit={handleParentLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -691,7 +774,7 @@ export const Login: React.FC = () => {
                     <input
                       type="text"
                       maxLength={16}
-                      placeholder="رمز ولي الأمر (مثال: 1001 أو 120081234567)"
+                      placeholder="الرقم الوطني للطالب (12 رقماً) أو كود الربط"
                       value={studentNationalId}
                       onChange={e => setStudentNationalId(e.target.value)}
                       className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -701,6 +784,8 @@ export const Login: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-1.5 pt-1 text-[11px] text-slate-400 flex-wrap">
+                    {DEV_MODE && (
+                    <>
                     <span>💡 رموز تجريبية:</span>
                     <button
                       type="button"
@@ -716,9 +801,12 @@ export const Login: React.FC = () => {
                     >
                       1002
                     </button>
+                    </>
+                    )}
                   </div>
                 </div>
 
+                {DEV_MODE && (
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     كلمة المرور:
@@ -735,6 +823,7 @@ export const Login: React.FC = () => {
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                 </div>
+                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">

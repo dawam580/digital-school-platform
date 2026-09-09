@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { AlertTriangle, Clock, RefreshCw, KeyRound, ShieldAlert, Phone, ShieldCheck, Lock, ExternalLink } from 'lucide-react';
+import { AlertTriangle, Clock, RefreshCw, KeyRound, ShieldAlert, Phone, ShieldCheck, Lock, ExternalLink, Send, CheckCircle2 } from 'lucide-react';
 import { LicenseVerificationResult } from '../../services/licensing/licenseTypes';
+import { LicenseService } from '../../services/licensing/licenseService';
 import { sound } from '../../utils/soundEffects';
 
 interface SubscriptionExpiredOverlayProps {
@@ -18,6 +19,43 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
   onOpenSuperAdmin
 }) => {
   const [isChecking, setIsChecking] = useState(false);
+  const [showRenewForm, setShowRenewForm] = useState(false);
+  const [renewPhone, setRenewPhone] = useState(result.licenseDoc?.admin_phone || '');
+  const [renewMsg, setRenewMsg] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [renewError, setRenewError] = useState('');
+  const [sentRequestId, setSentRequestId] = useState<string | null>(null);
+
+  const alreadyPending = LicenseService.hasPendingRenewal(result.licenseKey) || sentRequestId !== null;
+
+  const handleRenewal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRenewError('');
+    if (!renewPhone.trim()) {
+      setRenewError('يرجى إدخال رقم هاتف المدير للتواصل.');
+      return;
+    }
+    sound.playTap();
+    setIsSending(true);
+    try {
+      const res = await LicenseService.requestRenewal({
+        licenseKey: result.licenseKey,
+        schoolName: result.schoolName,
+        adminPhone: renewPhone,
+        message: renewMsg,
+      });
+      if (res.ok && res.request) {
+        sound.playSuccess();
+        setSentRequestId(res.request.id);
+        setShowRenewForm(false);
+      } else {
+        sound.playAlert();
+        setRenewError(res.error || 'تعذر إرسال الطلب.');
+      }
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const handleRefresh = async () => {
     sound.playTap();
@@ -99,8 +137,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
-            <button
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">            <button
               onClick={handleRefresh}
               disabled={isChecking}
               className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition disabled:opacity-50"
@@ -117,6 +154,66 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
               <span>إدخال رمز ترخيص جديد 🔑</span>
             </button>
           </div>
+
+          {/* Renewal Request (حلقة التجديد المغلقة — بدون واتساب) */}
+          {!isGrace && (
+            <div className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-950/30 p-4 space-y-3">
+              {sentRequestId || alreadyPending ? (
+                <div className="flex items-start gap-2 text-xs text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+                  <div>
+                    <p className="font-black">تم إرسال طلب التجديد بنجاح 📩</p>
+                    <p className="mt-0.5">طلبكم معلّق لدى المدير العام وسيتم التفعيل فور الاعتماد. رقم المتابعة:</p>
+                    <p className="font-mono font-bold mt-1" dir="ltr">{sentRequestId || 'قيد المراجعة'}</p>
+                  </div>
+                </div>
+              ) : showRenewForm ? (
+                <form onSubmit={handleRenewal} className="space-y-2.5">
+                  <p className="text-xs font-black text-indigo-900 dark:text-indigo-200">📩 طلب تجديد الاشتراك من المدير العام</p>
+                  <input
+                    type="tel"
+                    value={renewPhone}
+                    onChange={e => setRenewPhone(e.target.value)}
+                    placeholder="رقم هاتف المدير (09xxxxxxxx)"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                  <textarea
+                    value={renewMsg}
+                    onChange={e => setRenewMsg(e.target.value)}
+                    placeholder="ملاحظة اختيارية للمدير العام..."
+                    rows={2}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"
+                  />
+                  {renewError && <p className="text-[11px] font-bold text-rose-600">{renewError}</p>}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      disabled={isSending}
+                      className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black shadow-md transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>{isSending ? 'جاري الإرسال...' : 'إرسال طلب التجديد'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowRenewForm(false)}
+                      className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    >
+                      إلغاء
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button
+                  onClick={() => { sound.playTap(); setShowRenewForm(true); }}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>طلب تجديد الاشتراك من المدير العام 📩</span>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Super Admin Unlock link */}
           <div className="text-center pt-2">

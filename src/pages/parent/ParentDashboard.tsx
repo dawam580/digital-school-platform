@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { useRequireRole } from '../../hooks/useRequireRole';
+import { ExamStorageService } from '../../services/exams/examStorageService';
 import {
   Award,
   CalendarCheck,
@@ -83,6 +85,32 @@ export const ParentDashboard: React.FC = () => {
   }, [parentLinkedStudent, previouslyLinkedStudents, currentUserPhone, students]);
 
   const activeChild = parentLinkedStudent || parentChildren[0];
+
+  // بوابة النشر: الدرجات محجوبة حتى يعتمد الكنترول ويُنشر الكشف رسمياً.
+  // القاعدة: لا سجل قفل إطلاقاً = حالة legacy مفتوحة | قفل بلا نشر = محجوب | نشر = مرئي.
+  const [gradesReleased, setGradesReleased] = useState<boolean | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setGradesReleased(null);
+    const cls = activeChild?.className;
+    if (!cls) { setGradesReleased(true); return; }
+    ExamStorageService.getExamLock(cls).then(lock => {
+      if (cancelled) return;
+      if (lock.releasedAt) setGradesReleased(true);
+      else if (lock.lockedAt) setGradesReleased(false);
+      else setGradesReleased(true);
+    }).catch(() => { if (!cancelled) setGradesReleased(true); });
+    return () => { cancelled = true; };
+  }, [activeChild?.className]);
+
+  // إحصائيات حضور حقيقية من السجل (بدل الأرقام الثابتة)
+  const attHistory = activeChild?.recentAttendance || [];
+  const attPresent = attHistory.filter(r => r.status === 'present').length;
+  const attAbsent = attHistory.filter(r => r.status === 'unexcused').length;
+
+  // حارس الدور الإلزامي: هذه الشاشة لولي الأمر (والمدير/السوبر المعاينين) فقط — قبل أي عرض
+  const allowed = useRequireRole('parent');
+  if (!allowed) return null;
 
   // If no child is linked or selected on this browser session yet, show the Parent Inquiry Gate!
   if (!activeChild) {
@@ -304,7 +332,7 @@ export const ParentDashboard: React.FC = () => {
               نسبة الحضور
             </span>
             <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">
-              19 يوم حضور • 1 غياب
+              {attHistory.length > 0 ? `${attPresent} يوم حضور • ${attAbsent} غياب` : 'لا سجل حضور بعد'}
             </span>
           </div>
         </div>
@@ -312,14 +340,14 @@ export const ParentDashboard: React.FC = () => {
         {/* Card 2: Academic Average & Rank */}
         <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-center flex flex-col items-center justify-center space-y-2">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-50 dark:bg-blue-950/50 border-4 border-blue-500 flex items-center justify-center text-blue-700 dark:text-blue-300 font-black text-lg sm:text-xl shadow-inner">
-            {activeChild.academicAverage || 96.5}%
+            {activeChild.academicAverage != null ? `${activeChild.academicAverage}%` : '—'}
           </div>
           <div>
             <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 block">
-              المعدل العام ({activeChild.appreciation || 'ممتاز'})
+              المعدل العام ({activeChild.appreciation || 'لم يُحتسب بعد'})
             </span>
             <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold block">
-              الترتيب: الثاني على الفصل 🥈
+              {activeChild.academicAverage != null ? 'وفق آخر رصد معتمد' : 'بانتظار رصد الدرجات'}
             </span>
           </div>
         </div>
@@ -327,7 +355,7 @@ export const ParentDashboard: React.FC = () => {
         {/* Card 3: Behavior Points */}
         <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-center flex flex-col items-center justify-center space-y-2">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-amber-50 dark:bg-amber-950/50 border-4 border-amber-500 flex items-center justify-center text-amber-700 dark:text-amber-400 font-black text-lg sm:text-xl shadow-inner">
-            +{activeChild.behaviorPointsTotal || 48}
+            {activeChild.behaviorPointsTotal != null ? `+${activeChild.behaviorPointsTotal}` : '—'}
           </div>
           <div>
             <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 block">
@@ -398,6 +426,14 @@ export const ParentDashboard: React.FC = () => {
       {/* SECTION 1: GRADES & SUBJECT REPORT */}
       {activeTab === 'grades' && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 animate-in fade-in">
+          {gradesReleased === false ? (
+            <div className="p-8 text-center space-y-2">
+              <p className="text-3xl">🔒</p>
+              <p className="text-sm font-black text-slate-800 dark:text-white">النتائج قيد الاعتماد</p>
+              <p className="text-xs text-slate-500">كشف درجات هذا الفصل لم يُنشر رسمياً بعد — ستظهر الدرجات فور اعتماد الكنترول.</p>
+            </div>
+          ) : (
+          <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -436,15 +472,7 @@ export const ParentDashboard: React.FC = () => {
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
                 {(activeChild.grades && activeChild.grades.length > 0
                   ? activeChild.grades
-                  : [
-                      { id: '1', subjectName: 'الرياضيات', teacherName: 'أ. طارق الفيتوري', coursework: 38, finalExam: 57, total: 95, appreciation: 'ممتاز' },
-                      { id: '2', subjectName: 'اللغة العربية', teacherName: 'أ. عبدالسلام الورفلي', coursework: 39, finalExam: 58, total: 97, appreciation: 'ممتاز' },
-                      { id: '3', subjectName: 'العلوم الطبيعية', teacherName: 'أ. مريم الترهوني', coursework: 37, finalExam: 55, total: 92, appreciation: 'ممتاز' },
-                      { id: '4', subjectName: 'اللغة الإنجليزية', teacherName: 'أ. فاطمة الزوي', coursework: 36, finalExam: 54, total: 90, appreciation: 'ممتاز' },
-                      { id: '5', subjectName: 'الدراسات الاجتماعية', teacherName: 'أ. وليد المصراتي', coursework: 38, finalExam: 56, total: 94, appreciation: 'ممتاز' },
-                      { id: '6', subjectName: 'التربية الإسلامية', teacherName: 'أ. محمود السويحلي', coursework: 40, finalExam: 59, total: 99, appreciation: 'ممتاز' },
-                      { id: '7', subjectName: 'الحاسوب وتقنية المعلومات', teacherName: 'أ. أسامة المقريف', coursework: 39, finalExam: 58, total: 97, appreciation: 'ممتاز' }
-                    ]
+                  : []
                 ).map((grade: any, idx: number) => {
                   const coursework = grade.courseworkScore ?? grade.coursework ?? grade.period1 + (grade.period2 || 0) ?? 38;
                   const exam = grade.finalExam ?? grade.examScore ?? 56;
@@ -483,9 +511,20 @@ export const ParentDashboard: React.FC = () => {
                     </tr>
                   );
                 })}
+                {(!activeChild.grades || activeChild.grades.length === 0) && (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center">
+                      <p className="text-2xl mb-1">📝</p>
+                      <p className="text-sm font-black text-slate-700 dark:text-slate-200">لم تُرصد درجات هذا الفصل بعد</p>
+                      <p className="text-xs text-slate-400 mt-1">ستظهر هنا فور إدخال المعلمين للدرجات واعتمادها.</p>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
+          </>
+          )}
         </div>
       )}
 

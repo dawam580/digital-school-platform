@@ -19,7 +19,6 @@ export interface SchoolLicenseDoc {
   last_verified_at?: string;        // آخر توقيت تم فيه التحقق بنجاح
   offline_grace_allowed_days?: number; // عدد أيام السماح بدون إنترنت (افتراضياً 7 أيام)
 }
-
 export interface LicenseVerificationResult {
   isValid: boolean;                 // هل الترخيص يسمح بالعمل؟
   status: SubscriptionStatus;       // الحالة الفعلية
@@ -30,4 +29,18 @@ export interface LicenseVerificationResult {
   offlineDaysRemaining?: number;    // كم يوم متبقي في مهلة الـ 7 أيام
   errorMessage?: string;
   licenseDoc?: SchoolLicenseDoc;
+}
+
+/** طلب تجديد اشتراك ترسله المدرسة للمدير العام (حلقة التجديد المغلقة) */
+export type RenewalStatus = 'pending' | 'approved' | 'rejected';
+
+export interface RenewalRequest {
+  id: string;                       // REQ-<timestamp>-<rand>
+  license_key: string;
+  school_name: string;
+  admin_phone: string;
+  message?: string;
+  status: RenewalStatus;
+  created_at: string;               // ISO
+  resolved_at?: string;             // ISO
 }
