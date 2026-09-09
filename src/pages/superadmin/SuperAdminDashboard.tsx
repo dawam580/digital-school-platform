@@ -27,6 +27,7 @@ import { triggerConfetti } from '../../utils/confetti';
 import { getRoleLink, copyTextToClipboard } from '../../utils/inviteMessageHelper';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { SuperAdminLicenseManager } from '../../components/licensing/SuperAdminLicenseManager';
+import { SystemOwnerPanel } from '../../components/superadmin/SystemOwnerPanel';
 
 export const SuperAdminDashboard: React.FC = () => {
   const {
@@ -48,7 +49,7 @@ export const SuperAdminDashboard: React.FC = () => {
   const [showAddSchoolModal, setShowAddSchoolModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [copiedSchoolId, setCopiedSchoolId] = useState<string | null>(null);
-  const [activeSubTab, setActiveSubTab] = useState<'licensing' | 'schools'>('licensing');
+  const [activeSubTab, setActiveSubTab] = useState<'licensing' | 'schools' | 'owner'>('licensing');
 
   // New School Form State
   const [newSchoolName, setNewSchoolName] = useState('');
@@ -239,10 +240,24 @@ export const SuperAdminDashboard: React.FC = () => {
         >
           <span>🏛️ دليل المدارس والفروع المسجلة</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => { setActiveSubTab('owner'); sound.playTap(); }}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 ${
+            activeSubTab === 'owner'
+              ? 'bg-amber-500 text-slate-950 shadow-md'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <span>👑 مالك المشروع — تحكم كامل</span>
+        </button>
       </div>
 
       {activeSubTab === 'licensing' ? (
         <SuperAdminLicenseManager />
+      ) : activeSubTab === 'owner' ? (
+        <SystemOwnerPanel />
       ) : (
         <>
           {/* Schools Directory & Search Bar */}
