@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SchoolProvider, useSchool } from './context/SchoolContext';
 import { canAccessTab, ROLE_HOME, ROLE_AR_LABEL } from './services/security/roleAccess';
 import { SuperAdminLockModal } from './components/common/SuperAdminLockModal';
+import { AppErrorBoundary } from './components/common/AppErrorBoundary';
 import { Eye, ShieldAlert, RotateCcw } from 'lucide-react';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/auth/Login';
@@ -288,8 +289,10 @@ const MainContent: React.FC = () => {
 export function App() {
   return (
     <SchoolProvider>
-      <WindowsTitleBar />
-      <MainContent />
+      <AppErrorBoundary>
+        <WindowsTitleBar />
+        <MainContent />
+      </AppErrorBoundary>
     </SchoolProvider>
   );
 }

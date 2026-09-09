@@ -55,6 +55,7 @@ import { triggerConfetti } from '../../utils/confetti';
 import { TeacherAccount, Student } from '../../types';
 import { db } from '../../services/db';
 import { StatCard } from '../../components/ui/StatCard';
+import { AppErrorBoundary } from '../../components/common/AppErrorBoundary';
 
 // لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
 const AnalyticsCharts = React.lazy(() =>
@@ -539,9 +540,11 @@ export const AdminDashboard: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'analytics' && (
         <div className="space-y-4 animate-in fade-in">
-          <React.Suspense fallback={<AnalyticsFallback />}>
-            <AnalyticsCharts />
-          </React.Suspense>
+          <AppErrorBoundary title="تعثر تحميل الرسوم البيانية مؤقتاً">
+            <React.Suspense fallback={<AnalyticsFallback />}>
+              <AnalyticsCharts />
+            </React.Suspense>
+          </AppErrorBoundary>
           <SchoolCensusAnalyticsView />
         </div>
       )}

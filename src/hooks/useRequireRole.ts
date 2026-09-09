@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSchool } from '../context/SchoolContext';
 import { mayViewInterface, ROLE_AR_LABEL } from '../services/security/roleAccess';
 import { auditLogger } from '../services/audit/auditLogger';
@@ -18,8 +18,12 @@ export function useRequireRole(screenRole: UserRole): boolean {
     () => currentRole === screenRole && mayViewInterface(authenticatedRole, superUnlocked, screenRole)
   );
 
+  // يُطلق الرفض مرة واحدة فقط لكل mount — منع أي حلقة setState/تجميد للتبويب
+  const fired = useRef(false);
+
   useEffect(() => {
-    if (!allowed) {
+    if (!allowed && !fired.current) {
+      fired.current = true;
       auditLogger.log({
         actorName: currentUserPhone,
         actorRole: authenticatedRole,
