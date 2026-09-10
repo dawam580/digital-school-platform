@@ -18,7 +18,8 @@ import {
   HelpCircle,
   Layers,
   ArrowRight,
-  Award
+  Award,
+  Smartphone
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -49,6 +50,18 @@ export const Login: React.FC = () => {
 
   const [loginMode, setLoginMode] = useState<'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('admin');
   const [showInviteModal, setShowInviteModal] = useState(false);
+
+  // بوابة السوبر مخفية عن العامة: تظهر فقط برابط المالك (?role=superadmin) أو وضع التطوير.
+  // الحماية الحقيقية تبقى رمز الماستر — الإخفاء مجرد تقليل لسطح الهجوم.
+  const [showSuperPortal] = useState<boolean>(() => {
+    if (DEV_MODE) return true;
+    try {
+      if (typeof window !== 'undefined') {
+        return new URLSearchParams(window.location.search).get('role') === 'superadmin';
+      }
+    } catch {}
+    return false;
+  });
 
   // Check URL query parameters on load to auto-select tab
   useEffect(() => {
@@ -248,6 +261,15 @@ export const Login: React.FC = () => {
           <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
             <button
               type="button"
+              onClick={() => { setActiveTab('parent-mobile'); sound.playTap(); }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-emerald-200" />
+              <span>📱 تطبيق ولي الأمر (الهاتف)</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => { setActiveTab('landing'); sound.playTap(); }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-black shadow-md transition active:scale-95"
             >
@@ -307,8 +329,8 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* 5 Isolated Portal Selector Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+        {/* 4-5 Isolated Portal Selector Tabs (السوبر مخفي عن العامة) */}
+        <div className={`grid grid-cols-2 ${showSuperPortal ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700`}>
           <button
             type="button"
             onClick={() => { setLoginMode('admin'); setErrorMessage(''); sound.playTap(); }}
@@ -335,6 +357,7 @@ export const Login: React.FC = () => {
             <span>منسق الامتحانات</span>
           </button>
 
+          {showSuperPortal && (
           <button
             type="button"
             onClick={() => { setLoginMode('superadmin'); setErrorMessage(''); sound.playTap(); }}
@@ -347,6 +370,7 @@ export const Login: React.FC = () => {
             <Shield className="w-4 h-4" />
             <span>المدير العام (سوبر)</span>
           </button>
+          )}
 
           <button
             type="button"
@@ -549,8 +573,8 @@ export const Login: React.FC = () => {
             </div>
           )}
 
-          {/* Portal 2: Super Admin / Multi-School Directorate */}
-          {loginMode === 'superadmin' && (
+          {/* Portal 2: Super Admin — مخفي عن العامة (رابط المالك فقط) */}
+          {loginMode === 'superadmin' && showSuperPortal && (
             <div className="space-y-5 animate-in fade-in">
               <div className="text-center pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="inline-flex p-2.5 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 rounded-2xl mb-1.5">

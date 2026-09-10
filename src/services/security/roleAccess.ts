@@ -32,7 +32,7 @@ export const ROLE_HOME: Record<UserRole, string> = {
 };
 
 /** تبويبات عامة لا تحتاج هوية (بوابات الدخول والتعريف) */
-const PUBLIC_TABS = ['landing', 'login', 'parent-signup', 'link-student'];
+const PUBLIC_TABS = ['landing', 'login', 'parent-signup', 'link-student', 'parent-mobile'];
 
 /** التبويبات المسموح لكل واجهة عرضها */
 const ROLE_ALLOWED_TABS: Record<UserRole, string[]> = {
@@ -40,11 +40,11 @@ const ROLE_ALLOWED_TABS: Record<UserRole, string[]> = {
   admin: [
     'dashboard', 'attendance', 'student-profile', 'grades', 'assignments',
     'chat', 'schedule', 'db-studio', 'daily-report', 'finance', 'staff',
-    'notifications', 'link-student',
+    'notifications', 'link-student', 'parent-mobile',
   ],
   exams_coordinator: ['exams-coordinator-dashboard', 'notifications', 'chat'],
   teacher: ['teacher-quick', 'attendance', 'chat', 'notifications', 'student-profile', 'daily-report', 'link-student'],
-  parent: ['parent-dashboard', 'student-profile', 'daily-report', 'chat', 'link-student', 'parent-signup', 'notifications'],
+  parent: ['parent-dashboard', 'parent-mobile', 'student-profile', 'daily-report', 'chat', 'link-student', 'parent-signup', 'notifications'],
   counselor: ['counselor-dashboard', 'chat', 'notifications', 'student-profile'],
   // السوبر: كل شيء — لكن فقط عندما تكون الجلسة مفتوحة برمز الماستر
   superadmin: ['*'],

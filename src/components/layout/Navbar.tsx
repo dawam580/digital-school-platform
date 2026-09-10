@@ -254,7 +254,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                       </button>
                     ))}
 
-                    {/* Master Super Admin Locked Entry */}
+                    {/* Master Super Admin Locked Entry — لهوية السوبر فقط (مخفي عن المدير والطاقم) */}
+                    {authenticatedRole === 'superadmin' && (
                     <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-700">
                       <button
                         onClick={() => {
@@ -276,6 +277,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                         </span>
                       </button>
                     </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -373,6 +375,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               <span>📚 دليل المنظومة الشامل</span>
             </button>
 
+            {/* Direct Parent Mobile App Preview Button */}
+            <button
+              type="button"
+              onClick={() => { setActiveTab('parent-mobile'); sound.playTap(); }}
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black border border-indigo-200 dark:border-indigo-800 transition active:scale-95 shadow-sm"
+              title="معاينة تطبيق ولي الأمر كما يظهر على الهاتف"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-indigo-500" />
+              <span>📱 تطبيق ولي الأمر</span>
+            </button>
+
             {/* Mobile Companion / PWA Button */}
             <button
               type="button"
@@ -381,7 +394,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               title="فتح وتثبيت تطبيق الهاتف وتوليد باركود QR"
             >
               <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">📱 تطبيق الهاتف</span>
+              <span className="hidden sm:inline">📱 باركود الهاتف</span>
             </button>
 
             {/* Desktop Native Print & Folder Buttons (Only when in Windows Electron) */}

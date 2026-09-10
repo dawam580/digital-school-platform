@@ -35,6 +35,7 @@ import { FinancePage } from './pages/finance/FinancePage';
 import { StaffManagementPage } from './pages/admin/StaffManagementPage';
 import { WindowsTitleBar } from './components/desktop/WindowsTitleBar';
 import { LandingPage } from './pages/landing/LandingPage';
+import { ParentMobileApp } from './pages/parent/ParentMobileApp';
 
 const MainContent: React.FC = () => {
   const {
@@ -82,6 +83,26 @@ const MainContent: React.FC = () => {
     return (
       <>
         <LandingPage />
+        <SchoolManagerModal
+          isOpen={showSchoolManagerModal}
+          onClose={() => setShowSchoolManagerModal(false)}
+        />
+        <FreeTrialModal
+          isOpen={showFreeTrialModal}
+          onClose={() => setShowFreeTrialModal(false)}
+        />
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+        />
+      </>
+    );
+  }
+
+  if (activeTab === 'parent-mobile') {
+    return (
+      <>
+        <ParentMobileApp />
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}
@@ -183,7 +204,8 @@ const MainContent: React.FC = () => {
     // 1. Parent Role: completely isolated to their children's dedicated dashboard
     if (effectiveRole === 'parent') {
       if (safeTab === 'chat') return <ParentTeacherChat />;
-      return <ParentDashboard />;
+      if (safeTab === 'parent-desktop') return <ParentDashboard />;
+      return <ParentMobileApp />;
     }
 
     // 2. Teacher Role: streamlined to TeacherQuickDashboard
@@ -229,6 +251,8 @@ const MainContent: React.FC = () => {
         return <TeacherQuickDashboard />;
       case 'landing':
         return <LandingPage />;
+      case 'parent-mobile':
+        return <ParentMobileApp />;
       default:
         return <AdminDashboard />;
     }
