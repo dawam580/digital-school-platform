@@ -1,0 +1,32 @@
+# CODEOWNERS — قسمة العمل بين عاملي المشروع (منع التصادم).
+# القاعدة: عامل واحد في الملف الواحد. راجع الجدول قبل لمس ملف لا تملكه.
+#
+# لتفعيل الرفض التلقائي: Settings → Branches → Add rule (main) →
+# Require status checks (Verify Before Deploy) + Require pull request reviews.
+# بدون هاتين الخطوتين يبقى هذا الملف توثيقاً فقط.
+
+# --- فريق الواجهات (Antigravity): تطبيق ولي الأمر الهاتفي ومداخله ---
+/src/pages/parent/ParentMobileApp.tsx @dawam580
+/src/components/parent/ @dawam580
+
+# --- فريق الأمان والبنية: الحراسة، المصادقة، البيانات، التراخيص ---
+/src/hooks/useRequireRole.ts @dawam580
+/src/services/security/ @dawam580
+/src/services/licensing/ @dawam580
+/src/services/storage/autoBackup.ts @dawam580
+/src/services/db.ts @dawam580
+/src/context/SchoolContext.tsx @dawam580
+/src/App.tsx @dawam580
+/src/config/devMode.ts @dawam580
+vite.config.ts @dawam580
+firestore.rules @dawam580
+.github/workflows/ @dawam580
+
+# --- مشترك بحذر (أي تعديل هنا يُعلن في رسالة الالتزام): بوابات الدخول والقوائم ---
+/src/pages/auth/Login.tsx @dawam580
+/src/pages/landing/LandingPage.tsx @dawam580
+/src/components/layout/Navbar.tsx @dawam580
+/src/components/layout/Sidebar.tsx @dawam580
+
+# --- الافتراضي: مالك المشروع يراجع كل ما عداه ---
+* @dawam580

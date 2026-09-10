@@ -1,0 +1,39 @@
+name: Verify Before Deploy (البوابة الإجبارية)
+
+# قاعدة الفريق: لا دمج بلا بناء أخضر + 203 اختباراً.
+# يعمل على كل دفع وطلب سحب — أي كسر يظهر هنا قبل أن يصل للنشر.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck + Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: TypeScript Check (صفر أخطاء)
+        run: npx tsc --noEmit
+
+      - name: Automated Test Suite (203 اختباراً)
+        run: node tests/run-all.js
