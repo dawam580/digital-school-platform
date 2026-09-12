@@ -15,6 +15,7 @@ interface StatCardProps {
   title: string;
   value: string | number;
   suffix?: string;
+  badge?: string;
   hint?: string;
   trend?: { value: string; positive: boolean };
   icon: LucideIcon;
@@ -78,6 +79,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   suffix,
+  badge,
   hint,
   trend,
   icon: Icon,
@@ -111,7 +113,14 @@ export const StatCard: React.FC<StatCardProps> = ({
 
       <div className="relative flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block truncate">{title}</span>
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block truncate">{title}</span>
+            {badge && (
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                {badge}
+              </span>
+            )}
+          </div>
           <span className="mt-1 flex items-baseline gap-1.5 flex-wrap">
             <span className={twMerge('text-3xl font-black tabular-nums tracking-tight font-cairo', t.value)}>{value}</span>
             {suffix && <span className="text-sm font-extrabold text-slate-500 dark:text-slate-400">{suffix}</span>}

@@ -417,6 +417,7 @@ export const AdminDashboard: React.FC = () => {
           title="إجمالي الطلاب المسجلين"
           value={totalStudentsCount}
           suffix="طالب"
+          badge="2025/2026"
           hint="عرض الكشف الكامل ←"
           icon={Users}
           tone="blue"
@@ -427,6 +428,7 @@ export const AdminDashboard: React.FC = () => {
           title="شيت الامتحانات والنتائج"
           value={`${passRate}%`}
           suffix="نجاح"
+          badge="معتمد 🛡️"
           hint="كشف الرصد المعتمد ←"
           icon={Award}
           tone="purple"
@@ -437,6 +439,7 @@ export const AdminDashboard: React.FC = () => {
           title="التحكم في المعلمين"
           value={teachers.length}
           suffix="معلم"
+          badge="33 فصلاً"
           hint="إدارة الرموز والفصول ←"
           icon={BookOpen}
           tone="amber"
@@ -446,6 +449,7 @@ export const AdminDashboard: React.FC = () => {
         <StatCard
           title="تسجيل الحضور اليومي"
           value={`${attendancePercentage}%`}
+          badge="اليوم 📍"
           hint={`${presentCount} حاضر • ${absentCount} غائب`}
           icon={UserCheck}
           tone="emerald"
@@ -456,6 +460,7 @@ export const AdminDashboard: React.FC = () => {
           title="الجداول المدرسية الذكية"
           value="توزيع الحصص"
           suffix="AI ⚡"
+          badge="فض التعارض"
           hint="بناء وتصدير الجداول ←"
           icon={Sparkles}
           tone="indigo"
