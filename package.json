@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "node tests/run-all.js",
     "desktop": "npm run build && electron electron/main.cjs",
-    "electron": "electron electron/main.cjs"
+    "electron": "electron electron/main.cjs",
+    "graph:sync": "node scripts/sync-architecture-graph.cjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

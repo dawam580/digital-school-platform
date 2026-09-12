@@ -4,3 +4,4 @@ dist
 *.log
 cloudflared.exe
 server_db.json
+graphify-out/cache/

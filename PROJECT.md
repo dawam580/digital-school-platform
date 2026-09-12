@@ -14,7 +14,15 @@
   - `src/pages/students/` (`StudentProfile.tsx`)
   - `src/pages/reports/` (`DailyReport.tsx`)
   - `src/pages/notifications/` (`NotificationCenter.tsx`)
-  - `src/components/ui/` (`CommandPalette.tsx`, `CertificateModal.tsx`, `BehaviorPointsModal.tsx`, `AvatarPickerModal.tsx`, `RadarChart.tsx`)
+  - `src/components/ui/` (`CommandPalette.tsx`, `CertificateModal.tsx`, `BehaviorPointsModal.tsx`, `AvatarPickerModal.tsx`, `RadarChart.tsx`, `table.tsx`, `tabs.tsx`, `sheet.tsx`, `alert.tsx`, `Card.tsx`, `Badge.tsx`, `Input.tsx`)
+  - `src/pages/parent/` (`ParentMobileApp.tsx` - Standalone shadcn Parent PWA)
+  - `src/services/licensing/` (`licenseService.ts` - Firebase Firestore licensing)
+- **Knowledge Graph & Architecture Tree**:
+  - `graphify-out/GRAPH_TREE.html`: D3.js interactive collapsible architecture tree.
+  - `graphify-out/graph.html`: 2D/3D knowledge network visualization.
+  - `graphify-out/graph.json`: 989+ AST nodes and relationships.
+  - Synchronize via: `npm.cmd run graph:sync` (or `node scripts/sync-architecture-graph.cjs`).
+
 
 ---
 
