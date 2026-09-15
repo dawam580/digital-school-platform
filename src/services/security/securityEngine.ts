@@ -108,8 +108,10 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
 };
 
 export class SecurityEngine {
-  // Check permission for role
-  public static hasPermission(role: UserRole, permission: Permission): boolean {
+  // Check permission for role with optional custom staff permissions
+  public static hasPermission(role: UserRole, permission: Permission, customPermissions?: string[]): boolean {
+    if (role === 'admin' || role === 'superadmin') return true;
+    if (customPermissions && customPermissions.includes(permission)) return true;
     const permissions = ROLE_PERMISSIONS[role] || [];
     return permissions.includes(permission);
   }

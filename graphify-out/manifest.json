@@ -30,10 +30,10 @@
     "semantic_hash": "3fd22bbba02b6067f1d405b14ce58e3e"
   },
   "package.json": {
-    "mtime": 1789232451.8924935,
-    "seen": 1789232553.406508,
-    "ast_hash": "79d31eb7ba1c491a1a2fba1679f5e8e6",
-    "semantic_hash": "79d31eb7ba1c491a1a2fba1679f5e8e6"
+    "mtime": 1789482684.579141,
+    "seen": 1789484817.6141434,
+    "ast_hash": "6f39003474ad6c4133c27da8462a9dc5",
+    "semantic_hash": "6f39003474ad6c4133c27da8462a9dc5"
   },
   "payload.json": {
     "mtime": 1788673871.6728609,
@@ -534,10 +534,10 @@
     "semantic_hash": "c80ea32b2844fcb7ee757cb08a60e524"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1789480692.6469576,
-    "seen": 1789481055.3437624,
-    "ast_hash": "b3a44eb0f17d11df03c78d43fb4f6c5c",
-    "semantic_hash": "b3a44eb0f17d11df03c78d43fb4f6c5c"
+    "mtime": 1789484377.0466514,
+    "seen": 1789484817.6480582,
+    "ast_hash": "16f14b6d87e56af1ef31d47e52791c75",
+    "semantic_hash": "16f14b6d87e56af1ef31d47e52791c75"
   },
   "src/data/libyanBaourSchoolDataset.ts": {
     "mtime": 1788721300.6912737,
@@ -582,10 +582,10 @@
     "semantic_hash": "ab14df0bd02fb26a3a23616ffd5f5a26"
   },
   "src/pages/admin/StaffManagementPage.tsx": {
-    "mtime": 1788717434.6390436,
-    "seen": 1789227277.5597863,
-    "ast_hash": "dee149ab9d96d91f096938268ea94e6a",
-    "semantic_hash": "dee149ab9d96d91f096938268ea94e6a"
+    "mtime": 1789484643.2829256,
+    "seen": 1789484817.6480582,
+    "ast_hash": "e8cd83ca5f4af54df4a0cfaeadf9f4f7",
+    "semantic_hash": "e8cd83ca5f4af54df4a0cfaeadf9f4f7"
   },
   "src/pages/admin/SystemOperationalPlanPDF.tsx": {
     "mtime": 1788673871.7778475,
@@ -834,10 +834,10 @@
     "semantic_hash": "dca6a1106c007b4e9844a84b30f25fe5"
   },
   "src/services/security/securityEngine.ts": {
-    "mtime": 1788717484.8603635,
-    "seen": 1789227277.5601654,
-    "ast_hash": "8f2682b2f42e6f3d11e6cf0b1c529db9",
-    "semantic_hash": "8f2682b2f42e6f3d11e6cf0b1c529db9"
+    "mtime": 1789483514.3805645,
+    "seen": 1789484817.666052,
+    "ast_hash": "595148d1516e9b9629c568e996f74027",
+    "semantic_hash": "595148d1516e9b9629c568e996f74027"
   },
   "src/services/storage/autoBackup.ts": {
     "mtime": 1788976659.0692897,
@@ -1084,5 +1084,23 @@
     "seen": 1789481055.336007,
     "ast_hash": "962ca754a2801106f470c2750f8f2b26",
     "semantic_hash": "962ca754a2801106f470c2750f8f2b26"
+  },
+  "src/components/admin/StaffPermissionsModal.tsx": {
+    "mtime": 1789482845.4910572,
+    "seen": 1789484817.6270037,
+    "ast_hash": "f7e78ca27d969e8f9625f4ac118aa334",
+    "semantic_hash": "f7e78ca27d969e8f9625f4ac118aa334"
+  },
+  "src/services/auth/firebaseAuthService.ts": {
+    "mtime": 1789482756.39555,
+    "seen": 1789484817.6613057,
+    "ast_hash": "59ef235122e78163223d9e22f163b099",
+    "semantic_hash": "59ef235122e78163223d9e22f163b099"
+  },
+  "src/services/firebase/firebaseConfig.ts": {
+    "mtime": 1789482713.9942558,
+    "seen": 1789484817.6623027,
+    "ast_hash": "92c23eb6f01d42068939386a6144096a",
+    "semantic_hash": "92c23eb6f01d42068939386a6144096a"
   }
 }

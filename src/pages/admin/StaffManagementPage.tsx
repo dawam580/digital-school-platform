@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { StaffPermissionsModal } from '../../components/admin/StaffPermissionsModal';
+import { TeacherAccount } from '../../types';
 
 const ROLE_OPTIONS: { value: StaffRole; label: string }[] = [
   { value: 'admin', label: 'إداري' },
@@ -53,7 +55,8 @@ export const StaffManagementPage: React.FC = () => {
     updateStaffMember,
     deleteStaffMember,
     updateStaffDocuments,
-    setActiveTab
+    setActiveTab,
+    showToast
   } = useSchool();
 
   // Search and Filtering states
@@ -66,6 +69,7 @@ export const StaffManagementPage: React.FC = () => {
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
   const [docsModalStaff, setDocsModalStaff] = useState<StaffMember | null>(null);
   const [deleteConfirmStaff, setDeleteConfirmStaff] = useState<StaffMember | null>(null);
+  const [permissionsStaff, setPermissionsStaff] = useState<StaffMember | null>(null);
 
   // Form states for Add / Edit
   const [formFirstName, setFormFirstName] = useState('');
@@ -544,6 +548,17 @@ export const StaffManagementPage: React.FC = () => {
                             type="button"
                             onClick={() => {
                               sound.playTap();
+                              setPermissionsStaff(staff);
+                            }}
+                            className="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-600 dark:text-purple-400 transition-colors"
+                            title="تخصيص الصلاحيات (RBAC)"
+                          >
+                            <Shield className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              sound.playTap();
                               setDocsModalStaff(staff);
                             }}
                             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
@@ -935,6 +950,31 @@ export const StaffManagementPage: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 4. Staff Permissions Modal (Granular RBAC) */}
+      {permissionsStaff && (
+        <StaffPermissionsModal
+          isOpen={!!permissionsStaff}
+          onClose={() => setPermissionsStaff(null)}
+          teacher={{
+            id: permissionsStaff.id,
+            code: permissionsStaff.nationalNumber ? `LIB-${permissionsStaff.nationalNumber.slice(-4)}` : 'LIB-TCH',
+            name: `${permissionsStaff.firstName} ${permissionsStaff.lastName}`,
+            phone: permissionsStaff.phone,
+            subject: 'المادة الدراسية',
+            subjectCode: 'GEN',
+            assignedClasses: ['1/1', '2/1'],
+            avatar: '',
+            customPermissions: (permissionsStaff as any).customPermissions
+          } as any}
+          onSavePermissions={(_teacherId, customPermissions) => {
+            updateStaffMember(permissionsStaff.id, {
+              customPermissions
+            } as any);
+            showToast('success', 'تم تحديث الصلاحيات 🛡️', `تم تحديث صلاحيات (${permissionsStaff.firstName}) وحفظها بنجاح.`);
+          }}
+        />
       )}
 
     </div>

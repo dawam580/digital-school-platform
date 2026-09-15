@@ -1,29 +1,107 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // مجموعات المدارس والتراخيص (Digital School Licensing)
-    match /schools/{licenseKey} {
-      // السماح لعميل المدرسة بقراءة ترخيصه للتحقق من حالة الاشتراك
-      allow read: if true;
-      
-      // التعديل والكتابة محصورة بالسوبر أدمن ومحظورة كلياً على التطبيقات العادية
-      allow write: if request.auth != null && (
-        request.auth.token.role == 'superadmin' ||
-        request.auth.token.email == 'khlyftadm890@gmail.com'
-      );
+
+    // ========================================================================
+    // دالة التحقق الأساسية من التوكن المشفر
+    // ========================================================================
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
-    // طلبات تجديد الاشتراك (Renewal Requests)
-    match /renewals/{requestId} {
-      // القراءة لجهاز المدير العام (تُدمج محلياً وتعرض في مدير التراخيص)
-      allow read: if true;
-      // الإنشاء مسموح للمدرسة مع تحقق من الحقول الأساسية والحالة الأولية
-      allow create: if request.resource.data.status == 'pending'
-        && request.resource.data.license_key is string
-        && request.resource.data.school_name is string
-        && request.resource.data.admin_phone is string;
-      // التعديل والحذف من الكونسول فقط (قرار القبول/الرفض يتم محلياً لدى السوبر)
-      allow update, delete: if false;
+    // المدير العام (Superadmin) يملك صلاحية الرقابة والتراخيص العامة
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'superadmin';
+    }
+
+    // التحقق من انتماء المستخدم لنفس المدرسة (School Isolation)
+    function isSameSchool(schoolId) {
+      return isAuthenticated() && (request.auth.token.schoolId == schoolId || isSuperAdmin());
+    }
+
+    // التحقق من دور مدير المدرسة
+    function isSchoolAdmin(schoolId) {
+      return isSameSchool(schoolId) && (request.auth.token.role == 'admin' || isSuperAdmin());
+    }
+
+    // التحقق من دور منسق الامتحانات (الكنترول)
+    function isExamsCoordinator(schoolId) {
+      return isSameSchool(schoolId) && (request.auth.token.role == 'exams_coordinator' || isSchoolAdmin(schoolId));
+    }
+
+    // التحقق من دور المعلم
+    function isTeacher(schoolId) {
+      return isSameSchool(schoolId) && request.auth.token.role == 'teacher';
+    }
+
+    // التحقق من دور الأخصائي الاجتماعي
+    function isCounselor(schoolId) {
+      return isSameSchool(schoolId) && (request.auth.token.role == 'counselor' || isSchoolAdmin(schoolId));
+    }
+
+    // ========================================================================
+    // عزل المدارس والبيانات السحابية (Multi-Tenant Isolation)
+    // ========================================================================
+    match /schools/{schoolId} {
+      
+      // معلومات المدرسة الأساسية
+      allow read: if isSameSchool(schoolId);
+      allow write: if isSchoolAdmin(schoolId);
+
+      // 1. سجلات الطلاب (Students Collection)
+      // عدد الطلاب ديناميكي ومتغير لكل مدرسة بحرية تامة
+      match /students/{studentId} {
+        allow read: if isSameSchool(schoolId);
+        allow create, delete: if isSchoolAdmin(schoolId);
+        allow update: if isSchoolAdmin(schoolId) 
+                     || (isTeacher(schoolId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'recentAttendance', 'attendanceRate', 'behaviorPoints', 'behaviorPointsTotal', 'grades', 'lastAttendanceUpdate']))
+                     || isExamsCoordinator(schoolId);
+      }
+
+      // 2. الكادر التعليمي والوظيفي (Staff & Teachers)
+      match /staff/{staffId} {
+        allow read: if isSameSchool(schoolId);
+        allow write: if isSchoolAdmin(schoolId);
+      }
+
+      // 3. الفصول الدراسية (Classes)
+      match /classes/{classId} {
+        allow read: if isSameSchool(schoolId);
+        allow write: if isSchoolAdmin(schoolId);
+      }
+
+      // 4. سجل الحضور والغياب (Attendance Records)
+      match /attendance/{attendanceId} {
+        allow read: if isSameSchool(schoolId);
+        allow create, update: if isSchoolAdmin(schoolId) || isTeacher(schoolId);
+        allow delete: if isSchoolAdmin(schoolId);
+      }
+
+      // 5. درجات وشيتات الكنترول (Exams & Grades)
+      match /exam_records/{recordId} {
+        allow read: if isSameSchool(schoolId);
+        allow write: if isExamsCoordinator(schoolId) || isSchoolAdmin(schoolId);
+      }
+
+      // 6. مكتب الخدمة الاجتماعية وحالات الإرشاد (Counseling & Case Studies)
+      match /case_studies/{caseId} {
+        allow read, write: if isCounselor(schoolId);
+      }
+
+      // 7. سجل التدقيق والأمان (Audit Logs)
+      match /audit_logs/{logId} {
+        allow read: if isSchoolAdmin(schoolId);
+        allow create: if isSameSchool(schoolId);
+        allow update, delete: if false; // سجل التدقيق غير قابل للتعديل أو الحذف
+      }
+    }
+
+    // ========================================================================
+    // منظومة التراخيص والاشتراكات السحابية (Cloud Licensing)
+    // ========================================================================
+    match /school_licenses/{licenseKey} {
+      allow read: if true; // للتحقق من صلاحية الترخيص عند إقلاع المنظومة
+      allow write: if isSuperAdmin();
     }
   }
 }

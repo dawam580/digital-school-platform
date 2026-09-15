@@ -66,6 +66,7 @@ import { LicenseService } from '../services/licensing/licenseService';
 import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensing/licenseTypes';
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
 import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
+import { FirebaseAuthService, AuthSessionUser } from '../services/auth/firebaseAuthService';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -97,6 +98,8 @@ interface SchoolContextType {
   login: (phoneOrId: string, role: UserRole) => void;
   loginWithTeacherCode: (code: string) => boolean;
   logout: () => void;
+  authSession: AuthSessionUser | null;
+  hasPermission: (perm: string) => boolean;
 
   // Parent Student Linkage & Discovery
   parentLinkedStudent: Student | null;
@@ -527,6 +530,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => hasPriorSetup());
+  const [authSession, setAuthSession] = useState<AuthSessionUser | null>(() => FirebaseAuthService.getCurrentSession());
+
+  const hasPermission = useCallback((perm: string) => {
+    return FirebaseAuthService.hasPermission(perm);
+  }, []);
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
     try {
       return localStorage.getItem('madrasa_admin_phone') || '0922465676';
@@ -1162,6 +1170,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return;
     }
     setCurrentUserPhoneState(phoneOrId);
+    FirebaseAuthService.loginWithIdentifier(phoneOrId, '123456').then(res => {
+      if (res.success && res.user) {
+        setAuthSession(res.user);
+      }
+    }).catch(() => {});
+
     // تثبيت الهوية الحقيقية أولاً ثم فتح واجهتها مباشرة (تجاوز الحارس عمداً — هذه بوابة الدخول)
     setAuthenticatedRole(role);
     if (role !== 'superadmin') setSuperUnlocked(false);
@@ -1207,6 +1221,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (foundTeacher) {
       setCurrentTeacher(foundTeacher);
       setCurrentUserPhoneState(foundTeacher.phone);
+      FirebaseAuthService.loginWithIdentifier(foundTeacher.phone || cleanCode, '123456').then(res => {
+        if (res.success && res.user) {
+          setAuthSession(res.user);
+        }
+      }).catch(() => {});
       if (foundTeacher.code === 'LIB-SOC-01' || foundTeacher.subjectCode === 'COUNSEL') {
         setAuthenticatedRole('counselor');
         setSuperUnlocked(false);
@@ -1238,6 +1257,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const logout = () => {
+    FirebaseAuthService.logout().catch(() => {});
+    setAuthSession(null);
     setIsAuthenticated(false);
     setSuperUnlocked(false);
     clearSession();
@@ -2645,6 +2666,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         checkLicense,
         showActivationModal,
         setShowActivationModal,
+        authSession,
+        hasPermission,
       }}
     >
       {children}
