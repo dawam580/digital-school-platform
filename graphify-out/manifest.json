@@ -354,10 +354,10 @@
     "semantic_hash": "1e2af7611e6d721417b5b20032449146"
   },
   "src/components/layout/Navbar.tsx": {
-    "mtime": 1789045925.6664772,
-    "seen": 1789227277.5597863,
-    "ast_hash": "ca50740c106761b0df6f0e6d6bf90447",
-    "semantic_hash": "ca50740c106761b0df6f0e6d6bf90447"
+    "mtime": 1789480414.098316,
+    "seen": 1789481055.3330517,
+    "ast_hash": "3b6ab162fbbc000683fb57dc780f9f6b",
+    "semantic_hash": "3b6ab162fbbc000683fb57dc780f9f6b"
   },
   "src/components/layout/Sidebar.tsx": {
     "mtime": 1788985911.102081,
@@ -534,10 +534,10 @@
     "semantic_hash": "c80ea32b2844fcb7ee757cb08a60e524"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1788986308.0051672,
-    "seen": 1789227277.5597863,
-    "ast_hash": "68fb8a01e86ab605ee69e92a97f50d6f",
-    "semantic_hash": "68fb8a01e86ab605ee69e92a97f50d6f"
+    "mtime": 1789480692.6469576,
+    "seen": 1789481055.3437624,
+    "ast_hash": "b3a44eb0f17d11df03c78d43fb4f6c5c",
+    "semantic_hash": "b3a44eb0f17d11df03c78d43fb4f6c5c"
   },
   "src/data/libyanBaourSchoolDataset.ts": {
     "mtime": 1788721300.6912737,
@@ -678,10 +678,10 @@
     "semantic_hash": "b514c627efcd49a7c23e2579e6508f17"
   },
   "src/pages/parent/ParentMobileApp.tsx": {
-    "mtime": 1789046578.4538383,
-    "seen": 1789227277.5601654,
-    "ast_hash": "e45c1c0c3675b6a680dfbb51552b6278",
-    "semantic_hash": "e45c1c0c3675b6a680dfbb51552b6278"
+    "mtime": 1789480307.9185054,
+    "seen": 1789481055.3490143,
+    "ast_hash": "7ef18906f8a28aa444bf73b7e767068d",
+    "semantic_hash": "7ef18906f8a28aa444bf73b7e767068d"
   },
   "src/pages/reports/DailyReport.tsx": {
     "mtime": 1788673871.7990031,
@@ -1060,5 +1060,29 @@
     "seen": 1789233721.8863375,
     "ast_hash": "d23964923610475036c0436c07ef5d72",
     "semantic_hash": "d23964923610475036c0436c07ef5d72"
+  },
+  ".agents/skills/design-mobile-apps/create_project.json": {
+    "mtime": 1789478764.0017726,
+    "seen": 1789481055.31472,
+    "ast_hash": "43d3e49f753f65f8fa053e36f77c9ed1",
+    "semantic_hash": "43d3e49f753f65f8fa053e36f77c9ed1"
+  },
+  "skills-lock.json": {
+    "mtime": 1789478451.8070588,
+    "seen": 1789481055.3219123,
+    "ast_hash": "b92d7f8adf769042ecd847b68ecf9039",
+    "semantic_hash": "b92d7f8adf769042ecd847b68ecf9039"
+  },
+  "src/components/mobile/DesktopPairingModal.tsx": {
+    "mtime": 1789480033.7296546,
+    "seen": 1789481055.3350103,
+    "ast_hash": "1bc8a28778f0295a1e88b5317cc891c7",
+    "semantic_hash": "1bc8a28778f0295a1e88b5317cc891c7"
+  },
+  "src/components/mobile/MobileQrScannerModal.tsx": {
+    "mtime": 1789479985.6999228,
+    "seen": 1789481055.336007,
+    "ast_hash": "962ca754a2801106f470c2750f8f2b26",
+    "semantic_hash": "962ca754a2801106f470c2750f8f2b26"
   }
 }

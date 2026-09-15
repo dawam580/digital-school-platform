@@ -267,6 +267,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
+        const qPortal = params.get('portal');
+        if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
+          return 'parent';
+        }
         const qRole = params.get('role');
         if (qRole && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(qRole)) {
           return qRole as UserRole;
@@ -491,6 +495,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const hasPriorSetup = (): boolean => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qPortal = params.get('portal');
+        if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile' || params.get('code')) {
+          return true;
+        }
+      }
       // جلسة قائمة (لم تُسجَّل خروجاً) أو أي بصمة استخدام حقيقي على هذا الجهاز.
       // ملاحظة: مفتاح الترخيص مستثنى عمداً لأنه يُزرع تلقائياً عند أول فحص.
       if (localStorage.getItem(SESSION_KEY) === '1') return true;
@@ -695,6 +706,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
+        const qPortal = params.get('portal');
+        if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
+          return 'parent-mobile';
+        }
         const qRole = params.get('role');
         if (qRole === 'superadmin') return 'superadmin-dashboard';
         if (qRole === 'exams_coordinator') return 'exams-coordinator-dashboard';

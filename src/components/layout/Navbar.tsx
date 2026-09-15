@@ -34,6 +34,7 @@ import { QuickSystemGuideModal } from '../common/QuickSystemGuideModal';
 import { DirectorInviteModal } from '../common/DirectorInviteModal';
 import { ComprehensiveSystemGuideModal } from '../common/ComprehensiveSystemGuideModal';
 import { MobileCompanionModal } from '../mobile/MobileCompanionModal';
+import { DesktopPairingModal } from '../mobile/DesktopPairingModal';
 import { SuperAdminLockModal } from '../common/SuperAdminLockModal';
 import { mayViewInterface } from '../../services/security/roleAccess';
 import { isWindowsDesktop, executeNativePrint, openSchoolDocumentsFolder } from '../../services/native/windowsBridge';
@@ -486,10 +487,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         onClose={() => setShowComprehensiveGuide(false)}
       />
 
-      {/* Mobile Companion PWA Modal */}
-      <MobileCompanionModal
+      {/* Mobile Companion & Student QR Pairing Modal */}
+      <DesktopPairingModal
         isOpen={showMobileModal}
         onClose={() => setShowMobileModal(false)}
+        student={selectedStudent}
       />
 
       {/* Super Admin Security PIN Lock Modal */}
