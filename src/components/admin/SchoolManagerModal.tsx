@@ -29,6 +29,8 @@ import {
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { LicenseService } from '../../services/licensing/licenseService';
+import { ClientDeliveryModal } from '../common/ClientDeliveryModal';
+import { ClientDeliveryOptions } from '../../utils/inviteMessageHelper';
 
 interface SchoolManagerModalProps {
   isOpen: boolean;
@@ -74,6 +76,10 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
   const [showPrintCardModal, setShowPrintCardModal] = useState(false);
   const [activeLicenseKey, setActiveLicenseKey] = useState(() => LicenseService.getActiveLicenseKey() || 'SCH-BAOUR-2026-ACTIVE');
 
+  // Client Delivery Pack Modal State
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [deliveryModalInfo, setDeliveryModalInfo] = useState<ClientDeliveryOptions | null>(null);
+
   if (!isOpen) return null;
 
   const handleSaveCurrentProfile = (e: React.FormEvent) => {
@@ -99,9 +105,10 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
       return;
     }
     // لا هواتف مختلقة: رقم حقيقي أو يُترك فارغاً (يُستكمل لاحقاً من الإعدادات)
-    createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), newPhone.trim(), startFresh);
+    const createdSchool = createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), newPhone.trim(), startFresh);
     
     // إنشاء مفتاح دخول وترخيص تلقائي للمدرسة الجديدة
+    let generatedKey = '';
     try {
       const generated = LicenseService.generateSchoolAccessKey({
         schoolName: newSchoolName.trim(),
@@ -109,10 +116,20 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
         adminPhone: newPhone.trim(),
         district: newDistrict.trim()
       });
+      generatedKey = generated.accessKey;
       LicenseService.setActiveLicenseKey(generated.accessKey);
     } catch {}
 
-    onClose();
+    // فتح حزمة اعتماد وتسليم المنظومة للزبون فوراً
+    setDeliveryModalInfo({
+      schoolName: newSchoolName.trim(),
+      directorName: newDirector.trim() || 'مدير المدرسة',
+      phone: newPhone.trim() || '0912345678',
+      district: newDistrict.trim(),
+      schoolCode: (createdSchool as any)?.code || 'SCH-2026',
+      licenseKey: generatedKey
+    });
+    setShowDeliveryModal(true);
   };
 
   const handleGenerateKey = (e: React.FormEvent) => {
@@ -873,6 +890,18 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
             </div>
           </div>
         </div>
+      )}
+
+      {/* Client Delivery Pack Modal */}
+      {showDeliveryModal && deliveryModalInfo && (
+        <ClientDeliveryModal
+          isOpen={showDeliveryModal}
+          onClose={() => {
+            setShowDeliveryModal(false);
+            onClose();
+          }}
+          schoolInfo={deliveryModalInfo}
+        />
       )}
 
     </div>

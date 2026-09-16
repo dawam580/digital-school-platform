@@ -31,8 +31,8 @@ export const ROLE_HOME: Record<UserRole, string> = {
   superadmin: 'superadmin-dashboard',
 };
 
-/** تبويبات عامة لا تحتاج هوية (بوابات الدخول والتعريف) */
-const PUBLIC_TABS = ['landing', 'login', 'parent-signup', 'link-student', 'parent-mobile'];
+/** تبويبات عامة لا تحتاج هوية (بوابات الدخول والتعريف والتهيئة للزبون) */
+const PUBLIC_TABS = ['landing', 'login', 'parent-signup', 'link-student', 'parent-mobile', 'onboarding'];
 
 /** التبويبات المسموح لكل واجهة عرضها */
 const ROLE_ALLOWED_TABS: Record<UserRole, string[]> = {
@@ -40,7 +40,7 @@ const ROLE_ALLOWED_TABS: Record<UserRole, string[]> = {
   admin: [
     'dashboard', 'attendance', 'student-profile', 'grades', 'assignments',
     'chat', 'schedule', 'db-studio', 'daily-report', 'finance', 'staff',
-    'notifications', 'link-student', 'parent-mobile',
+    'notifications', 'link-student', 'parent-mobile', 'onboarding',
   ],
   exams_coordinator: ['exams-coordinator-dashboard', 'notifications', 'chat'],
   teacher: ['teacher-quick', 'attendance', 'chat', 'notifications', 'student-profile', 'daily-report', 'link-student'],

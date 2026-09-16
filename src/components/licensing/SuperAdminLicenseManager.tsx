@@ -25,12 +25,18 @@ import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest } from '../../serv
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
+import { ClientDeliveryModal } from '../common/ClientDeliveryModal';
+import { ClientDeliveryOptions } from '../../utils/inviteMessageHelper';
 
 export const SuperAdminLicenseManager: React.FC = () => {
   const [schools, setSchools] = useState<SchoolLicenseDoc[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   
+  // Client Delivery Pack Modal State
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [deliveryModalInfo, setDeliveryModalInfo] = useState<ClientDeliveryOptions | null>(null);
+
   // New School Modal State
   const [showAddModal, setShowAddModal] = useState(false);
   const [newSchoolName, setNewSchoolName] = useState('');
@@ -131,6 +137,17 @@ export const SuperAdminLicenseManager: React.FC = () => {
       sound.playSuccess();
       triggerConfetti();
       setShowAddModal(false);
+
+      if (created) {
+        setDeliveryModalInfo({
+          schoolName: created.school_name,
+          phone: created.admin_phone,
+          licenseKey: created.license_key,
+          schoolCode: created.school_id || 'SCH-2026'
+        });
+        setShowDeliveryModal(true);
+      }
+
       setNewSchoolName('');
       setNewSchoolPhone('');
       setNewSchoolNotes('');
@@ -364,6 +381,23 @@ export const SuperAdminLicenseManager: React.FC = () => {
                   </button>
 
                   <button
+                    onClick={() => {
+                      sound.playTap();
+                      setDeliveryModalInfo({
+                        schoolName: school.school_name,
+                        phone: school.admin_phone,
+                        licenseKey: school.license_key,
+                        schoolCode: school.school_id || 'SCH-2026'
+                      });
+                      setShowDeliveryModal(true);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition active:scale-95 flex items-center gap-1 shadow-sm"
+                    title="حزمة التسليم ورابط التفعيل للزبون"
+                  >
+                    <span>حزمة الزبون 📦</span>
+                  </button>
+
+                  <button
                     onClick={() => handleToggleStatus(school)}
                     className={`px-3 py-1.5 rounded-xl font-bold text-xs border transition ${
                       school.subscription_status === 'active'
@@ -459,6 +493,15 @@ export const SuperAdminLicenseManager: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Client Delivery Pack Modal */}
+      {showDeliveryModal && deliveryModalInfo && (
+        <ClientDeliveryModal
+          isOpen={showDeliveryModal}
+          onClose={() => setShowDeliveryModal(false)}
+          schoolInfo={deliveryModalInfo}
+        />
       )}
 
     </div>

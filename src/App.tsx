@@ -36,6 +36,7 @@ import { StaffManagementPage } from './pages/admin/StaffManagementPage';
 import { WindowsTitleBar } from './components/desktop/WindowsTitleBar';
 import { LandingPage } from './pages/landing/LandingPage';
 import { ParentMobileApp } from './pages/parent/ParentMobileApp';
+import { SchoolClientOnboardingPage } from './pages/onboarding/SchoolClientOnboardingPage';
 
 const MainContent: React.FC = () => {
   const {
@@ -103,6 +104,26 @@ const MainContent: React.FC = () => {
     return (
       <>
         <ParentMobileApp />
+        <SchoolManagerModal
+          isOpen={showSchoolManagerModal}
+          onClose={() => setShowSchoolManagerModal(false)}
+        />
+        <FreeTrialModal
+          isOpen={showFreeTrialModal}
+          onClose={() => setShowFreeTrialModal(false)}
+        />
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+        />
+      </>
+    );
+  }
+
+  if (activeTab === 'onboarding') {
+    return (
+      <>
+        <SchoolClientOnboardingPage />
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}
@@ -253,6 +274,8 @@ const MainContent: React.FC = () => {
         return <LandingPage />;
       case 'parent-mobile':
         return <ParentMobileApp />;
+      case 'onboarding':
+        return <SchoolClientOnboardingPage />;
       default:
         return <AdminDashboard />;
     }

@@ -701,6 +701,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
+        const qOnboard = params.get('onboard') || params.get('setup');
+        if (qOnboard) {
+          return 'onboarding';
+        }
         const qPortal = params.get('portal');
         if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
           return 'parent-mobile';

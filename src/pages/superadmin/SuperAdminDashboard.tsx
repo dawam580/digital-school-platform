@@ -28,6 +28,8 @@ import { getRoleLink, copyTextToClipboard } from '../../utils/inviteMessageHelpe
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { SuperAdminLicenseManager } from '../../components/licensing/SuperAdminLicenseManager';
 import { SystemOwnerPanel } from '../../components/superadmin/SystemOwnerPanel';
+import { ClientDeliveryModal } from '../../components/common/ClientDeliveryModal';
+import { ClientDeliveryOptions } from '../../utils/inviteMessageHelper';
 
 export const SuperAdminDashboard: React.FC = () => {
   const {
@@ -50,6 +52,10 @@ export const SuperAdminDashboard: React.FC = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [copiedSchoolId, setCopiedSchoolId] = useState<string | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<'licensing' | 'schools' | 'owner'>('licensing');
+
+  // Client Delivery Pack Modal State (حزمة اعتماد وتسليم المنظومة للزبون)
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [deliveryModalInfo, setDeliveryModalInfo] = useState<ClientDeliveryOptions | null>(null);
 
   // New School Form State
   const [newSchoolName, setNewSchoolName] = useState('');
@@ -74,7 +80,7 @@ export const SuperAdminDashboard: React.FC = () => {
     }
 
     sound.playSuccess();
-    createNewSchool(
+    const createdSchool = createNewSchool(
       newSchoolName.trim(),
       newDistrict.trim(),
       newDirector.trim() || 'مدير المدرسة',
@@ -84,6 +90,17 @@ export const SuperAdminDashboard: React.FC = () => {
     triggerConfetti();
     showToast('gold', 'تمت إضافة المدرسة بنجاح 🏛️', `تم تسجيل مدرسة (${newSchoolName}) في ديوان المدارس بنجاح.`);
     setShowAddSchoolModal(false);
+
+    // فتح حزمة التسليم ورابط التفعيل فوراً لإرساله للزبون (مدير المدرسة الجديد)
+    setDeliveryModalInfo({
+      schoolName: newSchoolName.trim(),
+      directorName: newDirector.trim() || 'مدير المدرسة',
+      phone: newPhone.trim(),
+      schoolCode: newSchoolCode.trim() || (createdSchool as any)?.code || 'SCH-2026',
+      district: newDistrict.trim()
+    });
+    setShowDeliveryModal(true);
+
     setNewSchoolName('');
     setNewSchoolCode('');
     setNewDirector('');
@@ -359,6 +376,25 @@ export const SuperAdminDashboard: React.FC = () => {
 
                 <button
                   type="button"
+                  onClick={() => {
+                    sound.playTap();
+                    setDeliveryModalInfo({
+                      schoolName: school.name,
+                      directorName: school.directorName,
+                      phone: school.directorPhone,
+                      schoolCode: school.code,
+                      district: school.district
+                    });
+                    setShowDeliveryModal(true);
+                  }}
+                  className="px-3 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition active:scale-95 flex items-center gap-1 shadow-sm"
+                  title="حزمة التسليم ورابط التفعيل للزبون"
+                >
+                  <span>حزمة الزبون 📦</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handleCopyDirectorLink(school)}
                   className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-95"
                   title="نسخ الرابط المباشر لمدير هذه المدرسة"
@@ -490,6 +526,19 @@ export const SuperAdminDashboard: React.FC = () => {
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
+
+      {/* Client Delivery Pack Modal */}
+      {showDeliveryModal && deliveryModalInfo && (
+        <ClientDeliveryModal
+          isOpen={showDeliveryModal}
+          onClose={() => setShowDeliveryModal(false)}
+          schoolInfo={deliveryModalInfo}
+          onOpenPreview={() => {
+            setActiveTab('onboarding');
+            setShowDeliveryModal(false);
+          }}
+        />
+      )}
 
     </div>
   );

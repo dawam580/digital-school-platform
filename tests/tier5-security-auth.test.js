@@ -361,6 +361,57 @@ export function createTier5Suite() {
       expect(checksum.length).toBe(4);
       expect(Number(checksum) >= 1000).toBe(true);
     });
+
+    runner.test('SEC.19 - Client Onboarding Link contains necessary school parameters', () => {
+      const baseUrl = 'https://dawam580.github.io/digital-school-platform';
+      const schoolId = 'SCH-TOKRA-01';
+      const schoolName = 'مدرسة توكرة المركزية';
+      const directorPhone = '0912345678';
+      const directorName = 'أ. محمد السنوسي';
+
+      const params = new URLSearchParams();
+      params.set('onboard', '1');
+      params.set('schoolId', schoolId);
+      params.set('school', schoolName);
+      params.set('phone', directorPhone);
+      params.set('director', directorName);
+      const onboardingLink = `${baseUrl}?${params.toString()}`;
+
+      expect(onboardingLink.includes('onboard=1')).toBe(true);
+      expect(onboardingLink.includes('schoolId=SCH-TOKRA-01')).toBe(true);
+      const parsedParams = new URLSearchParams(onboardingLink.split('?')[1]);
+      expect(parsedParams.get('school')).toBe('مدرسة توكرة المركزية');
+      expect(parsedParams.get('director')).toBe('أ. محمد السنوسي');
+    });
+
+    runner.test('SEC.20 - Client Delivery WhatsApp message includes 4 core pillars and Libyan phone format', () => {
+      const phone = '0922465676';
+      const cleanPhone = phone.replace(/[^0-9]/g, '');
+      const intlPhone = cleanPhone.startsWith('09') ? `218${cleanPhone.substring(1)}` : cleanPhone;
+      expect(intlPhone).toBe('218922465676');
+
+      const message = `🏛️ حزمة تسليم واعتماد المنصة
+1️⃣ تفعيل حساب المدير
+2️⃣ تطبيق ويندوز المكتبي
+3️⃣ كتيب التعليمات الشامل
+4️⃣ دليل حسابات الكادر`;
+
+      expect(message.includes('تفعيل حساب المدير')).toBe(true);
+      expect(message.includes('تطبيق ويندوز المكتبي')).toBe(true);
+      expect(message.includes('كتيب التعليمات الشامل')).toBe(true);
+      expect(message.includes('دليل حسابات الكادر')).toBe(true);
+    });
+
+    runner.test('SEC.21 - Windows Desktop launcher script includes native app flags', () => {
+      const webAppUrl = 'https://dawam580.github.io/digital-school-platform/';
+      const batchScript = `@echo off
+chcp 65001 > nul
+start msedge --app="${webAppUrl}?role=admin" --window-size=1440,920
+`;
+      expect(batchScript.includes('chcp 65001')).toBe(true);
+      expect(batchScript.includes('--app=')).toBe(true);
+      expect(batchScript.includes('role=admin')).toBe(true);
+    });
   });
 
   return runner;

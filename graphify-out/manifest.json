@@ -108,10 +108,10 @@
     "semantic_hash": "43bca8763dad107549d696cc4d7ef25a"
   },
   "src/App.tsx": {
-    "mtime": 1789561175.1074505,
-    "seen": 1789561539.0254,
-    "ast_hash": "9ebefde7ebb929b2b81050c61122d12c",
-    "semantic_hash": "9ebefde7ebb929b2b81050c61122d12c"
+    "mtime": 1789562865.6801372,
+    "seen": 1789563053.5026083,
+    "ast_hash": "feaf0d78dfaab8c587fe8ff3e1abff01",
+    "semantic_hash": "feaf0d78dfaab8c587fe8ff3e1abff01"
   },
   "src/components/admin/AccountSettingsModal.tsx": {
     "mtime": 1789562128.9223719,
@@ -168,10 +168,10 @@
     "semantic_hash": "fbfa74ab20c4059529442f6a22728907"
   },
   "src/components/admin/SchoolManagerModal.tsx": {
-    "mtime": 1789562238.672572,
-    "seen": 1789562423.587317,
-    "ast_hash": "9a54a941ff30359d978eb47894cc6777",
-    "semantic_hash": "9a54a941ff30359d978eb47894cc6777"
+    "mtime": 1789563499.8807886,
+    "seen": 1789563522.7954001,
+    "ast_hash": "c32870a0c9d502edb7d273e768aeb534",
+    "semantic_hash": "c32870a0c9d502edb7d273e768aeb534"
   },
   "src/components/admin/SecurityPinModal.tsx": {
     "mtime": 1789561175.1247778,
@@ -378,10 +378,10 @@
     "semantic_hash": "86d49757f23231b106faf4881d1d5823"
   },
   "src/components/licensing/SuperAdminLicenseManager.tsx": {
-    "mtime": 1789561175.1722376,
-    "seen": 1789561539.0254,
-    "ast_hash": "77b76181fe2cdd5f27972e081ec8154b",
-    "semantic_hash": "77b76181fe2cdd5f27972e081ec8154b"
+    "mtime": 1789563068.1582985,
+    "seen": 1789563104.0236862,
+    "ast_hash": "7677d78d5aece695b692485f7a4a5464",
+    "semantic_hash": "7677d78d5aece695b692485f7a4a5464"
   },
   "src/components/mobile/MobileCompanionModal.tsx": {
     "mtime": 1789561175.174227,
@@ -534,10 +534,10 @@
     "semantic_hash": "920aa1ce26b0002dbaf2ce8e1f1d54ff"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1789561175.206518,
-    "seen": 1789561539.0254,
-    "ast_hash": "fd8d9902046370dc778c1fa5b6e86bab",
-    "semantic_hash": "fd8d9902046370dc778c1fa5b6e86bab"
+    "mtime": 1789562832.7105985,
+    "seen": 1789563053.5423927,
+    "ast_hash": "1cdc021755dc3cc96f60576ff96dea31",
+    "semantic_hash": "1cdc021755dc3cc96f60576ff96dea31"
   },
   "src/data/libyanBaourSchoolDataset.ts": {
     "mtime": 1789561175.220626,
@@ -702,10 +702,10 @@
     "semantic_hash": "d78ee0d03ebef3d76f0f6a9c1ef2b0fb"
   },
   "src/pages/superadmin/SuperAdminDashboard.tsx": {
-    "mtime": 1789561175.2626653,
-    "seen": 1789561539.0254,
-    "ast_hash": "737b6f0360f3f5ec82fe14caf594c9ff",
-    "semantic_hash": "737b6f0360f3f5ec82fe14caf594c9ff"
+    "mtime": 1789562912.038538,
+    "seen": 1789563053.552955,
+    "ast_hash": "29f01e1265b7ba71e0a1ae0787647501",
+    "semantic_hash": "29f01e1265b7ba71e0a1ae0787647501"
   },
   "src/pages/teacher/TeacherQuickDashboard.tsx": {
     "mtime": 1789561175.2651775,
@@ -828,10 +828,10 @@
     "semantic_hash": "4d699b1a44f867626e240068a0b70141"
   },
   "src/services/security/roleAccess.ts": {
-    "mtime": 1789561175.295657,
-    "seen": 1789561539.0254,
-    "ast_hash": "42aa7c1a9366e3ed78dd527d66d576ba",
-    "semantic_hash": "42aa7c1a9366e3ed78dd527d66d576ba"
+    "mtime": 1789562825.1840835,
+    "seen": 1789563053.5682552,
+    "ast_hash": "7a02451ac26d8ff074c5194ebc98ec71",
+    "semantic_hash": "7a02451ac26d8ff074c5194ebc98ec71"
   },
   "src/services/security/securityEngine.ts": {
     "mtime": 1789561175.295657,
@@ -888,10 +888,10 @@
     "semantic_hash": "75e828abac29bc619258d23468a708b9"
   },
   "src/utils/inviteMessageHelper.ts": {
-    "mtime": 1789561175.3079827,
-    "seen": 1789561539.0254,
-    "ast_hash": "88df07b81ddd1d16c576ebcc9c345725",
-    "semantic_hash": "88df07b81ddd1d16c576ebcc9c345725"
+    "mtime": 1789562755.9417925,
+    "seen": 1789563053.5728066,
+    "ast_hash": "de1eaf84f80efd5945d9c883c5a11376",
+    "semantic_hash": "de1eaf84f80efd5945d9c883c5a11376"
   },
   "src/utils/soundEffects.ts": {
     "mtime": 1789561175.3085053,
@@ -1122,9 +1122,21 @@
     "semantic_hash": "01ead3a1611f57185314240025e57c84"
   },
   "tests/tier5-security-auth.test.js": {
-    "mtime": 1789562289.6028402,
-    "seen": 1789562423.6264622,
-    "ast_hash": "43d3f88b9e02719a92a456d881903ec9",
-    "semantic_hash": "43d3f88b9e02719a92a456d881903ec9"
+    "mtime": 1789563024.76967,
+    "seen": 1789563053.5773735,
+    "ast_hash": "a2a51058729a9bb2772210174037a22d",
+    "semantic_hash": "a2a51058729a9bb2772210174037a22d"
+  },
+  "src/components/common/ClientDeliveryModal.tsx": {
+    "mtime": 1789562778.369288,
+    "seen": 1789563053.5146112,
+    "ast_hash": "ca710e83b05a0240074c5c7e021b0c91",
+    "semantic_hash": "ca710e83b05a0240074c5c7e021b0c91"
+  },
+  "src/pages/onboarding/SchoolClientOnboardingPage.tsx": {
+    "mtime": 1789562813.532424,
+    "seen": 1789563053.552955,
+    "ast_hash": "11eb8a95f8e97adc4f37240fc9f2e53a",
+    "semantic_hash": "11eb8a95f8e97adc4f37240fc9f2e53a"
   }
 }

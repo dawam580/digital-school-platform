@@ -115,6 +115,140 @@ export const copyTextToClipboard = async (text: string): Promise<boolean> => {
   }
 };
 
-export const getWhatsAppShareUrl = (text: string): string => {
+export const getWhatsAppShareUrl = (text: string, phone?: string): string => {
+  const cleanPhone = phone ? phone.replace(/[^0-9]/g, '') : '';
+  if (cleanPhone) {
+    // Format for international libyan number if starting with 09
+    const intlPhone = cleanPhone.startsWith('09') ? `218${cleanPhone.substring(1)}` : cleanPhone;
+    return `https://api.whatsapp.com/send?phone=${intlPhone}&text=${encodeURIComponent(text)}`;
+  }
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 };
+
+/**
+ * توليد رابط التهيئة والتفعيل المباشر للزبون (مدير المدرسة)
+ */
+export const getClientOnboardingLink = (
+  schoolId: string,
+  schoolName?: string,
+  directorPhone?: string,
+  directorName?: string
+): string => {
+  const base = getBaseUrl().replace(/\/+$/, '');
+  const params = new URLSearchParams();
+  params.set('onboard', '1');
+  if (schoolId) params.set('schoolId', schoolId);
+  if (schoolName) params.set('school', schoolName);
+  if (directorPhone) params.set('phone', directorPhone);
+  if (directorName) params.set('director', directorName);
+  return `${base}?${params.toString()}`;
+};
+
+export interface ClientDeliveryOptions {
+  schoolName: string;
+  directorName?: string;
+  phone?: string;
+  schoolCode?: string;
+  licenseKey?: string;
+  district?: string;
+}
+
+/**
+ * توليد الرسالة الرسمية الكاملة لحزمة تسليم المنظومة للزبون (مدير المدرسة الجديد)
+ */
+export const generateClientDeliveryWhatsAppMessage = (options: ClientDeliveryOptions): string => {
+  const director = options.directorName || 'الأستاذ الفاضل مدير المدرسة';
+  const school = options.schoolName;
+  const phone = options.phone || '0912345678';
+  const code = options.schoolCode || 'SCH-2026';
+  const onboardingLink = getClientOnboardingLink(code, school, phone, director);
+
+  return `*بسم الله الرحمن الرحيم*
+*وزارة التربية والتعليم - دولة ليبيا*
+🏛️ *حزمة تسليم واعتماد «منصة المدرسة الرقمية» المعتمدة*
+
+حضرة ${director} المحترم،
+إدارة مدرسة: *${school}*
+
+نهنئكم باعتماد منصتكم المدرسية الرقمية رسمياً وفق المعايير الوزارية واللوائح المنظمة للامتحانات لعام 2025/2026م.
+
+تم تجهيز بوابتكم الخاصة وحزمة التسليم المتكاملة، وتتضمن:
+1️⃣ *تفعيل حساب المدير*: تعيين رمز الأمان PIN وكلمة المرور وتشغيل المنظومة.
+2️⃣ *تطبيق ويندوز المكتبي*: تشغيل المنظومة كنافذة مستقلة وسريعة تعمل بدون إنترنت (Offline-first).
+3️⃣ *كتيب التعليمات الشامل*: شرح مبسط لكافة خصائص المنظومة وجداول الحصص وشيت الامتحانات.
+4️⃣ *دليل حسابات الكادر*: آلية إنشاء حسابات المعلمين والكنترول والأخصائي الاجتماعي وتطبيق ولي الأمر.
+
+🔗 *رابط تفعيل وتشغيل المنظومة الخاص بكم:*
+${onboardingLink}
+
+📱 *بيانات الدخول المعتمدة:*
+• رقم الهاتف المعتمد: ${phone}
+• رمز الدخول الافتراضي: 2026 (يمكنكم تغييره فوراً)
+
+📌 *ملاحظة:* يرجى فتح الرابط المرفق أعلاه من جهاز الكمبيوتر أو الهاتف لبدء الإعداد فوراً.
+
+مع تحيات إدارة الدعم الفني وديوان المراقبة المدرسية.`;
+};
+
+/**
+ * محتوى سكربت مشغل سطح المكتب لنظام ويندوز
+ */
+export const getWindowsLauncherScriptContent = (schoolName: string = 'منصة المدرسة الرقمية'): string => {
+  const webAppUrl = getBaseUrl();
+  return `@echo off
+chcp 65001 > nul
+title ${schoolName} - Windows Desktop App
+color 0B
+echo ==============================================================================
+echo        ${schoolName}
+echo           النسخة المكتبية المعتمدة - Windows Desktop Edition
+echo ==============================================================================
+echo.
+echo [1/2] جاري فحص ملفات التشغيل والاتصال المحلي...
+timeout /t 1 > nul
+
+echo [2/2] جاري تشغيل المنظومة في نافذة سطح مكتب مستقلة وسريعة...
+echo.
+
+:: 1. محاولة التشغيل عبر مايكروسوفت إيدج في وضع النافذة المستقلة App Mode
+where msedge >nul 2>nul
+if %errorlevel% equ 0 (
+    start msedge --app="${webAppUrl}?role=admin" --window-size=1440,920 --window-position=30,30
+    echo [تم] تم فتح التطبيق بنافذة مستقلة عبر Microsoft Edge App.
+    timeout /t 2 > nul
+    exit
+)
+
+:: 2. محاولة التشغيل عبر جوجل كروم في وضع النافذة المستقلة App Mode
+where chrome >nul 2>nul
+if %errorlevel% equ 0 (
+    start chrome --app="${webAppUrl}?role=admin" --window-size=1440,920 --window-position=30,30
+    echo [تم] تم فتح التطبيق بنافذة مستقلة عبر Google Chrome App.
+    timeout /t 2 > nul
+    exit
+)
+
+:: 3. في حال عدم العثور، فتح الرابط في المتصفح الافتراضي
+start "" "${webAppUrl}?role=admin"
+echo [تم] تم فتح المنظومة في المتصفح الافتراضي بنجاح.
+timeout /t 2 > nul
+exit
+`;
+};
+
+/**
+ * تنزيل مشغل تطبيق ويندوز المكتبي (.bat) للمدرسة مباشرة من المتصفح
+ */
+export const downloadWindowsAppLauncher = (schoolName: string = 'منصة المدرسة الرقمية'): void => {
+  const scriptContent = getWindowsLauncherScriptContent(schoolName);
+  const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `تشغيل-المنظومة-ويندوز-${schoolName.replace(/\s+/g, '_')}.bat`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+};
+
