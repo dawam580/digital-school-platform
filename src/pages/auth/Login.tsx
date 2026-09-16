@@ -50,10 +50,8 @@ export const Login: React.FC = () => {
   const [loginMode, setLoginMode] = useState<'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('admin');
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // بوابة السوبر مخفية عن العامة: تظهر فقط برابط المالك (?role=superadmin) أو وضع التطوير.
-  // الحماية الحقيقية تبقى رمز الماستر — الإخفاء مجرد تقليل لسطح الهجوم.
+  // بوابة السوبر مخفية تماماً عن العامة والزوار: تظهر حصراً برابط المالك المشفر (?role=superadmin)
   const [showSuperPortal] = useState<boolean>(() => {
-    if (DEV_MODE) return true;
     try {
       if (typeof window !== 'undefined') {
         return new URLSearchParams(window.location.search).get('role') === 'superadmin';

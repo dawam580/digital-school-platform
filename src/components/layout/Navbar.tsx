@@ -26,7 +26,8 @@ import {
   HelpCircle,
   Smartphone,
   Printer,
-  FolderOpen
+  FolderOpen,
+  Share2
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
@@ -76,6 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showStudentMenu, setShowStudentMenu] = useState(false);
+  const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showDirectorInviteModal, setShowDirectorInviteModal] = useState(false);
   const [showComprehensiveGuide, setShowComprehensiveGuide] = useState(false);
@@ -91,17 +93,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
     { id: 'counselor', label: 'الأخصائي الاجتماعي', icon: <HeartHandshake className="w-4 h-4" />, color: 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300' },
   ];
 
+  // الأدوار المعتمدة الظاهرة في الواجهة العامة (مخفي عنها السوبر أدمن تماماً)
   const allRoles: { id: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
     ...staffRoles,
-    { id: 'superadmin', label: 'المدير العام (سوبر أدمن)', icon: <Building2 className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' },
     { id: 'parent', label: 'ولي الأمر', icon: <Users className="w-4 h-4" />, color: 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300' }
   ];
 
-  const isStaffMember = ['admin', 'exams_coordinator', 'teacher', 'counselor', 'superadmin'].includes(currentRole);
+  const isStaffMember = ['admin', 'exams_coordinator', 'teacher', 'counselor'].includes(currentRole);
   const currentRoleInfo = allRoles.find(r => r.id === currentRole) || staffRoles[0];
 
   // إخفاء الواجهات عن بعضها: كل هوية ترى في القائمة ما يحق لها فتحه فقط
-  // (المعلم يرى واجهته فقط فتختفي القائمة، المدير يرى الطاقم، السوبر يرى الكل)
   const visibleStaffRoles = staffRoles.filter(r => mayViewInterface(authenticatedRole, superUnlocked, r.id));
 
   const toggleSound = () => {
@@ -254,31 +255,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                         {currentRole === role.id && <Check className="w-4 h-4 text-purple-600" />}
                       </button>
                     ))}
-
-                    {/* Master Super Admin Locked Entry — لهوية السوبر فقط (مخفي عن المدير والطاقم) */}
-                    {authenticatedRole === 'superadmin' && (
-                    <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-700">
-                      <button
-                        onClick={() => {
-                          setShowRoleMenu(false);
-                          setShowSuperAdminLock(true);
-                          sound.playTap();
-                        }}
-                        className="w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-300 transition-colors group"
-                        title="منطقة المالك والمطور فقط (محمية برمز سري)"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="p-1 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">
-                            <Building2 className="w-3.5 h-3.5" />
-                          </span>
-                          <span className="font-bold">المدير العام (سوبر أدمن)</span>
-                        </div>
-                        <span className="text-[10px] bg-blue-500/20 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
-                          <span>🔒 مقفل</span>
-                        </span>
-                      </button>
-                    </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -287,7 +263,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             {/* Notification Bell */}
             <div className="relative">
               <button
-                onClick={() => { setShowNotifMenu(!showNotifMenu); setShowRoleMenu(false); setShowStudentMenu(false); sound.playTap(); }}
+                onClick={() => { setShowNotifMenu(!showNotifMenu); setShowRoleMenu(false); setShowStudentMenu(false); setShowToolsMenu(false); sound.playTap(); }}
                 className="relative p-2 rounded-2xl text-slate-600 dark:text-slate-300 hover:text-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700"
                 title="الإشعارات والتنبيهات"
               >
@@ -300,7 +276,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </button>
 
               {showNotifMenu && (
-                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-[92vw] sm:w-[400px] max-w-lg bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 py-3 z-[9999] animate-in fade-in zoom-in-95">
+                <div className="absolute left-0 mt-2 w-[92vw] sm:w-[380px] max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 py-3 z-[9999] animate-in fade-in zoom-in-95">
                   <div className="flex items-center justify-between px-4 pb-3 border-b border-slate-100 dark:border-slate-700">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-extrabold text-slate-800 dark:text-white">مركز التنبيهات</span>
@@ -354,85 +330,109 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               )}
             </div>
 
-            {/* Director Invite & Role Links Button */}
-            {/* Landing Page & Pricing Showcase */}
-            <button
-              type="button"
-              onClick={() => { setActiveTab('landing'); sound.playTap(); }}
-              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black border border-amber-200 dark:border-amber-800 transition active:scale-95 shadow-sm"
-              title="استعراض صفحة مميزات المنظومة وباقات الاشتراك"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>باقات الاشتراك والأسعار 🌟</span>
-            </button>
-
-            {/* Comprehensive System Guide Button */}
-            <button
-              type="button"
-              onClick={() => { setShowComprehensiveGuide(true); sound.playTap(); }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-black border border-blue-200 dark:border-blue-800 transition active:scale-95 shadow-sm"
-              title="دليل المنظومة الشامل من الألف إلى الياء"
-            >
-              <span>📚 دليل المنظومة الشامل</span>
-            </button>
-
-            {/* Direct Parent Mobile App Preview Button */}
-            <button
-              type="button"
-              onClick={() => { setActiveTab('parent-mobile'); sound.playTap(); }}
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black border border-indigo-200 dark:border-indigo-800 transition active:scale-95 shadow-sm"
-              title="معاينة تطبيق ولي الأمر كما يظهر على الهاتف"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-indigo-500" />
-              <span>📱 تطبيق ولي الأمر</span>
-            </button>
-
-            {/* Mobile Companion / PWA Button */}
-            <button
-              type="button"
-              onClick={() => { setShowMobileModal(true); sound.playTap(); }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-black border border-emerald-200 dark:border-emerald-800 transition active:scale-95 shadow-sm"
-              title="فتح وتثبيت تطبيق الهاتف وتوليد باركود QR"
-            >
-              <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">📱 باركود الهاتف</span>
-            </button>
-
-            {/* Desktop Native Print & Folder Buttons (Only when in Windows Electron) */}
-            {isDesktop && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => { executeNativePrint(); sound.playTap(); }}
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-black border border-blue-200 dark:border-blue-800 transition active:scale-95 shadow-sm"
-                  title="طباعة الصفحة مباشرة عبر طابعة الويندوز"
-                >
-                  <Printer className="w-4 h-4 text-blue-600" />
-                  <span>طباعة</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { openSchoolDocumentsFolder(); sound.playTap(); }}
-                  className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs font-black border border-amber-200 dark:border-amber-800 transition active:scale-95 shadow-sm"
-                  title="فتح مجلد مستندات وتقارير المدرسة في ويندوز"
-                >
-                  <FolderOpen className="w-4 h-4 text-amber-600" />
-                  <span>المستندات</span>
-                </button>
-              </>
-            )}
-
-            {/* Director Invite & Role Links Button (إدارة المدرسة والسوبر فقط) */}
-            {(authenticatedRole === 'admin' || (authenticatedRole === 'superadmin' && superUnlocked)) && (
+            {/* Quick Tools & Features Dropdown (يمنع تكدس الهيدر وانكسار الأسطر) */}
+            <div className="relative">
               <button
                 type="button"
-                onClick={() => { setShowDirectorInviteModal(true); sound.playTap(); }}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black border border-purple-200 dark:border-purple-800 transition active:scale-95 shadow-sm"
-                title="نسخ رسالة دعوة المدير والروابط المنفصلة"
+                onClick={() => {
+                  setShowToolsMenu(!showToolsMenu);
+                  setShowNotifMenu(false);
+                  setShowRoleMenu(false);
+                  setShowStudentMenu(false);
+                  sound.playTap();
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black border border-indigo-200 dark:border-indigo-800 transition active:scale-95 shadow-sm"
+                title="أدوات ومميزات المنظومة السريعة"
               >
-                <span>✉️ رسالة الدعوة والروابط</span>
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span className="hidden sm:inline">أدوات المنظومة</span>
+                <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
-            )}
+
+              {showToolsMenu && (
+                <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 py-2 z-[9999] animate-in fade-in zoom-in-95 font-cairo">
+                  <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                    أدوات ومميزات المدرسة ⚡
+                  </div>
+
+                  <button
+                    onClick={() => { setActiveTab('landing'); setShowToolsMenu(false); sound.playTap(); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-300 transition-colors"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                    <div>
+                      <p className="font-bold">باقات الاشتراك والأسعار</p>
+                      <p className="text-[10px] text-slate-400">استعراض الخطط والترقية</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { setShowComprehensiveGuide(true); setShowToolsMenu(false); sound.playTap(); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-300 transition-colors"
+                  >
+                    <BookOpen className="w-4 h-4 text-blue-500 shrink-0" />
+                    <div>
+                      <p className="font-bold">دليل المنظومة الشامل</p>
+                      <p className="text-[10px] text-slate-400">شرح جميع الأدوار واللوائح</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('parent-mobile'); setShowToolsMenu(false); sound.playTap(); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 transition-colors"
+                  >
+                    <Smartphone className="w-4 h-4 text-indigo-500 shrink-0" />
+                    <div>
+                      <p className="font-bold">تطبيق ولي الأمر</p>
+                      <p className="text-[10px] text-slate-400">معاينة واجهة الهاتف الذكي</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { setShowMobileModal(true); setShowToolsMenu(false); sound.playTap(); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 transition-colors"
+                  >
+                    <Smartphone className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <div>
+                      <p className="font-bold">باركود ربط الهاتف QR</p>
+                      <p className="text-[10px] text-slate-400">تثبيت التطبيق على الجوال</p>
+                    </div>
+                  </button>
+
+                  {(authenticatedRole === 'admin' || (authenticatedRole === 'superadmin' && superUnlocked)) && (
+                    <button
+                      onClick={() => { setShowDirectorInviteModal(true); setShowToolsMenu(false); sound.playTap(); }}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-purple-50 dark:hover:bg-purple-950/40 text-purple-700 dark:text-purple-300 transition-colors border-t border-slate-100 dark:border-slate-700"
+                    >
+                      <Share2 className="w-4 h-4 text-purple-500 shrink-0" />
+                      <div>
+                        <p className="font-bold">رسالة الدعوة والروابط</p>
+                        <p className="text-[10px] text-slate-400">روابط الكنترول والمعلم وولي الأمر</p>
+                      </div>
+                    </button>
+                  )}
+
+                  {isDesktop && (
+                    <div className="border-t border-slate-100 dark:border-slate-700 pt-1">
+                      <button
+                        onClick={() => { executeNativePrint(); setShowToolsMenu(false); sound.playTap(); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
+                      >
+                        <Printer className="w-4 h-4 text-blue-600" />
+                        <span>طباعة الصفحة الحالية</span>
+                      </button>
+                      <button
+                        onClick={() => { openSchoolDocumentsFolder(); setShowToolsMenu(false); sound.playTap(); }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
+                      >
+                        <FolderOpen className="w-4 h-4 text-amber-600" />
+                        <span>مجلد مستندات المدرسة</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Dark Mode Toggle */}
             <button

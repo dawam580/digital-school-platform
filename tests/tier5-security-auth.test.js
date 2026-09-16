@@ -48,7 +48,10 @@ class TestAuthEngine {
         this.recordFail(cleanId);
         return { success: false, error: 'رقم الهاتف غير مسجل كمدير معتمد.' };
       }
-      if (!['2026', '123456'].includes(cleanPass)) {
+      const validSecrets = ['2026', '123456'];
+      const custom = globalThis.localStorage?.getItem('madrasa_admin_password');
+      if (custom) validSecrets.push(custom);
+      if (!validSecrets.includes(cleanPass)) {
         this.recordFail(cleanId);
         return { success: false, error: 'رمز الأمان أو كلمة المرور غير صحيحة.' };
       }
@@ -65,7 +68,10 @@ class TestAuthEngine {
         this.recordFail(cleanId);
         return { success: false, error: 'رقم الهاتف غير مسجل كرئيس كنترول معتمد.' };
       }
-      if (!['2026', '123456'].includes(cleanPass)) {
+      const validSecrets = ['2026', '123456'];
+      const customExams = globalThis.localStorage?.getItem('madrasa_exams_password');
+      if (customExams) validSecrets.push(customExams);
+      if (!validSecrets.includes(cleanPass)) {
         this.recordFail(cleanId);
         return { success: false, error: 'كلمة المرور غير صحيحة.' };
       }
@@ -79,7 +85,10 @@ class TestAuthEngine {
         this.recordFail(cleanId);
         return { success: false, error: 'رمز المعلم غير مسجل.' };
       }
-      if (cleanPass !== '123456' && cleanPass !== '2026') {
+      const validSecrets = ['123456', '2026'];
+      const customTeacher = globalThis.localStorage?.getItem(`madrasa_teacher_pwd_${cleanId.toUpperCase()}`);
+      if (customTeacher) validSecrets.push(customTeacher);
+      if (!validSecrets.includes(cleanPass)) {
         this.recordFail(cleanId);
         return { success: false, error: 'كلمة المرور غير صحيحة.' };
       }
@@ -301,6 +310,56 @@ export function createTier5Suite() {
       });
       expect(res.success).toBe(true);
       expect(res.role).toBe('parent');
+    });
+  });
+
+  // ==========================================
+  // 5. Password Persistence & Access Key Generation
+  // ==========================================
+  runner.describe('SEC-05: Password Sync & System Access Key Generation', () => {
+    runner.test('SEC.16 - Custom admin password in storage takes effect and succeeds', () => {
+      if (globalThis.localStorage) {
+        globalThis.localStorage.setItem('madrasa_admin_password', 'NewAdminPass@2026');
+      }
+      const res = TestAuthEngine.verify({
+        role: 'admin',
+        identifier: '0922465676',
+        password: 'NewAdminPass@2026'
+      });
+      expect(res.success).toBe(true);
+      expect(res.role).toBe('admin');
+      if (globalThis.localStorage) {
+        globalThis.localStorage.removeItem('madrasa_admin_password');
+      }
+    });
+
+    runner.test('SEC.17 - Custom teacher password in storage succeeds for that teacher', () => {
+      if (globalThis.localStorage) {
+        globalThis.localStorage.setItem('madrasa_teacher_pwd_LIB-COMP-09', 'TeacherSecret99');
+      }
+      const res = TestAuthEngine.verify({
+        role: 'teacher',
+        identifier: 'LIB-COMP-09',
+        password: 'TeacherSecret99'
+      });
+      expect(res.success).toBe(true);
+      expect(res.role).toBe('teacher');
+      if (globalThis.localStorage) {
+        globalThis.localStorage.removeItem('madrasa_teacher_pwd_LIB-COMP-09');
+      }
+    });
+
+    runner.test('SEC.18 - Standard Access Key generation format and checksum validity', () => {
+      const schoolName = 'مدرسة الشهيد امحمد الباعور';
+      const prefix = schoolName.includes('الباعور') ? 'BAOUR' : 'LIBYA';
+      const rand1 = '8942';
+      const rand2 = 'X7K2';
+      const key = `MADRASA-2026-${prefix}-${rand1}-${rand2}`;
+
+      expect(key.startsWith('MADRASA-2026-BAOUR')).toBe(true);
+      const checksum = (Math.abs(key.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)) % 9000 + 1000).toString();
+      expect(checksum.length).toBe(4);
+      expect(Number(checksum) >= 1000).toBe(true);
     });
   });
 

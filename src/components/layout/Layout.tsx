@@ -21,7 +21,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { activeTab, setActiveTab, currentRole, unreadCount } = useSchool();
+  const { activeTab, setActiveTab, currentRole, unreadCount, schoolProfile } = useSchool();
 
   const getMobileNav = () => {
     switch (currentRole) {
@@ -74,12 +74,40 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {showSidebar && <Sidebar />}
         
-        <main className={`flex-1 overflow-y-auto ${currentRole === 'parent' ? 'pb-8 p-3 sm:p-5 lg:p-7' : 'pb-24 md:pb-8 p-3 sm:p-5 lg:p-7'}`}>
+        <main className={`flex-1 ${currentRole === 'parent' ? 'pb-12 p-3 sm:p-5 lg:p-7' : 'pb-28 md:pb-12 p-3 sm:p-5 lg:p-7'}`}>
           <div className="max-w-7xl mx-auto space-y-5">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Official Libyan School Platform Footer (يمنع أي انقطاع أو فراغ مشوه أسفل الشاشة) */}
+      <footer className="mt-auto border-t border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md py-6 px-4 font-cairo text-right">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-sm">
+              🇱🇾
+            </div>
+            <div>
+              <p className="font-black text-slate-800 dark:text-white text-sm">
+                {schoolProfile?.name || 'منظومة المدرسة الرقمية المعتمدة'}
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                {schoolProfile?.district || 'مراقبة التربية والتعليم'} • العام الدراسي {schoolProfile?.academicYear || '2025/2026'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap justify-center text-[11px] text-slate-500 dark:text-slate-400 font-bold">
+            <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+              نظام تشغيل محلي معتمد (IndexedDB) 🛡️
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
+              الإصدار v4.8 التجاري
+            </span>
+          </div>
+        </div>
+      </footer>
 
       {/* Mobile Bottom Navigation Bar (Hidden for parent who has a self-contained WhatsApp-like UI) */}
       {currentRole !== 'parent' && (

@@ -349,6 +349,108 @@ export class LicenseService {
   }
 
   /**
+   * إنشاء وتوليد مفتاح دخول وترخيص رسمي للمنظومة (System Access Key)
+   * يتيح للمدارس والزبائن تفعيل نسختهم بصورة معتمدة محلياً وسحابياً
+   */
+  static generateSchoolAccessKey(params: {
+    schoolName: string;
+    licenseType: 'annual' | 'lifetime' | 'trial';
+    adminPhone?: string;
+    district?: string;
+    notes?: string;
+  }): {
+    licenseDoc: SchoolLicenseDoc;
+    accessKey: string;
+    formattedKeyCard: {
+      key: string;
+      schoolName: string;
+      licenseTypeLabel: string;
+      expiresAt: string;
+      features: string[];
+      verificationCode: string;
+    };
+  } {
+    const rawName = (params.schoolName || 'مدرسة جديدة').trim();
+    const prefix = rawName.includes('الباعور')
+      ? 'BAOUR'
+      : rawName.includes('الأمل')
+      ? 'AMAL'
+      : 'LIBYA';
+    const rand1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const rand2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const accessKey = `MADRASA-2026-${prefix}-${rand1}-${rand2}`;
+
+    const now = new Date();
+    let subscription_status: SubscriptionStatus = 'active';
+    let subscription_ends_at: string | undefined = undefined;
+    let trial_ends_at = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString();
+    let licenseTypeLabel = 'ترخيص سنوي معتمد (2025/2026)';
+    let expiresAt = '31 أغسطس 2026';
+
+    if (params.licenseType === 'annual') {
+      subscription_status = 'active';
+      const annualDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+      subscription_ends_at = annualDate.toISOString();
+      licenseTypeLabel = 'ترخيص رسمي كامل للعام الدراسي 2025/2026';
+      expiresAt = annualDate.toLocaleDateString('ar-LY', { year: 'numeric', month: 'long', day: 'numeric' });
+    } else if (params.licenseType === 'lifetime') {
+      subscription_status = 'active';
+      const lifetimeDate = new Date(now.getTime() + 3650 * 24 * 60 * 60 * 1000);
+      subscription_ends_at = lifetimeDate.toISOString();
+      licenseTypeLabel = 'ترخيص دائم مدى الحياة (Enterprise Offline Unlimited)';
+      expiresAt = 'ترخيص دائم غير محدود';
+    } else {
+      subscription_status = 'trial';
+      const trialDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      trial_ends_at = trialDate.toISOString();
+      licenseTypeLabel = 'ترخيص تجريبي موسع (30 يوماً)';
+      expiresAt = trialDate.toLocaleDateString('ar-LY', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    const licenseDoc: SchoolLicenseDoc = {
+      license_key: accessKey,
+      school_name: rawName,
+      subscription_status,
+      trial_ends_at,
+      subscription_ends_at,
+      created_at: now.toISOString(),
+      admin_phone: params.adminPhone?.trim() || '0922465676',
+      notes: params.notes || `مفتاح دخول معتمد للمدرسة - ${licenseTypeLabel}`,
+      offline_grace_allowed_days: 14,
+      last_verified_at: now.toISOString()
+    };
+
+    // Save to local registry
+    const registry = this.getAdminRegisteredSchools().filter(s => s.license_key !== accessKey);
+    registry.unshift(licenseDoc);
+    this.saveAdminRegisteredSchools(registry);
+
+    // Sync to Firestore in background
+    this.pushToFirestore(licenseDoc).catch(() => {});
+
+    const checksum = (Math.abs(accessKey.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)) % 9000 + 1000).toString();
+
+    return {
+      licenseDoc,
+      accessKey,
+      formattedKeyCard: {
+        key: accessKey,
+        schoolName: rawName,
+        licenseTypeLabel,
+        expiresAt,
+        features: [
+          'لوحة تحكم المدير العام والتعداد المدرسي الشامل',
+          'شيت الامتحانات والكنترول (1120 درجة) وحساب الترتيب الآلي',
+          'بوابة المعلمين لرصد الأعمال والغياب اليومي',
+          'بوابة استعلام أولياء الأمور وحماية الخصوصية',
+          'التخزين المحلي الآمن دون الحاجة لإنترنت (Offline-First)'
+        ],
+        verificationCode: checksum
+      }
+    };
+  }
+
+  /**
    * تمديد فترة التجربة لمدرسة
    */
   static async extendTrial(licenseKey: string, additionalDays = 14): Promise<SchoolLicenseDoc | null> {

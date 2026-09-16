@@ -17,6 +17,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
 import { AiConfigService } from '../../services/ai/aiConfig';
+import { SecurityEngine } from '../../services/security/securityEngine';
 
 interface AccountSettingsModalProps {
   isOpen: boolean;
@@ -38,6 +39,14 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
   // Form States
   const [phone, setPhone] = useState(currentUserPhone || '0922465676');
   const [teacherCode, setTeacherCode] = useState(currentTeacher?.code || 'LIB-MATH-01');
+  const [directorPin, setDirectorPin] = useState(() => SecurityEngine.getDirectorPin());
+  const [examsPassword, setExamsPassword] = useState(() => {
+    try {
+      return localStorage.getItem('madrasa_exams_password') || '2026';
+    } catch {
+      return '2026';
+    }
+  });
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -64,6 +73,11 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
       return;
     }
 
+    if (directorPin && directorPin.trim().length < 4) {
+      showToast('error', 'رمز الأمان PIN', 'يجب أن يتكون رمز أمان المدير من 4 أرقام على الأقل.');
+      return;
+    }
+
     setIsSaving(true);
 
     setTimeout(() => {
@@ -73,13 +87,27 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
       }
       localStorage.setItem('madrasa_admin_phone', phone.trim());
 
-      // 2. Update Password if changed
+      // 2. Update Password across all recognized storage keys
       if (newPassword) {
         localStorage.setItem(`madrasa_pwd_${phone.trim()}`, newPassword);
         localStorage.setItem('madrasa_global_pwd', newPassword);
+        localStorage.setItem('madrasa_admin_password', newPassword);
+        if (currentRole === 'teacher' && currentTeacher) {
+          localStorage.setItem(`madrasa_teacher_pwd_${currentTeacher.code.toUpperCase()}`, newPassword);
+        }
       }
 
-      // 3. Update Teacher Code if teacher role
+      // 3. Update Director Security PIN
+      if (directorPin && directorPin.trim().length >= 4) {
+        SecurityEngine.setDirectorPin(directorPin.trim());
+      }
+
+      // 4. Update Exams Coordinator Password
+      if (examsPassword && examsPassword.trim()) {
+        localStorage.setItem('madrasa_exams_password', examsPassword.trim());
+      }
+
+      // 5. Update Teacher Code if teacher role
       if (currentRole === 'teacher' && currentTeacher) {
         const updatedTeachers = teachers.map((t: any) =>
           t.id === currentTeacher.id ? { ...t, code: teacherCode.trim() } : t
@@ -88,7 +116,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
         db.saveTeachers(updatedTeachers);
       }
 
-      // 4. Update AI Token
+      // 6. Update AI Token
       if (aiToken) {
         AiConfigService.saveCredentials({ rawToken: aiToken.trim() });
       }
@@ -98,14 +126,14 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
         actorRole: currentRole,
         action: 'UPDATE_SECURITY_SETTINGS',
         entity: 'Security',
-        details: `تحديث إعدادات الأمان ورقم الهاتف (${phone}) وكلمة المرور بنجاح`,
+        details: `تحديث إعدادات الأمان، رمز PIN للمدير (${directorPin})، وكلمات المرور بنجاح`,
         severity: 'INFO'
       });
 
       setIsSaving(false);
       sound.playSuccess();
       triggerConfetti();
-      showToast('gold', 'تم حفظ الإعدادات بنجاح 🔒', 'تم تحديث رقم الهاتف، كلمة المرور، وبيانات الأمان بنجاح.');
+      showToast('gold', 'تم حفظ الإعدادات بنجاح 🔒', 'تم تحديث رقم الهاتف، رمز PIN، وكلمات المرور المعتمدة بنجاح.');
       onClose();
     }, 400);
   };
@@ -174,13 +202,47 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
 
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
             <h4 className="text-xs font-black text-slate-400 uppercase tracking-wider">
-              تغيير كلمة المرور (اختياري)
+              إعدادات الأمان وكلمات المرور المعتمدة
             </h4>
+
+            {/* Director PIN and Exams Password (2-Column Grid) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                  <span>رمز أمان المدير (Director PIN)</span>
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={directorPin}
+                  onChange={e => setDirectorPin(e.target.value)}
+                  placeholder="2026"
+                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">الرمز المعتمد لدخول المدير وتأكيد العمليات الحساسة (افتراضي: 2026).</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+                  <span>كلمة مرور رئيس الكنترول</span>
+                </label>
+                <input
+                  type="text"
+                  value={examsPassword}
+                  onChange={e => setExamsPassword(e.target.value)}
+                  placeholder="2026"
+                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">كلمة المرور الخاصة ببوابة شيت الامتحانات (افتراضي: 2026).</p>
+              </div>
+            </div>
 
             {/* New Password */}
             <div className="relative">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                كلمة المرور الجديدة
+                كلمة المرور الجديدة للحساب (اختياري)
               </label>
               <input
                 type={showNewPassword ? 'text' : 'password'}

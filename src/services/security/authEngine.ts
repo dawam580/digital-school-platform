@@ -187,19 +187,21 @@ export class AuthEngine {
 
       // فحص كلمة المرور أو رمز أمان المدير (PIN)
       const currentPin = SecurityEngine.getDirectorPin();
-      let customPassword = '';
+      const validSecrets = new Set<string>([currentPin, '2026', '123456']);
       try {
-        customPassword = localStorage.getItem('madrasa_admin_password') || '';
+        const p1 = localStorage.getItem('madrasa_admin_password');
+        if (p1 && p1.trim()) validSecrets.add(p1.trim());
+        const p2 = localStorage.getItem('madrasa_global_pwd');
+        if (p2 && p2.trim()) validSecrets.add(p2.trim());
+        const p3 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
+        if (p3 && p3.trim()) validSecrets.add(p3.trim());
       } catch {}
-
-      const validSecrets = [currentPin, '2026', '123456'];
-      if (customPassword) validSecrets.push(customPassword);
 
       if (!cleanSecret) {
         return { success: false, error: 'يرجى إدخال كلمة المرور أو رمز الأمان (PIN) للمدير.' };
       }
 
-      if (!validSecrets.includes(cleanSecret)) {
+      if (!validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
         auditLogger.log({
           actorName: cleanId,
@@ -265,8 +267,15 @@ export class AuthEngine {
         return { success: false, error: 'يرجى إدخال كلمة المرور الخاصة بمنسق الامتحانات.' };
       }
 
-      const validSecrets = [SecurityEngine.getDirectorPin(), '2026', '123456'];
-      if (!validSecrets.includes(cleanSecret)) {
+      const validSecrets = new Set<string>([SecurityEngine.getDirectorPin(), '2026', '123456']);
+      try {
+        const ep1 = localStorage.getItem('madrasa_exams_password');
+        if (ep1 && ep1.trim()) validSecrets.add(ep1.trim());
+        const ep2 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
+        if (ep2 && ep2.trim()) validSecrets.add(ep2.trim());
+      } catch {}
+
+      if (!validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
         return {
           success: false,
@@ -336,8 +345,15 @@ export class AuthEngine {
         return { success: false, error: 'يرجى إدخال كلمة مرور المعلم.' };
       }
 
-      const validSecrets = ['123456', '2026'];
-      if (!validSecrets.includes(cleanSecret)) {
+      const validSecrets = new Set<string>(['123456', '2026']);
+      try {
+        const tp1 = localStorage.getItem(`madrasa_teacher_pwd_${foundTeacher.code.toUpperCase()}`);
+        if (tp1 && tp1.trim()) validSecrets.add(tp1.trim());
+        const tp2 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
+        if (tp2 && tp2.trim()) validSecrets.add(tp2.trim());
+      } catch {}
+
+      if (!validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
         return {
           success: false,

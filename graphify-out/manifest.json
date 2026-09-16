@@ -114,10 +114,10 @@
     "semantic_hash": "9ebefde7ebb929b2b81050c61122d12c"
   },
   "src/components/admin/AccountSettingsModal.tsx": {
-    "mtime": 1789561175.1104434,
-    "seen": 1789561539.0254,
-    "ast_hash": "d4fe59f055a7efa6bbce5f38a07f2da5",
-    "semantic_hash": "d4fe59f055a7efa6bbce5f38a07f2da5"
+    "mtime": 1789562128.9223719,
+    "seen": 1789562423.584165,
+    "ast_hash": "9d4d96a662e4f2041cb66d6839d7a94a",
+    "semantic_hash": "9d4d96a662e4f2041cb66d6839d7a94a"
   },
   "src/components/admin/AnalyticsCharts.tsx": {
     "mtime": 1789561175.1118393,
@@ -168,10 +168,10 @@
     "semantic_hash": "fbfa74ab20c4059529442f6a22728907"
   },
   "src/components/admin/SchoolManagerModal.tsx": {
-    "mtime": 1789561175.1237807,
-    "seen": 1789561539.0254,
-    "ast_hash": "4b68de5514ec0612fd565c9b9453e8a4",
-    "semantic_hash": "4b68de5514ec0612fd565c9b9453e8a4"
+    "mtime": 1789562238.672572,
+    "seen": 1789562423.587317,
+    "ast_hash": "9a54a941ff30359d978eb47894cc6777",
+    "semantic_hash": "9a54a941ff30359d978eb47894cc6777"
   },
   "src/components/admin/SecurityPinModal.tsx": {
     "mtime": 1789561175.1247778,
@@ -348,16 +348,16 @@
     "semantic_hash": "dea655496f6104cfb26ebed2dead82ff"
   },
   "src/components/layout/Layout.tsx": {
-    "mtime": 1789561175.16527,
-    "seen": 1789561539.0254,
-    "ast_hash": "1e2af7611e6d721417b5b20032449146",
-    "semantic_hash": "1e2af7611e6d721417b5b20032449146"
+    "mtime": 1789562022.5313194,
+    "seen": 1789562423.5942674,
+    "ast_hash": "133584c453942cafbfbddeb91ca19fdb",
+    "semantic_hash": "133584c453942cafbfbddeb91ca19fdb"
   },
   "src/components/layout/Navbar.tsx": {
-    "mtime": 1789561175.1662664,
-    "seen": 1789561539.0254,
-    "ast_hash": "1ddb77b24555e6ff8c8e2a3e61fba963",
-    "semantic_hash": "1ddb77b24555e6ff8c8e2a3e61fba963"
+    "mtime": 1789562007.2555797,
+    "seen": 1789562423.5942674,
+    "ast_hash": "05f783688f2483755c07297b40c1f1c8",
+    "semantic_hash": "05f783688f2483755c07297b40c1f1c8"
   },
   "src/components/layout/Sidebar.tsx": {
     "mtime": 1789561175.1673672,
@@ -612,10 +612,10 @@
     "semantic_hash": "77ad529f409831c7c8764f58a77df9fd"
   },
   "src/pages/auth/Login.tsx": {
-    "mtime": 1789561175.237784,
-    "seen": 1789561539.0254,
-    "ast_hash": "296c9f655582c1bb95e5f92795c2f97c",
-    "semantic_hash": "296c9f655582c1bb95e5f92795c2f97c"
+    "mtime": 1789562049.2634146,
+    "seen": 1789562423.6093154,
+    "ast_hash": "f60dcca61eb1cee1b4625aa4563efb22",
+    "semantic_hash": "f60dcca61eb1cee1b4625aa4563efb22"
   },
   "src/pages/auth/ParentSignUp.tsx": {
     "mtime": 1789561175.2389197,
@@ -786,10 +786,10 @@
     "semantic_hash": "7426b5c90ec95c29f25f4f8c1b8ab5e5"
   },
   "src/services/licensing/licenseService.ts": {
-    "mtime": 1789561175.2866347,
-    "seen": 1789561539.0254,
-    "ast_hash": "d89407257b4bc1c06123e44af7bbe5e2",
-    "semantic_hash": "d89407257b4bc1c06123e44af7bbe5e2"
+    "mtime": 1789562145.7442503,
+    "seen": 1789562423.6193814,
+    "ast_hash": "2115a4d6127ee030905a183f6111b704",
+    "semantic_hash": "2115a4d6127ee030905a183f6111b704"
   },
   "src/services/licensing/licenseTypes.ts": {
     "mtime": 1789561175.2871559,
@@ -1116,15 +1116,15 @@
     "semantic_hash": "56888185643f610fd7893f51a811f80f"
   },
   "src/services/security/authEngine.ts": {
-    "mtime": 1789561175.2936633,
-    "seen": 1789561539.0254,
-    "ast_hash": "fce56518aa6c159ce5f888bb1624149b",
-    "semantic_hash": "fce56518aa6c159ce5f888bb1624149b"
+    "mtime": 1789562082.2340157,
+    "seen": 1789562423.6203787,
+    "ast_hash": "01ead3a1611f57185314240025e57c84",
+    "semantic_hash": "01ead3a1611f57185314240025e57c84"
   },
   "tests/tier5-security-auth.test.js": {
-    "mtime": 1789561175.4158418,
-    "seen": 1789561539.0254,
-    "ast_hash": "b9dc59b1a3d31a89bbf8e29262ce9485",
-    "semantic_hash": "b9dc59b1a3d31a89bbf8e29262ce9485"
+    "mtime": 1789562289.6028402,
+    "seen": 1789562423.6264622,
+    "ast_hash": "43d3f88b9e02719a92a456d881903ec9",
+    "semantic_hash": "43d3f88b9e02719a92a456d881903ec9"
   }
 }
