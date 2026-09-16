@@ -534,10 +534,10 @@
     "semantic_hash": "c80ea32b2844fcb7ee757cb08a60e524"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1789484377.0466514,
-    "seen": 1789484817.6480582,
-    "ast_hash": "16f14b6d87e56af1ef31d47e52791c75",
-    "semantic_hash": "16f14b6d87e56af1ef31d47e52791c75"
+    "mtime": 1789557087.9494998,
+    "seen": 1789557390.3293517,
+    "ast_hash": "93adac4af43756c8fd6bb8820f7a12da",
+    "semantic_hash": "93adac4af43756c8fd6bb8820f7a12da"
   },
   "src/data/libyanBaourSchoolDataset.ts": {
     "mtime": 1788721300.6912737,
@@ -756,16 +756,16 @@
     "semantic_hash": "b4f6b15256b173a0b5d547ffb1fcbff9"
   },
   "src/services/databaseEngine.ts": {
-    "mtime": 1788673871.8189495,
-    "seen": 1789227277.5601654,
-    "ast_hash": "3bdaa1523ec0c61a1fb414fb1ed40c49",
-    "semantic_hash": "3bdaa1523ec0c61a1fb414fb1ed40c49"
+    "mtime": 1789556868.5459695,
+    "seen": 1789557390.3395312,
+    "ast_hash": "a8fd3f3cddf4780ef3f22a28e2d69deb",
+    "semantic_hash": "a8fd3f3cddf4780ef3f22a28e2d69deb"
   },
   "src/services/db.ts": {
-    "mtime": 1788974927.530192,
-    "seen": 1789227277.5601654,
-    "ast_hash": "6779337fd22d41285eee2d64222adc60",
-    "semantic_hash": "6779337fd22d41285eee2d64222adc60"
+    "mtime": 1789557242.5525956,
+    "seen": 1789557390.3395312,
+    "ast_hash": "cc3e8f799173c7f5155e939660a0eb6c",
+    "semantic_hash": "cc3e8f799173c7f5155e939660a0eb6c"
   },
   "src/services/exams/examStorageService.ts": {
     "mtime": 1788673871.8219419,
@@ -804,10 +804,10 @@
     "semantic_hash": "b2cad759c267ee162ceb0d2b3473f475"
   },
   "src/services/repositories/index.ts": {
-    "mtime": 1788673871.8282099,
-    "seen": 1789227277.5601654,
-    "ast_hash": "45bdf251530bb7977b896e4a548f7a54",
-    "semantic_hash": "45bdf251530bb7977b896e4a548f7a54"
+    "mtime": 1789556852.0663052,
+    "seen": 1789557390.341526,
+    "ast_hash": "adc6f37a22c68fca08b50c21ac28fa50",
+    "semantic_hash": "adc6f37a22c68fca08b50c21ac28fa50"
   },
   "src/services/schedule/conflictDetector.ts": {
     "mtime": 1788673871.830203,
@@ -846,10 +846,10 @@
     "semantic_hash": "ca676b1282d2916ddd58216f3f76aced"
   },
   "src/services/storage/indexedDb.ts": {
-    "mtime": 1788673871.835189,
-    "seen": 1789227277.5601654,
-    "ast_hash": "f336b60263a5909d636296561f2a9f1e",
-    "semantic_hash": "f336b60263a5909d636296561f2a9f1e"
+    "mtime": 1789556834.4345095,
+    "seen": 1789557390.3425298,
+    "ast_hash": "278cf4a64a0e482e9dc97fa172508fff",
+    "semantic_hash": "278cf4a64a0e482e9dc97fa172508fff"
   },
   "src/types/electron.d.ts": {
     "mtime": 1788716153.6858723,
@@ -1102,5 +1102,17 @@
     "seen": 1789484817.6623027,
     "ast_hash": "92c23eb6f01d42068939386a6144096a",
     "semantic_hash": "92c23eb6f01d42068939386a6144096a"
+  },
+  "src/services/domain/classAnalytics.ts": {
+    "mtime": 1789556887.3453968,
+    "seen": 1789557390.3395312,
+    "ast_hash": "0601acd3b5bf7184076cecd387c2e3b4",
+    "semantic_hash": "0601acd3b5bf7184076cecd387c2e3b4"
+  },
+  "src/services/domain/studentDomain.ts": {
+    "mtime": 1789557252.6294312,
+    "seen": 1789557390.3395312,
+    "ast_hash": "55bb54b7868bc8347d98d74aec2a5d09",
+    "semantic_hash": "55bb54b7868bc8347d98d74aec2a5d09"
   }
 }

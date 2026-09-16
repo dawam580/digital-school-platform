@@ -200,6 +200,136 @@ export const databaseEngine = {
     }
   },
 
+  // Validate relational integrity across database entities
+  validateRelationalIntegrity(): { isValid: boolean; issues: string[]; fixedCount: number; summary: Record<string, number> } {
+    const issues: string[] = [];
+    let fixedCount = 0;
+    try {
+      const studentsRaw = localStorage.getItem('madrasa_db_students_v3');
+      const classesRaw = localStorage.getItem('madrasa_db_classes_v3');
+      const students = studentsRaw ? JSON.parse(studentsRaw) : [];
+      const classes = classesRaw ? JSON.parse(classesRaw) : [];
+
+      const classNames = new Set(classes.map((c: any) => c.name?.trim()));
+      const studentIds = new Set<string>();
+      const nationalNumbers = new Set<string>();
+
+      let invalidClasses = 0;
+      let duplicateIds = 0;
+      let duplicateNationals = 0;
+
+      students.forEach((s: any, idx: number) => {
+        // 1. Check ID uniqueness
+        if (!s.id) {
+          issues.push(`طالب بدون معرّف فريد (رقم السجل: ${idx + 1})`);
+        } else if (studentIds.has(s.id)) {
+          duplicateIds++;
+          issues.push(`تكرار في معرّف الطالب: ${s.id} (${s.name})`);
+        } else {
+          studentIds.add(s.id);
+        }
+
+        // 2. Check National Number integrity
+        const nat = s.nationalNumber || s.nationalId;
+        if (nat) {
+          if (nationalNumbers.has(nat)) {
+            duplicateNationals++;
+            issues.push(`تكرار في الرقم الوطني: ${nat} للطالب: ${s.name}`);
+          } else {
+            nationalNumbers.add(nat);
+          }
+        }
+
+        // 3. Check Class relation
+        if (s.className && classNames.size > 0 && !classNames.has(s.className.trim())) {
+          invalidClasses++;
+        }
+      });
+
+      if (invalidClasses > 0) {
+        issues.push(`يوجد (${invalidClasses}) طالباً مسندين إلى فصول غير مدرجة في جدول الفصول الرئيسي.`);
+      }
+
+      return {
+        isValid: issues.length === 0,
+        issues,
+        fixedCount,
+        summary: {
+          totalStudents: students.length,
+          totalClasses: classes.length,
+          duplicateIds,
+          duplicateNationals,
+          unlinkedClasses: invalidClasses
+        }
+      };
+    } catch (e: any) {
+      return {
+        isValid: false,
+        issues: [`خطأ أثناء فحص التكامل العلائقي: ${e?.message || 'Unknown'}`],
+        fixedCount: 0,
+        summary: {}
+      };
+    }
+  },
+
+  // Synchronize class attendance counts with actual students records
+  syncRelationalState(): { synchronizedClasses: number; totalStudents: number } {
+    try {
+      const studentsRaw = localStorage.getItem('madrasa_db_students_v3');
+      const classesRaw = localStorage.getItem('madrasa_db_classes_v3');
+      if (!studentsRaw) return { synchronizedClasses: 0, totalStudents: 0 };
+
+      const students = JSON.parse(studentsRaw);
+      let classes = classesRaw ? JSON.parse(classesRaw) : [];
+
+      const statsMap = new Map<string, { total: number; present: number; absent: number; late: number }>();
+      students.forEach((s: any) => {
+        const cName = (s.className || 'عام').trim();
+        if (!statsMap.has(cName)) {
+          statsMap.set(cName, { total: 0, present: 0, absent: 0, late: 0 });
+        }
+        const st = statsMap.get(cName)!;
+        st.total += 1;
+        if (s.status === 'present') st.present += 1;
+        else if (s.status === 'late') st.late += 1;
+        else if (s.status === 'unexcused' || s.status === 'excused') st.absent += 1;
+      });
+
+      // Update or generate classes matching student rosters
+      if (classes.length === 0) {
+        classes = Array.from(statsMap.entries()).map(([name, stats], idx) => ({
+          id: `c-dyn-${idx + 1}`,
+          name,
+          grade: name.includes('1/') ? 'الصف الأول الأساسي' : name.includes('2/') ? 'الصف الثاني الأساسي' : 'تعليم أساسي',
+          studentCount: stats.total,
+          presentCount: stats.present,
+          absentCount: stats.absent,
+          lateCount: stats.late,
+          supervisor: 'مشرف الفصل'
+        }));
+      } else {
+        classes = classes.map((c: any) => {
+          const stats = statsMap.get(c.name?.trim());
+          if (stats) {
+            return {
+              ...c,
+              studentCount: stats.total,
+              presentCount: stats.present,
+              absentCount: stats.absent,
+              lateCount: stats.late
+            };
+          }
+          return c;
+        });
+      }
+
+      localStorage.setItem('madrasa_db_classes_v3', JSON.stringify(classes));
+      return { synchronizedClasses: classes.length, totalStudents: students.length };
+    } catch {
+      return { synchronizedClasses: 0, totalStudents: 0 };
+    }
+  },
+
   // Export full SQL Dump File
   exportSQLDump(): string {
     const students = JSON.parse(localStorage.getItem('madrasa_db_students_v3') || '[]');

@@ -6,7 +6,7 @@
  */
 
 const DB_NAME = 'MadrasaDigitalSchoolDB_v4';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export interface StorageResult<T> {
   success: boolean;
@@ -99,6 +99,50 @@ class IndexedDBManager {
         if (!db.objectStoreNames.contains('exam_locks')) {
           const lockStore = db.createObjectStore('exam_locks', { keyPath: 'id' });
           lockStore.createIndex('className', 'className', { unique: false });
+        }
+
+        // 11. Classes Store
+        if (!db.objectStoreNames.contains('classes')) {
+          const classStore = db.createObjectStore('classes', { keyPath: 'id' });
+          classStore.createIndex('name', 'name', { unique: false });
+          classStore.createIndex('grade', 'grade', { unique: false });
+        }
+
+        // 12. Teachers Store
+        if (!db.objectStoreNames.contains('teachers')) {
+          const teacherStore = db.createObjectStore('teachers', { keyPath: 'id' });
+          teacherStore.createIndex('code', 'code', { unique: true });
+        }
+
+        // 13. Notifications Store
+        if (!db.objectStoreNames.contains('notifications')) {
+          const notifStore = db.createObjectStore('notifications', { keyPath: 'id' });
+          notifStore.createIndex('category', 'category', { unique: false });
+          notifStore.createIndex('read', 'read', { unique: false });
+        }
+
+        // 14. Counseling Cases Store
+        if (!db.objectStoreNames.contains('case_studies')) {
+          const caseStore = db.createObjectStore('case_studies', { keyPath: 'id' });
+          caseStore.createIndex('studentId', 'studentId', { unique: false });
+        }
+
+        // 15. Financial Transactions Store
+        if (!db.objectStoreNames.contains('financial_records')) {
+          const finStore = db.createObjectStore('financial_records', { keyPath: 'id' });
+          finStore.createIndex('type', 'type', { unique: false });
+        }
+
+        // 16. Tuition Fees Store
+        if (!db.objectStoreNames.contains('tuition_records')) {
+          const tuiStore = db.createObjectStore('tuition_records', { keyPath: 'id' });
+          tuiStore.createIndex('studentId', 'studentId', { unique: false });
+        }
+
+        // 17. Staff Members Store
+        if (!db.objectStoreNames.contains('staff_members')) {
+          const staffStore = db.createObjectStore('staff_members', { keyPath: 'id' });
+          staffStore.createIndex('nationalNumber', 'nationalNumber', { unique: false });
         }
       };
 

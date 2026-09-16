@@ -21,6 +21,15 @@ import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTri
 import { CryptoVaultService } from './security/cryptoVault';
 import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 import { getCleanAvatar } from '../utils/avatarHelper';
+import {
+  studentRepository,
+  classRepository,
+  notificationRepository,
+  teacherRepository,
+  conversationRepository,
+  counselingRepository
+} from './repositories';
+import { computeLiveClassStats } from './domain/classAnalytics';
 
 export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
 export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
@@ -1178,6 +1187,7 @@ export const db = {
   saveTeachers(teachers: TeacherAccount[]) {
     try {
       localStorage.setItem(STORAGE_KEY_TEACHERS, JSON.stringify(teachers));
+      teacherRepository.saveAll(teachers).catch(() => {});
     } catch {}
   },
 
@@ -1307,6 +1317,13 @@ export const db = {
       if (force) {
         localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
       }
+      studentRepository.saveAll(students).catch(() => {});
+
+      // Keep classes live counts in sync automatically
+      const currentClasses = this.getClasses();
+      const updatedClasses = computeLiveClassStats(currentClasses, students);
+      localStorage.setItem(STORAGE_KEY_CLASSES, JSON.stringify(updatedClasses));
+      classRepository.saveAll(updatedClasses).catch(() => {});
     } catch {}
   },
 
@@ -1337,6 +1354,7 @@ export const db = {
   saveClasses(classes: SchoolClass[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_CLASSES, JSON.stringify(classes));
+      classRepository.saveAll(classes).catch(() => {});
     } catch {}
   },
 
@@ -1352,6 +1370,7 @@ export const db = {
   saveNotifications(notifications: NotificationItem[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notifications));
+      notificationRepository.saveAll(notifications).catch(() => {});
     } catch {}
   },
 
@@ -1382,8 +1401,10 @@ export const db = {
   saveConversations(conversations: TeacherConversation[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_CONVERSATIONS, JSON.stringify(conversations));
+      conversationRepository.saveAll(conversations).catch(() => {});
     } catch {}
   },
+
 
   getSchedule(): DaySchedule[] {
     try {
@@ -1412,6 +1433,7 @@ export const db = {
   saveCaseStudies(cases: SocialCaseStudy[]): void {
     try {
       localStorage.setItem(STORAGE_KEY_CASE_STUDIES, JSON.stringify(cases));
+      counselingRepository.saveAll(cases).catch(() => {});
     } catch {}
   },
 
