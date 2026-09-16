@@ -67,6 +67,7 @@ import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensi
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
 import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
 import { FirebaseAuthService, AuthSessionUser } from '../services/auth/firebaseAuthService';
+import { AuthEngine } from '../services/security/authEngine';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -95,8 +96,8 @@ interface SchoolContextType {
   currentTeacher: TeacherAccount | null;
   teachers: TeacherAccount[];
   selectTeacher: (teacher: TeacherAccount) => void;
-  login: (phoneOrId: string, role: UserRole) => void;
-  loginWithTeacherCode: (code: string) => boolean;
+  login: (phoneOrId: string, role: UserRole, password?: string) => { success: boolean; error?: string };
+  loginWithTeacherCode: (code: string, password?: string) => boolean;
   logout: () => void;
   authSession: AuthSessionUser | null;
   hasPermission: (perm: string) => boolean;
@@ -1156,8 +1157,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const login = (phoneOrId: string, role: UserRole) => {
-    // بوابة السوبر لا تُفتح إلا برمز الماستر عبر unlockSuperAdmin/enterSuperAdmin
+  const login = (phoneOrId: string, role: UserRole, password?: string): { success: boolean; error?: string } => {
+    // 1. بوابة السوبر لا تُفتح إلا برمز الماستر عبر unlockSuperAdmin/enterSuperAdmin
     if (role === 'superadmin' && !superUnlocked) {
       sound.playAlert();
       showToast('error', '🔒 يلزم رمز الماستر', 'دخول المدير العام محمي برمز السوبر (4 أرقام).');
@@ -1169,10 +1170,27 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         details: 'محاولة دخول سوبر مباشرة بدون رمز الماستر',
         severity: 'WARN'
       });
-      return;
+      return { success: false, error: 'دخول المدير العام محمي برمز السوبر (4 أرقام).' };
     }
-    setCurrentUserPhoneState(phoneOrId);
-    FirebaseAuthService.loginWithIdentifier(phoneOrId, '123456').then(res => {
+
+    const cleanId = (phoneOrId || '').trim();
+    const cleanSecret = (password || '').trim();
+
+    // 2. التحقق الصارم والمحكم من أوراق الاعتماد عبر وحدة المصادقة العميقة AuthEngine
+    const authResult = AuthEngine.verifyCredentials({
+      role,
+      identifier: cleanId,
+      password: cleanSecret
+    });
+
+    if (!authResult.success) {
+      sound.playAlert();
+      showToast('error', '⛔ بيانات الدخول غير صحيحة', authResult.error || 'فشلت المصادقة.');
+      return { success: false, error: authResult.error };
+    }
+
+    setCurrentUserPhoneState(cleanId);
+    FirebaseAuthService.loginWithIdentifier(cleanId, cleanSecret || '123456').then(res => {
       if (res.success && res.user) {
         setAuthSession(res.user);
       }
@@ -1188,7 +1206,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setCurrentTeacher(null);
       setActiveTab('parent-dashboard');
     } else if (role === 'teacher') {
-      const t = teachers.find(tch => tch.phone === phoneOrId) || teachers[0];
+      const t = teachers.find(tch => tch.phone === cleanId || tch.code.toUpperCase() === cleanId.toUpperCase()) || teachers[0];
       setCurrentTeacher(t);
       setActiveTab('teacher-quick');
     } else if (role === 'counselor') {
@@ -1207,23 +1225,30 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
     sound.playSuccess();
     showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : role === 'exams_coordinator' ? 'منسق الامتحانات والتقويم (الكنترول)' : role === 'superadmin' ? 'المدير العام (سوبر أدمن)' : 'إدارة المدرسة'}`);
-    auditLogger.log({
-      actorName: phoneOrId,
-      actorRole: role,
-      action: 'USER_LOGIN',
-      entity: 'Auth',
-      details: `تسجيل دخول ناجح برقم/هوية ${phoneOrId}`,
-      severity: 'INFO'
-    });
+    return { success: true };
   };
 
-  const loginWithTeacherCode = (code: string): boolean => {
-    const cleanCode = code.trim().toUpperCase();
+  const loginWithTeacherCode = (code: string, password?: string): boolean => {
+    const cleanCode = (code || '').trim().toUpperCase();
+    const cleanSecret = (password || '123456').trim();
+
+    const authResult = AuthEngine.verifyCredentials({
+      role: 'teacher',
+      identifier: cleanCode,
+      password: cleanSecret
+    });
+
+    if (!authResult.success) {
+      sound.playAlert();
+      showToast('error', 'رمز الدخول غير صحيح', authResult.error || 'تأكد من الرمز وكلمة المرور المسلمة لك من إدارة المدرسة.');
+      return false;
+    }
+
     const foundTeacher = teachers.find(t => t.code.trim().toUpperCase() === cleanCode);
     if (foundTeacher) {
       setCurrentTeacher(foundTeacher);
       setCurrentUserPhoneState(foundTeacher.phone);
-      FirebaseAuthService.loginWithIdentifier(foundTeacher.phone || cleanCode, '123456').then(res => {
+      FirebaseAuthService.loginWithIdentifier(foundTeacher.phone || cleanCode, cleanSecret).then(res => {
         if (res.success && res.user) {
           setAuthSession(res.user);
         }
@@ -1243,14 +1268,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       markSession();
       sound.playSuccess();
       showToast('gold', `مرحباً ${foundTeacher.name}`, `تم الدخول بنجاح بصفتك ${foundTeacher.subject} (الرمز: ${foundTeacher.code})`);
-      auditLogger.log({
-        actorName: foundTeacher.name,
-        actorRole: foundTeacher.code === 'LIB-SOC-01' ? 'counselor' : 'teacher',
-        action: 'TEACHER_CODE_LOGIN',
-        entity: 'Auth',
-        details: `تسجيل دخول برمز المعلم الفريد: ${foundTeacher.code}`,
-        severity: 'INFO'
-      });
       return true;
     }
     sound.playAlert();

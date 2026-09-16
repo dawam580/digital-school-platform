@@ -58,14 +58,18 @@ export const LandingPage: React.FC = () => {
 
   const handleQuickLogin = (role: UserRole) => {
     sound.playSuccess();
-    if (role === 'admin') login('0922465676', 'admin');
-    else if (role === 'exams_coordinator') login('0912345678', 'exams_coordinator');
-    else if (role === 'superadmin') login('0910000000', 'superadmin');
-    else if (role === 'teacher') login('LIB-MATH-01', 'teacher');
+    if (role === 'admin') login('0922465676', 'admin', '2026');
+    else if (role === 'exams_coordinator') login('0912345678', 'exams_coordinator', '2026');
+    else if (role === 'superadmin') login('DISTRICT-SUPER-01', 'superadmin', '9988');
+    else if (role === 'teacher') login('LIB-COMP-09', 'teacher', '123456');
     else if (role === 'counselor') {
       setCurrentRole('counselor');
       setActiveTab('counselor-dashboard');
-    } else if (role === 'parent') login('1001', 'parent');
+    } else if (role === 'parent') {
+      const firstStudent = students[0];
+      const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '120195864392';
+      login(idToUse, 'parent', '123456');
+    }
   };
 
   const pricingPlans: PricingPlan[] = [

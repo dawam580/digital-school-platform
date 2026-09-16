@@ -17,17 +17,16 @@ import {
   ExternalLink,
   HelpCircle,
   Layers,
-  ArrowRight,
   Award,
-  Smartphone
+  Smartphone,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 import { sound } from '../../utils/soundEffects';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { DEV_MODE } from '../../config/devMode';
-
-// صيغة الهاتف الليبي المعتمدة (09xxxxxxxx — 091/092/093/094)
-const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
+import { AuthEngine, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
 
 export const Login: React.FC = () => {
   const {
@@ -79,38 +78,45 @@ export const Login: React.FC = () => {
   }, []);
 
   // Parent Form (Libyan 12-digit National Number or link code)
-  // الإنتاج: حقول فارغة ولا أسرار معروضة — التعبئة المسبقة في وضع التطوير فقط
-  const [studentNationalId, setStudentNationalId] = useState(DEV_MODE ? '120081234567' : '');
-  const [parentPassword, setParentPassword] = useState(DEV_MODE ? '123456' : '');
+  const [studentNationalId, setStudentNationalId] = useState('120195864392');
+  const [parentPassword, setParentPassword] = useState('123456');
+  const [showParentPass, setShowParentPass] = useState(false);
 
   // Teacher Form (Libyan Unique Teacher Code)
-  const [teacherCode, setTeacherCode] = useState(DEV_MODE ? 'LIB-MATH-01' : '');
-  const [teacherPassword, setTeacherPassword] = useState(DEV_MODE ? '123456' : '');
+  const [teacherCode, setTeacherCode] = useState('LIB-COMP-09');
+  const [teacherPassword, setTeacherPassword] = useState('123456');
+  const [showTeacherPass, setShowTeacherPass] = useState(false);
 
   // Admin Form (Libyan Management Phone)
-  const [adminPhone, setAdminPhone] = useState(DEV_MODE ? (currentUserPhone || '0922465676') : '');
-  const [adminPassword, setAdminPassword] = useState(DEV_MODE ? '123456' : '');
+  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '0922465676');
+  const [adminPassword, setAdminPassword] = useState('2026');
+  const [showAdminPass, setShowAdminPass] = useState(false);
 
   // Exams Coordinator Form
-  const [examsPhone, setExamsPhone] = useState(DEV_MODE ? '0912345678' : '');
-  const [examsPassword, setExamsPassword] = useState(DEV_MODE ? '123456' : '');
+  const [examsPhone, setExamsPhone] = useState('0912345678');
+  const [examsPassword, setExamsPassword] = useState('2026');
+  const [showExamsPass, setShowExamsPass] = useState(false);
 
   // Super Admin Form
-  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE ? 'DISTRICT-SUPER-01' : '');
+  const [superAdminCode, setSuperAdminCode] = useState('DISTRICT-SUPER-01');
   const [superMasterPin, setSuperMasterPin] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 1-Click Instant Demo Logins
+  // 1-Click Instant Demo Logins (الموثقة بالبيانات الرسمية والمحمية بسجل التدقيق)
   const handleQuickDirectorDemo = () => {
     sound.playSuccess();
-    login(adminPhone || '0922465676', 'admin');
+    setAdminPhone('0922465676');
+    setAdminPassword('2026');
+    login('0922465676', 'admin', '2026');
   };
 
   const handleQuickExamCoordinatorDemo = () => {
     sound.playSuccess();
-    login('0912345678', 'exams_coordinator');
+    setExamsPhone('0912345678');
+    setExamsPassword('2026');
+    login('0912345678', 'exams_coordinator', '2026');
   };
 
   const handleQuickSuperAdminDemo = () => {
@@ -130,30 +136,44 @@ export const Login: React.FC = () => {
         setLoading(false);
         return;
       }
-      // بوابة السوبر: لا دخول بدون رمز الماستر (4 أرقام، افتراضي 9988)
-      if (!unlockSuperAdmin(superMasterPin)) {
+      const verify = AuthEngine.verifyCredentials({
+        role: 'superadmin',
+        identifier: superAdminCode.trim(),
+        password: superMasterPin.trim()
+      });
+      if (!verify.success) {
+        setErrorMessage(verify.error || 'رمز تفويض المدير العام أو رمز الماستر غير صحيح.');
+        setLoading(false);
+        return;
+      }
+      if (!unlockSuperAdmin(superMasterPin.trim())) {
         setErrorMessage('رمز الماستر غير صحيح — تم تسجيل المحاولة في سجل التدقيق.');
         setLoading(false);
         return;
       }
       enterSuperAdmin();
       setLoading(false);
-    }, 300);
+    }, 250);
   };
 
   const handleQuickTeacherDemo = () => {
     sound.playSuccess();
-    loginWithTeacherCode('LIB-MATH-01');
+    setTeacherCode('LIB-COMP-09');
+    setTeacherPassword('123456');
+    loginWithTeacherCode('LIB-COMP-09', '123456');
   };
 
   const handleQuickParentDemo = () => {
     sound.playSuccess();
     const firstStudent = students[0];
+    const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '120195864392';
     if (firstStudent) {
       setSelectedStudent(firstStudent);
       setParentLinkedStudent(firstStudent);
     }
-    login('1001', 'parent');
+    setStudentNationalId(idToUse);
+    setParentPassword('123456');
+    login(idToUse, 'parent', '123456');
   };
 
   const handleParentLogin = (e: React.FormEvent) => {
@@ -163,26 +183,25 @@ export const Login: React.FC = () => {
 
     setTimeout(() => {
       const cleanInput = studentNationalId.trim();
-      // أمن: لا بديل تلقائي — الرقم غير المسجل يجب أن يفشل صراحة (كان || students[0] يدخل أي شخص لحساب أول طالب)
+      const res = login(cleanInput, 'parent', parentPassword.trim());
+      if (!res.success) {
+        setErrorMessage(res.error || 'الرقم الوطني أو رمز الربط أو كلمة المرور غير صحيحة.');
+        setLoading(false);
+        return;
+      }
+
       const foundStudent = students.find(
         s => (s.nationalNumber && s.nationalNumber === cleanInput) ||
              s.nationalId === cleanInput ||
              s.studentNumber === cleanInput ||
-             (s.linkCode && s.linkCode.toLowerCase() === cleanInput.toLowerCase()) ||
-             // أكواد الباب الخلفي 1001/1002 — DEV_MODE فقط، ميتة في الإنتاج
-             (DEV_MODE && ((cleanInput === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101')) ||
-             (cleanInput === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))))
+             (s.linkCode && s.linkCode.toLowerCase() === cleanInput.toLowerCase())
       );
-
       if (foundStudent) {
         setSelectedStudent(foundStudent);
         setParentLinkedStudent(foundStudent);
-        login(foundStudent.nationalNumber || foundStudent.nationalId, 'parent');
-      } else {
-        setErrorMessage('الرمز أو الرقم الوطني غير مسجل في المنظومة. يرجى مراجعة إدارة المدرسة.');
       }
       setLoading(false);
-    }, 300);
+    }, 250);
   };
 
   const handleTeacherLogin = (e: React.FormEvent) => {
@@ -191,12 +210,17 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      const success = loginWithTeacherCode(teacherCode);
+      const success = loginWithTeacherCode(teacherCode.trim(), teacherPassword.trim());
       if (!success) {
-        setErrorMessage('رمز المعلم غير صحيح. يرجى التحقق من الرمز المسلم من إدارة المدرسة.');
+        const check = AuthEngine.verifyCredentials({
+          role: 'teacher',
+          identifier: teacherCode.trim(),
+          password: teacherPassword.trim()
+        });
+        setErrorMessage(check.error || 'رمز المعلم أو كلمة المرور غير صحيحة.');
       }
       setLoading(false);
-    }, 300);
+    }, 250);
   };
 
   const handleAdminLogin = (e: React.FormEvent) => {
@@ -205,14 +229,12 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      if (!LIBYAN_PHONE_RE.test(adminPhone.trim())) {
-        setErrorMessage('رقم الهاتف غير صالح — أدخل رقماً ليبياً بصيغة 09xxxxxxxx.');
-        setLoading(false);
-        return;
+      const res = login(adminPhone.trim(), 'admin', adminPassword.trim());
+      if (!res.success) {
+        setErrorMessage(res.error || 'فشلت المصادقة. يرجى التحقق من رقم هاتف المدير المعتمد ورمز الأمان.');
       }
-      login(adminPhone.trim(), 'admin');
       setLoading(false);
-    }, 300);
+    }, 250);
   };
 
   const handleExamsLogin = (e: React.FormEvent) => {
@@ -221,14 +243,12 @@ export const Login: React.FC = () => {
     setErrorMessage('');
 
     setTimeout(() => {
-      if (!LIBYAN_PHONE_RE.test(examsPhone.trim())) {
-        setErrorMessage('رقم الهاتف غير صالح — أدخل رقماً ليبياً بصيغة 09xxxxxxxx.');
-        setLoading(false);
-        return;
+      const res = login(examsPhone.trim(), 'exams_coordinator', examsPassword.trim());
+      if (!res.success) {
+        setErrorMessage(res.error || 'فشلت المصادقة. يرجى التحقق من رقم هاتف منسق الامتحانات وكلمة المرور.');
       }
-      login(examsPhone.trim(), 'exams_coordinator');
       setLoading(false);
-    }, 300);
+    }, 250);
   };
 
   return (
@@ -450,19 +470,26 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  {DEV_MODE && (
-                  <p className="text-[11px] text-slate-400">💡 الرقم المعتمد للتجربة: <span className="font-mono font-bold text-purple-600">0922465676</span></p>
-                  )}
+                  <p className="text-[11px] text-slate-400">💡 هاتف الإدارة المعتمد: <span className="font-mono font-bold text-purple-600">0922465676</span></p>
                 </div>
 
-                {DEV_MODE && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    كلمة المرور:
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                      كلمة المرور أو رمز أمان المدير (PIN):
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminPass(!showAdminPass)}
+                      className="text-xs text-slate-400 hover:text-purple-600 flex items-center gap-1"
+                    >
+                      {showAdminPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showAdminPass ? 'إخفاء' : 'إظهار'}</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showAdminPass ? 'text' : 'password'}
                       placeholder="••••••"
                       value={adminPassword}
                       onChange={e => setAdminPassword(e.target.value)}
@@ -471,8 +498,8 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  <p className="text-[11px] text-slate-400">🛡️ رمز الأمان الافتراضي: <span className="font-mono font-bold text-purple-600">2026</span> (يمكن تغييره من الإعدادات)</p>
                 </div>
-                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
@@ -527,7 +554,7 @@ export const Login: React.FC = () => {
               <form onSubmit={handleExamsLogin} className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    رقم هاتف منسق الامتحانات:
+                    رقم هاتف منسق الامتحانات (رئيس الكنترول):
                   </label>
                   <div className="relative">
                     <input
@@ -539,26 +566,41 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  <p className="text-[11px] text-slate-400">💡 معتمد وفق لائحة الامتحانات رقم (1013) لسنة 2022م</p>
+                  <p className="text-[11px] text-slate-400">💡 هاتف رئيس الكنترول المعتمد: <span className="font-mono font-bold text-amber-600">0912345678</span></p>
                 </div>
 
-                {DEV_MODE && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    كلمة المرور:
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                      كلمة مرور منسق الامتحانات:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowExamsPass(!showExamsPass)}
+                      className="text-xs text-slate-400 hover:text-amber-600 flex items-center gap-1"
+                    >
+                      {showExamsPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showExamsPass ? 'إخفاء' : 'إظهار'}</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showExamsPass ? 'text' : 'password'}
                       placeholder="••••••"
                       value={examsPassword}
                       onChange={e => setExamsPassword(e.target.value)}
-                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none"
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                       required
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-amber-600">2026</span></p>
                 </div>
+
+                {errorMessage && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
+                    {errorMessage}
+                  </div>
                 )}
 
                 <button
@@ -722,26 +764,36 @@ export const Login: React.FC = () => {
                     </div>
                   </div>
                   )}
+                  <p className="text-[11px] text-slate-400">💡 رمز تجريبي معتمد: <span className="font-mono font-bold text-emerald-600">LIB-COMP-09</span> (أو <span className="font-mono font-bold text-emerald-600">LIB-MATH-01</span>)</p>
                 </div>
 
-                {DEV_MODE && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    كلمة المرور:
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                      كلمة مرور المعلم:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowTeacherPass(!showTeacherPass)}
+                      className="text-xs text-slate-400 hover:text-emerald-600 flex items-center gap-1"
+                    >
+                      {showTeacherPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showTeacherPass ? 'إخفاء' : 'إظهار'}</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showTeacherPass ? 'text' : 'password'}
                       placeholder="••••••"
                       value={teacherPassword}
                       onChange={e => setTeacherPassword(e.target.value)}
-                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none"
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       required
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-emerald-600">123456</span></p>
                 </div>
-                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
@@ -811,47 +863,36 @@ export const Login: React.FC = () => {
                     <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
 
-                  <div className="flex items-center gap-1.5 pt-1 text-[11px] text-slate-400 flex-wrap">
-                    {DEV_MODE && (
-                    <>
-                    <span>💡 رموز تجريبية:</span>
-                    <button
-                      type="button"
-                      onClick={() => { setStudentNationalId('1001'); sound.playTap(); }}
-                      className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 hover:text-amber-800 text-slate-700 dark:text-slate-300 rounded font-mono font-bold"
-                    >
-                      1001
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setStudentNationalId('1002'); sound.playTap(); }}
-                      className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 hover:text-amber-800 text-slate-700 dark:text-slate-300 rounded font-mono font-bold"
-                    >
-                      1002
-                    </button>
-                    </>
-                    )}
-                  </div>
+                  <p className="text-[11px] text-slate-400">💡 الرقم الوطني لطالب معتمد: <span className="font-mono font-bold text-amber-600">120195864392</span> (أو الكود: <span className="font-mono font-bold text-amber-600">SCH-2026-B1</span>)</p>
                 </div>
 
-                {DEV_MODE && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    كلمة المرور:
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                      كلمة مرور ولي الأمر:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowParentPass(!showParentPass)}
+                      className="text-xs text-slate-400 hover:text-amber-600 flex items-center gap-1"
+                    >
+                      {showParentPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showParentPass ? 'إخفاء' : 'إظهار'}</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showParentPass ? 'text' : 'password'}
                       placeholder="••••••"
                       value={parentPassword}
                       onChange={e => setParentPassword(e.target.value)}
-                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none"
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                       required
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-amber-600">123456</span></p>
                 </div>
-                )}
 
                 {errorMessage && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">

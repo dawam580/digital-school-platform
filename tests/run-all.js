@@ -11,6 +11,7 @@ import { createTier1Suite } from './tier1-features.test.js';
 import { createTier2Suite } from './tier2-boundary.test.js';
 import { createTier3Suite } from './tier3-pairwise.test.js';
 import { createTier4Suite } from './tier4-scenarios.test.js';
+import { createTier5Suite } from './tier5-security-auth.test.js';
 
 // ANSI Color Codes
 const RESET = '\x1b[0m';
@@ -32,7 +33,8 @@ async function main() {
     createTier1Suite(),
     createTier2Suite(),
     createTier3Suite(),
-    createTier4Suite()
+    createTier4Suite(),
+    createTier5Suite()
   ];
 
   let totalTests = 0;
