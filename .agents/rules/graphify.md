@@ -27,3 +27,11 @@ The primary visual tree requested and approved by the user is `graphify-out/GRAP
 - **Interactive 2D/3D Knowledge Graph**: `graphify-out/graph.html`
 - **GraphRAG Data**: `graphify-out/graph.json`
 - **Sync Command**: `npm.cmd run graph:sync` (or `node scripts/sync-architecture-graph.cjs`)
+
+### 4. Global Architecture Trees Hub for All Projects (مركز شجرة كافة المشاريع)
+- Whenever working on, reading, or modifying **المدرسة**, **دوائي**, or **بنيان**:
+  - Check `c:\Users\HP\Downloads\Sketch\آدم` (which links to `Downloads/stitch_\آدم`):
+    - **🏫 مدرسة**: `Madrasa_Architecture_Tree.html` / `Madrasa_Interactive_Graph.html`
+    - **💊 دوائي**: `Dawaei_Architecture_Tree.html` / `Dawaei_Interactive_Graph.html`
+    - **🏗️ بنيان**: `Bunyan_Architecture_Tree.html` / `Bunyan_Interactive_Graph.html`
+

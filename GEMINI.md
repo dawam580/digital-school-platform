@@ -18,3 +18,13 @@
 - **Storage**: Offline-first via IndexedDB & LocalStorage (`src/services/storage/indexedDb.ts`). Never wipe or replace real student data with generic mock data.
 - **Licensing**: Remote validation via Firebase Firestore (`madrasa-license-2026`), zero modification of local student data.
 - **UI Standard**: Pure Arabic RTL, Tailwind CSS, Lucide icons, shadcn/ui components (`src/components/ui/`).
+
+## 3. Global Architecture Graphs & Trees Hub (مركز الرسوم البيانية وشجرة كافة المشاريع)
+- **Central Location**: `c:\Users\HP\Downloads\Sketch\آدم` (also linked to `c:\Users\HP\Downloads\stitch_\آدم`).
+- **Rule for Reading/Modifying Any Project**: Whenever inspecting, reading, or modifying this project or ANY of the user's projects (such as **مدرسة**, **دوائي**, **بنيان**):
+  - Always check `Downloads/Sketch/آدم` to find the comprehensive interactive graph and architecture tree for each project:
+    1. **🏫 مدرسة (Madrasa)**: `Madrasa_Architecture_Tree.html` & `Madrasa_Interactive_Graph.html`
+    2. **💊 دوائي (Dawaei)**: `Dawaei_Architecture_Tree.html` & `Dawaei_Interactive_Graph.html`
+    3. **🏗️ بنيان (Bunyan)**: `Bunyan_Architecture_Tree.html` & `Bunyan_Interactive_Graph.html`
+  - Consult these visual trees and relational graphs first to understand modules, schemas, and dependencies, and to execute modifications rapidly with zero drift.
+
