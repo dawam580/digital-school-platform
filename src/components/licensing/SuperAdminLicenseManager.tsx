@@ -143,7 +143,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
           schoolName: created.school_name,
           phone: created.admin_phone,
           licenseKey: created.license_key,
-          schoolCode: created.school_id || 'SCH-2026'
+          schoolCode: created.school_id || created.license_key || 'SCH-2026'
         });
         setShowDeliveryModal(true);
       }
@@ -387,7 +387,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
                         schoolName: school.school_name,
                         phone: school.admin_phone,
                         licenseKey: school.license_key,
-                        schoolCode: school.school_id || 'SCH-2026'
+                        schoolCode: school.school_id || school.license_key || 'SCH-2026'
                       });
                       setShowDeliveryModal(true);
                     }}

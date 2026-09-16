@@ -128,7 +128,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
 
   const handleDirectLoginToDashboard = () => {
     sound.playSuccess();
-    login(directorPhone, directorPin);
+    login(directorPhone, 'admin', directorPin);
     setCurrentRole('admin');
     setActiveTab('dashboard');
   };

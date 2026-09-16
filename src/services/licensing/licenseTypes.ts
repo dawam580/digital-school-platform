@@ -9,6 +9,7 @@ export type SubscriptionStatus = 'trial' | 'active' | 'suspended' | 'expired' | 
 
 export interface SchoolLicenseDoc {
   license_key: string;              // المعرف الفريد للمدرسة (مثال: SCH-2026-LIC-XXXX)
+  school_id?: string;               // رمز أو كود المدرسة التعريفي
   school_name: string;              // اسم المدرسة الرسمي
   subscription_status: SubscriptionStatus; // حالة الاشتراك
   trial_ends_at: string;            // تاريخ انتهاء الفترة التجريبية (ISO 8601)

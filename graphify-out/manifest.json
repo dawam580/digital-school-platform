@@ -30,10 +30,10 @@
     "semantic_hash": "f6a3ee199cb2c5f8caf8c5a268022e38"
   },
   "package.json": {
-    "mtime": 1789561175.0865674,
-    "seen": 1789561539.0254,
-    "ast_hash": "6f39003474ad6c4133c27da8462a9dc5",
-    "semantic_hash": "6f39003474ad6c4133c27da8462a9dc5"
+    "mtime": 1789585646.029776,
+    "seen": 1789585880.969151,
+    "ast_hash": "ae5ef71f94524d49f18faf3165bb92dd",
+    "semantic_hash": "ae5ef71f94524d49f18faf3165bb92dd"
   },
   "payload.json": {
     "mtime": 1789561175.0865674,
@@ -378,10 +378,10 @@
     "semantic_hash": "86d49757f23231b106faf4881d1d5823"
   },
   "src/components/licensing/SuperAdminLicenseManager.tsx": {
-    "mtime": 1789563068.1582985,
-    "seen": 1789563104.0236862,
-    "ast_hash": "7677d78d5aece695b692485f7a4a5464",
-    "semantic_hash": "7677d78d5aece695b692485f7a4a5464"
+    "mtime": 1789585380.6406815,
+    "seen": 1789585880.9944103,
+    "ast_hash": "988f9c6dd47a6c282d93570d96174e70",
+    "semantic_hash": "988f9c6dd47a6c282d93570d96174e70"
   },
   "src/components/mobile/MobileCompanionModal.tsx": {
     "mtime": 1789561175.174227,
@@ -792,10 +792,10 @@
     "semantic_hash": "2115a4d6127ee030905a183f6111b704"
   },
   "src/services/licensing/licenseTypes.ts": {
-    "mtime": 1789561175.2871559,
-    "seen": 1789561539.0254,
-    "ast_hash": "8f75f1ae7de5cdd64c51b05d6c912af4",
-    "semantic_hash": "8f75f1ae7de5cdd64c51b05d6c912af4"
+    "mtime": 1789585304.7815688,
+    "seen": 1789585881.0185869,
+    "ast_hash": "d4a59c333ed2a69c79a36a873a0013d4",
+    "semantic_hash": "d4a59c333ed2a69c79a36a873a0013d4"
   },
   "src/services/native/windowsBridge.ts": {
     "mtime": 1789561175.2882004,
@@ -1068,10 +1068,10 @@
     "semantic_hash": "43d3e49f753f65f8fa053e36f77c9ed1"
   },
   "skills-lock.json": {
-    "mtime": 1789561507.646022,
-    "seen": 1789561539.0254,
-    "ast_hash": "57ffc28b85c02f421f1dd5e14a8999d0",
-    "semantic_hash": "57ffc28b85c02f421f1dd5e14a8999d0"
+    "mtime": 1789581976.2407048,
+    "seen": 1789585880.969151,
+    "ast_hash": "17460d625f993fc33c5283c4ab7cca58",
+    "semantic_hash": "17460d625f993fc33c5283c4ab7cca58"
   },
   "src/components/mobile/DesktopPairingModal.tsx": {
     "mtime": 1789561175.1732292,
@@ -1134,9 +1134,9 @@
     "semantic_hash": "ca710e83b05a0240074c5c7e021b0c91"
   },
   "src/pages/onboarding/SchoolClientOnboardingPage.tsx": {
-    "mtime": 1789562813.532424,
-    "seen": 1789563053.552955,
-    "ast_hash": "11eb8a95f8e97adc4f37240fc9f2e53a",
-    "semantic_hash": "11eb8a95f8e97adc4f37240fc9f2e53a"
+    "mtime": 1789585411.9572957,
+    "seen": 1789585881.013693,
+    "ast_hash": "ebf4e2210aae2e4339055404443c285b",
+    "semantic_hash": "ebf4e2210aae2e4339055404443c285b"
   }
 }

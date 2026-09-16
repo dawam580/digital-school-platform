@@ -33,7 +33,7 @@ jobs:
         run: npm install
 
       - name: TypeScript Check (صفر أخطاء)
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
-      - name: Automated Test Suite (203 اختباراً)
+      - name: Automated Test Suite (224 اختباراً)
         run: node tests/run-all.js
