@@ -154,7 +154,7 @@ export const LandingPage: React.FC = () => {
       badge: 'القيادة والإشراف',
       icon: <Shield className="w-5 h-5 text-purple-600" />,
       colorClass: 'border-purple-500 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300',
-      desc: 'لوحة قيادة شاملة تعرض إحصائيات 873 طالباً، 33 فصلاً، كشوفات المعلمين، جداول الحصص، وأدوات استيراد وتصدير ملفات Excel و PDF مع خطة تشغيلية كاملة.',
+      desc: 'لوحة قيادة شاملة تعرض إحصائيات الطلاب، الفصول، كشوفات المعلمين، جداول الحصص، وأدوات استيراد وتصدير ملفات Excel و PDF مع خطة تشغيلية كاملة.',
       features: [
         'إحصائيات تفصيلية لأعداد الطلبة وتوزيع الفصول بنين وبنات',
         'استيراد كشوفات المركز الوطني للامتحانات من ملفات PDF',
@@ -406,9 +406,9 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-6">
             <TailgridsStatCard
               icon={<Users className="w-6 h-6" />}
-              value="873"
+              value={students.length > 5 ? `${students.length}` : '+1,000'}
               label="طالباً مسجلاً بالكشوف الرسمية"
-              trend="مدرسة الباعور النموذجية"
+              trend="سعة استيعاب مرنة"
               trendUp={true}
               colorClass="from-blue-600 to-indigo-600"
             />

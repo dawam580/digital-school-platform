@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { isWindowsDesktop } from '../../services/native/windowsBridge';
+import { useSchool } from '../../context/SchoolContext';
 import { Minus, Square, Copy, X, Monitor, ShieldCheck, FolderOpen } from 'lucide-react';
 
 export const WindowsTitleBar: React.FC = () => {
+  const { schoolProfile } = useSchool();
   const [isDesktop, setIsDesktop] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
 
@@ -47,7 +49,7 @@ export const WindowsTitleBar: React.FC = () => {
         <div className="w-5 h-5 rounded-md bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-blue-300">
           <Monitor className="w-3.5 h-3.5" />
         </div>
-        <span className="font-bold tracking-wide text-white">منظومة مدرسة الشهيد امحمد الباعور</span>
+        <span className="font-bold tracking-wide text-white">{schoolProfile?.name || 'منظومة المدرسة الرقمية الذكية'}</span>
         <span className="text-slate-400 text-[11px] hidden sm:inline">| إصدار سطح المكتب المعتمد (Windows Native)</span>
         <div className="flex items-center gap-1 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full text-[10px]">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>

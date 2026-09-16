@@ -65,7 +65,9 @@ export const TeacherQuickDashboard: React.FC = () => {
     logout,
     setShowCustomCodeModal,
     setCurrentRole,
-    isReadOnlyPreview
+    isReadOnlyPreview,
+    authenticatedRole,
+    schoolProfile
   } = useSchool();
 
   // Custom Attendance State
@@ -93,7 +95,7 @@ export const TeacherQuickDashboard: React.FC = () => {
 
   const [selectedClass, setSelectedClass] = useState<string>(assignedClasses[0] || '3/أ');
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
-  const [showTeacherSelectModal, setShowTeacherSelectModal] = useState<boolean>(!currentTeacher);
+  const [showTeacherSelectModal, setShowTeacherSelectModal] = useState<boolean>(!currentTeacher && authenticatedRole !== 'teacher');
 
   // Synchronize selectedClass when currentTeacher changes
   React.useEffect(() => {
@@ -398,15 +400,18 @@ export const TeacherQuickDashboard: React.FC = () => {
               <span>مادة: <strong className="text-white underline decoration-emerald-400 underline-offset-4">{currentTeacher?.subject || 'غير محدد'}</strong></span>
               <span>• رمز المعلم: <span className="font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-xs font-black">{currentTeacher?.code || '—'}</span></span>
               
-              <button
-                type="button"
-                onClick={() => { setShowTeacherSelectModal(true); sound.playTap(); }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-emerald-950 text-xs font-black shadow-md hover:bg-emerald-50 transition active:scale-95"
-                title="اضغط هنا لتغيير المعلم واختيار اسمك من كشف المدرسة"
-              >
-                <Users className="w-3.5 h-3.5 text-emerald-700" />
-                <span>تبديل المعلم 🔄</span>
-              </button>
+              {/* تبديل المعلم محظور تماماً على المعلم الحقيقي، ومتاح فقط أثناء معاينة الإدارة والسوبر */}
+              {authenticatedRole !== 'teacher' && (
+                <button
+                  type="button"
+                  onClick={() => { setShowTeacherSelectModal(true); sound.playTap(); }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-emerald-950 text-xs font-black shadow-md hover:bg-emerald-50 transition active:scale-95"
+                  title="اضغط هنا لتغيير المعلم واختيار اسمك من كشف المدرسة"
+                >
+                  <Users className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>تبديل المعلم 🔄</span>
+                </button>
+              )}
 
               <button
                 type="button"
@@ -451,7 +456,7 @@ export const TeacherQuickDashboard: React.FC = () => {
             onClick={() => {
               sound.playTap();
               setCurrentRole('admin');
-              showToast('info', 'لوحة تحكم المدير 🏛️', 'تم الرجوع إلى لوحة الإدارة العامة لمدرسة الباعور.');
+              showToast('info', 'لوحة تحكم المدير 🏛️', `تم الرجوع إلى لوحة الإدارة العامة لـ (${schoolProfile.name}).`);
             }}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm border border-purple-400/50 shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95"
             title="الرجوع إلى لوحة تحكم مدير المدرسة الرئيسية"

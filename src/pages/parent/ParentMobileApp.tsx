@@ -267,7 +267,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
 
           <div>
             <h2 className="text-lg font-black text-white">منظومة ولي الأمر والطالب 📱</h2>
-            <p className="text-xs text-slate-400 mt-1">مدرسة الشهيد امحمد الباعور للتعليم الأساسي</p>
+            <p className="text-xs text-slate-400 mt-1">{schoolProfile.name}</p>
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-2xl border border-white/5">
@@ -472,7 +472,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-emerald-400 font-bold">متزامن مع كمبيوتر المدرسة</span>
           </span>
-          <span>مدرسة الشهيد امحمد الباعور</span>
+          <span>{schoolProfile.name}</span>
         </div>
       </header>
 
@@ -671,10 +671,10 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2 text-slate-300">
                 <Phone className="w-4 h-4 text-emerald-400" />
-                <span>هاتف إدارة مدرسة الباعور:</span>
+                <span>هاتف إدارة المدرسة:</span>
               </div>
-              <a href="tel:0922465676" className="font-mono font-bold text-amber-300 hover:underline">
-                0922465676
+              <a href={`tel:${schoolProfile.directorPhone || '0912345678'}`} className="font-mono font-bold text-amber-300 hover:underline">
+                {schoolProfile.directorPhone || '0912345678'}
               </a>
             </div>
 
@@ -980,8 +980,8 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 <div className="flex items-center gap-2">
                   <img src={logoImg} alt="شعار المدرسة" className="w-8 h-8 object-contain" />
                   <div>
-                    <h4 className="text-[11px] font-black text-amber-300">مدرسة الشهيد امحمد الباعور</h4>
-                    <span className="text-[9px] text-slate-300 block">بطاقة الطالب الرقمية المعتمدة 2025/2026</span>
+                    <h4 className="text-[11px] font-black text-amber-300">{schoolProfile.name}</h4>
+                    <span className="text-[9px] text-slate-300 block">بطاقة الطالب الرقمية المعتمدة {schoolProfile.academicYear}</span>
                   </div>
                 </div>
                 <span className="text-xs">🇱🇾</span>

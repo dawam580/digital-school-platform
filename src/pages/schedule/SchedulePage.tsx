@@ -31,7 +31,7 @@ import { SchedulePeriod, DaySchedule } from '../../types';
 import { SchedulePeriodEditorModal } from '../../components/admin/SchedulePeriodEditorModal';
 
 export const SchedulePage: React.FC = () => {
-  const { schedule, selectedStudent, teachers, currentRole, showToast } = useSchool();
+  const { schedule, selectedStudent, teachers, currentRole, showToast, schoolProfile } = useSchool();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(0);
   
   // Multi-Class Schedules state
@@ -482,8 +482,8 @@ export const SchedulePage: React.FC = () => {
             <div className="text-right space-y-0.5">
               <p className="font-bold">دولة ليبيا</p>
               <p className="font-bold">وزارة التربية والتعليم</p>
-              <p className="font-bold">مراقبة التربية والتعليم توكرة</p>
-              <p className="font-black text-sm">مدرسة الشهيد امحمد الباعور للتعليم الأساسي</p>
+              <p className="font-bold">{schoolProfile.district || 'مراقبة التربية والتعليم'}</p>
+              <p className="font-black text-sm">{schoolProfile.name}</p>
             </div>
 
             <div className="text-center">
@@ -491,7 +491,7 @@ export const SchedulePage: React.FC = () => {
                 🏛️
               </div>
               <h2 className="text-base font-black tracking-wide">جدول الحصص الأسبوعي المعتمد</h2>
-              <p className="text-[11px] font-bold text-slate-700 font-mono">العام الدراسي: 2025 - 2026 م</p>
+              <p className="text-[11px] font-bold text-slate-700 font-mono">العام الدراسي: {schoolProfile.academicYear}</p>
             </div>
 
             <div className="text-left font-mono text-xs space-y-0.5">
@@ -596,7 +596,7 @@ export const SchedulePage: React.FC = () => {
 
           <div className="space-y-8">
             <p className="font-bold text-slate-700">مدير المدرسة</p>
-            <p className="font-black text-slate-900">أ. فرج امحمد الباعور</p>
+            <p className="font-black text-slate-900">{schoolProfile.directorName || 'مدير المدرسة المعتمد'}</p>
             <p className="font-mono text-slate-400">التوقيع: ....................</p>
           </div>
 

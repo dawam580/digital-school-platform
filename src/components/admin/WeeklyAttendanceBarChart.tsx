@@ -16,7 +16,7 @@ export const WeeklyAttendanceBarChart: React.FC = () => {
   const { students, isDarkMode } = useSchool();
 
   const { weeklyData, avgAttendanceRate } = useMemo(() => {
-    const total = students.length || 873;
+    const total = students.length || 1;
     const presentToday = students.filter(s => s.status === 'present').length || Math.round(total * 0.94);
     const absentToday = total - presentToday;
 

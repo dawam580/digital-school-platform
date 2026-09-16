@@ -422,15 +422,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </>
             )}
 
-            {/* Director Invite & Role Links Button */}
-            <button
-              type="button"
-              onClick={() => { setShowDirectorInviteModal(true); sound.playTap(); }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black border border-purple-200 dark:border-purple-800 transition active:scale-95 shadow-sm"
-              title="نسخ رسالة دعوة المدير والروابط المنفصلة"
-            >
-              <span>✉️ رسالة الدعوة والروابط</span>
-            </button>
+            {/* Director Invite & Role Links Button (إدارة المدرسة والسوبر فقط) */}
+            {(authenticatedRole === 'admin' || (authenticatedRole === 'superadmin' && superUnlocked)) && (
+              <button
+                type="button"
+                onClick={() => { setShowDirectorInviteModal(true); sound.playTap(); }}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black border border-purple-200 dark:border-purple-800 transition active:scale-95 shadow-sm"
+                title="نسخ رسالة دعوة المدير والروابط المنفصلة"
+              >
+                <span>✉️ رسالة الدعوة والروابط</span>
+              </button>
+            )}
 
             {/* Dark Mode Toggle */}
             <button

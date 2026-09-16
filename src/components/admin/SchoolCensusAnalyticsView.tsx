@@ -33,7 +33,7 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
   const [showPrintView, setShowPrintView] = useState(false);
 
   // 1. Overall Student Statistics
-  const totalStudents = students.length || 873;
+  const totalStudents = students.length;
   const maleStudents = useMemo(() => students.filter(s => s.gender === 'male').length, [students]);
   const femaleStudents = useMemo(() => students.filter(s => s.gender === 'female').length, [students]);
   const malePercent = Math.round((maleStudents / (totalStudents || 1)) * 100);
@@ -143,10 +143,10 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
               <span>لوحة القيادة التنفيذية | الإحصاء والتعداد الشامل</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-black font-tajawal text-white tracking-wide">
-              رؤية وإحصائيات مدرسة الشهيد امحمد الباعور للتعليم الأساسي
+              رؤية وإحصائيات {schoolProfile.name}
             </h1>
             <p className="text-slate-300 text-xs md:text-sm font-cairo max-w-3xl leading-relaxed">
-              تعداد متكامل للطلاب (873 طالباً)، وتوزيع الفصول (33 فصلاً صباحياً ومسائياً)، والكادر التعليمي والإداري وفق قاعدة البيانات المعتمدة لوزارة التربية والتعليم الليبية.
+              تعداد متكامل للطلاب ({totalStudents} طالباً)، وتوزيع الفصول والكادر التعليمي والإداري وفق قاعدة البيانات المعتمدة لوزارة التربية والتعليم الليبية.
             </p>
           </div>
 

@@ -491,28 +491,14 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     markSession();
     applyRole('admin');
   };
-  // نموذج الجلسة (بوابة عامة للغرباء / دخول مباشر لصاحب الجهاز):
-  // الرابط العام على جهاز غريب = لا جلسة ولا إعداد سابق → شاشة الدخول (لا لوحة مدير مباشرة).
-  // جهاز المدرسة (سبق الدخول أو الترخيص أو الإعداد) → استعادة الجلسة والدخول المباشر محفوظ.
   const SESSION_KEY = 'madrasa_session_active';
 
   const hasPriorSetup = (): boolean => {
     try {
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const qPortal = params.get('portal');
-        if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile' || params.get('code')) {
-          return true;
-        }
-      }
-      // جلسة قائمة (لم تُسجَّل خروجاً) أو أي بصمة استخدام حقيقي على هذا الجهاز.
-      // ملاحظة: مفتاح الترخيص مستثنى عمداً لأنه يُزرع تلقائياً عند أول فحص.
-      if (localStorage.getItem(SESSION_KEY) === '1') return true;
-      if (localStorage.getItem('madrasa_auth_role')) return true;
-      if (localStorage.getItem('madrasa_active_role')) return true;
-      if (localStorage.getItem(STORAGE_KEY_SCHOOL_PROFILE)) return true;
-      if (localStorage.getItem('madrasa_db_students_v3')) return true;
-      if (localStorage.getItem(STORAGE_KEY_SAVED_SCHOOLS)) return true;
+      // المصادقة تعتمد حصراً على وجود جلسة نشطة صريحة مع هوية دور محددة
+      // (يمنع دخول الزائر أو الزبون تلقائياً إلى لوحة المدير دون تسجيل دخول)
+      const hasActiveSession = localStorage.getItem(SESSION_KEY) === '1' && Boolean(localStorage.getItem('madrasa_auth_role'));
+      if (hasActiveSession) return true;
     } catch {}
     return false;
   };
@@ -718,17 +704,29 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
           return 'parent-mobile';
         }
+        if (qPortal === 'teacher' || qPortal === 'admin' || qPortal === 'exams' || qPortal === 'superadmin') {
+          return 'login';
+        }
         const qRole = params.get('role');
-        if (qRole === 'superadmin') return 'superadmin-dashboard';
-        if (qRole === 'exams_coordinator') return 'exams-coordinator-dashboard';
-        if (qRole === 'teacher') return 'teacher-quick';
-        if (qRole === 'parent') return 'parent-dashboard';
-        if (qRole === 'admin') return 'dashboard';
+        if (qRole === 'superadmin') return hasPriorSetup() ? 'superadmin-dashboard' : 'login';
+        if (qRole === 'exams_coordinator') return hasPriorSetup() ? 'exams-coordinator-dashboard' : 'login';
+        if (qRole === 'teacher') return hasPriorSetup() ? 'teacher-quick' : 'login';
+        if (qRole === 'parent') return 'parent-mobile';
+        if (qRole === 'admin') return hasPriorSetup() ? 'dashboard' : 'login';
       }
-      const saved = localStorage.getItem('madrasa_active_tab');
-      if (saved) return saved;
+      if (hasPriorSetup()) {
+        const saved = localStorage.getItem('madrasa_active_tab');
+        if (saved && saved !== 'landing' && saved !== 'login') return saved;
+        const savedRole = localStorage.getItem('madrasa_auth_role');
+        if (savedRole === 'teacher') return 'teacher-quick';
+        if (savedRole === 'parent') return 'parent-mobile';
+        if (savedRole === 'exams_coordinator') return 'exams-coordinator-dashboard';
+        if (savedRole === 'counselor') return 'counselor-dashboard';
+        if (savedRole === 'superadmin') return 'superadmin-dashboard';
+        return 'dashboard';
+      }
     } catch {}
-    return 'dashboard';
+    return 'landing';
   });
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
@@ -753,26 +751,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
-  // Persistent Students (Libyan Official Al-Baour Roster 873 Students)
+  // Persistent Students: المرونة للبدء بقالب خفيف ونظيف أو استيراد كشف المدرسة
   // تهيئة بالقائمة الكاملة الخام: حالة الذاكرة مرجع الكتابة، والنطاق يُفرض عند العرض والجلب المباشر
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const data = db.getAllStudents();
-      if (data && data.length > 5) return data;
-      if (data && data.length > 0 && data[0]?.id !== 'std-1') return data;
-      return LIBYAN_BAOUR_STUDENTS;
+      if (data && data.length > 0) return data;
+      return SEED_STUDENTS;
     } catch {
-      return LIBYAN_BAOUR_STUDENTS;
+      return SEED_STUDENTS;
     }
   });
 
   const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
     try {
       const all = db.getAllStudents();
-      const list = (all && all.length > 5) ? all : LIBYAN_BAOUR_STUDENTS;
-      return list[0];
+      const list = (all && all.length > 0) ? all : SEED_STUDENTS;
+      return list[0] || SEED_STUDENTS[0];
     } catch {
-      return LIBYAN_BAOUR_STUDENTS[0];
+      return SEED_STUDENTS[0];
     }
   });
 
@@ -1008,6 +1005,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   const selectTeacher = useCallback((teacher: TeacherAccount) => {
+    if (authenticatedRole === 'teacher' && currentTeacher && currentTeacher.id !== teacher.id) {
+      sound.playAlert();
+      showToast('error', '⛔ غير مصرح', 'لا يمكنك تبديل حساب المعلم أثناء تسجيل الدخول بحسابك الشخصي.');
+      return;
+    }
     setCurrentTeacher(prev => {
       if (prev && prev.id !== teacher.id) {
         auditLogger.log({
@@ -1025,7 +1027,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem('madrasa_active_teacher_id', teacher.id);
     } catch {}
     showToast('info', 'تم تحديد حساب المعلم 👨‍🏫', `أنت الآن في واجهة المعلم (${teacher.name}) - مادة ${teacher.subject}`);
-  }, [showToast]);
+  }, [authenticatedRole, currentTeacher, showToast]);
 
   const recordInfractionAndCheck = useCallback((
     studentId: string,
@@ -1262,10 +1264,22 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsAuthenticated(false);
     setSuperUnlocked(false);
     clearSession();
+    try {
+      localStorage.removeItem('madrasa_auth_role');
+      localStorage.removeItem('madrasa_active_role');
+      localStorage.removeItem('madrasa_active_teacher_id');
+      localStorage.removeItem('madrasa_active_tab');
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('role');
+        url.searchParams.delete('portal');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
     setCurrentTeacher(null);
-    setActiveTab('login');
+    setActiveTab('landing');
     sound.playTap();
-    showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح.');
+    showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح والعودة إلى البوابة الرئيسية.');
   };
 
   const updateAttendance = (studentId: string, status: AttendanceStatus, note?: string) => {
@@ -1706,8 +1720,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     SecurityEngine.assertPermission(currentRole, 'RESET_SYSTEM');
     if (!requireLiveMode('تصفير قاعدة البيانات')) return;
     db.resetAllData();
-    setStudents(LIBYAN_BAOUR_STUDENTS);
-    setSelectedStudent(LIBYAN_BAOUR_STUDENTS[0]);
+    setStudents(SEED_STUDENTS);
+    db.saveStudents(SEED_STUDENTS, true);
+    setSelectedStudent(SEED_STUDENTS[0]);
     setTeachers(SEED_TEACHERS);
     setClasses(SEED_CLASSES);
     setNotifications(SEED_NOTIFICATIONS);
@@ -2307,11 +2322,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
 
     if (trialData.seedRichData) {
-      const initialSeed = (LIBYAN_BAOUR_STUDENTS && LIBYAN_BAOUR_STUDENTS.length > 0)
-        ? LIBYAN_BAOUR_STUDENTS
-        : SEED_STUDENTS;
-      setStudents(initialSeed);
-      db.saveStudents(initialSeed);
+      setStudents(SEED_STUDENTS);
+      db.saveStudents(SEED_STUDENTS, true);
       setFinancialTransactions(INITIAL_FINANCIAL_TRANSACTIONS);
       setTuitionFees(INITIAL_TUITION_RECORDS);
       try {

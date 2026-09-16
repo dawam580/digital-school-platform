@@ -36,11 +36,11 @@ export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
 
 export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
   id: 'school-main-01',
-  name: 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي',
-  code: '30713',
-  district: 'مراقبة التربية والتعليم - توكرة',
-  directorName: 'أ. فتحي الشريف (مدير المدرسة)',
-  directorPhone: '0922465676',
+  name: 'منظومة المدرسة الرقمية الذكية',
+  code: 'SCH-2026',
+  district: 'مراقبة التربية والتعليم',
+  directorName: 'مدير المدرسة المعتمد',
+  directorPhone: '0912345678',
   academicYear: '2025 - 2026 م',
   isCustom: false
 };
@@ -1260,7 +1260,7 @@ export const db = {
         }
       }
       if (!list || list.length === 0) {
-        list = LIBYAN_BAOUR_STUDENTS;
+        list = SEED_STUDENTS;
       }
       // Guarantee clean vector avatars (never unsplash)
       const cleaned = list.map(s => ({
@@ -1272,7 +1272,7 @@ export const db = {
       // فرض النطاق على مستوى البيانات (الرفض هنا لا في العرض فقط)
       return this.scopeStudents(cleaned);
     } catch {
-      return LIBYAN_BAOUR_STUDENTS.map(s => ({
+      return SEED_STUDENTS.map(s => ({
         ...s,
         avatar: getCleanAvatar(s.name, s.gender)
       }));
@@ -1294,7 +1294,7 @@ export const db = {
         }
       }
       if (!list || list.length === 0) {
-        list = LIBYAN_BAOUR_STUDENTS;
+        list = SEED_STUDENTS;
       }
       return list.map(s => ({
         ...s,
@@ -1303,7 +1303,7 @@ export const db = {
           : s.avatar
       }));
     } catch {
-      return LIBYAN_BAOUR_STUDENTS.map(s => ({
+      return SEED_STUDENTS.map(s => ({
         ...s,
         avatar: getCleanAvatar(s.name, s.gender)
       }));

@@ -410,7 +410,7 @@ export const Login: React.FC = () => {
                   <Building2 className="w-5 h-5" />
                 </div>
                 <h2 className="text-base font-black text-slate-800 dark:text-white">بوابة مدير المدرسة (لوحة التحكم الكاملة)</h2>
-                <p className="text-xs text-slate-400 mt-0.5">إدارة الطلاب (873 طالب)، المعلمين، الفصول، الحضور، واعتماد الكنترول</p>
+                <p className="text-xs text-slate-400 mt-0.5">إدارة الطلاب، المعلمين، الفصول، الحضور، واعتماد الكنترول والنتائج</p>
               </div>
 
               {/* Instant 1-Click Demo Button for Testing Directors — DEV_MODE فقط، محذوف من الإنتاج */}

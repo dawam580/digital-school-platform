@@ -266,7 +266,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
               onChange={e => setSelectedClassScope(e.target.value)}
               className="p-2.5 pr-3 pl-8 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs cursor-pointer focus:ring-2 focus:ring-indigo-500 transition"
             >
-              <option value="all">جميع الفصول (873 طالب)</option>
+              <option value="all">جميع الفصول ({students.length} طالب)</option>
               {availableClasses.map(cls => (
                 <option key={cls} value={cls}>
                   فصل: {cls}
