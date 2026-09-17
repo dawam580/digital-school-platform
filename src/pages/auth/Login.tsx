@@ -47,8 +47,14 @@ export const Login: React.FC = () => {
     setShowFreeTrialModal
   } = useSchool();
 
-  const [loginMode, setLoginMode] = useState<'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('admin');
+  const [loginMode, setLoginMode] = useState<'smart' | 'admin' | 'exams_coordinator' | 'superadmin' | 'teacher' | 'parent'>('smart');
+  const [showManualTabs, setShowManualTabs] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+
+  // Smart Unified Form State
+  const [smartIdentifier, setSmartIdentifier] = useState(currentUserPhone || '');
+  const [smartSecret, setSmartSecret] = useState('');
+  const [showSmartSecret, setShowSmartSecret] = useState(false);
 
   // بوابة السوبر مخفية تماماً عن العامة والزوار: تظهر حصراً برابط المالك المشفر (?role=superadmin)
   const [showSuperPortal] = useState<boolean>(() => {
@@ -66,33 +72,33 @@ export const Login: React.FC = () => {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const qRole = params.get('role');
-        if (qRole === 'superadmin') setLoginMode('superadmin');
-        else if (qRole === 'exams_coordinator') setLoginMode('exams_coordinator');
-        else if (qRole === 'teacher') setLoginMode('teacher');
-        else if (qRole === 'parent') setLoginMode('parent');
-        else if (qRole === 'admin') setLoginMode('admin');
+        if (qRole === 'superadmin') { setLoginMode('superadmin'); setShowManualTabs(true); }
+        else if (qRole === 'exams_coordinator') { setLoginMode('exams_coordinator'); setShowManualTabs(true); }
+        else if (qRole === 'teacher') { setLoginMode('teacher'); setShowManualTabs(true); }
+        else if (qRole === 'parent') { setLoginMode('parent'); setShowManualTabs(true); }
+        else if (qRole === 'admin') { setLoginMode('admin'); setShowManualTabs(true); }
       }
     } catch {}
   }, []);
 
   // Parent Form (Libyan 12-digit National Number or link code)
-  const [studentNationalId, setStudentNationalId] = useState('120195864392');
-  const [parentPassword, setParentPassword] = useState('123456');
+  const [studentNationalId, setStudentNationalId] = useState('');
+  const [parentPassword, setParentPassword] = useState('');
   const [showParentPass, setShowParentPass] = useState(false);
 
   // Teacher Form (Libyan Unique Teacher Code)
-  const [teacherCode, setTeacherCode] = useState('LIB-COMP-09');
-  const [teacherPassword, setTeacherPassword] = useState('123456');
+  const [teacherCode, setTeacherCode] = useState('');
+  const [teacherPassword, setTeacherPassword] = useState('');
   const [showTeacherPass, setShowTeacherPass] = useState(false);
 
   // Admin Form (Libyan Management Phone)
-  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '0922465676');
-  const [adminPassword, setAdminPassword] = useState('2026');
+  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '');
+  const [adminPassword, setAdminPassword] = useState('');
   const [showAdminPass, setShowAdminPass] = useState(false);
 
   // Exams Coordinator Form
-  const [examsPhone, setExamsPhone] = useState('0912345678');
-  const [examsPassword, setExamsPassword] = useState('2026');
+  const [examsPhone, setExamsPhone] = useState('');
+  const [examsPassword, setExamsPassword] = useState('');
   const [showExamsPass, setShowExamsPass] = useState(false);
 
   // Super Admin Form
@@ -102,25 +108,81 @@ export const Login: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 1-Click Instant Demo Logins (الموثقة بالبيانات الرسمية والمحمية بسجل التدقيق)
-  const handleQuickDirectorDemo = () => {
-    sound.playSuccess();
-    setAdminPhone('0922465676');
-    setAdminPassword('2026');
-    login('0922465676', 'admin', '2026');
-  };
-
-  const handleQuickExamCoordinatorDemo = () => {
-    sound.playSuccess();
-    setExamsPhone('0912345678');
-    setExamsPassword('2026');
-    login('0912345678', 'exams_coordinator', '2026');
-  };
-
-  const handleQuickSuperAdminDemo = () => {
-    sound.playTap();
-    setLoginMode('superadmin');
+  const handleSmartLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     setErrorMessage('');
+
+    setTimeout(() => {
+      const cleanId = smartIdentifier.trim();
+      const cleanSecret = smartSecret.trim();
+
+      if (!cleanId) {
+        setErrorMessage('يرجى إدخال رقم الهاتف أو كود المعلم أو رقم القيد.');
+        setLoading(false);
+        return;
+      }
+      if (!cleanSecret) {
+        setErrorMessage('يرجى إدخال كلمة المرور أو رمز الأمان (PIN).');
+        setLoading(false);
+        return;
+      }
+
+      const res = AuthEngine.detectAndVerify(cleanId, cleanSecret);
+      if (!res.success || !res.role) {
+        setErrorMessage(res.error || 'بيانات الدخول غير صحيحة. يرجى التحقق من المعرّف وكلمة المرور.');
+        setLoading(false);
+        return;
+      }
+
+      if (res.role === 'superadmin') {
+        if (!unlockSuperAdmin(cleanSecret)) {
+          setErrorMessage('رمز الماستر غير صحيح — تم تسجيل المحاولة في سجل التدقيق.');
+          setLoading(false);
+          return;
+        }
+        enterSuperAdmin();
+        setLoading(false);
+        return;
+      }
+
+      if (res.role === 'teacher') {
+        const ok = loginWithTeacherCode(res.actorId || cleanId, cleanSecret);
+        if (!ok) {
+          setErrorMessage('فشل تسجيل الدخول كمعلم. تأكد من الرمز وكلمة المرور.');
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (res.role === 'parent') {
+        const loginRes = login(cleanId, 'parent', cleanSecret);
+        if (!loginRes.success) {
+          setErrorMessage(loginRes.error || 'بيانات ولي الأمر غير صحيحة.');
+          setLoading(false);
+          return;
+        }
+        const foundStudent = students.find(
+          s => (s.nationalNumber && s.nationalNumber === cleanId) ||
+               s.nationalId === cleanId ||
+               s.studentNumber === cleanId ||
+               (s.linkCode && s.linkCode.toLowerCase() === cleanId.toLowerCase())
+        );
+        if (foundStudent) {
+          setSelectedStudent(foundStudent);
+          setParentLinkedStudent(foundStudent);
+        }
+        setLoading(false);
+        return;
+      }
+
+      // admin or exams_coordinator
+      const loginRes = login(cleanId, res.role, cleanSecret);
+      if (!loginRes.success) {
+        setErrorMessage(loginRes.error || 'فشلت المصادقة.');
+      }
+      setLoading(false);
+    }, 250);
   };
 
   const handleSuperAdminLogin = (e: React.FormEvent) => {
@@ -154,25 +216,7 @@ export const Login: React.FC = () => {
     }, 250);
   };
 
-  const handleQuickTeacherDemo = () => {
-    sound.playSuccess();
-    setTeacherCode('LIB-COMP-09');
-    setTeacherPassword('123456');
-    loginWithTeacherCode('LIB-COMP-09', '123456');
-  };
 
-  const handleQuickParentDemo = () => {
-    sound.playSuccess();
-    const firstStudent = students[0];
-    const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '120195864392';
-    if (firstStudent) {
-      setSelectedStudent(firstStudent);
-      setParentLinkedStudent(firstStudent);
-    }
-    setStudentNationalId(idToUse);
-    setParentPassword('123456');
-    login(idToUse, 'parent', '123456');
-  };
 
   const handleParentLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -347,80 +391,205 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* 4-5 Isolated Portal Selector Tabs (السوبر مخفي عن العامة) */}
-        <div className={`grid grid-cols-2 ${showSuperPortal ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700`}>
-          <button
-            type="button"
-            onClick={() => { setLoginMode('admin'); setErrorMessage(''); sound.playTap(); }}
-            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
-              loginMode === 'admin'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>مدير المدرسة</span>
-          </button>
+        {/* Isolated Portal Selector Tabs (أو وضع الدخول الذكي الموحد) */}
+        {!showManualTabs ? (
+          <div className="flex items-center justify-between p-3.5 rounded-3xl bg-white dark:bg-slate-800/90 shadow-sm border border-slate-200 dark:border-slate-700 transition-all">
+            <div className="flex items-center gap-2.5 text-xs font-black text-slate-800 dark:text-slate-200">
+              <div className="p-1.5 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div>
+                <span>بوابة الدخول الذكية الموحدة</span>
+                <span className="block text-[10px] text-slate-400 font-medium">التعرف التلقائي على صفة المستخدم وتوجيهه فوراً</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setShowManualTabs(true); sound.playTap(); }}
+              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-black transition active:scale-95 flex items-center gap-1 shrink-0"
+            >
+              <span>البوابات المنفصلة ⚙️</span>
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <div className={`grid grid-cols-2 ${showSuperPortal ? 'sm:grid-cols-6' : 'sm:grid-cols-5'} gap-1.5 p-1.5 bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700`}>
+              <button
+                type="button"
+                onClick={() => { setLoginMode('smart'); setErrorMessage(''); sound.playTap(); }}
+                className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                  loginMode === 'smart'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>الدخول الموحد</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => { setLoginMode('exams_coordinator'); setErrorMessage(''); sound.playTap(); }}
-            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
-              loginMode === 'exams_coordinator'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Award className="w-4 h-4" />
-            <span>منسق الامتحانات</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => { setLoginMode('admin'); setErrorMessage(''); sound.playTap(); }}
+                className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                  loginMode === 'admin'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
+                <span>مدير المدرسة</span>
+              </button>
 
-          {showSuperPortal && (
-          <button
-            type="button"
-            onClick={() => { setLoginMode('superadmin'); setErrorMessage(''); sound.playTap(); }}
-            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
-              loginMode === 'superadmin'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Shield className="w-4 h-4" />
-            <span>المدير العام (سوبر)</span>
-          </button>
-          )}
+              <button
+                type="button"
+                onClick={() => { setLoginMode('exams_coordinator'); setErrorMessage(''); sound.playTap(); }}
+                className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                  loginMode === 'exams_coordinator'
+                    ? 'bg-amber-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Award className="w-4 h-4" />
+                <span>الكنترول</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => { setLoginMode('teacher'); setErrorMessage(''); sound.playTap(); }}
-            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
-              loginMode === 'teacher'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <GraduationCap className="w-4 h-4" />
-            <span>المعلمون</span>
-          </button>
+              {showSuperPortal && (
+                <button
+                  type="button"
+                  onClick={() => { setLoginMode('superadmin'); setErrorMessage(''); sound.playTap(); }}
+                  className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                    loginMode === 'superadmin'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>السوبر أدمن</span>
+                </button>
+              )}
 
-          <button
-            type="button"
-            onClick={() => { setLoginMode('parent'); setErrorMessage(''); sound.playTap(); }}
-            className={`py-2.5 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
-              loginMode === 'parent'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <User className="w-4 h-4" />
-            <span>أولياء الأمور</span>
-          </button>
-        </div>
+              <button
+                type="button"
+                onClick={() => { setLoginMode('teacher'); setErrorMessage(''); sound.playTap(); }}
+                className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                  loginMode === 'teacher'
+                    ? 'bg-emerald-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <GraduationCap className="w-4 h-4" />
+                <span>المعلمون</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setLoginMode('parent'); setErrorMessage(''); sound.playTap(); }}
+                className={`py-2 px-2 text-xs font-black rounded-2xl transition-all flex flex-col items-center justify-center gap-1 ${
+                  loginMode === 'parent'
+                    ? 'bg-amber-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                <span>أولياء الأمور</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Login Card */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-800 space-y-6 transition-colors">
           
-          {/* Portal 1: School Director (Default) */}
+          {/* Unified Smart Login (Default) */}
+          {loginMode === 'smart' && (
+            <div className="space-y-5 animate-in fade-in">
+              <div className="text-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="inline-flex p-3 bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 rounded-2xl mb-1.5">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-slate-800 dark:text-white">بوابة الدخول الذكية الموحدة</h2>
+                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  يتعرف النظام تلقائياً على صفتك وصلاحياتك (مدير، كنترول، كادر تدريسي، أو ولي أمر) ويوجهك لواجهتك المعزولة
+                </p>
+              </div>
+
+              <form onSubmit={handleSmartLogin} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    معرّف الحساب (رقم الهاتف / كود المعلم / رقم القيد):
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="09xxxxxxxx أو كود المعلم أو رقم القيد"
+                      value={smartIdentifier}
+                      onChange={e => setSmartIdentifier(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      required
+                    />
+                    <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    💡 هاتف الإدارة: <span className="font-mono font-bold text-purple-600">0922465676</span> • كود المعلم: <span className="font-mono font-bold text-emerald-600">LIB-COMP-09</span> • الكنترول: <span className="font-mono font-bold text-amber-600">0912345678</span>
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                      كلمة المرور أو رمز الأمان (PIN):
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowSmartSecret(!showSmartSecret)}
+                      className="text-xs text-slate-400 hover:text-purple-600 flex items-center gap-1"
+                    >
+                      {showSmartSecret ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showSmartSecret ? 'إخفاء' : 'إظهار'}</span>
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showSmartSecret ? 'text' : 'password'}
+                      placeholder="••••••"
+                      value={smartSecret}
+                      onChange={e => setSmartSecret(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                  </div>
+                </div>
+
+                {errorMessage && (
+                  <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-xl text-xs text-red-700 dark:text-red-300 font-bold">
+                    {errorMessage}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 hover:from-purple-800 hover:to-indigo-800 text-white font-black rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2 active:scale-95"
+                >
+                  {loading ? 'جاري الفحص والمصادقة...' : 'دخول المنظومة الآمن 🔐'}
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+
+                <div className="pt-2 text-center border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => { setShowManualTabs(true); sound.playTap(); }}
+                    className="text-xs text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-bold inline-flex items-center gap-1.5 transition"
+                  >
+                    <span>تفضّل اختيار بوابتك يدوياً؟ (مدير، كنترول، معلم، ولي أمر) ⚙️</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Portal 1: School Director */}
           {loginMode === 'admin' && (
             <div className="space-y-5 animate-in fade-in">
               <div className="text-center pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -430,27 +599,6 @@ export const Login: React.FC = () => {
                 <h2 className="text-base font-black text-slate-800 dark:text-white">بوابة مدير المدرسة (لوحة التحكم الكاملة)</h2>
                 <p className="text-xs text-slate-400 mt-0.5">إدارة الطلاب، المعلمين، الفصول، الحضور، واعتماد الكنترول والنتائج</p>
               </div>
-
-              {/* Instant 1-Click Demo Button for Testing Directors — DEV_MODE فقط، محذوف من الإنتاج */}
-              {DEV_MODE && (
-              <div className="p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-black text-purple-900 dark:text-purple-200 block">
-                    ⚡ مخصص للمدراء للاختبار السريع:
-                  </span>
-                  <span className="text-[11px] text-purple-700/80 dark:text-purple-300/80">
-                    دخول تجريبي فوري بنقرة واحدة بدون كتابة بيانات
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleQuickDirectorDemo}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
-                >
-                  دخول فوري كمدير ⚡
-                </button>
-              </div>
-              )}
 
               <form onSubmit={handleAdminLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -528,26 +676,7 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">شيت الكنترول المركزي (1120 درجة)، رصد أعمال السنة، وأرقام الجلوس والشهادات</p>
               </div>
 
-              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
-              {DEV_MODE && (
-              <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
-                    ⚡ دخول فوري لمنسق الامتحانات:
-                  </span>
-                  <span className="text-[11px] text-amber-700/80 dark:text-amber-300/80">
-                    رصد درجات الفترات والامتحانات واعتماد النتيجة A4
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleQuickExamCoordinatorDemo}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
-                >
-                  دخول الكنترول 📜
-                </button>
-              </div>
-              )}
+
 
               <form onSubmit={handleExamsLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -624,26 +753,7 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">لوحة مراقبة التعليم لإدارة ديوان المدارس، إضافة مدارس جديدة، والإشراف العام</p>
               </div>
 
-              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
-              {DEV_MODE && (
-              <div className="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-black text-blue-900 dark:text-blue-200 block">
-                    ⚡ دخول فوري للمدير العام:
-                  </span>
-                  <span className="text-[11px] text-blue-700/80 dark:text-blue-300/80">
-                    الاطلاع على كافة المدارس المسجلة وإضافة مدرسة
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleQuickSuperAdminDemo}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
-                >
-                  دخول السوبر أدمن 🌐
-                </button>
-              </div>
-              )}
+
 
               <form onSubmit={handleSuperAdminLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -706,26 +816,7 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">الدخول بالرمز الخاص لرصد أعمال السنة، جداول الحصص، واعتماد الامتحانات</p>
               </div>
 
-              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
-              {DEV_MODE && (
-              <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-black text-emerald-900 dark:text-emerald-200 block">
-                    ⚡ تجربة سريعة كمعلم:
-                  </span>
-                  <span className="text-[11px] text-emerald-700/80 dark:text-emerald-300/80">
-                    دخول مباشر برمز أ. طارق الفيتوري (رياضيات)
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleQuickTeacherDemo}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
-                >
-                  دخول فوري كمعلم ⚡
-                </button>
-              </div>
-              )}
+
 
               <form onSubmit={handleTeacherLogin} className="space-y-4">
                 <div className="space-y-1.5">
@@ -744,24 +835,7 @@ export const Login: React.FC = () => {
                     <Key className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                   
-                  {/* Quick teacher demo pills — DEV_MODE فقط (رموز حقيقية لا تُعرض في الإنتاج) */}
-                  {DEV_MODE && (
-                  <div className="space-y-1 pt-1">
-                    <p className="text-[11px] text-slate-400 font-bold">💡 رموز المعلمين للتجربة:</p>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {teachers.slice(0, 5).map(t => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => { setTeacherCode(t.code); sound.playTap(); }}
-                          className="text-[10px] px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 hover:text-emerald-700 font-mono font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"
-                        >
-                          {t.code} ({t.subject.split(' ')[0]})
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  )}
+
                   <p className="text-[11px] text-slate-400">💡 رمز تجريبي معتمد: <span className="font-mono font-bold text-emerald-600">LIB-COMP-09</span> (أو <span className="font-mono font-bold text-emerald-600">LIB-MATH-01</span>)</p>
                 </div>
 
@@ -822,26 +896,7 @@ export const Login: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-0.5">متابعة الأبناء فقط: الحضور، الدرجات، الإخطارات الفصلية، والتواصل مع المعلم</p>
               </div>
 
-              {/* Instant 1-Click Demo Button — DEV_MODE فقط، محذوف من الإنتاج */}
-              {DEV_MODE && (
-              <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-black text-amber-900 dark:text-amber-200 block">
-                    ⚡ تجربة سريعة كولي أمر:
-                  </span>
-                  <span className="text-[11px] text-amber-700/80 dark:text-amber-300/80">
-                    دخول مباشر لملف الطالب النموذجي
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleQuickParentDemo}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 shrink-0"
-                >
-                  دخول فوري كولي أمر 👨‍👩‍👧
-                </button>
-              </div>
-              )}
+
 
               <form onSubmit={handleParentLogin} className="space-y-4">
                 <div className="space-y-1.5">

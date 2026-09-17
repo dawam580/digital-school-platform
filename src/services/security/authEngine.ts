@@ -537,4 +537,64 @@ export class AuthEngine {
 
     return { success: false, error: 'نوع الحساب غير معروف.' };
   }
+
+  /**
+   * الفحص الذكي التلقائي وتحديد الدور تلقائياً (Smart Dynamic Login)
+   * يفحص الهوية الممررة ويطابقها مع الحسابات المعتمدة دون الحاجة لاختيار الدور مسبقاً
+   */
+  public static detectAndVerify(identifier: string, secret: string): AuthResult {
+    const cleanId = (identifier || '').trim();
+    const cleanSecret = (secret || '').trim();
+
+    if (!cleanId) {
+      return { success: false, error: 'يرجى إدخال رقم الهاتف أو المعرّف الرسمي أو كود الدخول.' };
+    }
+
+    // 1. فحص المدير العام (Super Admin)
+    if (cleanId.toUpperCase() === 'DISTRICT-SUPER-01' || cleanId.toLowerCase() === 'superadmin') {
+      return this.verifyCredentials({ role: 'superadmin', identifier: cleanId, password: cleanSecret });
+    }
+
+    // 2. إذا كان رقم هاتف ليبي
+    if (LIBYAN_PHONE_RE.test(cleanId)) {
+      const adminPhones = this.getAuthorizedAdminPhones();
+      if (adminPhones.includes(cleanId)) {
+        const res = this.verifyCredentials({ role: 'admin', identifier: cleanId, password: cleanSecret });
+        if (res.success || !this.getAuthorizedExamsPhones().includes(cleanId)) {
+          return res;
+        }
+      }
+
+      const examsPhones = this.getAuthorizedExamsPhones();
+      if (examsPhones.includes(cleanId)) {
+        return this.verifyCredentials({ role: 'exams_coordinator', identifier: cleanId, password: cleanSecret });
+      }
+
+      // فحص إذا كان هاتف معلم
+      let teacherList: TeacherAccount[] = SEED_TEACHERS;
+      try {
+        const stored = localStorage.getItem('madrasa_db_teachers_v4');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) teacherList = parsed;
+        }
+      } catch {}
+
+      const foundTeacherByPhone = teacherList.find(t => t.phone && t.phone.trim() === cleanId);
+      if (foundTeacherByPhone) {
+        return this.verifyCredentials({ role: 'teacher', identifier: foundTeacherByPhone.code, password: cleanSecret });
+      }
+
+      // محاولة فحص ولي الأمر بالهاتف
+      return this.verifyCredentials({ role: 'parent', identifier: cleanId, password: cleanSecret });
+    }
+
+    // 3. إذا كان كود معلم أو أخصائي (مثل LIB-COMP-09 أو كود أبجدي)
+    if (cleanId.toUpperCase().startsWith('LIB-') || (cleanId.length <= 11 && isNaN(Number(cleanId)))) {
+      return this.verifyCredentials({ role: 'teacher', identifier: cleanId, password: cleanSecret });
+    }
+
+    // 4. إذا كان رقماً وطنياً (12 رقماً) أو رقم قيد طالب
+    return this.verifyCredentials({ role: 'parent', identifier: cleanId, password: cleanSecret });
+  }
 }

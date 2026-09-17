@@ -108,10 +108,10 @@
     "semantic_hash": "43bca8763dad107549d696cc4d7ef25a"
   },
   "src/App.tsx": {
-    "mtime": 1789562865.6801372,
-    "seen": 1789563053.5026083,
-    "ast_hash": "feaf0d78dfaab8c587fe8ff3e1abff01",
-    "semantic_hash": "feaf0d78dfaab8c587fe8ff3e1abff01"
+    "mtime": 1789658408.5924697,
+    "seen": 1789659189.825441,
+    "ast_hash": "ee5eeb8225348832cd6f5117421aa832",
+    "semantic_hash": "ee5eeb8225348832cd6f5117421aa832"
   },
   "src/components/admin/AccountSettingsModal.tsx": {
     "mtime": 1789562128.9223719,
@@ -354,16 +354,16 @@
     "semantic_hash": "133584c453942cafbfbddeb91ca19fdb"
   },
   "src/components/layout/Navbar.tsx": {
-    "mtime": 1789562007.2555797,
-    "seen": 1789562423.5942674,
-    "ast_hash": "05f783688f2483755c07297b40c1f1c8",
-    "semantic_hash": "05f783688f2483755c07297b40c1f1c8"
+    "mtime": 1789658430.2154062,
+    "seen": 1789659189.8444333,
+    "ast_hash": "5c688989c46ee755467365edc57ea7e6",
+    "semantic_hash": "5c688989c46ee755467365edc57ea7e6"
   },
   "src/components/layout/Sidebar.tsx": {
-    "mtime": 1789561175.1673672,
-    "seen": 1789561539.0254,
-    "ast_hash": "27a98c54324040f86e51bcc97bd3c624",
-    "semantic_hash": "27a98c54324040f86e51bcc97bd3c624"
+    "mtime": 1789658417.4469676,
+    "seen": 1789659189.8444333,
+    "ast_hash": "fd450cc567d1f795c369d42e693f1af0",
+    "semantic_hash": "fd450cc567d1f795c369d42e693f1af0"
   },
   "src/components/licensing/LicenseActivationModal.tsx": {
     "mtime": 1789561175.169282,
@@ -612,10 +612,10 @@
     "semantic_hash": "77ad529f409831c7c8764f58a77df9fd"
   },
   "src/pages/auth/Login.tsx": {
-    "mtime": 1789562049.2634146,
-    "seen": 1789562423.6093154,
-    "ast_hash": "f60dcca61eb1cee1b4625aa4563efb22",
-    "semantic_hash": "f60dcca61eb1cee1b4625aa4563efb22"
+    "mtime": 1789658811.319692,
+    "seen": 1789659189.8680918,
+    "ast_hash": "a7468a2c56f4d0fd7e46c6fe15ea467a",
+    "semantic_hash": "a7468a2c56f4d0fd7e46c6fe15ea467a"
   },
   "src/pages/auth/ParentSignUp.tsx": {
     "mtime": 1789561175.2389197,
@@ -828,10 +828,10 @@
     "semantic_hash": "4d699b1a44f867626e240068a0b70141"
   },
   "src/services/security/roleAccess.ts": {
-    "mtime": 1789562825.1840835,
-    "seen": 1789563053.5682552,
-    "ast_hash": "7a02451ac26d8ff074c5194ebc98ec71",
-    "semantic_hash": "7a02451ac26d8ff074c5194ebc98ec71"
+    "mtime": 1789658394.808684,
+    "seen": 1789659189.8822412,
+    "ast_hash": "70de99159770c48fab75d13c526319dd",
+    "semantic_hash": "70de99159770c48fab75d13c526319dd"
   },
   "src/services/security/securityEngine.ts": {
     "mtime": 1789561175.295657,
@@ -1116,10 +1116,10 @@
     "semantic_hash": "56888185643f610fd7893f51a811f80f"
   },
   "src/services/security/authEngine.ts": {
-    "mtime": 1789562082.2340157,
-    "seen": 1789562423.6203787,
-    "ast_hash": "01ead3a1611f57185314240025e57c84",
-    "semantic_hash": "01ead3a1611f57185314240025e57c84"
+    "mtime": 1789658441.7121835,
+    "seen": 1789659189.8807044,
+    "ast_hash": "8d4c1c7248e4730a2845649141e5b923",
+    "semantic_hash": "8d4c1c7248e4730a2845649141e5b923"
   },
   "tests/tier5-security-auth.test.js": {
     "mtime": 1789563024.76967,

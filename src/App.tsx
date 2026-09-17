@@ -274,6 +274,8 @@ const MainContent: React.FC = () => {
         return <LandingPage />;
       case 'parent-mobile':
         return <ParentMobileApp />;
+      case 'counselor-dashboard':
+        return <SocialCounselorDashboard />;
       case 'onboarding':
         return <SchoolClientOnboardingPage />;
       default:

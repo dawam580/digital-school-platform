@@ -145,7 +145,7 @@ export const Sidebar: React.FC = () => {
                       sound.playTap();
                       // عناصر التقاطع بين الواجهات تعاين الدور (لا تبويب ميت يُرتد)
                       if (item.id === 'counselor-dashboard') {
-                        viewAs('counselor');
+                        setActiveTab('counselor-dashboard');
                       } else if (item.id === 'school-manager') {
                         setShowSchoolManagerModal(true);
                       } else if (item.isCustomAction) {

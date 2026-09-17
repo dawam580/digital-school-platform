@@ -217,46 +217,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               </div>
             )}
 
-            {/* School Staff Switcher (يظهر فقط لمن يملك أكثر من واجهة — مخفي عن المعلم/المنسق/الأخصائي) */}
-            {isStaffMember && visibleStaffRoles.length > 1 && (
-              <div className="relative">
-                <button
-                  onClick={() => { setShowRoleMenu(!showRoleMenu); setShowNotifMenu(false); setShowStudentMenu(false); sound.playTap(); }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl text-xs font-bold transition-all border ${currentRoleInfo.color} border-current/20 shadow-sm`}
-                  title="التبديل بين طاقم المدرسة الداخلي"
-                >
-                  {currentRoleInfo.icon}
-                  <span className="hidden sm:inline">{currentRoleInfo.label}</span>
-                  <ChevronDown className="w-3.5 h-3.5 opacity-70" />
-                </button>
-
-                {showRoleMenu && (
-                  <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-in fade-in zoom-in-95 font-cairo">
-                    <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                      <span>طاقم المدرسة الداخلي</span>
-                      <span className="text-[10px] bg-purple-50 dark:bg-purple-950 text-purple-600 px-1.5 py-0.5 rounded font-bold">إدارة</span>
-                    </div>
-                    {visibleStaffRoles.map(role => (
-                      <button
-                        key={role.id}
-                        onClick={() => {
-                          viewAs(role.id);
-                          setShowRoleMenu(false);
-                          sound.playSuccess();
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2 text-right text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
-                          currentRole === role.id ? 'bg-purple-50 dark:bg-purple-900/40 font-bold text-purple-700 dark:text-purple-300' : 'text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className={`p-1 rounded-lg ${role.color}`}>{role.icon}</span>
-                          <span>{role.label}</span>
-                        </div>
-                        {currentRole === role.id && <Check className="w-4 h-4 text-purple-600" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
+            {/* School Staff Badge (عرض الدور المعتمد فقط — بدون إمكانية التبديل العشوائي) */}
+            {isStaffMember && (
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold border ${currentRoleInfo.color} border-current/20 shadow-sm select-none`}
+                title={`أنت تعمل بصفتك: ${currentRoleInfo.label}`}
+              >
+                {currentRoleInfo.icon}
+                <span className="hidden sm:inline">{currentRoleInfo.label}</span>
               </div>
             )}
 

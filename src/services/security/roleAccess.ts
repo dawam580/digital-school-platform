@@ -40,7 +40,7 @@ const ROLE_ALLOWED_TABS: Record<UserRole, string[]> = {
   admin: [
     'dashboard', 'attendance', 'student-profile', 'grades', 'assignments',
     'chat', 'schedule', 'db-studio', 'daily-report', 'finance', 'staff',
-    'notifications', 'link-student', 'parent-mobile', 'onboarding',
+    'notifications', 'link-student', 'parent-mobile', 'onboarding', 'counselor-dashboard',
   ],
   exams_coordinator: ['exams-coordinator-dashboard', 'notifications', 'chat'],
   teacher: ['teacher-quick', 'attendance', 'chat', 'notifications', 'student-profile', 'daily-report', 'link-student'],
@@ -65,10 +65,9 @@ export function canAccessTab(viewedRole: UserRole, tab: string, superViewing = f
 }
 
 /**
- * هل يحق لهذه الهوية معاينة واجهة دور آخر؟ (الفصل بين الواجهات)
- * - المدير العام (جلسة ماستر مفتوحة): كل الواجهات والأقسام.
- * - مدير المدرسة: كل الواجهات ما عدا السوبر (نطاق مؤسسته).
- * - بقية الأدوار: واجهتهم فقط.
+ * هل يحق لهذه الهوية معاينة واجهة دور آخر؟ (الفصل الصارم بين الواجهات)
+ * - المدير العام (جلسة ماستر مفتوحة برمز الماستر): كل الواجهات.
+ * - كافة الأدوار الأخرى (المدير، المعلم، الكنترول، ولي الأمر): واجهتهم فقط ولا يسمح بالتنقل.
  */
 export function mayViewInterface(
   authenticatedRole: UserRole,
@@ -78,6 +77,5 @@ export function mayViewInterface(
   if (targetRole === authenticatedRole) return true;
   if (targetRole === 'superadmin') return authenticatedRole === 'superadmin' && superUnlocked;
   if (authenticatedRole === 'superadmin') return superUnlocked;
-  if (authenticatedRole === 'admin') return true;
   return false;
 }
