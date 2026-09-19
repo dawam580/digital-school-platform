@@ -102,7 +102,7 @@ export const Login: React.FC = () => {
   const [showExamsPass, setShowExamsPass] = useState(false);
 
   // Super Admin Form
-  const [superAdminCode, setSuperAdminCode] = useState('DISTRICT-SUPER-01');
+  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE ? 'DISTRICT-SUPER-01' : '');
   const [superMasterPin, setSuperMasterPin] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -529,9 +529,11 @@ export const Login: React.FC = () => {
                     />
                     <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">
                     💡 هاتف الإدارة: <span className="font-mono font-bold text-purple-600">0922465676</span> • كود المعلم: <span className="font-mono font-bold text-emerald-600">LIB-COMP-09</span> • الكنترول: <span className="font-mono font-bold text-amber-600">0912345678</span>
                   </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -616,7 +618,9 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">💡 هاتف الإدارة المعتمد: <span className="font-mono font-bold text-purple-600">0922465676</span></p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -644,7 +648,9 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">🛡️ رمز الأمان الافتراضي: <span className="font-mono font-bold text-purple-600">2026</span> (يمكن تغييره من الإعدادات)</p>
+                  )}
                 </div>
 
                 {errorMessage && (
@@ -693,7 +699,9 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">💡 هاتف رئيس الكنترول المعتمد: <span className="font-mono font-bold text-amber-600">0912345678</span></p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -721,7 +729,9 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-amber-600">2026</span></p>
+                  )}
                 </div>
 
                 {errorMessage && (
@@ -864,7 +874,9 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-emerald-600">123456</span></p>
+                  )}
                 </div>
 
                 {errorMessage && (
@@ -916,7 +928,9 @@ export const Login: React.FC = () => {
                     <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
 
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">💡 الرقم الوطني لطالب معتمد: <span className="font-mono font-bold text-amber-600">120195864392</span> (أو الكود: <span className="font-mono font-bold text-amber-600">SCH-2026-B1</span>)</p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -944,7 +958,9 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
+                  {DEV_MODE && (
                   <p className="text-[11px] text-slate-400">🛡️ كلمة المرور الافتراضية: <span className="font-mono font-bold text-amber-600">123456</span></p>
+                  )}
                 </div>
 
                 {errorMessage && (

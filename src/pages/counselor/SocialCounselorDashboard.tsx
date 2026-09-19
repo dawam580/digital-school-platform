@@ -544,7 +544,7 @@ export const SocialCounselorDashboard: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-slate-400 block">ولي الأمر والهاتف</span>
-                    <strong className="text-slate-800 dark:text-slate-200 font-mono">{currentReportStudent.parentPhone || '0922465676'}</strong>
+                    <strong className="text-slate-800 dark:text-slate-200 font-mono">{currentReportStudent.parentPhone || '—'}</strong>
                   </div>
                 </div>
 

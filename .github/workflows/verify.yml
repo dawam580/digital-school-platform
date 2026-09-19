@@ -37,3 +37,9 @@ jobs:
 
       - name: Automated Test Suite (224 اختباراً)
         run: node tests/run-all.js
+
+      - name: Production Build
+        run: npm run build
+
+      - name: Dist Guard (لا ملفات مفقودة ولا دائرة chunks)
+        run: node scripts/verify-dist.mjs

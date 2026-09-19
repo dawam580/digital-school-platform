@@ -59,7 +59,7 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
       `"${st.studentNumber || st.nationalNumber?.slice(-7) || '-'}"`,
       `"${st.name}"`,
       st.gender === 'male' ? 'ذكر' : 'انثى',
-      st.birthDate || '2015-01-01',
+      st.birthDate || '—',
       'ليبي',
       st.gender === 'male' ? 'مسلم' : 'مسلمة'
     ].join(','));
@@ -236,7 +236,7 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
                         {st.gender === 'male' ? 'ذكر' : 'انثى'}
                       </td>
                       <td className="py-2 px-3 border-l border-slate-300 text-center font-mono font-bold text-slate-800">
-                        {st.birthDate || '2015-01-01'}
+                        {st.birthDate || '—'}
                       </td>
                       <td className="py-2 px-3 border-l border-slate-300 text-center">
                         ليبي

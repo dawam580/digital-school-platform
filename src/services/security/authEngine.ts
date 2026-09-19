@@ -11,6 +11,7 @@ import { SecurityEngine } from './securityEngine';
 import { auditLogger } from '../audit/auditLogger';
 import { getSchoolProfile, SEED_TEACHERS } from '../db';
 import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
+import { DEV_MODE } from '../../config/devMode';
 
 export const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
 
@@ -41,6 +42,30 @@ export class AuthEngine {
   private static readonly MAX_ATTEMPTS = 3;
   private static readonly LOCKOUT_DURATION_MS = 30000; // 30 seconds
   private static readonly SUPER_LOCKOUT_DURATION_MS = 45000; // 45 seconds
+
+  /**
+   * أسرار مخزنة مخصصة (كلمات مرور عيّنها المدير من الإعدادات) — لا أسرار كونية هنا أبداً.
+   */
+  private static storedSecrets(keys: string[]): Set<string> {
+    const s = new Set<string>();
+    for (const k of keys) {
+      try {
+        const v = localStorage.getItem(k);
+        if (v && v.trim()) s.add(v.trim());
+      } catch {}
+    }
+    return s;
+  }
+
+  /**
+   * أسرار التطوير فقط (123456/2026) — موجودة في DEV_MODE وحده، ميتة تماماً في بناء الإنتاج.
+   */
+  private static devSecrets(): string[] {
+    try {
+      if (DEV_MODE) return ['123456', '2026'];
+    } catch {}
+    return [];
+  }
 
   /**
    * فحص حالة الحظر المؤقت بسبب تكرار المحاولات الخاطئة
@@ -185,17 +210,14 @@ export class AuthEngine {
         };
       }
 
-      // فحص كلمة المرور أو رمز أمان المدير (PIN)
+      // فحص كلمة المرور أو رمز أمان المدير (PIN): الحالي + المخصصة المخزنة فقط.
+      // لا أسرار كونية — التمهيد هو رمز المدير نفسه (قابل للتدوير من لوحة المالك).
       const currentPin = SecurityEngine.getDirectorPin();
-      const validSecrets = new Set<string>([currentPin, '2026', '123456']);
-      try {
-        const p1 = localStorage.getItem('madrasa_admin_password');
-        if (p1 && p1.trim()) validSecrets.add(p1.trim());
-        const p2 = localStorage.getItem('madrasa_global_pwd');
-        if (p2 && p2.trim()) validSecrets.add(p2.trim());
-        const p3 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
-        if (p3 && p3.trim()) validSecrets.add(p3.trim());
-      } catch {}
+      const validSecrets = new Set<string>([
+        currentPin,
+        ...this.storedSecrets(['madrasa_admin_password', 'madrasa_global_pwd', `madrasa_pwd_${cleanId}`]),
+        ...this.devSecrets(),
+      ]);
 
       if (!cleanSecret) {
         return { success: false, error: 'يرجى إدخال كلمة المرور أو رمز الأمان (PIN) للمدير.' };
@@ -267,13 +289,12 @@ export class AuthEngine {
         return { success: false, error: 'يرجى إدخال كلمة المرور الخاصة بمنسق الامتحانات.' };
       }
 
-      const validSecrets = new Set<string>([SecurityEngine.getDirectorPin(), '2026', '123456']);
-      try {
-        const ep1 = localStorage.getItem('madrasa_exams_password');
-        if (ep1 && ep1.trim()) validSecrets.add(ep1.trim());
-        const ep2 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
-        if (ep2 && ep2.trim()) validSecrets.add(ep2.trim());
-      } catch {}
+      // رمز المدير الحالي + المخصصة المخزنة فقط — لا أسرار كونية.
+      const validSecrets = new Set<string>([
+        SecurityEngine.getDirectorPin(),
+        ...this.storedSecrets(['madrasa_exams_password', `madrasa_pwd_${cleanId}`]),
+        ...this.devSecrets(),
+      ]);
 
       if (!validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
@@ -345,13 +366,13 @@ export class AuthEngine {
         return { success: false, error: 'يرجى إدخال كلمة مرور المعلم.' };
       }
 
-      const validSecrets = new Set<string>(['123456', '2026']);
-      try {
-        const tp1 = localStorage.getItem(`madrasa_teacher_pwd_${foundTeacher.code.toUpperCase()}`);
-        if (tp1 && tp1.trim()) validSecrets.add(tp1.trim());
-        const tp2 = localStorage.getItem(`madrasa_pwd_${cleanId}`);
-        if (tp2 && tp2.trim()) validSecrets.add(tp2.trim());
-      } catch {}
+      // كلمة مرور المعلم المخصصة + رمز المدير (تجاوز المالك) — لا أسرار كونية.
+      // التمهيد: المدير يعيّن كلمات المعلمين من الإعدادات؛ رمز المدير يبقى مخرج الطوارئ للمالك.
+      const validSecrets = new Set<string>([
+        ...this.storedSecrets([`madrasa_teacher_pwd_${foundTeacher.code.toUpperCase()}`, `madrasa_pwd_${cleanId}`]),
+        SecurityEngine.getDirectorPin(),
+        ...this.devSecrets(),
+      ]);
 
       if (!validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
@@ -387,11 +408,17 @@ export class AuthEngine {
     // ── د. بوابة الأخصائي الاجتماعي ومنظم النشاط (Counselor) ──
     if (role === 'counselor') {
       const cleanCode = cleanId.toUpperCase();
-      if (cleanCode !== 'LIB-SOC-01' && !cleanId.includes('0912345678')) {
+      if (cleanCode !== 'LIB-SOC-01') {
         return { success: false, error: 'رمز الأخصائي غير صحيح. الرمز المعتمد: LIB-SOC-01.' };
       }
 
-      if (!cleanSecret || (cleanSecret !== '123456' && cleanSecret !== '2026')) {
+      // كلمة مرور الأخصائي المخصصة + رمز المدير (تجاوز المالك) — لا أسرار كونية.
+      const validSecrets = new Set<string>([
+        ...this.storedSecrets(['madrasa_teacher_pwd_LIB-SOC-01', `madrasa_pwd_${cleanId}`]),
+        SecurityEngine.getDirectorPin(),
+        ...this.devSecrets(),
+      ]);
+      if (!cleanSecret || !validSecrets.has(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);
         return {
           success: false,
@@ -405,7 +432,7 @@ export class AuthEngine {
       return {
         success: true,
         role: 'counselor',
-        actorName: 'أ. هناء الصابر (الأخصائية الاجتماعية)',
+        actorName: 'الأخصائي الاجتماعي',
         actorId: 't-counselor-01'
       };
     }
@@ -476,13 +503,14 @@ export class AuthEngine {
              s.studentNumber === cleanId ||
              (s.parentPhone && s.parentPhone.trim() === cleanId) ||
              (s.linkCode && s.linkCode.toLowerCase() === cleanId.toLowerCase()) ||
-             (cleanId === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101' || s.studentNumber === '5864392')) ||
-             (cleanId === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))
+             // أكواد الباب الخلفي 1001/1002 — DEV_MODE فقط، ميتة في الإنتاج
+             (DEV_MODE && ((cleanId === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101' || s.studentNumber === '5864392')) ||
+             (cleanId === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))))
       );
 
       const isRegisteredParentPhone = LIBYAN_PHONE_RE.test(cleanId);
 
-      if (!foundStudent && !isRegisteredParentPhone && cleanId !== '1001' && cleanId !== '1002') {
+      if (!foundStudent && !isRegisteredParentPhone && !(DEV_MODE && (cleanId === '1001' || cleanId === '1002'))) {
         const fail = this.recordFailedAttempt(cleanId);
         auditLogger.log({
           actorName: cleanId,
@@ -500,8 +528,8 @@ export class AuthEngine {
         };
       }
 
-      const validSecrets = ['123456', '2026'];
-      if (foundStudent?.studentNumber) validSecrets.push(foundStudent.studentNumber);
+      // كلمة المرور: رقم قيد الطالب نفسه مقبول (سر موثق على مستنداته) — لا أسرار كونية.
+      const validSecrets = [foundStudent?.studentNumber, ...this.devSecrets()].filter(Boolean) as string[];
 
       if (cleanSecret && !validSecrets.includes(cleanSecret)) {
         const fail = this.recordFailedAttempt(cleanId);

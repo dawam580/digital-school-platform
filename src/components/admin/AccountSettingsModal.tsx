@@ -37,7 +37,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
   } = useSchool() as any;
 
   // Form States
-  const [phone, setPhone] = useState(currentUserPhone || '0922465676');
+  const [phone, setPhone] = useState(currentUserPhone || '');
   const [teacherCode, setTeacherCode] = useState(currentTeacher?.code || 'LIB-MATH-01');
   const [directorPin, setDirectorPin] = useState(() => SecurityEngine.getDirectorPin());
   const [examsPassword, setExamsPassword] = useState(() => {
@@ -126,7 +126,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
         actorRole: currentRole,
         action: 'UPDATE_SECURITY_SETTINGS',
         entity: 'Security',
-        details: `تحديث إعدادات الأمان، رمز PIN للمدير (${directorPin})، وكلمات المرور بنجاح`,
+        details: 'تحديث إعدادات الأمان ورمز PIN وكلمات المرور بنجاح (القيم مخفية عمداً)',
         severity: 'INFO'
       });
 

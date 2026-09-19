@@ -150,7 +150,7 @@ export const StudentDossierModal: React.FC<StudentDossierModalProps> = ({
             <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
               <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-bold">نسبة الحضور</span>
               <span className="text-xl font-black text-teal-600 dark:text-teal-400 print:text-black">
-                {student.attendanceRate || 98}%
+                {student.attendanceRate != null ? `${student.attendanceRate}%` : '—'}
               </span>
               <span className="text-[10px] text-slate-400 block mt-0.5">
                 حالة الحضور: {student.status === 'present' ? 'حاضر اليوم' : student.status === 'late' ? 'متأخر' : 'غائب'}

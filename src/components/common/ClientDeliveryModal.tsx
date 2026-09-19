@@ -131,7 +131,7 @@ export const ClientDeliveryModal: React.FC<ClientDeliveryModalProps> = ({
             </div>
             <div>
               <span className="text-[11px] text-slate-400 font-bold block">هاتف الدخول:</span>
-              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">{schoolInfo.phone || '0912345678'}</span>
+              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">{schoolInfo.phone || '—'}</span>
             </div>
           </div>
 

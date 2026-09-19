@@ -130,7 +130,7 @@ export const StudentFollowUpFormModal: React.FC<StudentFollowUpFormModalProps> =
       semester,
       counselorName,
       parentName: currentStudent.parentName || `ولي أمر الطالب ${currentStudent.name}`,
-      parentPhone: currentStudent.parentPhone || '0922465676',
+      parentPhone: currentStudent.parentPhone || '',
       overallAcademicLevel,
       subjectEvaluations,
       recommendations: {
@@ -260,7 +260,7 @@ export const StudentFollowUpFormModal: React.FC<StudentFollowUpFormModalProps> =
                 <input
                   type="text"
                   readOnly
-                  value={`${currentStudent.parentName || 'ولي الأمر'} (${currentStudent.parentPhone || '0922465676'})`}
+                  value={`${currentStudent.parentName || 'ولي الأمر'} (${currentStudent.parentPhone || '—'})`}
                   className="w-full p-2 rounded-xl border border-slate-200 bg-slate-100 font-bold text-slate-600 text-xs"
                 />
               </div>

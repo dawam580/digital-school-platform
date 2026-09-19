@@ -49,7 +49,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
       setNationalNumber(studentToEdit.nationalNumber || studentToEdit.nationalId || '');
       setStudentNumber(studentToEdit.studentNumber || '');
       setMotherName(studentToEdit.motherName || '—');
-      setBirthDate(studentToEdit.birthDate || '2015-05-10');
+      setBirthDate(studentToEdit.birthDate || '');
       setGender(studentToEdit.gender || 'male');
       setParentName(studentToEdit.parentName || '');
       setParentPhone(studentToEdit.parentPhone || '');
@@ -61,7 +61,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
       setNationalNumber('');
       setStudentNumber(String(Math.floor(1000000 + Math.random() * 9000000))); // Random 7-digit registration number
       setMotherName('—');
-      setBirthDate('2015-05-10');
+      setBirthDate('');
       setGender('male');
       setParentName('');
       setParentPhone('09');

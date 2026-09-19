@@ -102,7 +102,7 @@ export const PrintableStudentGradeCard: React.FC<PrintableStudentGradeCardProps>
             </div>
 
             <div className="text-left space-y-0.5 text-[11px] font-mono font-bold text-slate-700">
-              <p>رقم القيد: {student.studentNumber || '2025-0101'}</p>
+              <p>رقم القيد: {student.studentNumber || '—'}</p>
               <p>تاريخ الإصدار: {new Date().toLocaleDateString('ar-LY')}</p>
               <p className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300 font-sans inline-block mt-1">
                 منظومة معتمدة

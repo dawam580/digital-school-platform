@@ -317,7 +317,7 @@ export const ParentStudentGate: React.FC<ParentStudentGateProps> = ({
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-500 font-bold">
                     <span>تجربة العرض ↗️</span>
                     <span className="text-emerald-600 dark:text-emerald-400 font-mono">
-                      {s.academicAverage || 94}%
+                      {s.academicAverage != null ? `${s.academicAverage}%` : '—'}
                     </span>
                   </div>
                 </button>

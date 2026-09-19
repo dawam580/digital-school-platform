@@ -1810,7 +1810,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       code: `SCH-LIB-${Math.floor(100 + Math.random() * 900)}`,
       district: district || 'مراقبة التربية والتعليم',
       directorName: directorName || 'مدير المدرسة',
-      directorPhone: directorPhone || '0922465676',
+      directorPhone: directorPhone || '',
       academicYear: '2025 - 2026 م',
       isCustom: true
     };

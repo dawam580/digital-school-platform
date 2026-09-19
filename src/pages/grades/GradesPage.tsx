@@ -11,7 +11,8 @@ export const GradesPage: React.FC = () => {
   const [editForm, setEditForm] = useState<Partial<SubjectGrade>>({});
 
   const grades = selectedStudent.grades || [];
-  const gpa = selectedStudent.academicAverage || 96.5;
+  const gpa: number | null = selectedStudent.academicAverage ?? null;
+  const gpaLabel = gpa == null ? 'لم يُحتسب بعد' : gpa >= 95 ? 'ممتاز مرتفع (A+)' : gpa >= 90 ? 'ممتاز (A)' : gpa >= 50 ? 'ناجح' : 'دور ثانٍ';
 
   const handleStartEdit = (g: SubjectGrade) => {
     setEditingGradeId(g.id);
@@ -92,13 +93,13 @@ export const GradesPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">{gpa}%</span>
+            <span className="text-3xl font-black text-slate-900 dark:text-white">{gpa != null ? `${gpa}%` : '—'}</span>
             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              {gpa >= 95 ? 'ممتاز مرتفع (A+)' : gpa >= 90 ? 'ممتاز (A)' : 'جيد جداً (B+)'}
+              {gpaLabel}
             </span>
           </div>
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-1000" style={{ width: `${gpa}%` }} />
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-1000" style={{ width: `${gpa ?? 0}%` }} />
           </div>
         </div>
 
@@ -476,8 +477,8 @@ export const GradesPage: React.FC = () => {
                 {/* Result Card */}
                 <div className="bg-slate-900 text-white p-4 rounded-2xl text-center space-y-1">
                   <span className="text-xs text-amber-300 font-bold">النتيجة العامة والمعدل</span>
-                  <div className="text-2xl font-black text-amber-400">{gpa}%</div>
-                  <div className="text-xs font-bold text-emerald-400">ناجح بتفوق وتميز (مرتبة الشرف الأولى)</div>
+                  <div className="text-2xl font-black text-amber-400">{gpa != null ? `${gpa}%` : '—'}</div>
+                  <div className="text-xs font-bold text-emerald-400">{gpaLabel}</div>
                 </div>
 
                 {/* Stamp & Verification QR */}

@@ -70,7 +70,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
   // Access Key Generator States (ميزة إنشاء مفتاح الدخول إلى المنظومة)
   const [targetSchoolForGen, setTargetSchoolForGen] = useState(schoolProfile.name);
   const [licenseDuration, setLicenseDuration] = useState<'annual' | 'lifetime' | 'trial'>('annual');
-  const [targetPhone, setTargetPhone] = useState(schoolProfile.directorPhone || '0922465676');
+  const [targetPhone, setTargetPhone] = useState(schoolProfile.directorPhone || '');
   const [generatedCard, setGeneratedCard] = useState<any | null>(null);
   const [hasCopiedKey, setHasCopiedKey] = useState(false);
   const [showPrintCardModal, setShowPrintCardModal] = useState(false);
@@ -104,6 +104,10 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
       showToast('error', 'تنبيه', 'يرجى كتابة اسم المدرسة أولاً.');
       return;
     }
+    if (newPhone.trim() && !/^09[1234]\d{7}$/.test(newPhone.trim())) {
+      showToast('error', 'رقم الهاتف', 'أدخل رقماً ليبياً صحيحاً (09xxxxxxxx) أو اتركه فارغاً.');
+      return;
+    }
     // لا هواتف مختلقة: رقم حقيقي أو يُترك فارغاً (يُستكمل لاحقاً من الإعدادات)
     const createdSchool = createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), newPhone.trim(), startFresh);
     
@@ -124,7 +128,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
     setDeliveryModalInfo({
       schoolName: newSchoolName.trim(),
       directorName: newDirector.trim() || 'مدير المدرسة',
-      phone: newPhone.trim() || '0912345678',
+      phone: newPhone.trim() || '—',
       district: newDistrict.trim(),
       schoolCode: (createdSchool as any)?.code || 'SCH-2026',
       licenseKey: generatedKey
@@ -679,9 +683,12 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
                     </label>
                     <input
                       type="text"
+                      required
+                      pattern="09[1234][0-9]{7}"
+                      title="رقم ليبي بصيغة 09xxxxxxxx — يُربط بهوية الترخيص"
                       value={targetPhone}
                       onChange={e => setTargetPhone(e.target.value)}
-                      placeholder="0922465676"
+                      placeholder="09xxxxxxxx"
                       className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs"
                     />
                   </div>

@@ -79,16 +79,16 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
       .reduce((sum, g) => sum + g.total, 0);
   }, [gradeBreakdown]);
 
-  // Total classes & shifts computed dynamically from student distribution
+  // Total classes & shifts computed dynamically from student distribution (no fiction fallback)
   const uniqueClassesSet = useMemo(() => new Set(students.map(s => s.className).filter(Boolean)), [students]);
-  const totalClassesCount = uniqueClassesSet.size || 28;
+  const totalClassesCount = uniqueClassesSet.size;
   const morningClassesCount = useMemo(() => {
     const morning = Array.from(uniqueClassesSet).filter(c => c.includes('صباح'));
-    return morning.length || 20;
+    return morning.length;
   }, [uniqueClassesSet]);
   const eveningClassesCount = useMemo(() => {
     const evening = Array.from(uniqueClassesSet).filter(c => c.includes('مساء'));
-    return evening.length || 8;
+    return evening.length;
   }, [uniqueClassesSet]);
   const avgClassDensity = (totalStudents / (totalClassesCount || 1)).toFixed(1);
 

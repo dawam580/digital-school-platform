@@ -36,7 +36,7 @@ export const NewSummonModal: React.FC<NewSummonModalProps> = ({
       studentId: selectedStudent.id,
       studentName: selectedStudent.name,
       parentName: selectedStudent.parentName || `ولي أمر الطالب ${selectedStudent.name}`,
-      parentPhone: selectedStudent.parentPhone || '0922465676',
+      parentPhone: selectedStudent.parentPhone || '',
       reason: reason.trim(),
       requestedDate,
       requestedTime,
@@ -82,7 +82,7 @@ export const NewSummonModal: React.FC<NewSummonModalProps> = ({
             >
               {students.map(s => (
                 <option key={s.id} value={s.id}>
-                  {s.name} ({s.className}) - هاتف ولي الأمر: {s.parentPhone || '0922465676'}
+                  {s.name} ({s.className}) - هاتف ولي الأمر: {s.parentPhone || '—'}
                 </option>
               ))}
             </select>
@@ -92,7 +92,7 @@ export const NewSummonModal: React.FC<NewSummonModalProps> = ({
           <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 flex items-center justify-between">
             <div className="space-y-0.5">
               <p className="font-bold text-amber-950">{selectedStudent.parentName || `ولي أمر ${selectedStudent.name}`}</p>
-              <p className="text-[11px] text-amber-800 font-mono">رقم التواصل: {selectedStudent.parentPhone || '0922465676'}</p>
+              <p className="text-[11px] text-amber-800 font-mono">رقم التواصل: {selectedStudent.parentPhone || '— (يُستكمل من ملف الطالب)'}</p>
             </div>
             <span className="px-2.5 py-1 bg-amber-200/80 text-amber-900 rounded-xl font-bold text-[10px]">
               فصل {selectedStudent.className}

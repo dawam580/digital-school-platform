@@ -569,7 +569,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                   </span>
                 </div>
                 <div className="text-left font-mono">
-                  <span className="text-base font-black text-white">{activeChild.academicAverage || 87.3}</span>
+                  <span className="text-base font-black text-white">{activeChild.academicAverage != null ? activeChild.academicAverage : '—'}</span>
                   <span className="text-[10px] text-slate-400 block">/ 100</span>
                 </div>
               </div>
@@ -578,11 +578,11 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               <div className="p-3.5 rounded-2xl bg-[#14213d]/80 border border-white/10 flex items-center justify-between shadow-sm">
                 <div>
                   <span className="text-[10px] text-slate-400 block">نقاط السلوك</span>
-                  <span className="text-xs font-black text-amber-400 block mt-0.5">أداء مميز</span>
+                  <span className="text-xs font-black text-amber-400 block mt-0.5">{activeChild.behaviorPointsTotal != null && activeChild.behaviorPointsTotal > 0 ? 'أداء مميز' : 'بانتظار التقييم'}</span>
                 </div>
                 <div className="flex items-center gap-1 bg-amber-500/20 px-2 py-1 rounded-xl text-amber-300 font-bold font-mono text-xs border border-amber-500/30">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span>{activeChild.behaviorPointsTotal || 42}</span>
+                  <span>{activeChild.behaviorPointsTotal != null ? `+${activeChild.behaviorPointsTotal}` : '—'}</span>
                 </div>
               </div>
 
@@ -673,9 +673,13 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 <Phone className="w-4 h-4 text-emerald-400" />
                 <span>هاتف إدارة المدرسة:</span>
               </div>
-              <a href={`tel:${schoolProfile.directorPhone || '0912345678'}`} className="font-mono font-bold text-amber-300 hover:underline">
-                {schoolProfile.directorPhone || '0912345678'}
+              {schoolProfile.directorPhone ? (
+              <a href={`tel:${schoolProfile.directorPhone}`} className="font-mono font-bold text-amber-300 hover:underline">
+                {schoolProfile.directorPhone}
               </a>
+              ) : (
+              <span className="font-bold text-slate-400">يُعلن لاحقاً من الإدارة</span>
+              )}
             </div>
 
           </div>
@@ -729,16 +733,10 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 <div className="space-y-2.5">
                   <h4 className="text-xs font-black text-slate-400 px-1">كشف درجات المواد الدراسية</h4>
                   
-                  {(activeChild.grades && activeChild.grades.length > 0 ? activeChild.grades : [
-                    { subjectName: 'الرياضيات', teacherName: 'أ. طارق الفيتوري', total: 92, maxTotal: 100, appreciation: 'ممتاز' },
-                    { subjectName: 'اللغة العربية', teacherName: 'أ. سالم التاورغي', total: 88, maxTotal: 100, appreciation: 'ممتاز' },
-                    { subjectName: 'العلوم', teacherName: 'أ. فاطمة المجبري', total: 78, maxTotal: 100, appreciation: 'جيد جداً' },
-                    { subjectName: 'التربية الإسلامية', teacherName: 'أ. عثمان السويحلي', total: 95, maxTotal: 100, appreciation: 'ممتاز' },
-                    { subjectName: 'الحاسوب', teacherName: 'أ. أدم المنصوري', total: 90, maxTotal: 100, appreciation: 'ممتاز' },
-                    { subjectName: 'اللغة الإنجليزية', teacherName: 'أ. مفتاح الورفلي', total: 84, maxTotal: 100, appreciation: 'جيد جداً' }
-                  ]).map((g, idx) => {
-                    const total = g.total || 85;
-                    const max = g.maxTotal || 100;
+                  {(activeChild.grades && activeChild.grades.length > 0 ? activeChild.grades : []
+                  ).map((g, idx) => {
+                    const total = g.total ?? 0;
+                    const max = g.maxTotal ?? 100;
                     const pct = Math.round((total / max) * 100);
                     const colorBar = pct >= 85 ? 'bg-emerald-400' : pct >= 75 ? 'bg-blue-400' : pct >= 50 ? 'bg-amber-400' : 'bg-rose-400';
                     return (
@@ -766,6 +764,12 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                       </div>
                     );
                   })}
+                  {(!activeChild.grades || activeChild.grades.length === 0) && (
+                    <div className="p-6 rounded-2xl bg-[#14213d]/60 border border-white/10 text-center space-y-1">
+                      <p className="text-sm font-black text-white">لم تُرصد درجات هذا الفصل بعد 📝</p>
+                      <p className="text-[11px] text-slate-400">ستظهر هنا فور إدخال المعلمين للدرجات واعتمادها.</p>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -849,19 +853,19 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             <div className="grid grid-cols-4 gap-2 text-center">
               <div className="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/30">
                 <span className="text-[10px] text-emerald-300 block">حضور</span>
-                <span className="text-base font-black text-white font-mono">{attPresent || 18}</span>
+                <span className="text-base font-black text-white font-mono">{attPresent}</span>
               </div>
               <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-500/30">
                 <span className="text-[10px] text-amber-300 block">تأخير</span>
-                <span className="text-base font-black text-white font-mono">{attLate || 2}</span>
+                <span className="text-base font-black text-white font-mono">{attLate}</span>
               </div>
               <div className="p-3 rounded-2xl bg-blue-950/40 border border-blue-500/30">
                 <span className="text-[10px] text-blue-300 block">بعذر</span>
-                <span className="text-base font-black text-white font-mono">{attExcused || 1}</span>
+                <span className="text-base font-black text-white font-mono">{attExcused}</span>
               </div>
               <div className="p-3 rounded-2xl bg-rose-950/40 border border-rose-500/30">
                 <span className="text-[10px] text-rose-300 block">غياب</span>
-                <span className="text-base font-black text-white font-mono">{attAbsent || 0}</span>
+                <span className="text-base font-black text-white font-mono">{attAbsent}</span>
               </div>
             </div>
 
@@ -996,7 +1000,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 <div className="space-y-1">
                   <h3 className="text-sm font-black text-white">{activeChild.name}</h3>
                   <p className="text-[11px] text-amber-300 font-bold">الصف: {activeChild.className}</p>
-                  <p className="text-[10px] text-slate-300 font-mono">رقم القيد: {activeChild.studentNumber || '7819201'}</p>
+                  <p className="text-[10px] text-slate-300 font-mono">رقم القيد: {activeChild.studentNumber || '—'}</p>
                 </div>
               </div>
 
@@ -1058,7 +1062,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                   <span>لوحة الأوسمة والتميز</span>
                 </h4>
                 <span className="text-xs font-black text-amber-300 font-mono">
-                  {activeChild.behaviorPointsTotal || 42} ⭐
+                  {activeChild.behaviorPointsTotal != null ? `+${activeChild.behaviorPointsTotal} ⭐` : '—'}
                 </span>
               </div>
 

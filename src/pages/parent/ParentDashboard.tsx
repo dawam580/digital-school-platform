@@ -325,7 +325,7 @@ export const ParentDashboard: React.FC = () => {
         {/* Card 1: Attendance Rate */}
         <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-center flex flex-col items-center justify-center space-y-2">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border-4 border-emerald-500 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-black text-lg sm:text-xl shadow-inner">
-            {activeChild.attendanceRate || 98}%
+            {activeChild.attendanceRate != null ? `${activeChild.attendanceRate}%` : '—'}
           </div>
           <div>
             <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 block">
@@ -604,7 +604,7 @@ export const ParentDashboard: React.FC = () => {
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
               <span>نقاط التميز السلوكي وملاحظات المعلمين المباشرة</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold">
-                +{activeChild.behaviorPointsTotal || 48} نقطة تميز
+                +{activeChild.behaviorPointsTotal != null ? `${activeChild.behaviorPointsTotal} نقطة تميز` : 'لا نقاط مسجلة بعد'}
               </span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">

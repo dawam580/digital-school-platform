@@ -37,14 +37,16 @@ export const PrintableTeachersRosterModal: React.FC<PrintableTeachersRosterModal
     const rows = teachers.map((t, idx) => ({
       'ت': idx + 1,
       'الاسم الرباعي': t.name,
-      'الرقم الوطني': t.nationalNumber || '119800000000',
-      'رقم الملف (منظومة الشاطئ)': t.fileNumber || `WSH-${1000 + idx}`,
+      'الرقم الوطني': t.nationalNumber || '—',
+      'رقم الملف (منظومة الشاطئ)': t.fileNumber || '—',
       'المادة التدريسية': t.subject,
-      'المؤهل والتخصص': t.qualification || 'بكالوريوس تربوي',
+      'المؤهل والتخصص': t.qualification || '—',
       'الفصول المسندة': t.assignedClasses.join('، '),
       'النصاب القانوني': t.teachingQuota || 20,
-      'الحصص الفعلية': t.assignedPeriodsCount || 18,
-      'حالة النصاب': (t.assignedPeriodsCount || 18) >= (t.teachingQuota || 20) ? 'مستوفٍ للنصاب' : 'فارق بسيط',
+      'الحصص الفعلية': t.assignedPeriodsCount ?? '—',
+      'حالة النصاب': t.assignedPeriodsCount != null && t.teachingQuota != null
+        ? (t.assignedPeriodsCount >= t.teachingQuota ? 'مستوفٍ للنصاب' : 'فارق بسيط')
+        : '—',
       'الهاتف': t.phone
     }));
 
@@ -151,14 +153,14 @@ export const PrintableTeachersRosterModal: React.FC<PrintableTeachersRosterModal
                   <tr key={tch.id} className="hover:bg-slate-50">
                     <td className="p-2 text-center border-l border-slate-300 font-mono font-bold">{idx + 1}</td>
                     <td className="p-2 border-l border-slate-300 font-black text-slate-900">{tch.name}</td>
-                    <td className="p-2 border-l border-slate-300 font-mono text-center">{tch.nationalNumber || '119800000000'}</td>
-                    <td className="p-2 border-l border-slate-300 font-mono text-center font-bold text-blue-900">{tch.fileNumber || `WSH-${1000 + idx}`}</td>
+                    <td className="p-2 border-l border-slate-300 font-mono text-center">{tch.nationalNumber || '—'}</td>
+                    <td className="p-2 border-l border-slate-300 font-mono text-center font-bold text-blue-900">{tch.fileNumber || '—'}</td>
                     <td className="p-2 border-l border-slate-300 font-bold text-center">{tch.subject}</td>
-                    <td className="p-2 border-l border-slate-300 text-slate-700">{tch.qualification || 'بكالوريوس علوم تربوية'}</td>
+                    <td className="p-2 border-l border-slate-300 text-slate-700">{tch.qualification || '—'}</td>
                     <td className="p-2 border-l border-slate-300 text-center font-bold">{tch.assignedClasses.join('، ')}</td>
                     <td className="p-2 border-l border-slate-300 font-mono font-black text-center">{tch.teachingQuota || 20}</td>
-                    <td className="p-2 border-l border-slate-300 font-mono font-black text-center text-emerald-700">{tch.assignedPeriodsCount || 18}</td>
-                    <td className="p-2 text-[11px] text-slate-600">{tch.notes || 'مستوفٍ للنصاب'}</td>
+                    <td className="p-2 border-l border-slate-300 font-mono font-black text-center text-emerald-700">{tch.assignedPeriodsCount ?? '—'}</td>
+                    <td className="p-2 text-[11px] text-slate-600">{tch.notes || '—'}</td>
                   </tr>
                 ))}
               </tbody>

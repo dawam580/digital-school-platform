@@ -41,7 +41,7 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
   const [city, setCity] = useState('طرابلس');
   const [studentCount, setStudentCount] = useState('300 - 600 طالب');
   const [isInternational, setIsInternational] = useState(false);
-  const [phone, setPhone] = useState('0912345678');
+  const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('طرابلس - حي الأندلس، بالقرب من مجمع المدارس');
   const [username, setUsername] = useState('مدير_المدرسة');
   const [password, setPassword] = useState('123456');
@@ -92,7 +92,7 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
             city,
             studentCount,
             isInternational,
-            phone: phone.trim() || '0922465676',
+            phone: phone.trim(),
             address: address.trim() || city,
             username: username.trim() || 'المدير العام',
             seedRichData
@@ -327,9 +327,11 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
                     <input
                       type="tel"
                       required
+                      pattern="09[1234][0-9]{7}"
+                      title="رقم ليبي بصيغة 09xxxxxxxx"
                       value={phone}
                       onChange={e => setPhone(e.target.value)}
-                      placeholder="0912345678"
+                      placeholder="09xxxxxxxx"
                       className="w-full px-4 py-3 pr-10 text-sm font-mono rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />

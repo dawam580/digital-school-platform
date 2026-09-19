@@ -211,7 +211,7 @@ export const StudentProfile: React.FC = () => {
 
         <div className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-100 shadow-card space-y-1">
           <span className="text-[11px] font-bold text-slate-400">آخر تواجد مسجل</span>
-          <p className="text-sm font-extrabold text-slate-800 pt-1 leading-tight">{selectedStudent.lastSeenTime || '07:15 ص'}</p>
+          <p className="text-sm font-extrabold text-slate-800 pt-1 leading-tight">{selectedStudent.lastSeenTime || '—'}</p>
           <span className="text-[10px] text-slate-400 font-medium block">البوابة الإلكترونية</span>
         </div>
 

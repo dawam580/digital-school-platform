@@ -135,7 +135,7 @@ export const DesktopPairingModal: React.FC<DesktopPairingModalProps> = ({
               </div>
               <div className="text-left">
                 <span className="text-[10px] text-slate-400 block">المعدل العام</span>
-                <span className="text-xs font-black text-emerald-400 font-mono">{student.academicAverage || 88}%</span>
+                <span className="text-xs font-black text-emerald-400 font-mono">{student.academicAverage != null ? `${student.academicAverage}%` : '—'}</span>
               </div>
             </div>
           )}

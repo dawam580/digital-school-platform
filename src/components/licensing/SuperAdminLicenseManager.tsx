@@ -122,6 +122,10 @@ export const SuperAdminLicenseManager: React.FC = () => {
   const handleCreateSchool = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSchoolName.trim()) return;
+    if (!/^09[1234]\d{7}$/.test(newSchoolPhone.trim())) {
+      sound.playAlert();
+      return;
+    }
 
     sound.playTap();
     setIsSubmitting(true);
@@ -129,7 +133,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
     try {
       const created = await LicenseService.registerSchool({
         schoolName: newSchoolName,
-        phone: newSchoolPhone || '0922465676',
+        phone: newSchoolPhone.trim(),
         trialDays: newSchoolDays,
         notes: newSchoolNotes
       });
@@ -441,9 +445,12 @@ export const SuperAdminLicenseManager: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">رقم هاتف المدير المسؤول</label>
                 <input
                   type="tel"
+                  required
+                  pattern="09[1234][0-9]{7}"
+                  title="رقم ليبي بصيغة 09xxxxxxxx (إلزامي لهوية الترخيص)"
                   value={newSchoolPhone}
                   onChange={e => setNewSchoolPhone(e.target.value)}
-                  placeholder="0922465676"
+                  placeholder="09xxxxxxxx"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 />
               </div>

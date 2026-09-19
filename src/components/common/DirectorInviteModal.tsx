@@ -55,7 +55,7 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
   const currentMessage = generateDirectorInviteMessage({
     directorName: directorName.trim() || 'الأستاذ الفاضل مدير المدرسة',
     schoolName: schoolProfile.name,
-    phone: schoolProfile.directorPhone || '0922465676'
+    phone: schoolProfile.directorPhone || ''
   });
 
   const handleCopyLink = async (roleKey: string, link: string) => {

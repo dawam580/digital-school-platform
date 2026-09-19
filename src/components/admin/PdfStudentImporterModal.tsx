@@ -296,13 +296,13 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
         nationalNumber: s.nationalNumber || s.nationalId,
         motherName: '—', // Officially blank in Ministry exam documents
         gender: s.gender,
-        birthDate: s.birthDate || '2013-05-15',
+        birthDate: s.birthDate || '',
         birthPlace: 'توكرة',
         grade: s.grade,
         className: s.className,
         sectionCode: (s.className.includes('2') ? 'ب' : s.className.includes('3') ? 'ج' : s.className.includes('4') ? 'د' : 'أ') as any,
         academicYear: '2025-2026 م',
-        parentPhone: s.parentPhone || '0912345678',
+        parentPhone: s.parentPhone || '',
         confidenceScore: 100,
         originalRowText: `${s.studentNumber} ${s.name} ${s.gender} ${s.birthDate}`
       }));

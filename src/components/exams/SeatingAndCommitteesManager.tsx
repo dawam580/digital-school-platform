@@ -497,7 +497,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
               <div className="flex justify-between items-center pt-1">
                 <span className="text-slate-700 font-black text-sm">رقم الجلوس:</span>
                 <span className="font-mono font-black text-2xl text-indigo-700 px-3 py-1 bg-white rounded-xl border border-indigo-300 shadow-inner">
-                  {seatingMap.get(printingCardStudent.id) || printingCardStudent.studentNumber || '26001'}
+                  {seatingMap.get(printingCardStudent.id) || printingCardStudent.studentNumber || '—'}
                 </span>
               </div>
             </div>
