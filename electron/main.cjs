@@ -39,7 +39,7 @@ function createWindow() {
     height: 920,
     minWidth: 1080,
     minHeight: 700,
-    title: 'منظومة مدرسة الشهيد امحمد الباعور الرقمية | النظام الإداري والتعليمي المتكامل',
+    title: 'منظومة المدرسة الرقمية للتعليم الأساسي | النظام الإداري والتعليمي المتكامل',
     icon: iconPath,
     backgroundColor: '#0b192c',
     show: false,

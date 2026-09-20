@@ -18,10 +18,10 @@
     "semantic_hash": "f0a3c529380b541027f06095fe19d1f6"
   },
   "electron/main.cjs": {
-    "mtime": 1789561175.047467,
-    "seen": 1789561539.0254,
-    "ast_hash": "69498f82af0f4ab172aa18748d39b8b3",
-    "semantic_hash": "69498f82af0f4ab172aa18748d39b8b3"
+    "mtime": 1789944987.7964208,
+    "seen": 1789945131.288654,
+    "ast_hash": "b0d3ed470c84bada8a2d64c8d677cd88",
+    "semantic_hash": "b0d3ed470c84bada8a2d64c8d677cd88"
   },
   "electron/preload.cjs": {
     "mtime": 1789561175.047467,
@@ -30,10 +30,10 @@
     "semantic_hash": "f6a3ee199cb2c5f8caf8c5a268022e38"
   },
   "package.json": {
-    "mtime": 1789921688.2067595,
-    "seen": 1789931720.1136646,
-    "ast_hash": "ede97cb6b9e279e2ddecc22e44c59281",
-    "semantic_hash": "ede97cb6b9e279e2ddecc22e44c59281"
+    "mtime": 1789945007.115317,
+    "seen": 1789945131.288654,
+    "ast_hash": "a0ebacb7808b056d3562b28a134904e9",
+    "semantic_hash": "a0ebacb7808b056d3562b28a134904e9"
   },
   "payload.json": {
     "mtime": 1789561175.0865674,
@@ -534,10 +534,10 @@
     "semantic_hash": "920aa1ce26b0002dbaf2ce8e1f1d54ff"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1789931007.2742817,
-    "seen": 1789931720.1459086,
-    "ast_hash": "fe9bc039cb24242761778d26857f562d",
-    "semantic_hash": "fe9bc039cb24242761778d26857f562d"
+    "mtime": 1789945046.849805,
+    "seen": 1789945131.3139577,
+    "ast_hash": "09d12453e519002ebed856734a861dd8",
+    "semantic_hash": "09d12453e519002ebed856734a861dd8"
   },
   "src/data/libyanBaourSchoolDataset.ts": {
     "mtime": 1789561175.220626,
@@ -786,10 +786,10 @@
     "semantic_hash": "7426b5c90ec95c29f25f4f8c1b8ab5e5"
   },
   "src/services/licensing/licenseService.ts": {
-    "mtime": 1789944130.1667738,
-    "seen": 1789944426.3692806,
-    "ast_hash": "2941dd822639b5224bf9873f0f12e13a",
-    "semantic_hash": "2941dd822639b5224bf9873f0f12e13a"
+    "mtime": 1789945026.8124878,
+    "seen": 1789945131.321771,
+    "ast_hash": "ff98d271bbdc3b068bc9d3202329cac5",
+    "semantic_hash": "ff98d271bbdc3b068bc9d3202329cac5"
   },
   "src/services/licensing/licenseTypes.ts": {
     "mtime": 1789585304.7815688,

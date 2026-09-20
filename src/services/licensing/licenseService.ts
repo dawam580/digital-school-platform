@@ -453,10 +453,12 @@ export class LicenseService {
     };
   } {
     const rawName = (params.schoolName || 'مدرسة جديدة').trim();
-    const prefix = rawName.includes('الباعور')
+    // Dynamic school identifier (لا تقييد باسم معين)
+    const cleanLetters = rawName.replace(/[^A-Za-z]/g, '').toUpperCase();
+    const prefix = cleanLetters.length >= 3
+      ? cleanLetters.substring(0, 5)
+      : rawName.includes('الباعور')
       ? 'BAOUR'
-      : rawName.includes('الأمل')
-      ? 'AMAL'
       : 'LIBYA';
     const rand1 = Math.random().toString(36).substring(2, 6).toUpperCase();
     const rand2 = Math.random().toString(36).substring(2, 6).toUpperCase();

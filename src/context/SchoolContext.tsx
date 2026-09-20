@@ -2711,6 +2711,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isOpen={showActivationModal}
         onSuccess={(doc) => {
           setShowActivationModal(false);
+          if (doc.school_name && doc.school_name.trim()) {
+            updateSchoolProfile({ name: doc.school_name.trim() });
+          }
           setLicenseInfo({
             isValid: true,
             status: doc.subscription_status,
@@ -2729,6 +2732,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           result={licenseInfo}
           onRecheck={async () => {
             const res = await checkLicense();
+            if (res.isValid && res.schoolName && res.schoolName.trim()) {
+              updateSchoolProfile({ name: res.schoolName.trim() });
+            }
             setLicenseInfo(res);
           }}
           onEnterNewLicense={() => setShowActivationModal(true)}
