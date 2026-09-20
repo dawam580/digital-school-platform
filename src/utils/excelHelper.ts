@@ -186,9 +186,9 @@ export function parseStudentsCsv(csvText: string): Partial<Student>[] {
         behaviorPoints: [],
         badges: [],
         subjects: [
-          { name: 'الرياضيات', score: 95, maxScore: 100, teacher: 'أ. أحمد الغامدي', evaluation: 'مستوى ممتاز' },
-          { name: 'لغتي الجميلة', score: 94, maxScore: 100, teacher: 'أ. عبدالمحسن الدوسري', evaluation: 'قراءة ومشاركة جيدة' },
-          { name: 'العلوم', score: 96, maxScore: 100, teacher: 'أ. خالد الشهري', evaluation: 'تفاعل ممتاز' },
+          { name: 'الرياضيات', score: 95, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'مستوى ممتاز' },
+          { name: 'اللغة العربية', score: 94, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'قراءة ومشاركة جيدة' },
+          { name: 'العلوم الطبيعية', score: 96, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'تفاعل ممتاز' },
         ],
         recentAttendance: [{ date: '2026-09-01', status: 'present' }],
         notes: []

@@ -589,196 +589,38 @@ export const SEED_SCHEDULE: DaySchedule[] = [
 ];
 
 // Clean Libyan Students Dataset (12-Digit National Numbers & 2025/2026 Academic Year)
-export const SEED_STUDENTS: Student[] = [
-  {
-    id: 'std-1',
-    name: 'معتز سالم الورفلي',
-    nationalId: '120081234567',
-    nationalNumber: '120081234567',
-    studentNumber: '2025-0101',
-    linkCode: 'SCH-2026-L1',
-    avatar: getCleanAvatar('معتز سالم الورفلي', 'male'),
-    grade: 'الصف الثالث الأساسي',
-    className: '3/أ',
-    gender: 'male',
-    parentName: 'سالم بن علي الورفلي',
-    parentPhone: '0922465676',
-    parentEmail: 'salem.werfelli@gmail.com',
-    status: 'present',
-    attendanceRate: 98,
-    academicAverage: 96.5,
-    courseworkScore: 39,
-    examScore: 58,
-    totalScore: 97,
-    appreciation: 'ممتاز',
-    behaviorRating: 'ممتاز',
-    behaviorPointsTotal: 48,
-    lastSeenTime: '07:50 صباحاً (البوابة المدرسية)',
-    grades: SAMPLE_GRADES_RAYAN,
-    assignments: SAMPLE_ASSIGNMENTS,
-    competencies: [
-      { name: 'حل المسائل الرياضية', score: 96, maxScore: 100 },
-      { name: 'التفكير العلمي والابتكار', score: 94, maxScore: 100 },
-      { name: 'مهارات الحاسوب والتطبيقات', score: 100, maxScore: 100 },
-      { name: 'الانضباط والسمت المدرسي', score: 98, maxScore: 100 },
-      { name: 'التعبير اللغوي والإملاء', score: 95, maxScore: 100 },
-    ],
-    behaviorPoints: [
-      { id: 'bp-1', category: 'positive', title: 'مشاركة ممتازة في الرياضيات والحساب الذهني', points: 5, icon: '🌟', date: 'اليوم 08:30 ص', teacher: 'أ. طارق الفيتوري' },
-      { id: 'bp-2', category: 'positive', title: 'إتقان تطبيق معمل الحاسوب', points: 4, icon: '💻', date: 'اليوم 10:15 ص', teacher: 'أ. أسامة المقريف' },
-      { id: 'bp-3', category: 'positive', title: 'حل واجب العلوم الميداني', points: 4, icon: '🔬', date: 'أمس', teacher: 'أ. مريم الترهوني' },
-    ],
-    badges: [
-      { id: 'b1', title: 'نجم الحساب الذهني', icon: '🏆', date: 'سبتمبر 2025', description: 'الترتيب الأول في مسابقة الرياضيات' },
-      { id: 'b2', title: 'صديق معمل الحاسوب', icon: '💻', date: 'أكتوبر 2025', description: 'التميز في التطبيقات التقنية' },
-      { id: 'b3', title: 'فارس الانضباط الصباحي', icon: '⭐', date: 'نوفمبر 2025', description: 'حضور مبكر بدون أي تأخير' }
-    ],
-    subjects: [
-      { name: 'الرياضيات', score: 98, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'متميز في التفكير المنطقي' },
-      { name: 'اللغة العربية', score: 95, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'قراءة معبرة وخط واضح' },
-      { name: 'العلوم الطبيعية', score: 97, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'مشاركة ممتازة في المعمل' },
-      { name: 'الحاسوب', score: 100, maxScore: 100, teacher: 'أ. أسامة المقريف', evaluation: 'درجة كاملة في التطبيق العملي' },
-      { name: 'التربية الإسلامية', score: 99, maxScore: 100, teacher: 'أ. محمود السويحلي', evaluation: 'حفظ وتلاوة وسلوك قدوة' },
-    ],
-    recentAttendance: [
-      { date: '2025-09-01', status: 'present', note: 'حضور مبكر' },
-      { date: '2025-09-02', status: 'present', note: 'حضور منتظم' },
-    ],
-    notes: [
-      { id: 'n-1', date: 'اليوم', teacher: 'أ. طارق الفيتوري', type: 'positive', text: 'معتز طالب مجتهد ومتفاعل دائماً في حصة الرياضيات.' }
-    ]
-  },
-  {
-    id: 'std-2',
-    name: 'آية مصطفى الترهوني',
-    nationalId: '220082345678',
-    nationalNumber: '220082345678',
-    studentNumber: '2025-0102',
-    linkCode: 'SCH-2026-L2',
-    avatar: getCleanAvatar('آية مصطفى الترهوني', 'female'),
-    grade: 'الصف الثالث الأساسي',
-    className: '3/أ',
-    gender: 'female',
-    parentName: 'مصطفى بن رمضان الترهوني',
-    parentPhone: '0912233445',
-    parentEmail: 'mustafa.tarhouni@gmail.com',
-    status: 'present',
-    attendanceRate: 99,
-    academicAverage: 98.2,
-    courseworkScore: 40,
-    examScore: 59,
-    totalScore: 99,
-    appreciation: 'ممتاز',
-    behaviorRating: 'ممتاز',
-    behaviorPointsTotal: 52,
-    grades: SAMPLE_GRADES_RAYAN,
-    competencies: [
-      { name: 'التفوق اللغوي', score: 100, maxScore: 100 },
-      { name: 'العلوم والبحث', score: 98, maxScore: 100 },
-      { name: 'الحاسوب والمهارات الرقمية', score: 96, maxScore: 100 }
-    ],
-    behaviorPoints: [],
-    subjects: []
-  },
-  {
-    id: 'std-3',
-    name: 'عبدالرحمن علي المقريف',
-    nationalId: '120083456789',
-    nationalNumber: '120083456789',
-    studentNumber: '2025-0103',
-    linkCode: 'SCH-2026-L3',
-    avatar: getCleanAvatar('عبدالرحمن علي المقريف', 'male'),
-    grade: 'الصف الثالث الأساسي',
-    className: '3/ب',
-    gender: 'male',
-    parentName: 'علي بن فرج المقريف',
-    parentPhone: '0923344556',
-    parentEmail: 'ali.megrahi@gmail.com',
-    status: 'present',
-    attendanceRate: 95,
-    academicAverage: 94.0,
-    courseworkScore: 38,
-    examScore: 56,
-    totalScore: 94,
-    appreciation: 'ممتاز',
-    behaviorRating: 'ممتاز',
-    behaviorPointsTotal: 35,
-    grades: SAMPLE_GRADES_RAYAN,
-    competencies: [],
-    behaviorPoints: [],
-    subjects: []
-  },
-  {
-    id: 'std-4',
-    name: 'سارة عمر الفيتوري',
-    nationalId: '220084567890',
-    nationalNumber: '220084567890',
-    studentNumber: '2025-0104',
-    linkCode: 'SCH-2026-L4',
-    avatar: getCleanAvatar('سارة عمر الفيتوري', 'female'),
-    grade: 'الصف الثاني الأساسي',
-    className: '2/أ',
-    gender: 'female',
-    parentName: 'عمر بن الهادي الفيتوري',
-    parentPhone: '0944455667',
-    parentEmail: 'omar.fitouri@gmail.com',
-    status: 'present',
-    attendanceRate: 97,
-    academicAverage: 96.0,
-    courseworkScore: 39,
-    examScore: 57,
-    totalScore: 96,
-    appreciation: 'ممتاز',
-    behaviorRating: 'ممتاز',
-    behaviorPointsTotal: 40,
-    grades: SAMPLE_GRADES_RAYAN,
-    competencies: [],
-    behaviorPoints: [],
-    subjects: []
-  },
-  {
-    id: 'std-5',
-    name: 'يوسف فتحي السويحلي',
-    nationalId: '120085678901',
-    nationalNumber: '120085678901',
-    studentNumber: '2025-0105',
-    linkCode: 'SCH-2026-L5',
-    avatar: getCleanAvatar('يوسف فتحي السويحلي', 'male'),
-    grade: 'الصف الأول الأساسي',
-    className: '1/أ',
-    gender: 'male',
-    parentName: 'فتحي بن مسعود السويحلي',
-    parentPhone: '0915566778',
-    parentEmail: 'fathi.sweihli@gmail.com',
-    status: 'present',
-    attendanceRate: 98,
-    academicAverage: 99.0,
-    courseworkScore: 40,
-    examScore: 59,
-    totalScore: 99,
-    appreciation: 'ممتاز',
-    behaviorRating: 'ممتاز',
-    behaviorPointsTotal: 45,
-    grades: SAMPLE_GRADES_RAYAN,
-    competencies: [],
-    behaviorPoints: [],
-    subjects: []
-  }
-];
+// Real 873 Libyan Students from Official School Records
+export const SEED_STUDENTS: Student[] = LIBYAN_BAOUR_STUDENTS;
 
 export const SEED_CLASSES: SchoolClass[] = [
-  { id: 'c-7a', name: '7/أ', grade: 'الصف السابع الأساسي', studentCount: 32, presentCount: 31, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
-  { id: 'c-7b', name: '7/ب', grade: 'الصف السابع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 1, supervisor: 'أ. عبدالسلام الورفلي' },
-  { id: 'c-8a', name: '8/أ', grade: 'الصف الثامن الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. وليد المصراتي' },
-  { id: 'c-8b', name: '8/ب', grade: 'الصف الثامن الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. فاطمة الزوي' },
-  { id: 'c-6a', name: '6/أ', grade: 'الصف السادس الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
-  { id: 'c-6b', name: '6/ب', grade: 'الصف السادس الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
-  { id: 'c-4a', name: '4/أ', grade: 'الصف الرابع الأساسي', studentCount: 31, presentCount: 30, absentCount: 1, lateCount: 0, supervisor: 'أ. محمود السويحلي' },
-  { id: 'c-4b', name: '4/ب', grade: 'الصف الرابع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
-  { id: 'c-9a', name: '9/أ', grade: 'الصف التاسع الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
-  { id: 'c-9b', name: '9/ب', grade: 'الصف التاسع الأساسي', studentCount: 28, presentCount: 28, absentCount: 0, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
-  { id: 'c-3a', name: '3/أ', grade: 'الصف الثالث الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
-  { id: 'c-3b', name: '3/ب', grade: 'الصف الثالث الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'cls-1-1', name: '1/1 مساء', grade: 'الصف الأول الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'cls-1-2', name: '1/2 مساء', grade: 'الصف الأول الأساسي', studentCount: 32, presentCount: 31, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'cls-2-1', name: '2/1 مساء', grade: 'الصف الثاني الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
+  { id: 'cls-2-2', name: '2/2 مساء', grade: 'الصف الثاني الأساسي', studentCount: 26, presentCount: 25, absentCount: 1, lateCount: 0, supervisor: 'أ. فاطمة الزوي' },
+  { id: 'cls-3-1', name: '3/1 مساء', grade: 'الصف الثالث الأساسي', studentCount: 31, presentCount: 30, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
+  { id: 'cls-3-2', name: '3/2 مساء', grade: 'الصف الثالث الأساسي', studentCount: 28, presentCount: 27, absentCount: 1, lateCount: 0, supervisor: 'أ. خليل الزنتاني' },
+  { id: 'cls-4-1', name: '4/1 مساء', grade: 'الصف الرابع الأساسي', studentCount: 34, presentCount: 33, absentCount: 1, lateCount: 0, supervisor: 'أ. وليد المصراتي' },
+  { id: 'cls-4-2', name: '4/2 مساء', grade: 'الصف الرابع الأساسي', studentCount: 34, presentCount: 33, absentCount: 1, lateCount: 0, supervisor: 'أ. ناصر الدرسي' },
+  { id: 'cls-5-1', name: '5/1 صباح', grade: 'الصف الخامس الأساسي', studentCount: 39, presentCount: 38, absentCount: 1, lateCount: 0, supervisor: 'أ. محمود السويحلي' },
+  { id: 'cls-5-2', name: '5/2 صباح', grade: 'الصف الخامس الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'cls-5-3', name: '5/3 صباح', grade: 'الصف الخامس الأساسي', studentCount: 30, presentCount: 29, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
+  { id: 'cls-6-1', name: '6/1 صباح', grade: 'الصف السادس الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'cls-6-2', name: '6/2 صباح', grade: 'الصف السادس الأساسي', studentCount: 26, presentCount: 25, absentCount: 1, lateCount: 0, supervisor: 'أ. فاطمة الزوي' },
+  { id: 'cls-6-3', name: '6/3 صباح', grade: 'الصف السادس الأساسي', studentCount: 29, presentCount: 28, absentCount: 1, lateCount: 0, supervisor: 'أ. خليل الزنتاني' },
+  { id: 'cls-6-4', name: '6/4 صباح', grade: 'الصف السادس الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
+  { id: 'cls-6-5', name: '6/5 صباح', grade: 'الصف السادس الأساسي', studentCount: 3, presentCount: 3, absentCount: 0, lateCount: 0, supervisor: 'أ. ناصر الدرسي' },
+  { id: 'cls-7-1', name: '7/1 صباح', grade: 'الصف السابع الأساسي', studentCount: 43, presentCount: 42, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'cls-7-2', name: '7/2 صباح', grade: 'الصف السابع الأساسي', studentCount: 39, presentCount: 38, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'cls-7-3', name: '7/3 صباح', grade: 'الصف السابع الأساسي', studentCount: 42, presentCount: 40, absentCount: 2, lateCount: 0, supervisor: 'أ. ناصر الدرسي' },
+  { id: 'cls-7-4', name: '7/4 صباح', grade: 'الصف السابع الأساسي', studentCount: 34, presentCount: 33, absentCount: 1, lateCount: 0, supervisor: 'أ. وليد المصراتي' },
+  { id: 'cls-8-1', name: '8/1 صباح', grade: 'الصف الثامن الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. خليل الزنتاني' },
+  { id: 'cls-8-2', name: '8/2 صباح', grade: 'الصف الثامن الأساسي', studentCount: 32, presentCount: 31, absentCount: 1, lateCount: 0, supervisor: 'أ. فاطمة الزوي' },
+  { id: 'cls-8-3', name: '8/3 صباح', grade: 'الصف الثامن الأساسي', studentCount: 36, presentCount: 35, absentCount: 1, lateCount: 0, supervisor: 'أ. مريم الترهوني' },
+  { id: 'cls-8-4', name: '8/4 صباح', grade: 'الصف الثامن الأساسي', studentCount: 35, presentCount: 34, absentCount: 1, lateCount: 0, supervisor: 'أ. وليد المصراتي' },
+  { id: 'cls-9-1', name: '9/1 صباح', grade: 'الصف التاسع الأساسي', studentCount: 27, presentCount: 26, absentCount: 1, lateCount: 0, supervisor: 'أ. أدم المنصوري' },
+  { id: 'cls-9-2', name: '9/2 صباح', grade: 'الصف التاسع الأساسي', studentCount: 23, presentCount: 23, absentCount: 0, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
+  { id: 'cls-9-3', name: '9/3 صباح', grade: 'الصف التاسع الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. عبدالسلام الورفلي' },
+  { id: 'cls-9-4', name: '9/4 صباح', grade: 'الصف التاسع الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. أسامة المقريف' },
 ];
 
 export const SEED_NOTIFICATIONS: NotificationItem[] = [
@@ -1259,8 +1101,9 @@ export const db = {
           list = CryptoVaultService.decryptStudentsBatch(parsed);
         }
       }
-      if (!list || list.length === 0) {
-        list = SEED_STUDENTS;
+      if (!list || list.length < 50) {
+        list = LIBYAN_BAOUR_STUDENTS;
+        this.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
       }
       // Guarantee clean vector avatars (never unsplash)
       const cleaned = list.map(s => ({
@@ -1272,7 +1115,7 @@ export const db = {
       // فرض النطاق على مستوى البيانات (الرفض هنا لا في العرض فقط)
       return this.scopeStudents(cleaned);
     } catch {
-      return SEED_STUDENTS.map(s => ({
+      return LIBYAN_BAOUR_STUDENTS.map(s => ({
         ...s,
         avatar: getCleanAvatar(s.name, s.gender)
       }));
@@ -1293,8 +1136,9 @@ export const db = {
           list = CryptoVaultService.decryptStudentsBatch(parsed);
         }
       }
-      if (!list || list.length === 0) {
-        list = SEED_STUDENTS;
+      if (!list || list.length < 50) {
+        list = LIBYAN_BAOUR_STUDENTS;
+        this.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
       }
       return list.map(s => ({
         ...s,
@@ -1303,7 +1147,7 @@ export const db = {
           : s.avatar
       }));
     } catch {
-      return SEED_STUDENTS.map(s => ({
+      return LIBYAN_BAOUR_STUDENTS.map(s => ({
         ...s,
         avatar: getCleanAvatar(s.name, s.gender)
       }));
@@ -1345,7 +1189,14 @@ export const db = {
   getClasses(): SchoolClass[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY_CLASSES);
-      return data ? JSON.parse(data) : SEED_CLASSES;
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length >= 20) {
+          return parsed;
+        }
+      }
+      this.saveClasses(SEED_CLASSES);
+      return SEED_CLASSES;
     } catch {
       return SEED_CLASSES;
     }

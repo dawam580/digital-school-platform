@@ -44,8 +44,10 @@ export const ParentTeacherChat: React.FC = () => {
     sendChatMessage(activeConvId, reply);
   };
 
+  const studentFirstName = selectedStudent?.name ? selectedStudent.name.split(' ')[0] : 'بالطالب';
+
   const quickReplies = [
-    'شكراً لحرصكم واهتمامكم الدائم بريان 🌟',
+    `شكراً لحرصكم واهتمامكم الدائم بـ ${studentFirstName} 🌟`,
     'تم حل الواجب وتسليمه عبر المنصة بنجاح 📝',
     'نرجو تزويدنا بموعد الاختبار القصير القادم 📅',
     'جزاكم الله خيراً أستاذنا الفاضل على جهودكم 👏'

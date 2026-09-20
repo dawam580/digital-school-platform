@@ -65,8 +65,8 @@ export const DatabaseStudio: React.FC = () => {
 
       // Measure Search & Filter time over 1000 items
       const t0 = performance.now();
-      const mockQuery = 'العتيبي';
-      const searchRes = students.filter(s => s.name.includes(mockQuery) || s.nationalId.includes('109'));
+      const mockQuery = 'عيسى';
+      const searchRes = students.filter(s => s.name.includes(mockQuery) || s.nationalId.includes('120'));
       const searchDurationMs = Math.round((performance.now() - t0) * 100) / 100;
 
       // Measure Sort time

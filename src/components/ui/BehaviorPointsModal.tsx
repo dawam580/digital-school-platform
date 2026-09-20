@@ -45,8 +45,8 @@ export const BehaviorPointsModal: React.FC<BehaviorPointsModalProps> = ({
       title: badge.title,
       points: badge.points,
       icon: badge.icon,
-      date: 'اليوم ' + new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-      teacher: 'أ. أحمد الغامدي (رائد الفصل)'
+      date: 'اليوم ' + new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' }),
+      teacher: 'أ. طارق الفيتوري (رائد الفصل)'
     };
 
     if (activeType === 'positive') {

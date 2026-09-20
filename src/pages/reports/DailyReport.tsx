@@ -41,7 +41,7 @@ export const DailyReport: React.FC = () => {
     { date: 'الإثنين، 31 أغسطس 2026', status: 'حاضر', checkIn: '07:12 ص', checkOut: '01:30 م', note: 'أداء متميز في حصة الإملاء والتعبير' },
     { date: 'الأحد، 30 أغسطس 2026', status: 'متأخر', checkIn: '07:45 ص', checkOut: '01:30 م', note: 'تم التنبيه على أهمية الحضور المبكر للطابور' },
     { date: 'الخميس، 27 أغسطس 2026', status: 'حاضر', checkIn: '07:10 ص', checkOut: '01:15 م', note: 'تسليم مشروع العلوم بنجاح' },
-    { date: 'الأربعاء، 26 أغسطس 2026', status: 'حاضر', checkIn: '07:15 ص', checkOut: '01:30 م', note: 'حفظ متقن لقصيدة لغتي الجميلة' },
+    { date: 'الأربعاء، 26 أغسطس 2026', status: 'حاضر', checkIn: '07:15 ص', checkOut: '01:30 م', note: 'حفظ متقن لمحفوظات وقصيدة اللغة العربية' },
   ];
 
   return (
@@ -250,7 +250,7 @@ export const DailyReport: React.FC = () => {
         </div>
 
         <div className="p-4 rounded-2xl bg-[#f0f4ff] border border-blue-100 text-xs sm:text-sm text-slate-700 leading-relaxed">
-          <p className="font-bold text-[#00288e] mb-1">أ. أحمد الغامدي (رائد الفصل):</p>
+          <p className="font-bold text-[#00288e] mb-1">أ. طارق الفيتوري (رائد الفصل):</p>
           <p>
             "{dailyReport.behaviorNotes}"
           </p>

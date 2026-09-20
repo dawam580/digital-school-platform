@@ -98,7 +98,7 @@ export const ParentSignUp: React.FC = () => {
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="مثال: فهد بن ناصر العتيبي"
+                    placeholder="مثال: محمد علي الورفلي"
                     value={fullName}
                     onChange={e => setFullName(e.target.value)}
                     className="w-full px-4 py-3 pr-11 text-base rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00288e]/20 focus:border-[#00288e] transition-all text-slate-800 placeholder:text-slate-400"

@@ -82,7 +82,7 @@ export const LinkStudent: React.FC = () => {
               <KeyRound className="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
             </div>
             <p className="text-xs text-slate-400">
-              💡 كود تجريبي سريع: <button type="button" onClick={() => setLinkCode('SCH-2026-R1')} className="font-bold text-[#00288e] hover:underline">SCH-2026-R1</button> (ريان العتيبي) أو <button type="button" onClick={() => setLinkCode('SCH-2026-S2')} className="font-bold text-[#00288e] hover:underline">SCH-2026-S2</button> (سارة القحطاني)
+              💡 كود تجريبي سريع: <button type="button" onClick={() => setLinkCode('SCH-2026-B1')} className="font-bold text-[#00288e] hover:underline">SCH-2026-B1</button> (أحمد محمد عيسى) أو <button type="button" onClick={() => setLinkCode('SCH-2026-B2')} className="font-bold text-[#00288e] hover:underline">SCH-2026-B2</button> (أسامة محمد محمود)
             </p>
           </div>
 

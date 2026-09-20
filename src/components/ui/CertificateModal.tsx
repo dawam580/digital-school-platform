@@ -92,7 +92,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ isOpen, onCl
           <div className="flex items-center justify-between pt-6 border-t border-amber-200/80 text-xs font-bold text-slate-700">
             <div className="text-center space-y-1">
               <p className="text-slate-500">رائد الفصل</p>
-              <p className="font-extrabold text-slate-900">أ. أحمد الغامدي</p>
+              <p className="font-extrabold text-slate-900">أ. طارق الفيتوري</p>
             </div>
 
             {/* Golden Seal Badge */}
@@ -105,7 +105,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ isOpen, onCl
 
             <div className="text-center space-y-1">
               <p className="text-slate-500">مدير المدرسة</p>
-              <p className="font-extrabold text-slate-900">د. ناصر السعيد</p>
+              <p className="font-extrabold text-slate-900">إدارة المدرسة المعتمدة</p>
             </div>
           </div>
 

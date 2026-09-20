@@ -19,127 +19,127 @@ export interface ClassScheduleMap {
 
 // Default Seed Multi-Class Schedules to enable cross-class conflict tracking
 export const SEED_MULTI_CLASS_SCHEDULES: ClassScheduleMap = {
-  '3/أ': [
+  '9/1 صباح': [
     {
       dayName: 'الأحد',
       dayIndex: 0,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 101', icon: '📐', color: 'blue' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 101', icon: '📖', color: 'emerald' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 101', icon: '🕌', color: 'amber' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية البدنية', teacher: 'أ. سامي الحربي', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 101', icon: '📐', color: 'blue' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 101', icon: '📖', color: 'emerald' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 101', icon: '🕌', color: 'amber' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية البدنية', teacher: 'أ. صالح البدري', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' }
       ]
     },
     {
       dayName: 'الإثنين',
       dayIndex: 1,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 101', icon: '📐', color: 'blue' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 101', icon: '📖', color: 'emerald' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الاجتماعيات', teacher: 'أ. بدر المطيري', room: 'قاعة 101', icon: '🌍', color: 'amber' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'المهارات الرقمية', teacher: 'أ. يوسف العنزي', room: 'معمل الحاسب', icon: '💻', color: 'cyan' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية الفنية', teacher: 'أ. وائل القحطاني', room: 'المرسم', icon: '🎨', color: 'pink' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 101', icon: '📐', color: 'blue' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 101', icon: '📖', color: 'emerald' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 101', icon: '🌍', color: 'amber' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'الحاسوب وتقنية المعلومات', teacher: 'أ. أدم المنصوري', room: 'معمل الحاسب', icon: '💻', color: 'cyan' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية الفنية', teacher: 'أ. وائل الترهوني', room: 'المرسم', icon: '🎨', color: 'pink' }
       ]
     },
     {
       dayName: 'الثلاثاء',
       dayIndex: 2,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 101', icon: '📖', color: 'emerald' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 101', icon: '🕌', color: 'amber' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 101', icon: '📐', color: 'blue' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية البدنية', teacher: 'أ. سامي الحربي', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 101', icon: '📖', color: 'emerald' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 101', icon: '🕌', color: 'amber' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 101', icon: '📐', color: 'blue' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'التربية البدنية', teacher: 'أ. صالح البدري', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' }
       ]
     },
     {
       dayName: 'الأربعاء',
       dayIndex: 3,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 101', icon: '📐', color: 'blue' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 101', icon: '🕌', color: 'amber' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 101', icon: '📖', color: 'emerald' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'الاجتماعيات', teacher: 'أ. بدر المطيري', room: 'قاعة 101', icon: '🌍', color: 'amber' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'المهارات الرقمية', teacher: 'أ. يوسف العنزي', room: 'معمل الحاسب', icon: '💻', color: 'cyan' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 101', icon: '📐', color: 'blue' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 101', icon: '🕌', color: 'amber' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 101', icon: '📖', color: 'emerald' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 101', icon: '🌍', color: 'amber' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'الحاسوب وتقنية المعلومات', teacher: 'أ. أدم المنصوري', room: 'معمل الحاسب', icon: '💻', color: 'cyan' }
       ]
     },
     {
       dayName: 'الخميس',
       dayIndex: 4,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 101', icon: '🕌', color: 'amber' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 101', icon: '📐', color: 'blue' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 101', icon: '📖', color: 'emerald' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'النشاط الطلابي', teacher: 'رائد النشاط', room: 'مسرح المدرسة', icon: '🌟', color: 'amber' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 101', icon: '🕌', color: 'amber' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 101', icon: '📐', color: 'blue' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 101', icon: '📖', color: 'emerald' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'النشاط المدرسي', teacher: 'رائد النشاط', room: 'مسرح المدرسة', icon: '🌟', color: 'amber' }
       ]
     }
   ],
-  '3/ب': [
+  '9/2 صباح': [
     {
       dayName: 'الأحد',
       dayIndex: 0,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 102', icon: '📖', color: 'emerald' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 102', icon: '📐', color: 'blue' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 102', icon: '🕌', color: 'amber' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية البدنية', teacher: 'أ. سامي الحربي', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 102', icon: '📖', color: 'emerald' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 102', icon: '📐', color: 'blue' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 102', icon: '🕌', color: 'amber' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية البدنية', teacher: 'أ. صالح البدري', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' }
       ]
     },
     {
       dayName: 'الإثنين',
       dayIndex: 1,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 102', icon: '📐', color: 'blue' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الاجتماعيات', teacher: 'أ. بدر المطيري', room: 'قاعة 102', icon: '🌍', color: 'amber' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 102', icon: '📖', color: 'emerald' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية الفنية', teacher: 'أ. وائل القحطاني', room: 'المرسم', icon: '🎨', color: 'pink' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'المهارات الرقمية', teacher: 'أ. يوسف العنزي', room: 'معمل الحاسب', icon: '💻', color: 'cyan' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 102', icon: '📐', color: 'blue' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 102', icon: '🌍', color: 'amber' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 102', icon: '📖', color: 'emerald' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية الفنية', teacher: 'أ. وائل الترهوني', room: 'المرسم', icon: '🎨', color: 'pink' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'الحاسوب وتقنية المعلومات', teacher: 'أ. أدم المنصوري', room: 'معمل الحاسب', icon: '💻', color: 'cyan' }
       ]
     },
     {
       dayName: 'الثلاثاء',
       dayIndex: 2,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 102', icon: '🕌', color: 'amber' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 102', icon: '📖', color: 'emerald' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 102', icon: '📐', color: 'blue' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية البدنية', teacher: 'أ. سامي الحربي', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 102', icon: '🕌', color: 'amber' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 102', icon: '📖', color: 'emerald' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 102', icon: '📐', color: 'blue' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'التربية البدنية', teacher: 'أ. صالح البدري', room: 'الصالة الرياضية', icon: '⚽', color: 'rose' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' }
       ]
     },
     {
       dayName: 'الأربعاء',
       dayIndex: 3,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 102', icon: '📐', color: 'blue' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 102', icon: '📖', color: 'emerald' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 102', icon: '🕌', color: 'amber' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'المهارات الرقمية', teacher: 'أ. يوسف العنزي', room: 'معمل الحاسب', icon: '💻', color: 'cyan' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'الاجتماعيات', teacher: 'أ. بدر المطيري', room: 'قاعة 102', icon: '🌍', color: 'amber' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 102', icon: '📐', color: 'blue' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 102', icon: '📖', color: 'emerald' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 102', icon: '🕌', color: 'amber' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'الحاسوب وتقنية المعلومات', teacher: 'أ. أدم المنصوري', room: 'معمل الحاسب', icon: '💻', color: 'cyan' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'الدراسات الاجتماعية', teacher: 'أ. وليد المصراتي', room: 'قاعة 102', icon: '🌍', color: 'amber' }
       ]
     },
     {
       dayName: 'الخميس',
       dayIndex: 4,
       periods: [
-        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. أحمد الغامدي', room: 'قاعة 102', icon: '📐', color: 'blue' },
-        { periodNumber: 2, time: '08:20 - 09:05', subject: 'الدراسات الإسلامية', teacher: 'أ. فيصل الدوسري', room: 'قاعة 102', icon: '🕌', color: 'amber' },
-        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. عبدالله السعيد', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
-        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة الإنجليزية', teacher: 'أ. طارق الزهراني', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
-        { periodNumber: 5, time: '11:15 - 12:00', subject: 'النشاط الطلابي', teacher: 'رائد النشاط', room: 'مسرح المدرسة', icon: '🌟', color: 'amber' },
-        { periodNumber: 6, time: '12:05 - 12:50', subject: 'لغتي الجميلة', teacher: 'أ. محمد الشهري', room: 'قاعة 102', icon: '📖', color: 'emerald' }
+        { periodNumber: 1, time: '07:30 - 08:15', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', room: 'قاعة 102', icon: '📐', color: 'blue' },
+        { periodNumber: 2, time: '08:20 - 09:05', subject: 'التربية الإسلامية', teacher: 'أ. محمود السويحلي', room: 'قاعة 102', icon: '🕌', color: 'amber' },
+        { periodNumber: 3, time: '09:10 - 09:55', subject: 'العلوم الطبيعية', teacher: 'أ. مريم الترهوني', room: 'معمل العلوم', icon: '🔬', color: 'purple' },
+        { periodNumber: 4, time: '10:25 - 11:10', subject: 'اللغة الإنجليزية', teacher: 'أ. فاطمة الزوي', room: 'معمل اللغات', icon: '🌐', color: 'indigo' },
+        { periodNumber: 5, time: '11:15 - 12:00', subject: 'النشاط المدرسي', teacher: 'رائد النشاط', room: 'مسرح المدرسة', icon: '🌟', color: 'amber' },
+        { periodNumber: 6, time: '12:05 - 12:50', subject: 'اللغة العربية', teacher: 'أ. عبدالسلام الورفلي', room: 'قاعة 102', icon: '📖', color: 'emerald' }
       ]
     }
   ]

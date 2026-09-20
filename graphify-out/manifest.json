@@ -104,8 +104,8 @@
   "server_db.json": {
     "mtime": 1789561175.1054547,
     "seen": 1789561539.0254,
-    "ast_hash": "43bca8763dad107549d696cc4d7ef25a",
-    "semantic_hash": "43bca8763dad107549d696cc4d7ef25a"
+    "ast_hash": "",
+    "semantic_hash": ""
   },
   "src/App.tsx": {
     "mtime": 1789658408.5924697,
@@ -180,10 +180,10 @@
     "semantic_hash": "2c6660abe925070061e46b98e75dd928"
   },
   "src/components/admin/SmartExcelStudentImporter.tsx": {
-    "mtime": 1789561175.1267197,
-    "seen": 1789561539.0254,
-    "ast_hash": "007d2e485d20b2cf47c2678325fff778",
-    "semantic_hash": "007d2e485d20b2cf47c2678325fff778"
+    "mtime": 1789947381.631038,
+    "seen": 1789947673.456771,
+    "ast_hash": "9380cb316040ea147fd95b93e674eefe",
+    "semantic_hash": "9380cb316040ea147fd95b93e674eefe"
   },
   "src/components/admin/StudentExcelManager.tsx": {
     "mtime": 1789561175.1307094,
@@ -462,10 +462,10 @@
     "semantic_hash": "1a755b6cb4d031ee42e025383f8fb3a3"
   },
   "src/components/ui/BehaviorPointsModal.tsx": {
-    "mtime": 1789561175.1913557,
-    "seen": 1789561539.0254,
-    "ast_hash": "75612f6da972cd340c2b37108ad7409b",
-    "semantic_hash": "75612f6da972cd340c2b37108ad7409b"
+    "mtime": 1789947439.607273,
+    "seen": 1789947673.4867668,
+    "ast_hash": "a1ca80a4a7c5e58ee1bb74e2b118cafe",
+    "semantic_hash": "a1ca80a4a7c5e58ee1bb74e2b118cafe"
   },
   "src/components/ui/Button.tsx": {
     "mtime": 1789561175.1923532,
@@ -480,10 +480,10 @@
     "semantic_hash": "b1e0d94fd0623ba3e23648b8ad5fa7f8"
   },
   "src/components/ui/CertificateModal.tsx": {
-    "mtime": 1789561175.1937635,
-    "seen": 1789561539.0254,
-    "ast_hash": "377c551331f7288827194753949cdedd",
-    "semantic_hash": "377c551331f7288827194753949cdedd"
+    "mtime": 1789947402.1796615,
+    "seen": 1789947673.4867668,
+    "ast_hash": "e5970949a4e34d34fcc5475b3a8fdcc4",
+    "semantic_hash": "e5970949a4e34d34fcc5475b3a8fdcc4"
   },
   "src/components/ui/CollapsibleSection.tsx": {
     "mtime": 1789561175.1947622,
@@ -576,10 +576,10 @@
     "semantic_hash": "7cb7df33aff747876c79c9ca0d8abb66"
   },
   "src/pages/admin/DatabaseStudio.tsx": {
-    "mtime": 1789561175.229067,
-    "seen": 1789561539.0254,
-    "ast_hash": "ab14df0bd02fb26a3a23616ffd5f5a26",
-    "semantic_hash": "ab14df0bd02fb26a3a23616ffd5f5a26"
+    "mtime": 1789947481.0944,
+    "seen": 1789947673.4968016,
+    "ast_hash": "7a3adc4c90c8d0627452d1969d4fdcdf",
+    "semantic_hash": "7a3adc4c90c8d0627452d1969d4fdcdf"
   },
   "src/pages/admin/StaffManagementPage.tsx": {
     "mtime": 1789561175.2301025,
@@ -606,10 +606,10 @@
     "semantic_hash": "8283a398b34235efa5a60b7787af0cd7"
   },
   "src/pages/auth/LinkStudent.tsx": {
-    "mtime": 1789561175.2365193,
-    "seen": 1789561539.0254,
-    "ast_hash": "77ad529f409831c7c8764f58a77df9fd",
-    "semantic_hash": "77ad529f409831c7c8764f58a77df9fd"
+    "mtime": 1789947360.2393725,
+    "seen": 1789947673.4968016,
+    "ast_hash": "e5d2ed302bbdf542a26dabfd6a594de5",
+    "semantic_hash": "e5d2ed302bbdf542a26dabfd6a594de5"
   },
   "src/pages/auth/Login.tsx": {
     "mtime": 1789858278.6213167,
@@ -618,16 +618,16 @@
     "semantic_hash": "a96f9fa1aa8bd6213f78062696fc7965"
   },
   "src/pages/auth/ParentSignUp.tsx": {
-    "mtime": 1789561175.2389197,
-    "seen": 1789561539.0254,
-    "ast_hash": "dac5b4dbd0d4ed1f0fea439bb3d24c2c",
-    "semantic_hash": "dac5b4dbd0d4ed1f0fea439bb3d24c2c"
+    "mtime": 1789947371.0937092,
+    "seen": 1789947673.4968016,
+    "ast_hash": "80a6cf43393ba41a74a938b0407bd805",
+    "semantic_hash": "80a6cf43393ba41a74a938b0407bd805"
   },
   "src/pages/chat/ParentTeacherChat.tsx": {
-    "mtime": 1789561175.240491,
-    "seen": 1789561539.0254,
-    "ast_hash": "b2062136900aa053cfcf3351c75d6f65",
-    "semantic_hash": "b2062136900aa053cfcf3351c75d6f65"
+    "mtime": 1789947468.2550044,
+    "seen": 1789947673.4968016,
+    "ast_hash": "34e72555be9739660b6c2c8a2a30ec93",
+    "semantic_hash": "34e72555be9739660b6c2c8a2a30ec93"
   },
   "src/pages/counselor/SocialCounselorDashboard.tsx": {
     "mtime": 1789858666.1695316,
@@ -684,10 +684,10 @@
     "semantic_hash": "256ec4f2b168ad06dc23593860f99406"
   },
   "src/pages/reports/DailyReport.tsx": {
-    "mtime": 1789561175.2577207,
-    "seen": 1789561539.0254,
-    "ast_hash": "37217f1fad7038bef19b3f5722143d4b",
-    "semantic_hash": "37217f1fad7038bef19b3f5722143d4b"
+    "mtime": 1789947457.1788597,
+    "seen": 1789947673.5018137,
+    "ast_hash": "baa2dc54d7570d2f21d9615542e75927",
+    "semantic_hash": "baa2dc54d7570d2f21d9615542e75927"
   },
   "src/pages/schedule/SchedulePage.tsx": {
     "mtime": 1789561175.2587178,
@@ -762,10 +762,10 @@
     "semantic_hash": "a8fd3f3cddf4780ef3f22a28e2d69deb"
   },
   "src/services/db.ts": {
-    "mtime": 1789561175.2771177,
-    "seen": 1789561539.0254,
-    "ast_hash": "16e087dea9cc90420de9ffd9264e73c1",
-    "semantic_hash": "16e087dea9cc90420de9ffd9264e73c1"
+    "mtime": 1789947331.7143483,
+    "seen": 1789947673.5118716,
+    "ast_hash": "33c632f3be38582c4106559380673c89",
+    "semantic_hash": "33c632f3be38582c4106559380673c89"
   },
   "src/services/exams/examStorageService.ts": {
     "mtime": 1789561175.2798913,
@@ -810,10 +810,10 @@
     "semantic_hash": "adc6f37a22c68fca08b50c21ac28fa50"
   },
   "src/services/schedule/conflictDetector.ts": {
-    "mtime": 1789561175.2916694,
-    "seen": 1789561539.0254,
-    "ast_hash": "4377d99203fb0fdb8961eb3403fa0c79",
-    "semantic_hash": "4377d99203fb0fdb8961eb3403fa0c79"
+    "mtime": 1789947506.1635945,
+    "seen": 1789947673.5174906,
+    "ast_hash": "21cf6d1539620ee547772c81bd2a066e",
+    "semantic_hash": "21cf6d1539620ee547772c81bd2a066e"
   },
   "src/services/schedule/timetableAiGenerator.ts": {
     "mtime": 1789561175.2926652,
@@ -882,10 +882,10 @@
     "semantic_hash": "aba50337f2124d3dafed23f2a5b0cd80"
   },
   "src/utils/excelHelper.ts": {
-    "mtime": 1789561175.3068767,
-    "seen": 1789561539.0254,
-    "ast_hash": "75e828abac29bc619258d23468a708b9",
-    "semantic_hash": "75e828abac29bc619258d23468a708b9"
+    "mtime": 1789947391.8738148,
+    "seen": 1789947673.5230052,
+    "ast_hash": "86082d25c1173ddba54a0c47895301b2",
+    "semantic_hash": "86082d25c1173ddba54a0c47895301b2"
   },
   "src/utils/inviteMessageHelper.ts": {
     "mtime": 1789562755.9417925,
