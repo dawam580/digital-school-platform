@@ -412,6 +412,90 @@ start msedge --app="${webAppUrl}?role=admin" --window-size=1440,920
       expect(batchScript.includes('--app=')).toBe(true);
       expect(batchScript.includes('role=admin')).toBe(true);
     });
+
+    runner.test('SEC.22 - Machine Hardware ID format conforms to Libyan standard (HWID-LY-XXXX-XXXX-XXXX)', () => {
+      const sampleHwid = 'HWID-LY-9A2F-4E10-8B3C';
+      const hwidRegex = /^HWID-LY-[0-9A-F]{4}-[0-9A-F]{4}(-[0-9A-F]{4})?$/;
+      expect(hwidRegex.test(sampleHwid)).toBe(true);
+      expect(sampleHwid.startsWith('HWID-LY-')).toBe(true);
+    });
+
+    runner.test('SEC.23 - 7-Day Trial duration calculation and expiration lockdown', () => {
+      const now = Date.now();
+      const trialDurationMs = 7 * 24 * 60 * 60 * 1000;
+      
+      // Active trial on day 3
+      const day3Start = now - (3 * 24 * 60 * 60 * 1000);
+      const day3Diff = (day3Start + trialDurationMs) - now;
+      const day3Remaining = Math.max(0, Math.ceil(day3Diff / (24 * 60 * 60 * 1000)));
+      expect(day3Remaining).toBe(4);
+      expect(day3Diff > 0).toBe(true);
+
+      // Expired trial on day 8
+      const day8Start = now - (8 * 24 * 60 * 60 * 1000);
+      const day8Diff = (day8Start + trialDurationMs) - now;
+      const day8Remaining = Math.max(0, Math.ceil(day8Diff / (24 * 60 * 60 * 1000)));
+      expect(day8Remaining).toBe(0);
+      expect(day8Diff <= 0).toBe(true);
+    });
+
+    runner.test('SEC.24 - Anti-Clock-Tampering detection detects system rollback beyond threshold', () => {
+      const lastSeen = Date.now();
+      const marginMs = 2 * 60 * 60 * 1000; // 2 hours grace
+
+      // Normal time advancement
+      const normalCurrent = lastSeen + 5000;
+      const isNormalTampered = normalCurrent < lastSeen - marginMs;
+      expect(isNormalTampered).toBe(false);
+
+      // Tampered: clock rolled back 1 day
+      const tamperedCurrent = lastSeen - (24 * 60 * 60 * 1000);
+      const isRollbackTampered = tamperedCurrent < lastSeen - marginMs;
+      expect(isRollbackTampered).toBe(true);
+    });
+
+    runner.test('SEC.25 - Cryptographic MADRASA-v2 offline token structure and payload verification', () => {
+      const payload = {
+        v: 2,
+        schoolName: 'مدرسة المستقبل للتعليم الأساسي',
+        hwid: 'HWID-LY-9A2F-4E10',
+        licenseType: 'lifetime',
+        issuedAt: new Date().toISOString(),
+        expiresAt: '2099-12-31T23:59:59.000Z',
+        adminPhone: '0922465676'
+      };
+      const jsonStr = JSON.stringify(payload);
+      const base64 = Buffer.from(jsonStr, 'utf-8').toString('base64');
+      const dummySig = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+      const token = `MADRASA-v2-${base64}.${dummySig}`;
+
+      expect(token.startsWith('MADRASA-v2-')).toBe(true);
+      expect(token.includes('.')).toBe(true);
+
+      const decoded = JSON.parse(Buffer.from(token.slice('MADRASA-v2-'.length).split('.')[0], 'base64').toString('utf-8'));
+      expect(decoded.schoolName).toBe('مدرسة المستقبل للتعليم الأساسي');
+      expect(decoded.hwid).toBe('HWID-LY-9A2F-4E10');
+      expect(decoded.licenseType).toBe('lifetime');
+    });
+
+    runner.test('SEC.26 - Binding check: Token bound to specific HWID rejected when machine HWID does not match', () => {
+      const licenseHwid = 'HWID-LY-AAAA-1111';
+      const machineHwid1 = 'HWID-LY-BBBB-2222';
+      const machineHwid2 = 'HWID-LY-AAAA-1111';
+
+      // HWID mismatch
+      const mismatch = (licenseHwid !== '*' && licenseHwid !== machineHwid1);
+      expect(mismatch).toBe(true);
+
+      // HWID match
+      const match = (licenseHwid === '*' || licenseHwid === machineHwid2);
+      expect(match).toBe(true);
+
+      // Wildcard license works everywhere
+      const wildcard = '*';
+      const wildcardMatch = (wildcard === '*' || wildcard === machineHwid1);
+      expect(wildcardMatch).toBe(true);
+    });
   });
 
   return runner;

@@ -6,6 +6,7 @@
  */
 
 import { SchoolLicenseDoc, LicenseVerificationResult, SubscriptionStatus, RenewalRequest } from './licenseTypes';
+import { CryptoLicenseHelper, SignedLicenseToken } from './cryptoHelper';
 
 export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDSR-Wu-95GoJ_Y63gHGy4IWpbtMvqCNYk",
@@ -112,6 +113,87 @@ export class LicenseService {
       ...DEFAULT_INITIAL_LICENSE,
       license_key: key
     };
+
+    // 0. Clock Tampering Guard (حماية من التلاعب بساعة الويندوز)
+    const clockCheck = CryptoLicenseHelper.checkClockTampering();
+    if (clockCheck.tampered) {
+      return {
+        isValid: false,
+        status: 'suspended',
+        schoolName: cached.school_name,
+        licenseKey: key,
+        daysRemaining: 0,
+        isOfflineGrace: true,
+        offlineDaysRemaining: 0,
+        errorMessage: clockCheck.reason || 'تم اكتشاف تراجع في تاريخ أو ساعة جهاز الكمبيوتر لحماية المنظومة.',
+        licenseDoc: cached
+      };
+    }
+
+    // 1. Check Cryptographically Signed Hardware-Bound Token (MADRASA-v2-)
+    if (key.startsWith('MADRASA-V2-') || key.startsWith('MADRASA-v2-')) {
+      const vResult = CryptoLicenseHelper.verifyLicenseToken(key);
+      if (!vResult.isValid || !vResult.payload) {
+        return {
+          isValid: false,
+          status: 'expired',
+          schoolName: vResult.payload?.schoolName || cached.school_name,
+          licenseKey: key,
+          daysRemaining: 0,
+          isOfflineGrace: true,
+          offlineDaysRemaining: 0,
+          errorMessage: vResult.errorMessage || 'مفتاح الترخيص المشفر غير صالح أو منتهي.',
+          licenseDoc: cached
+        };
+      }
+      const payload = vResult.payload;
+      const expiresMs = new Date(payload.expiresAt).getTime();
+      const isStillValid = Date.now() <= expiresMs;
+      const daysRemaining = Math.max(0, Math.ceil((expiresMs - Date.now()) / (1000 * 60 * 60 * 24)));
+      return {
+        isValid: isStillValid,
+        status: isStillValid ? 'active' : 'expired',
+        schoolName: payload.schoolName,
+        licenseKey: key,
+        daysRemaining,
+        isOfflineGrace: true,
+        offlineDaysRemaining: daysRemaining,
+        errorMessage: isStillValid ? undefined : `انتهت صلاحية الترخيص المعتمد بتاريخ ${new Date(payload.expiresAt).toLocaleDateString('ar-LY')}.`,
+        licenseDoc: {
+          license_key: key,
+          school_name: payload.schoolName,
+          subscription_status: isStillValid ? 'active' : 'expired',
+          trial_ends_at: payload.expiresAt,
+          subscription_ends_at: payload.expiresAt,
+          created_at: payload.issuedAt,
+          admin_phone: payload.adminPhone || '',
+          notes: `ترخيص مشفر (${payload.licenseType}) مقيد بالبصمة ${payload.hwid}`,
+          offline_grace_allowed_days: 365,
+          last_verified_at: new Date().toISOString()
+        }
+      };
+    }
+
+    // 2. Check 7-day hardware trial for trial status
+    if (cached.subscription_status === 'trial') {
+      const trial = CryptoLicenseHelper.getTrialStatus();
+      if (!trial.isTrialActive) {
+        return {
+          isValid: false,
+          status: 'expired',
+          schoolName: cached.school_name,
+          licenseKey: key,
+          daysRemaining: 0,
+          isOfflineGrace: true,
+          offlineDaysRemaining: 0,
+          errorMessage: 'انتهت الفترة التجريبية المجانية (7 أيام). يرجى التواصل مع الإدارة للحصول على مفتاح التفعيل الدائم لمنظومتكم.',
+          licenseDoc: {
+            ...cached,
+            subscription_status: 'expired'
+          }
+        };
+      }
+    }
 
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
 
@@ -670,5 +752,77 @@ export class LicenseService {
       list.push(doc);
     }
     this.saveAdminRegisteredSchools(list);
+  }
+
+  /**
+   * تفعيل ترخيص مشفر وموقع رقمياً غير متصل بالإنترنت (Offline Hardware-Bound Activation)
+   */
+  static activateOfflineToken(token: string): { success: boolean; schoolName?: string; expiresAt?: string; error?: string } {
+    const clean = token.trim();
+    const res = CryptoLicenseHelper.verifyLicenseToken(clean);
+    if (!res.isValid || !res.payload) {
+      return { success: false, error: res.errorMessage || 'مفتاح الترخيص المشفر غير صالح.' };
+    }
+    this.setActiveLicenseKey(clean);
+    const doc: SchoolLicenseDoc = {
+      license_key: clean,
+      school_name: res.payload.schoolName,
+      subscription_status: 'active',
+      trial_ends_at: res.payload.expiresAt,
+      subscription_ends_at: res.payload.expiresAt,
+      created_at: res.payload.issuedAt,
+      admin_phone: res.payload.adminPhone || '',
+      notes: `ترخيص مشفر (${res.payload.licenseType}) مقيد بالبصمة ${res.payload.hwid}`,
+      offline_grace_allowed_days: 365,
+      last_verified_at: new Date().toISOString()
+    };
+    this.setCachedLicense(doc);
+    this.syncToAdminRegistry(doc);
+    return {
+      success: true,
+      schoolName: res.payload.schoolName,
+      expiresAt: res.payload.expiresAt
+    };
+  }
+
+  /**
+   * توليد ترخيص مشفر وموقع رقمياً لمدرسة محددة وبصمة جهاز (للسوبر أدمن فقط)
+   */
+  static generateOfflineLicense(params: {
+    schoolName: string;
+    hwid: string;
+    licenseType: 'lifetime' | 'annual' | 'trial_extended';
+    adminPhone?: string;
+  }): {
+    token: string;
+    formattedCard: {
+      schoolName: string;
+      hwid: string;
+      licenseTypeLabel: string;
+      token: string;
+    };
+  } {
+    const token = CryptoLicenseHelper.generateLicenseToken(
+      params.schoolName,
+      params.hwid,
+      params.licenseType,
+      params.adminPhone
+    );
+    const licenseTypeLabel =
+      params.licenseType === 'lifetime'
+        ? 'ترخيص دائم مدى الحياة (Enterprise Unlimited)'
+        : params.licenseType === 'annual'
+        ? 'ترخيص سنوي معتمد (1 Year)'
+        : 'تمديد تجريبي (14 يوماً إضافية)';
+
+    return {
+      token,
+      formattedCard: {
+        schoolName: params.schoolName,
+        hwid: params.hwid.toUpperCase(),
+        licenseTypeLabel,
+        token
+      }
+    };
   }
 }

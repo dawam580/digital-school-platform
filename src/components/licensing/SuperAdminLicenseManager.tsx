@@ -18,7 +18,8 @@ import {
   Send,
   CheckCircle2,
   XCircle,
-  Inbox
+  Inbox,
+  Laptop
 } from 'lucide-react';
 import { LicenseService } from '../../services/licensing/licenseService';
 import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest } from '../../services/licensing/licenseTypes';
@@ -44,6 +45,48 @@ export const SuperAdminLicenseManager: React.FC = () => {
   const [newSchoolNotes, setNewSchoolNotes] = useState('');
   const [newSchoolDays, setNewSchoolDays] = useState(14);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Offline Machine-Bound License Generator State (نمط بنيان)
+  const [genSchoolName, setGenSchoolName] = useState('');
+  const [genHwid, setGenHwid] = useState('');
+  const [genPhone, setGenPhone] = useState('');
+  const [genType, setGenType] = useState<'lifetime' | 'annual' | 'trial_extended'>('lifetime');
+  const [generatedResult, setGeneratedResult] = useState<{
+    token: string;
+    schoolName: string;
+    hwid: string;
+    typeLabel: string;
+  } | null>(null);
+
+  const handleGenerateOfflineKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!genSchoolName.trim()) {
+      alert('يرجى كتابة اسم المدرسة.');
+      return;
+    }
+    sound.playSuccess();
+    triggerConfetti();
+    const res = LicenseService.generateOfflineLicense({
+      schoolName: genSchoolName.trim(),
+      hwid: genHwid.trim() || '*',
+      licenseType: genType,
+      adminPhone: genPhone.trim()
+    });
+    setGeneratedResult({
+      token: res.token,
+      schoolName: genSchoolName.trim(),
+      hwid: genHwid.trim() || '*',
+      typeLabel: res.formattedCard.licenseTypeLabel
+    });
+    auditLogger.log({
+      actorName: 'السوبر أدمن',
+      actorRole: 'superadmin',
+      action: 'LICENSE_GENERATED',
+      entity: 'Licensing',
+      details: `توليد مفتاح مشفر (${res.formattedCard.licenseTypeLabel}) لمدرسة: ${genSchoolName.trim()}`,
+      severity: 'WARN'
+    });
+  };
 
   useEffect(() => {
     loadSchools();
@@ -196,6 +239,140 @@ export const SuperAdminLicenseManager: React.FC = () => {
           <Plus className="w-4 h-4" />
           <span>تسجيل مدرسة جديدة وتوليد ترخيص ➕</span>
         </button>
+      </div>
+
+      {/* Offline Hardware-Bound Cryptographic License Generator (نمط بنيان) */}
+      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl border border-indigo-500/30 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-indigo-800/60 pb-3">
+          <div>
+            <h2 className="text-base font-black flex items-center gap-2 text-white">
+              <Laptop className="w-5 h-5 text-indigo-400" />
+              <span>مولد التراخيص المشفرة المقيدة ببصمة الجهاز (Offline Hardware License Generator)</span>
+            </h2>
+            <p className="text-xs text-indigo-200/80 mt-0.5">
+              توليد مفتاح ترخيص مشفر وموقع رقمياً (SHA-256) يربط المنظومة بجهاز كمبيوتر الزبون حصراً ويعمل بدون إنترنت 100%.
+            </p>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-[11px] font-bold text-indigo-300 shrink-0">
+            نموذج بنيان المعتمد 🔐
+          </span>
+        </div>
+
+        <form onSubmit={handleGenerateOfflineKey} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div>
+            <label className="block text-[11px] font-bold text-indigo-200 mb-1">اسم المدرسة الجديدة *</label>
+            <input
+              type="text"
+              required
+              value={genSchoolName}
+              onChange={e => setGenSchoolName(e.target.value)}
+              placeholder="مثال: مدرسة المستقبل الخاصة"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-indigo-200 mb-1">
+              كود بصمة جهاز العميل (HWID)
+            </label>
+            <input
+              type="text"
+              value={genHwid}
+              onChange={e => setGenHwid(e.target.value)}
+              placeholder="HWID-LY-XXXX-XXXX أو اترك فارغاً لترخيص عام (*)"
+              dir="ltr"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs font-mono text-emerald-400 placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-indigo-200 mb-1">نوع الترخيص الممنوح</label>
+            <select
+              value={genType}
+              onChange={e => setGenType(e.target.value as any)}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs text-white focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+            >
+              <option value="lifetime">مدى الحياة دائم (Lifetime Unlimited)</option>
+              <option value="annual">سنوي كامل (1 Year - للعام 2026)</option>
+              <option value="trial_extended">تمديد تجريبي إضافي (14 يوماً)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-indigo-200 mb-1">هاتف المدير (لإرسال المفتاح)</label>
+            <div className="flex gap-2">
+              <input
+                type="tel"
+                value={genPhone}
+                onChange={e => setGenPhone(e.target.value)}
+                placeholder="09xxxxxxxx"
+                dir="ltr"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-black shadow-lg transition active:scale-95 shrink-0 flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>توليد ⚡</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {/* Generated Result Card */}
+        {generatedResult && (
+          <div className="p-4 rounded-2xl bg-slate-950 border border-emerald-500/40 space-y-2.5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs font-black text-emerald-300">
+                  تم توليد مفتاح الترخيص المشفر لمدرسة ({generatedResult.schoolName}) بنجاح!
+                </span>
+                <span className="text-[10px] text-slate-400">({generatedResult.typeLabel})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleCopy(generatedResult.token)}
+                  className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1 transition shrink-0"
+                >
+                  {copiedKey === generatedResult.token ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-300" />
+                      <span>تم النسخ!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>نسخ المفتاح</span>
+                    </>
+                  )}
+                </button>
+                {genPhone && (
+                  <a
+                    href={`https://wa.me/${genPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                      `السلام عليكم مدير مدرسة ${generatedResult.schoolName}،\nتم اعتماد وترخيص منظومتكم المدرسية بنجاح 🎓\n\n🔑 مفتاح الترخيص المعتمد الخاص بكم:\n${generatedResult.token}\n\nنوع الترخيص: ${generatedResult.typeLabel}\n\nيرجى فتح المنظومة على حاسوبكم ولصق المفتاح في خانة التفعيل للبدء الفوري.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition shrink-0"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>إرسال عبر واتساب 💬</span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-black/60 border border-slate-800">
+              <p className="text-[10px] text-slate-400 mb-1">كود الترخيص المشفر (MADRASA-v2 Token):</p>
+              <code className="text-xs font-mono text-emerald-400 select-all break-all" dir="ltr">
+                {generatedResult.token}
+              </code>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Renewal Requests Inbox (طلبات التجديد المعلقة) */}
