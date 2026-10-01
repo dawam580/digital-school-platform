@@ -113,7 +113,9 @@ export class LicenseService {
         hostname === '127.0.0.1' ||
         hostname === '0.0.0.0' ||
         hostname === '::1' ||
-        hostname.endsWith('.local')
+        hostname.endsWith('.local') ||
+        hostname.includes('dawam580.github.io') ||
+        hostname.includes('github.io')
       ) {
         return true;
       }
