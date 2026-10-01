@@ -138,6 +138,7 @@ export const Login: React.FC = () => {
     setLoading(true);
     setErrorMessage('');
     try {
+      localStorage.setItem('madrasa_developer_mode', 'true');
       AuthEngine.clearAttempts('0912345678');
       AuthEngine.clearAttempts('0922465676');
       SecurityEngine.resetDirectorPinLockout();

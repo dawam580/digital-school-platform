@@ -39,7 +39,12 @@ export function initDesktopPersistence(): void {
     const storedHasData = Object.keys(stored).some(k => k.startsWith('madrasa_db_') || k === 'madrasa_school_profile_v1');
     if (!localHasData && storedHasData) {
       for (const [k, v] of Object.entries(stored)) {
-        try { localStorage.setItem(k, v); } catch {}
+        try {
+          if (k === 'madrasa_school_profile_v1' && (v.includes('الأندلس') || v.includes('Andalus'))) {
+            continue;
+          }
+          localStorage.setItem(k, v);
+        } catch {}
       }
     }
   } catch {}

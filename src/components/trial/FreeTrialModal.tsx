@@ -37,12 +37,12 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   // Form State
-  const [schoolName, setSchoolName] = useState('مدرسة الأندلس النموذجية للتعليم الأساسي');
+  const [schoolName, setSchoolName] = useState('');
   const [city, setCity] = useState('طرابلس');
   const [studentCount, setStudentCount] = useState('300 - 600 طالب');
   const [isInternational, setIsInternational] = useState(false);
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('طرابلس - حي الأندلس، بالقرب من مجمع المدارس');
+  const [address, setAddress] = useState('');
   const [username, setUsername] = useState('مدير_المدرسة');
   const [password, setPassword] = useState('123456');
   const [seedRichData, setSeedRichData] = useState(true);
@@ -348,7 +348,7 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
                       type="text"
                       value={address}
                       onChange={e => setAddress(e.target.value)}
-                      placeholder="طرابلس - حي الأندلس"
+                      placeholder="مثال: طرابلس - النوفليين"
                       className="w-full px-4 py-3 pr-10 text-sm rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                     <MapPin className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />

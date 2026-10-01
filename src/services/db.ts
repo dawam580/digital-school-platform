@@ -45,10 +45,51 @@ export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
   isCustom: false
 };
 
+export const purgeResidualTrialData = (): void => {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.removeItem(STORAGE_KEY_SCHOOL_PROFILE);
+    localStorage.removeItem('madrasa_active_license_key');
+    localStorage.removeItem('madrasa_cached_license_doc_v1');
+    localStorage.removeItem('madrasa_trial_start_timestamp_v2');
+    localStorage.removeItem('madrasa_trial_seal_a_v2');
+    localStorage.removeItem('madrasa_trial_seal_b_v2');
+    localStorage.removeItem('madrasa_clock_guard_last_seen_v2');
+    localStorage.removeItem('madrasa_trial_start_ms');
+    localStorage.removeItem('madrasa_trial_start_mirror_a');
+    localStorage.removeItem('madrasa_trial_start_mirror_b');
+    localStorage.removeItem('madrasa_device_trial_seal_v1');
+
+    // تنظيف قائمة المدارس المحفوظة إن وُجدت مدرسة الأندلس التجريبية
+    const saved = localStorage.getItem(STORAGE_KEY_SAVED_SCHOOLS);
+    if (saved) {
+      try {
+        const list: SchoolProfile[] = JSON.parse(saved);
+        if (Array.isArray(list)) {
+          const cleaned = list.filter(s => !s.name?.includes('الأندلس') && !s.name?.includes('Andalus'));
+          if (cleaned.length > 0) {
+            localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(cleaned));
+          } else {
+            localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify([DEFAULT_SCHOOL_PROFILE]));
+          }
+        }
+      } catch {}
+    }
+  } catch {}
+};
+
 export const getSchoolProfile = (): SchoolProfile => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY_SCHOOL_PROFILE);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed: SchoolProfile = JSON.parse(saved);
+      // تطهير ذاتي فوري: إزالة أي بقايا لمدرسة الأندلس التجريبية واستعادة المنظومة الأصلية للمطور
+      if (parsed.name && (parsed.name.includes('الأندلس') || parsed.name.includes('Andalus'))) {
+        purgeResidualTrialData();
+        return DEFAULT_SCHOOL_PROFILE;
+      }
+      return parsed;
+    }
   } catch {}
   return DEFAULT_SCHOOL_PROFILE;
 };

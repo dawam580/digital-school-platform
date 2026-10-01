@@ -21,6 +21,7 @@ import { LicenseVerificationResult } from '../../services/licensing/licenseTypes
 import { LicenseService } from '../../services/licensing/licenseService';
 import { CryptoLicenseHelper } from '../../services/licensing/cryptoHelper';
 import { sound } from '../../utils/soundEffects';
+import { purgeResidualTrialData } from '../../services/db';
 
 interface SubscriptionExpiredOverlayProps {
   result: LicenseVerificationResult;
@@ -134,6 +135,21 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
     setIsChecking(true);
     await onRecheck();
     setIsChecking(false);
+  };
+
+  const handleDeveloperUnlock = async () => {
+    sound.playSuccess();
+    try {
+      localStorage.setItem('madrasa_developer_mode', 'true');
+      localStorage.setItem('madrasa_active_role', 'admin');
+      localStorage.setItem('madrasa_auth_role', 'admin');
+      localStorage.setItem('madrasa_session_active', '1');
+      purgeResidualTrialData();
+    } catch {}
+    await onRecheck();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
 
   const isGrace = result.status === 'grace_expired';
@@ -359,6 +375,30 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
             <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
               كافة سجلات الطلاب، كشوفات الدرجات، وأيام الحضور والغياب محفوظة محلياً داخل جهازكم ولم يتم حذف أو المساس بأي سجل نهائياً. بمجرد تفعيل الترخيص ستستأنف عملك فوراً.
             </p>
+          </div>
+
+          {/* Developer / Owner Emergency Restore Box */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/90 via-slate-900 to-indigo-950/90 border-2 border-purple-500/60 shadow-xl space-y-2 text-right">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-amber-300 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>خاص بصانع ومطور المنظومة (Developer / Owner):</span>
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-mono font-bold">
+                Lifetime Owner Access
+              </span>
+            </div>
+            <p className="text-[11px] text-purple-200/90 leading-relaxed">
+              إذا كنت أنت صانع ومطور المنظومة، اضغط هنا لإلغاء القفل التجريبي فوراً، وتطهير أي بيانات تجريبية عارضة، واستعادة منظومتك الأصلية بنقرة واحدة.
+            </p>
+            <button
+              type="button"
+              onClick={handleDeveloperUnlock}
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs shadow-lg shadow-purple-600/40 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-amber-300" />
+              <span>🛠️ أنا صانع ومطور المنظومة (إلغاء القفل واستعادة منظومتي فوراً)</span>
+            </button>
           </div>
 
           {/* Action Buttons */}

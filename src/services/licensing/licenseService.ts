@@ -96,12 +96,65 @@ export class LicenseService {
   }
 
   /**
+   * فحص ما إذا كانت البيئة الحالية هي بيئة المطور أو المالك أو بيئة التطوير المحلية
+   * المطور والمالك يملكان ترخيصاً نشطاً دائماً ولا تخضع بيئتهما لقفل الفترة التجريبية إطلاقاً.
+   */
+  static isDeveloperOrOwnerEnvironment(): boolean {
+    if (typeof window === 'undefined') return false;
+
+    // 1. جهاز المورّد عبر Electron
+    if (window.electronAPI?.isVendorMachine?.() === true) return true;
+
+    // 2. بيئة التطوير المحلية (Localhost / 127.0.0.1 / Dev Server)
+    try {
+      const hostname = window.location.hostname;
+      if (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname === '0.0.0.0' ||
+        hostname === '::1' ||
+        hostname.endsWith('.local')
+      ) {
+        return true;
+      }
+    } catch {}
+
+    // 3. وضع التطوير Vite DEV
+    if (import.meta.env.DEV) return true;
+
+    // 4. علم وضع المطور / المالك المخزن محلياً أو بالرابط
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('developer') === 'true' || url.searchParams.get('owner') === 'true') {
+        localStorage.setItem('madrasa_developer_mode', 'true');
+        return true;
+      }
+      if (localStorage.getItem('madrasa_developer_mode') === 'true') {
+        return true;
+      }
+      const activeKey = localStorage.getItem(STORAGE_KEYS.ACTIVE_LICENSE_KEY);
+      if (activeKey === 'DEVELOPER-LIFETIME-KEY' || activeKey === 'VENDOR-MACHINE') {
+        return true;
+      }
+    } catch {}
+
+    return false;
+  }
+
+  /**
    * جلب الوثيقة المخزنة محلياً في الـ Cache
    */
   static getCachedLicense(): SchoolLicenseDoc | null {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.CACHED_LICENSE_DOC);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.school_name && (parsed.school_name.includes('الأندلس') || parsed.school_name.includes('Andalus'))) {
+          localStorage.removeItem(STORAGE_KEYS.CACHED_LICENSE_DOC);
+          return null;
+        }
+        return parsed;
+      }
     } catch {}
     return null;
   }
@@ -123,7 +176,10 @@ export class LicenseService {
       const raw = localStorage.getItem(STORAGE_KEYS.LOCAL_SCHOOLS_REGISTRY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const cleaned = parsed.filter(s => !s.school_name?.includes('الأندلس') && !s.school_name?.includes('Andalus'));
+          return cleaned.length > 0 ? cleaned : [DEFAULT_INITIAL_LICENSE];
+        }
       }
     } catch {}
     // Seed with default school
@@ -142,20 +198,32 @@ export class LicenseService {
    * فحص حالة اشتراك المدرسة (سحابياً مع دعم الـ Cache ومهلة الـ 7 أيام بدون إنترنت)
    */
   static async checkSubscription(explicitKey?: string): Promise<LicenseVerificationResult> {
-    // جهاز المورّد (يحمل مفتاح التوقيع الخاص) لا يحتاج ترخيصاً
-    if (!explicitKey && typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true) {
-      const vendorDoc: SchoolLicenseDoc = {
-        license_key: 'VENDOR-MACHINE',
-        school_name: 'جهاز المورّد',
+    // 0. جهاز المورّد أو بيئة المطور والمالك: ترخيص دائم نشط مدى الحياة لا ينتهي أبداً
+    if (!explicitKey && this.isDeveloperOrOwnerEnvironment()) {
+      const cached = this.getCachedLicense() || DEFAULT_INITIAL_LICENSE;
+      const schoolName = (cached.school_name && !cached.school_name.includes('الأندلس'))
+        ? cached.school_name
+        : 'منظومة المدرسة الرقمية للتعليم الأساسي';
+      const devDoc: SchoolLicenseDoc = {
+        license_key: 'DEVELOPER-LIFETIME-KEY',
+        school_name: schoolName,
         subscription_status: 'active',
         trial_ends_at: '2099-12-31T23:59:59.000Z',
         subscription_ends_at: '2099-12-31T23:59:59.000Z',
         created_at: new Date().toISOString(),
-        notes: 'جهاز المورّد المعتمد',
+        notes: 'ترخيص المطور والمالك المعتمد (مدى الحياة)',
+        offline_grace_allowed_days: 36500,
+        last_verified_at: new Date().toISOString()
       };
       return {
-        isValid: true, status: 'active', schoolName: vendorDoc.school_name, licenseKey: vendorDoc.license_key,
-        daysRemaining: 36500, isOfflineGrace: false, offlineDaysRemaining: 36500, licenseDoc: vendorDoc
+        isValid: true,
+        status: 'active',
+        schoolName: devDoc.school_name,
+        licenseKey: devDoc.license_key,
+        daysRemaining: 36500,
+        isOfflineGrace: false,
+        offlineDaysRemaining: 36500,
+        licenseDoc: devDoc
       };
     }
     const rawKey = (explicitKey || this.getActiveLicenseKey() || DEFAULT_INITIAL_LICENSE.license_key).trim();

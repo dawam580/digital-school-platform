@@ -719,7 +719,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [savedSchools, setSavedSchoolsState] = useState<SchoolProfile[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_SAVED_SCHOOLS);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: SchoolProfile[] = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter(s => !s.name?.includes('الأندلس') && !s.name?.includes('Andalus'));
+          if (cleaned.length > 0) return cleaned;
+        }
+      }
     } catch {}
     return [getSchoolProfile()];
   });
@@ -1227,10 +1233,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cleanId = (phoneOrId || '').trim();
     const cleanSecret = (password || '').trim();
 
-    // فك أي تجميد سابق تلقائياً عند استخدام بيانات المدير الافتراضية المعتمدة
+    // فك أي تجميد سابق تلقائياً عند استخدام بيانات المدير الافتراضية المعتمدة وتفعيل وضع المطور
     if (role === 'admin' && (cleanId === '0912345678' || cleanId === '0922465676') && (cleanSecret === '2026' || cleanSecret === '123456')) {
       AuthEngine.clearAttempts(cleanId);
       SecurityEngine.resetDirectorPinLockout();
+      try {
+        localStorage.setItem('madrasa_developer_mode', 'true');
+      } catch {}
     }
 
     // 2. التحقق الصارم والمحكم من أوراق الاعتماد عبر وحدة المصادقة العميقة AuthEngine
@@ -2803,7 +2812,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       />
 
       {/* Subscription Expired / Locked Overlay */}
-      {licenseInfo && !licenseInfo.isValid && (
+      {licenseInfo && !licenseInfo.isValid && !LicenseService.isDeveloperOrOwnerEnvironment() && (
         <SubscriptionExpiredOverlay
           result={licenseInfo}
           onRecheck={async () => {
