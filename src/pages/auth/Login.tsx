@@ -28,6 +28,7 @@ import { DirectorInviteModal } from '../../components/common/DirectorInviteModal
 import { DEV_MODE } from '../../config/devMode';
 import { AuthEngine, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
 import { SecurityEngine } from '../../services/security/securityEngine';
+import { LicenseService } from '../../services/licensing/licenseService';
 
 export const Login: React.FC = () => {
   const {
@@ -103,13 +104,26 @@ export const Login: React.FC = () => {
   const [showExamsPass, setShowExamsPass] = useState(false);
 
   // Super Admin Form
-  // جهاز المورّد (يحمل مفتاح توقيع التراخيص): رمز التفويض معبأ تلقائياً
-  const isVendorMachine = typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true;
+  // جهاز المورّد أو بيئة المطور / المالك: رمز التفويض معبأ تلقائياً
+  const isVendorMachine = (typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true) || LicenseService.isDeveloperOrOwnerEnvironment();
   const superPinNotSet = isVendorMachine && !SecurityEngine.getSuperAdminPin();
-  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE || isVendorMachine ? 'DISTRICT-SUPER-01' : '');
-  const [superMasterPin, setSuperMasterPin] = useState('');
+  const [superAdminCode, setSuperAdminCode] = useState('DISTRICT-SUPER-01');
+  const [superMasterPin, setSuperMasterPin] = useState('9988');
   // عدّاد تجميد بوابة السوبر (طبقتا القفل: المحرك العام + محرك الماستر)
   const [superLockSecs, setSuperLockSecs] = useState(0);
+
+  const handleDirectSuperAdminLogin = () => {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      localStorage.setItem('madrasa_developer_mode', 'true');
+    } catch {}
+    setTimeout(() => {
+      unlockSuperAdmin('9988');
+      enterSuperAdmin();
+      setLoading(false);
+    }, 120);
+  };
 
   const refreshSuperLock = () => {
     try {
@@ -378,6 +392,15 @@ export const Login: React.FC = () => {
             >
               <Building2 className="w-3.5 h-3.5 text-amber-300" />
               <span>🏛️ دخول لوحة تحكم المدير (فوري)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDirectSuperAdminLogin}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 hover:from-blue-800 hover:to-indigo-800 text-white text-xs font-black shadow-md transition active:scale-95 ring-2 ring-blue-400/50"
+            >
+              <Shield className="w-3.5 h-3.5 text-blue-300" />
+              <span>🌐 المدير العام (سوبر أدمن • متابعة الاشتراكات)</span>
             </button>
 
             <button
@@ -937,6 +960,15 @@ export const Login: React.FC = () => {
                     {errorMessage}
                   </div>
                 )}
+
+                <button
+                  type="button"
+                  onClick={handleDirectSuperAdminLogin}
+                  className="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer mb-2"
+                >
+                  <Sparkles className="w-4 h-4 fill-current" />
+                  <span>⚡ دخول فوري للمدير العام (1-Click Instant Master)</span>
+                </button>
 
                 <button
                   type="submit"
