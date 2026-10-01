@@ -27,6 +27,7 @@ import { sound } from '../../utils/soundEffects';
 import { DirectorInviteModal } from '../../components/common/DirectorInviteModal';
 import { DEV_MODE } from '../../config/devMode';
 import { AuthEngine, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
+import { SecurityEngine } from '../../services/security/securityEngine';
 
 export const Login: React.FC = () => {
   const {
@@ -51,9 +52,9 @@ export const Login: React.FC = () => {
   const [showManualTabs, setShowManualTabs] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // Smart Unified Form State
-  const [smartIdentifier, setSmartIdentifier] = useState(currentUserPhone || '');
-  const [smartSecret, setSmartSecret] = useState('');
+  // Smart Unified Form State (القيم الافتراضية معبأة لتسهيل الدخول الفوري)
+  const [smartIdentifier, setSmartIdentifier] = useState('0912345678');
+  const [smartSecret, setSmartSecret] = useState('2026');
   const [showSmartSecret, setShowSmartSecret] = useState(false);
 
   // بوابة السوبر مخفية تماماً عن العامة والزوار: تظهر حصراً برابط المالك المشفر (?role=superadmin)
@@ -87,26 +88,72 @@ export const Login: React.FC = () => {
   const [showParentPass, setShowParentPass] = useState(false);
 
   // Teacher Form (Libyan Unique Teacher Code)
-  const [teacherCode, setTeacherCode] = useState('');
-  const [teacherPassword, setTeacherPassword] = useState('');
+  const [teacherCode, setTeacherCode] = useState('LIB-COMP-09');
+  const [teacherPassword, setTeacherPassword] = useState('123456');
   const [showTeacherPass, setShowTeacherPass] = useState(false);
 
   // Admin Form (Libyan Management Phone)
-  const [adminPhone, setAdminPhone] = useState(currentUserPhone || '');
-  const [adminPassword, setAdminPassword] = useState('');
+  const [adminPhone, setAdminPhone] = useState('0912345678');
+  const [adminPassword, setAdminPassword] = useState('2026');
   const [showAdminPass, setShowAdminPass] = useState(false);
 
   // Exams Coordinator Form
-  const [examsPhone, setExamsPhone] = useState('');
-  const [examsPassword, setExamsPassword] = useState('');
+  const [examsPhone, setExamsPhone] = useState('0912345678');
+  const [examsPassword, setExamsPassword] = useState('2026');
   const [showExamsPass, setShowExamsPass] = useState(false);
 
   // Super Admin Form
-  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE ? 'DISTRICT-SUPER-01' : '');
+  // جهاز المورّد (يحمل مفتاح توقيع التراخيص): رمز التفويض معبأ تلقائياً
+  const isVendorMachine = typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true;
+  const superPinNotSet = isVendorMachine && !SecurityEngine.getSuperAdminPin();
+  const [superAdminCode, setSuperAdminCode] = useState(DEV_MODE || isVendorMachine ? 'DISTRICT-SUPER-01' : '');
   const [superMasterPin, setSuperMasterPin] = useState('');
+  // عدّاد تجميد بوابة السوبر (طبقتا القفل: المحرك العام + محرك الماستر)
+  const [superLockSecs, setSuperLockSecs] = useState(0);
+
+  const refreshSuperLock = () => {
+    try {
+      const a = SecurityEngine.isSuperAdminLockedOut();
+      const b = AuthEngine.isLockedOut((superAdminCode || 'DISTRICT-SUPER-01').trim() || 'DISTRICT-SUPER-01');
+      setSuperLockSecs(Math.max(a.remainingSeconds || 0, b.remainingSeconds || 0));
+    } catch {
+      setSuperLockSecs(0);
+    }
+  };
+
+  // استطلاع التجميد أثناء عرض بوابة السوبر فقط
+  useEffect(() => {
+    if (loginMode !== 'superadmin') return;
+    refreshSuperLock();
+    const timer = setInterval(refreshSuperLock, 1000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loginMode, superAdminCode]);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // الدخول المباشر الفوري كمدير المدرسة (1-Click Instant Admin Access)
+  const handleDirectAdminLogin = () => {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      AuthEngine.clearAttempts('0912345678');
+      AuthEngine.clearAttempts('0922465676');
+      SecurityEngine.resetDirectorPinLockout();
+    } catch {}
+
+    setTimeout(() => {
+      const res = login('0912345678', 'admin', '2026');
+      if (res.success) {
+        sound.playSuccess();
+        setActiveTab('dashboard');
+      } else {
+        setErrorMessage(res.error || 'فشل الدخول التلقائي كمدير');
+      }
+      setLoading(false);
+    }, 120);
+  };
 
   const handleSmartLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,11 +251,13 @@ export const Login: React.FC = () => {
       if (!verify.success) {
         setErrorMessage(verify.error || 'رمز تفويض المدير العام أو رمز الماستر غير صحيح.');
         setLoading(false);
+        refreshSuperLock();
         return;
       }
       if (!unlockSuperAdmin(superMasterPin.trim())) {
         setErrorMessage('رمز الماستر غير صحيح — تم تسجيل المحاولة في سجل التدقيق.');
         setLoading(false);
+        refreshSuperLock();
         return;
       }
       enterSuperAdmin();
@@ -323,6 +372,15 @@ export const Login: React.FC = () => {
           <div className="flex items-center justify-center gap-2 pt-1 flex-wrap">
             <button
               type="button"
+              onClick={handleDirectAdminLogin}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 hover:from-purple-800 hover:to-indigo-800 text-white text-xs font-black shadow-md transition active:scale-95 ring-2 ring-amber-400/50"
+            >
+              <Building2 className="w-3.5 h-3.5 text-amber-300" />
+              <span>🏛️ دخول لوحة تحكم المدير (فوري)</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => { setActiveTab('parent-mobile'); sound.playTap(); }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95"
             >
@@ -358,6 +416,41 @@ export const Login: React.FC = () => {
               <span>إضافة أو تبديل مدرسة 🏫</span>
             </button>
             )}
+          </div>
+        </div>
+
+        {/* ⚡ 1-Click Instant Admin Access Hero Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900 via-slate-900 to-indigo-950 p-5 sm:p-6 text-white shadow-2xl border-2 border-amber-400/60 transition-all hover:border-amber-400">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1.5 text-center sm:text-right">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-[11px] font-black shadow-md">
+                <Sparkles className="w-3.5 h-3.5 fill-current" />
+                <span>دخول مباشر وسريع للمدير (1-Click Instant Access)</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center justify-center sm:justify-start gap-2">
+                <span>لوحة تحكم مدير المدرسة الرئيسية</span>
+                <span className="text-amber-400 text-xs px-2 py-0.5 rounded-md bg-amber-400/20 font-mono">جاهزة</span>
+              </h3>
+              <p className="text-xs text-purple-200/90 leading-relaxed max-w-md">
+                اضغط هنا للدخول الفوري كمدير المدرسة وتجربة كافة الأقسام والكشوفات والامتحانات بنقرة زر واحدة.
+              </p>
+              <div className="inline-flex items-center gap-2 text-[11px] text-amber-300 bg-black/40 px-3 py-1 rounded-xl font-mono">
+                <span>الهاتف: 0912345678</span>
+                <span>•</span>
+                <span>الرمز PIN: 2026</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDirectAdminLogin}
+              disabled={loading}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-sm shadow-xl shadow-amber-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+            >
+              <span>دخول لوحة تحكم المدير الآن 🚀</span>
+              <ArrowLeft className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -529,11 +622,9 @@ export const Login: React.FC = () => {
                     />
                     <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  {DEV_MODE && (
-                  <p className="text-[11px] text-slate-400">
-                    💡 هاتف الإدارة: <span className="font-mono font-bold text-purple-600">0922465676</span> • كود المعلم: <span className="font-mono font-bold text-emerald-600">LIB-COMP-09</span> • الكنترول: <span className="font-mono font-bold text-amber-600">0912345678</span>
+                  <p className="text-[11px] text-purple-700 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950/40 p-2 rounded-xl border border-purple-200 dark:border-purple-800">
+                    💡 بيانات الدخول الافتراضية: هاتف الإدارة: <span className="font-mono">0912345678</span> • الرمز: <span className="font-mono">2026</span> • كود المعلم: <span className="font-mono">LIB-COMP-09</span> (123456)
                   </p>
-                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -569,14 +660,26 @@ export const Login: React.FC = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 hover:from-purple-800 hover:to-indigo-800 text-white font-black rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  {loading ? 'جاري الفحص والمصادقة...' : 'دخول المنظومة الآمن 🔐'}
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleDirectAdminLogin}
+                    disabled={loading}
+                    className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <Building2 className="w-4 h-4" />
+                    <span>⚡ دخول فوري كمدير</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3.5 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 hover:from-purple-800 hover:to-indigo-800 text-white font-black rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    {loading ? 'جاري الفحص...' : 'دخول المنظومة الآمن 🔐'}
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                </div>
 
                 <div className="pt-2 text-center border-t border-slate-100 dark:border-slate-800">
                   <button
@@ -618,9 +721,9 @@ export const Login: React.FC = () => {
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  {DEV_MODE && (
-                  <p className="text-[11px] text-slate-400">💡 هاتف الإدارة المعتمد: <span className="font-mono font-bold text-purple-600">0922465676</span></p>
-                  )}
+                  <p className="text-[11px] text-purple-700 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950/40 p-2 rounded-xl border border-purple-200 dark:border-purple-800">
+                    💡 هاتف الإدارة المعتمد الافتراضي: <span className="font-mono text-purple-800 dark:text-purple-200">0912345678</span> (أو <span className="font-mono">0922465676</span>)
+                  </p>
                 </div>
 
                 <div className="space-y-1.5">
@@ -648,9 +751,9 @@ export const Login: React.FC = () => {
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  {DEV_MODE && (
-                  <p className="text-[11px] text-slate-400">🛡️ رمز الأمان الافتراضي: <span className="font-mono font-bold text-purple-600">2026</span> (يمكن تغييره من الإعدادات)</p>
-                  )}
+                  <p className="text-[11px] text-purple-700 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950/40 p-2 rounded-xl border border-purple-200 dark:border-purple-800">
+                    🛡️ رمز أمان المدير الافتراضي (PIN): <span className="font-mono text-purple-800 dark:text-purple-200">2026</span> (معبأ مسبقاً للتجربة)
+                  </p>
                 </div>
 
                 {errorMessage && (
@@ -659,14 +762,26 @@ export const Login: React.FC = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 bg-purple-700 hover:bg-purple-800 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  {loading ? 'جاري التحقق...' : 'دخول لوحة تحكم المدير 🏛️'}
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleDirectAdminLogin}
+                    disabled={loading}
+                    className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <Building2 className="w-4 h-4" />
+                    <span>⚡ دخول فوري كمدير</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3.5 bg-purple-700 hover:bg-purple-800 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    {loading ? 'جاري التحقق...' : 'دخول لوحة تحكم المدير 🏛️'}
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                </div>
               </form>
             </div>
           )}
@@ -765,6 +880,12 @@ export const Login: React.FC = () => {
 
 
 
+              {superPinNotSet && (
+                <p className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs font-bold leading-relaxed">
+                  🔑 أول دخول على جهاز المورّد: اختر رمز ماستر جديداً من 6 أرقام (غير متكرر وغير متسلسل) واكتبه في خانة رمز الماستر — سيُحفظ رمزاً دائماً لهذه البوابة.
+                </p>
+              )}
+
               <form onSubmit={handleSuperAdminLogin} className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -785,30 +906,43 @@ export const Login: React.FC = () => {
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    🔒 رمز الماستر للمدير العام (4 أرقام):
+                    🔒 رمز الماستر للمدير العام (6 أرقام أو أكثر):
                   </label>
                   <div className="relative">
                     <input
                       type="password"
                       inputMode="numeric"
-                      maxLength={4}
-                      placeholder="••••"
+                      maxLength={8}
+                      placeholder="••••••"
                       value={superMasterPin}
-                      onChange={e => setSuperMasterPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      onChange={e => setSuperMasterPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
                       className="w-full px-4 py-3 pr-10 text-sm font-mono font-bold tracking-[0.5em] text-center rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/40 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
                   <p className="text-[11px] text-slate-400">🛡️ بعد 3 محاولات خاطئة تُجمَّد البوابة 45 ثانية وتُسجَّل المحاولة.</p>
+                  <p className="text-[11px] text-slate-400">🔑 الرمز الافتراضي للماستر هو <span className="font-mono font-bold">9988</span> — إذا غيّرته سابقاً من لوحة المالك فاستخدم الجديد.</p>
                 </div>
+
+                {superLockSecs > 0 && (
+                  <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-black text-center">
+                    ⏳ البوابة مجمدة حمايةً من التخمين — متبقي ({superLockSecs}) ثانية. انتظر ولا تحاول.
+                  </div>
+                )}
+
+                {errorMessage && loginMode === 'superadmin' && (
+                  <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-xl text-xs text-red-700 dark:text-red-300 font-bold">
+                    {errorMessage}
+                  </div>
+                )}
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                  disabled={loading || superLockSecs > 0}
+                  className="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
-                  {loading ? 'جاري التحقق...' : 'دخول ديوان مراقبة المدارس 🌐'}
+                  {loading ? 'جاري التحقق...' : superLockSecs > 0 ? `انتظر (${superLockSecs}) ثانية ⏳` : 'دخول ديوان مراقبة المدارس 🌐'}
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               </form>
@@ -929,7 +1063,7 @@ export const Login: React.FC = () => {
                   </div>
 
                   {DEV_MODE && (
-                  <p className="text-[11px] text-slate-400">💡 الرقم الوطني لطالب معتمد: <span className="font-mono font-bold text-amber-600">120195864392</span> (أو الكود: <span className="font-mono font-bold text-amber-600">SCH-2026-B1</span>)</p>
+                  <p className="text-[11px] text-slate-400">💡 الرقم الوطني لطالب معتمد: <span className="font-mono font-bold text-amber-600">999900000001</span> (أو الكود: <span className="font-mono font-bold text-amber-600">DEMO-001</span>) — بعد تحميل البيانات التجريبية</p>
                   )}
                 </div>
 

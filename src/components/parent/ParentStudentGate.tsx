@@ -135,7 +135,7 @@ export const ParentStudentGate: React.FC<ParentStudentGateProps> = ({
               <span className="text-2xl font-black text-emerald-400 font-mono">
                 {students.length} طالباً
               </span>
-              <span className="text-[10px] text-slate-400">كشف مدرسة الباعور المعتمد • 33 فصلاً</span>
+              <span className="text-[10px] text-slate-400">السجل المدرسي المعتمد للعام الحالي</span>
             </div>
           </div>
 

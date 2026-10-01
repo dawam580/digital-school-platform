@@ -29,7 +29,7 @@ export interface InviteMessageOptions {
 
 export const generateDirectorInviteMessage = (options?: InviteMessageOptions): string => {
   const director = options?.directorName || 'الأستاذ الفاضل مدير المدرسة';
-  const school = options?.schoolName || 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي';
+  const school = options?.schoolName || 'مدرسة شريان الحياة للتعليم الأساسي';
   const phone = options?.phone || '0922465676';
   const pwd = options?.password || '123456';
 
@@ -91,6 +91,21 @@ export const generateDirectorInviteMessage = (options?: InviteMessageOptions): s
 
 نتشرف بملاحظاتكم وتجربتكم الكريمة لتطوير الإدارة المدرسية الرقمية.
 وتفضلوا بقبول فائق التقدير والاحترام.`;
+};
+
+/**
+ * تحويل رقم الهاتف الليبي المحلي (09xxxxxxxx) إلى الصيغة الدولية (218xxxxxxxxx)
+ * المطلوبة لروابط wa.me — تُرجع null إذا كان الرقم غير صالح (فلا يُبنى رابط مكسور).
+ */
+export const toIntlWhatsAppPhone = (phone?: string): string | null => {
+  if (!phone) return null;
+  let digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('00218')) digits = digits.substring(5);
+  else if (digits.startsWith('218')) digits = digits.substring(3);
+  else if (digits.startsWith('0')) digits = digits.substring(1);
+  // بعد التجريد يجب أن يكون رقماً ليبياً من 9 خانات يبدأ بـ 9
+  if (!/^9[1234]\d{7}$/.test(digits)) return null;
+  return `218${digits}`;
 };
 
 export const copyTextToClipboard = async (text: string): Promise<boolean> => {

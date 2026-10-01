@@ -5,8 +5,8 @@
  * ============================================================================
  */
 
-import { SchoolLicenseDoc, LicenseVerificationResult, SubscriptionStatus, RenewalRequest } from './licenseTypes';
-import { CryptoLicenseHelper, SignedLicenseToken } from './cryptoHelper';
+import { SchoolLicenseDoc, LicenseVerificationResult, SubscriptionStatus, RenewalRequest, RequestedLicenseType } from './licenseTypes';
+import { CryptoLicenseHelper, secureRandomSuffix, isSignedLicenseFormat } from './cryptoHelper';
 
 export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDSR-Wu-95GoJ_Y63gHGy4IWpbtMvqCNYk",
@@ -22,17 +22,46 @@ const STORAGE_KEYS = {
   CACHED_LICENSE_DOC: 'madrasa_cached_license_doc_v1',
   LOCAL_SCHOOLS_REGISTRY: 'madrasa_admin_schools_registry_v1',
   RENEWAL_REQUESTS: 'madrasa_renewal_requests_v1',
+  ACTIVATION_ATTEMPTS: 'madrasa_license_attempt_lock_v1',
 };
 
-// Initial default license for existing school (مدرسة الشهيد امحمد الباعور)
+// خنق محاولات التفعيل: 5 محاولات خاطئة لكل مفتاح = تجميد 60 ثانية (ضد التخمين)
+const ACTIVATION_MAX_ATTEMPTS = 5;
+const ACTIVATION_LOCK_MS = 60 * 1000;
+
+interface AttemptRecord { count: number; lockUntil: number; }
+
+function readAttemptMap(): Record<string, AttemptRecord> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.ACTIVATION_ATTEMPTS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') return parsed;
+    }
+  } catch {}
+  return {};
+}
+
+function writeAttemptMap(map: Record<string, AttemptRecord>): void {
+  try {
+    // تقليم السجلات المنتهية حتى لا يتضخم المفتاح
+    const now = Date.now();
+    for (const k of Object.keys(map)) {
+      if (map[k].lockUntil < now && map[k].count <= 0) delete map[k];
+    }
+    localStorage.setItem(STORAGE_KEYS.ACTIVATION_ATTEMPTS, JSON.stringify(map));
+  } catch {}
+}
+
+// Initial default trial license for newly delivered school platform (7-day trial)
 export const DEFAULT_INITIAL_LICENSE: SchoolLicenseDoc = {
-  license_key: 'SCH-BAOUR-2026-ACTIVE',
-  school_name: 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي',
+  license_key: 'SCH-TRIPOLI-2026-TRIAL',
+  school_name: 'منظومة المدرسة الرقمية للتعليم الأساسي',
   subscription_status: 'trial',
-  trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days
+  trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days trial
   created_at: new Date().toISOString(),
-  admin_phone: '0922465676',
-  notes: 'الترخيص المعتمد الأساسي',
+  admin_phone: '0912345678',
+  notes: 'ترخيص تجريبي أولي لمدة أسبوع (7 أيام)',
   offline_grace_allowed_days: 7
 };
 
@@ -54,10 +83,15 @@ export class LicenseService {
 
   /**
    * حفظ مفتاح الترخيص عند التفعيل لأول مرة
+   * (مفاتيح MADRASA-v3 تُحفظ بحالتها الأصلية لأن Base64 حساسة للأحرف)
    */
   static setActiveLicenseKey(key: string): void {
     try {
-      localStorage.setItem(STORAGE_KEYS.ACTIVE_LICENSE_KEY, key.trim().toUpperCase());
+      const clean = key.trim();
+      localStorage.setItem(
+        STORAGE_KEYS.ACTIVE_LICENSE_KEY,
+        isSignedLicenseFormat(clean) ? clean : clean.toUpperCase()
+      );
     } catch {}
   }
 
@@ -108,7 +142,25 @@ export class LicenseService {
    * فحص حالة اشتراك المدرسة (سحابياً مع دعم الـ Cache ومهلة الـ 7 أيام بدون إنترنت)
    */
   static async checkSubscription(explicitKey?: string): Promise<LicenseVerificationResult> {
-    const key = (explicitKey || this.getActiveLicenseKey() || DEFAULT_INITIAL_LICENSE.license_key).trim().toUpperCase();
+    // جهاز المورّد (يحمل مفتاح التوقيع الخاص) لا يحتاج ترخيصاً
+    if (!explicitKey && typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true) {
+      const vendorDoc: SchoolLicenseDoc = {
+        license_key: 'VENDOR-MACHINE',
+        school_name: 'جهاز المورّد',
+        subscription_status: 'active',
+        trial_ends_at: '2099-12-31T23:59:59.000Z',
+        subscription_ends_at: '2099-12-31T23:59:59.000Z',
+        created_at: new Date().toISOString(),
+        notes: 'جهاز المورّد المعتمد',
+      };
+      return {
+        isValid: true, status: 'active', schoolName: vendorDoc.school_name, licenseKey: vendorDoc.license_key,
+        daysRemaining: 36500, isOfflineGrace: false, offlineDaysRemaining: 36500, licenseDoc: vendorDoc
+      };
+    }
+    const rawKey = (explicitKey || this.getActiveLicenseKey() || DEFAULT_INITIAL_LICENSE.license_key).trim();
+    // المفاتيح الموقّعة حساسة لحالة الأحرف (Base64) — لا تُوحَّد أحرفها
+    const key = isSignedLicenseFormat(rawKey) ? rawKey.replace(/\s+/g, '') : rawKey.toUpperCase();
     const cached = this.getCachedLicense() || this.findInAdminRegistry(key) || {
       ...DEFAULT_INITIAL_LICENSE,
       license_key: key
@@ -130,8 +182,8 @@ export class LicenseService {
       };
     }
 
-    // 1. Check Cryptographically Signed Hardware-Bound Token (MADRASA-v2-)
-    if (key.startsWith('MADRASA-V2-') || key.startsWith('MADRASA-v2-')) {
+    // 1. Check Cryptographically Signed Hardware-Bound Token (MADRASA-v3-)
+    if (isSignedLicenseFormat(key)) {
       const vResult = CryptoLicenseHelper.verifyLicenseToken(key);
       if (!vResult.isValid || !vResult.payload) {
         return {
@@ -147,6 +199,21 @@ export class LicenseService {
         };
       }
       const payload = vResult.payload;
+      // قائمة الإلغاء: مفتاح أبطله المدير العام يُرفض حتى لو توقيعه سليم
+      // (تُفحص من السجل المحلي + الكاش — وتُزامَن سحابياً عند توفر الاتصال)
+      if (this.isLicenseRevoked(key)) {
+        return {
+          isValid: false,
+          status: 'suspended',
+          schoolName: payload.schoolName,
+          licenseKey: key,
+          daysRemaining: 0,
+          isOfflineGrace: true,
+          offlineDaysRemaining: 0,
+          errorMessage: 'تم إلغاء هذا الترخيص من قبل الإدارة العامة. تواصل معنا لمراجعة الاشتراك.',
+          licenseDoc: cached
+        };
+      }
       const expiresMs = new Date(payload.expiresAt).getTime();
       const isStillValid = Date.now() <= expiresMs;
       const daysRemaining = Math.max(0, Math.ceil((expiresMs - Date.now()) / (1000 * 60 * 60 * 24)));
@@ -174,166 +241,30 @@ export class LicenseService {
       };
     }
 
-    // 2. Check 7-day hardware trial for trial status
-    if (cached.subscription_status === 'trial') {
-      const trial = CryptoLicenseHelper.getTrialStatus();
-      if (!trial.isTrialActive) {
-        return {
-          isValid: false,
-          status: 'expired',
-          schoolName: cached.school_name,
-          licenseKey: key,
-          daysRemaining: 0,
-          isOfflineGrace: true,
-          offlineDaysRemaining: 0,
-          errorMessage: 'انتهت الفترة التجريبية المجانية (7 أيام). يرجى التواصل مع الإدارة للحصول على مفتاح التفعيل الدائم لمنظومتكم.',
-          licenseDoc: {
-            ...cached,
-            subscription_status: 'expired'
-          }
-        };
-      }
-    }
-
-    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
-
-    // 1. If online, attempt to fetch fresh record from Firestore
-    if (isOnline) {
-      try {
-        const freshDoc = await this.fetchFromFirestore(key);
-        if (freshDoc) {
-          freshDoc.last_verified_at = new Date().toISOString();
-          this.setCachedLicense(freshDoc);
-          this.syncToAdminRegistry(freshDoc);
-          return this.evaluateLicenseDoc(freshDoc, false);
-        }
-      } catch (err) {
-        // Network or permission fallback: continue to offline evaluation
-      }
-    }
-
-    // 2. Offline / Fallback Evaluation with 7-Day Grace Period
-    const lastVerified = cached.last_verified_at ? new Date(cached.last_verified_at).getTime() : Date.now();
-    const elapsedDays = (Date.now() - lastVerified) / (1000 * 60 * 60 * 24);
-    const graceAllowedDays = cached.offline_grace_allowed_days || 7;
-
-    if (elapsedDays > graceAllowedDays) {
-      return {
-        isValid: false,
-        status: 'grace_expired',
-        schoolName: cached.school_name,
-        licenseKey: cached.license_key,
-        daysRemaining: 0,
-        isOfflineGrace: false,
-        offlineDaysRemaining: 0,
-        errorMessage: `تجاوزت المنظومة مهلة الـ ${graceAllowedDays} أيام للعمل بدون اتصال. يرجى الاتصال بالإنترنت للتحقق من سريان الترخيص.`,
-        licenseDoc: cached
-      };
-    }
-
-    const offlineDaysRemaining = Math.max(0, Math.ceil(graceAllowedDays - elapsedDays));
-    const evalResult = this.evaluateLicenseDoc(cached, true);
+    // 2. أي مفتاح غير موقّع = فترة تجريبية فقط (7 أيام) محسوبة من الأختام المحمية.
+    // لا تُمنح حالة "مفعّل" إلا لمفتاح موقّع من المورّد؛ أي وثيقة محلية أو
+    // سحابية بحالة active لا تكفي وحدها (كانت قابلة للتعديل من المتصفح).
+    const trial = CryptoLicenseHelper.getTrialStatus();
+    const trialDoc: SchoolLicenseDoc = {
+      ...cached,
+      license_key: key,
+      subscription_status: trial.isTrialActive ? 'trial' : 'expired',
+      trial_ends_at: trial.trialEndsAt,
+      subscription_ends_at: undefined,
+    };
     return {
-      ...evalResult,
+      isValid: trial.isTrialActive,
+      status: trial.isTrialActive ? 'trial' : 'expired',
+      schoolName: cached.school_name,
+      licenseKey: key,
+      daysRemaining: trial.daysRemaining,
       isOfflineGrace: true,
-      offlineDaysRemaining
+      offlineDaysRemaining: trial.daysRemaining,
+      errorMessage: trial.isTrialActive
+        ? undefined
+        : 'انتهت الفترة التجريبية المجانية (7 أيام). يرجى التواصل معنا للحصول على مفتاح التفعيل لمنظومتكم.',
+      licenseDoc: trialDoc
     };
-  }
-
-  /**
-   * تقييم التواريخ والحالة للوثيقة
-   */
-  private static evaluateLicenseDoc(doc: SchoolLicenseDoc, isOffline: boolean): LicenseVerificationResult {
-    const now = Date.now();
-    let status = doc.subscription_status;
-    let daysRemaining = 0;
-
-    if (status === 'suspended') {
-      return {
-        isValid: false,
-        status: 'suspended',
-        schoolName: doc.school_name,
-        licenseKey: doc.license_key,
-        daysRemaining: 0,
-        isOfflineGrace: isOffline,
-        errorMessage: 'تم تعليق ترخيص المنظومة مؤقتاً من قبل الإدارة العامة.',
-        licenseDoc: doc
-      };
-    }
-
-    if (status === 'trial') {
-      const trialEnd = new Date(doc.trial_ends_at).getTime();
-      const diffMs = trialEnd - now;
-      daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-
-      if (diffMs <= 0) {
-        status = 'expired';
-        return {
-          isValid: false,
-          status: 'expired',
-          schoolName: doc.school_name,
-          licenseKey: doc.license_key,
-          daysRemaining: 0,
-          isOfflineGrace: isOffline,
-          errorMessage: 'انتهت الفترة التجريبية لمدرستكم. يرجى التواصل معنا لتجديد الاشتراك.',
-          licenseDoc: doc
-        };
-      }
-    } else if (status === 'active' && doc.subscription_ends_at) {
-      const subEnd = new Date(doc.subscription_ends_at).getTime();
-      const diffMs = subEnd - now;
-      daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-
-      if (diffMs <= 0) {
-        status = 'expired';
-        return {
-          isValid: false,
-          status: 'expired',
-          schoolName: doc.school_name,
-          licenseKey: doc.license_key,
-          daysRemaining: 0,
-          isOfflineGrace: isOffline,
-          errorMessage: 'انتهت فترة الاشتراك السنوي المعتمدة للمدرسة.',
-          licenseDoc: doc
-        };
-      }
-    } else if (status === 'active') {
-      daysRemaining = 365; // Unlimited or active
-    }
-
-    return {
-      isValid: status === 'active' || (status === 'trial' && daysRemaining > 0),
-      status,
-      schoolName: doc.school_name,
-      licenseKey: doc.license_key,
-      daysRemaining,
-      isOfflineGrace: isOffline,
-      licenseDoc: doc
-    };
-  }
-
-  /**
-   * قراءة مستند المدرسة من Firestore عبر REST API
-   */
-  private static async fetchFromFirestore(licenseKey: string): Promise<SchoolLicenseDoc | null> {
-    const docId = encodeURIComponent(licenseKey);
-    const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/schools/${docId}?key=${FIREBASE_CONFIG.apiKey}`;
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
-
-    try {
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeout);
-      if (!res.ok) return null;
-      const json = await res.json();
-      if (json.fields) {
-        return this.parseFirestoreFields(json.fields);
-      }
-    } catch {
-      clearTimeout(timeout);
-    }
-    return null;
   }
 
   /**
@@ -353,6 +284,9 @@ export class LicenseService {
         created_at: { stringValue: doc.created_at },
         admin_phone: { stringValue: doc.admin_phone || '' },
         notes: { stringValue: doc.notes || '' },
+        bound_hwid: doc.bound_hwid ? { stringValue: doc.bound_hwid } : { nullValue: null },
+        revoked: { booleanValue: doc.revoked === true },
+        delivered_at: doc.delivered_at ? { stringValue: doc.delivered_at } : { nullValue: null },
         last_verified_at: { stringValue: new Date().toISOString() }
       }
     };
@@ -379,6 +313,9 @@ export class LicenseService {
       created_at: fields.created_at?.stringValue || new Date().toISOString(),
       admin_phone: fields.admin_phone?.stringValue,
       notes: fields.notes?.stringValue,
+      bound_hwid: fields.bound_hwid?.stringValue,
+      revoked: fields.revoked?.booleanValue === true,
+      delivered_at: fields.delivered_at?.stringValue,
       last_verified_at: fields.last_verified_at?.stringValue || new Date().toISOString()
     };
   }
@@ -386,11 +323,11 @@ export class LicenseService {
   // --- Super Admin Helpers ---
 
   /**
-   * توليد مفتاح ترخيص فريد جديد
+   * توليد مفتاح ترخيص فريد جديد (عشوائية مشفرة آمنة — غير قابلة للتخمين)
    */
   static generateLicenseKey(): string {
-    const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const part1 = secureRandomSuffix(4);
+    const part2 = secureRandomSuffix(4);
     return `SCH-2026-${part1}-${part2}`;
   }
 
@@ -457,11 +394,9 @@ export class LicenseService {
     const cleanLetters = rawName.replace(/[^A-Za-z]/g, '').toUpperCase();
     const prefix = cleanLetters.length >= 3
       ? cleanLetters.substring(0, 5)
-      : rawName.includes('الباعور')
-      ? 'BAOUR'
       : 'LIBYA';
-    const rand1 = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const rand2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const rand1 = secureRandomSuffix(4);
+    const rand2 = secureRandomSuffix(4);
     const accessKey = `MADRASA-2026-${prefix}-${rand1}-${rand2}`;
 
     const now = new Date();
@@ -621,33 +556,46 @@ export class LicenseService {
   }
 
   /**
-   * إرسال طلب تجديد من المدرسة إلى المدير العام.
+   * إرسال طلب تجديد/شراء من المدرسة إلى المدير العام.
    * يُحفظ محلياً دائماً، ويُزامَن مع Firestore عند توفر الإنترنت (best-effort).
+   * تُرفق بصمة الجهاز (HWID) تلقائياً ليولّد المدير مفتاحاً مقيداً بها بضغطة واحدة.
    */
   static async requestRenewal(params: {
     licenseKey: string;
     schoolName: string;
     adminPhone: string;
     message?: string;
+    hwid?: string;
+    licenseType?: RequestedLicenseType;
   }): Promise<{ ok: boolean; request?: RenewalRequest; error?: string }> {
     const licenseKey = params.licenseKey.trim().toUpperCase();
-    const schoolName = params.schoolName.trim();
+    const schoolName = params.schoolName.trim().slice(0, 120);
     const adminPhone = params.adminPhone.trim();
     if (!licenseKey || !schoolName || !adminPhone) {
       return { ok: false, error: 'بيانات الطلب ناقصة (المدرسة / الترخيص / الهاتف).' };
+    }
+    if (!/^09[1234]\d{7}$/.test(adminPhone)) {
+      return { ok: false, error: 'رقم هاتف المدير غير صالح (يجب أن يكون ليبياً بصيغة 09xxxxxxxx).' };
     }
     if (this.hasPendingRenewal(licenseKey)) {
       return { ok: false, error: 'يوجد طلب تجديد معلّق مسبقاً لهذا الترخيص بانتظار المدير العام.' };
     }
 
+    const cleanHwid = (params.hwid || '').trim().toUpperCase();
+    const hwid = /^HWID-LY-[A-Z0-9-]{4,32}$/.test(cleanHwid) ? cleanHwid : undefined;
+    const licenseType: RequestedLicenseType =
+      params.licenseType === 'lifetime' || params.licenseType === 'trial_extended' ? params.licenseType : 'annual';
+
     const req: RenewalRequest = {
-      id: `REQ-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+      id: `REQ-${Date.now()}-${secureRandomSuffix(4)}`,
       license_key: licenseKey,
       school_name: schoolName,
       admin_phone: adminPhone,
       message: params.message?.trim().slice(0, 500),
       status: 'pending',
       created_at: new Date().toISOString(),
+      hwid,
+      licenseType,
     };
 
     const list = [req, ...this.getRenewalRequests()].slice(0, 200);
@@ -719,6 +667,10 @@ export class LicenseService {
           status: { stringValue: req.status },
           created_at: { stringValue: req.created_at },
           resolved_at: req.resolved_at ? { stringValue: req.resolved_at } : { nullValue: null },
+          hwid: req.hwid ? { stringValue: req.hwid } : { nullValue: null },
+          licenseType: { stringValue: req.licenseType || 'annual' },
+          deliveredKey: req.deliveredKey ? { stringValue: req.deliveredKey } : { nullValue: null },
+          delivered_at: req.delivered_at ? { stringValue: req.delivered_at } : { nullValue: null },
         }
       };
       const res = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -729,6 +681,7 @@ export class LicenseService {
   }
 
   private static parseRenewalFields(fields: any): RenewalRequest {
+    const lt = fields.licenseType?.stringValue;
     return {
       id: fields.id?.stringValue || '',
       license_key: fields.license_key?.stringValue || '',
@@ -738,6 +691,10 @@ export class LicenseService {
       status: (fields.status?.stringValue === 'approved' || fields.status?.stringValue === 'rejected') ? fields.status.stringValue : 'pending',
       created_at: fields.created_at?.stringValue || new Date().toISOString(),
       resolved_at: fields.resolved_at?.stringValue,
+      hwid: fields.hwid?.stringValue,
+      licenseType: (lt === 'lifetime' || lt === 'trial_extended' || lt === 'annual') ? lt : 'annual',
+      deliveredKey: fields.deliveredKey?.stringValue,
+      delivered_at: fields.delivered_at?.stringValue,
     };
   }
 
@@ -758,13 +715,51 @@ export class LicenseService {
 
   /**
    * تفعيل ترخيص مشفر وموقع رقمياً غير متصل بالإنترنت (Offline Hardware-Bound Activation)
+   * مع خنق التخمين (5 محاولات/دقيقة لكل مفتاح) وفحص قائمة الإلغاء.
    */
-  static activateOfflineToken(token: string): { success: boolean; schoolName?: string; expiresAt?: string; error?: string } {
-    const clean = token.trim();
+  static activateOfflineToken(token: string): { success: boolean; schoolName?: string; expiresAt?: string; error?: string; retryAfterSec?: number } {
+    const clean = token.replace(/\s+/g, '').trim();
+    if (!clean) {
+      return { success: false, error: 'يرجى لصق كود الترخيص هنا.' };
+    }
+    const throttleKey = clean.substring(0, 24).toUpperCase();
+    const now = Date.now();
+    const attempts = readAttemptMap();
+    const rec = attempts[throttleKey];
+    if (rec && rec.lockUntil > now) {
+      const retryAfterSec = Math.ceil((rec.lockUntil - now) / 1000);
+      return { success: false, retryAfterSec, error: `محاولات كثيرة خاطئة — أُقفل التفعيل مؤقتاً (${retryAfterSec} ثانية) لحماية المنظومة.` };
+    }
+
     const res = CryptoLicenseHelper.verifyLicenseToken(clean);
     if (!res.isValid || !res.payload) {
-      return { success: false, error: res.errorMessage || 'مفتاح الترخيص المشفر غير صالح.' };
+      const next: AttemptRecord = { count: (rec?.count || 0) + 1, lockUntil: 0 };
+      if (next.count >= ACTIVATION_MAX_ATTEMPTS) {
+        next.lockUntil = now + ACTIVATION_LOCK_MS;
+        next.count = 0;
+      }
+      attempts[throttleKey] = next;
+      writeAttemptMap(attempts);
+      const left = ACTIVATION_MAX_ATTEMPTS - next.count;
+      return {
+        success: false,
+        retryAfterSec: next.lockUntil > now ? Math.ceil((next.lockUntil - now) / 1000) : undefined,
+        error: next.lockUntil > now
+          ? 'تم استنفاد المحاولات — أُقفل التفعيل 60 ثانية.'
+          : `${res.errorMessage || 'مفتاح الترخيص المشفر غير صالح.'} (المحاولات المتبقية: ${left})`
+      };
     }
+
+    // نجاح التحقق = تصفير العداد
+    if (rec) {
+      delete attempts[throttleKey];
+      writeAttemptMap(attempts);
+    }
+
+    if (this.isLicenseRevoked(clean)) {
+      return { success: false, error: 'تم إلغاء هذا الترخيص من قبل الإدارة العامة.' };
+    }
+
     this.setActiveLicenseKey(clean);
     const doc: SchoolLicenseDoc = {
       license_key: clean,
@@ -775,6 +770,7 @@ export class LicenseService {
       created_at: res.payload.issuedAt,
       admin_phone: res.payload.adminPhone || '',
       notes: `ترخيص مشفر (${res.payload.licenseType}) مقيد بالبصمة ${res.payload.hwid}`,
+      bound_hwid: res.payload.hwid,
       offline_grace_allowed_days: 365,
       last_verified_at: new Date().toISOString()
     };
@@ -788,14 +784,191 @@ export class LicenseService {
   }
 
   /**
+   * تنفيذ طلب بضغطة واحدة (للمدير العام): توليد مفتاح مشفر مقيد ببصمة
+   * جهاز الزبون المرفقة بالطلب + اعتباره مسلَّماً. يُرسَل المفتاح للزبون
+   * عبر واتساب من الواجهة، ويُحفظ أثر التسليم في الطلب والسجل.
+   */
+  static async fulfillRenewalWithOfflineKey(
+    id: string,
+    licenseType?: RequestedLicenseType
+  ): Promise<{ request: RenewalRequest; token: string } | null> {
+    const list = this.getRenewalRequests();
+    const idx = list.findIndex(r => r.id === id);
+    if (idx === -1 || list[idx].status !== 'pending') return null;
+
+    const req = list[idx];
+    const type: RequestedLicenseType = licenseType || req.licenseType || 'annual';
+    const hwid = req.hwid && req.hwid.trim() ? req.hwid.trim().toUpperCase() : '*';
+    const token = await CryptoLicenseHelper.signLicenseToken(req.school_name, hwid, type, req.admin_phone);
+    const nowIso = new Date().toISOString();
+
+    list[idx] = {
+      ...req,
+      licenseType: type,
+      status: 'approved',
+      resolved_at: nowIso,
+      deliveredKey: token,
+      delivered_at: nowIso,
+    };
+    this.saveRenewalRequests(list);
+    this.pushRenewalToFirestore(list[idx]).catch(() => {});
+
+    // قيد الترخيص المسلَّم في سجل المدير (تتبع التسليم + الإلغاء لاحقاً)
+    const verify = CryptoLicenseHelper.verifyLicenseToken(token);
+    const doc: SchoolLicenseDoc = {
+      license_key: token,
+      school_name: req.school_name,
+      subscription_status: 'active',
+      trial_ends_at: verify.payload?.expiresAt || nowIso,
+      subscription_ends_at: verify.payload?.expiresAt,
+      created_at: nowIso,
+      admin_phone: req.admin_phone,
+      notes: `مفتاح مشفر مسلَّم للزبون (${type}) — طلب ${req.id}`,
+      bound_hwid: hwid,
+      delivered_at: nowIso,
+      last_verified_at: nowIso
+    };
+    this.syncToAdminRegistry(doc);
+    this.pushToFirestore(doc).catch(() => {});
+
+    return { request: list[idx], token };
+  }
+
+  /**
+   * إلغاء ترخيص (قائمة الإلغاء): يُعلق فوراً في السجل المحلي ويُزامَن سحابياً.
+   * المفاتيح المشفرة المبطلة تُرفض في كل فحص لاحق (متصل أو غير متصل).
+   */
+  static async revokeLicense(licenseKey: string): Promise<boolean> {
+    const key = licenseKey.trim();
+    if (!key) return false;
+    const schools = this.getAdminRegisteredSchools();
+    const idx = schools.findIndex(s => s.license_key === key);
+    if (idx !== -1) {
+      schools[idx] = { ...schools[idx], subscription_status: 'suspended', revoked: true };
+      this.saveAdminRegisteredSchools(schools);
+      this.pushToFirestore(schools[idx]).catch(() => {});
+    } else {
+      // قيد إلغاء حتى لو لم يكن في السجل (مفتاح مشفر خارجي)
+      const stub: SchoolLicenseDoc = {
+        license_key: key,
+        school_name: 'ترخيص ملغي',
+        subscription_status: 'suspended',
+        trial_ends_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        revoked: true,
+      };
+      this.syncToAdminRegistry(stub);
+    }
+    if ((this.getActiveLicenseKey() || '').toUpperCase() === key.toUpperCase()) {
+      const cached = this.getCachedLicense();
+      if (cached) {
+        this.setCachedLicense({ ...cached, subscription_status: 'suspended', revoked: true });
+      }
+    }
+    return true;
+  }
+
+  /**
+   * استعادة ترخيص ملغي (فك الإلغاء): يزيل علامة revoked ويعيد التفعيل.
+   * للترخيص التجريبي الافتراضي يعيده تجريبياً، ولغيره يمنحه سنة عند غياب تاريخ انتهاء.
+   */
+  static async restoreLicense(licenseKey: string): Promise<boolean> {
+    const key = licenseKey.trim();
+    if (!key) return false;
+    const nowIso = new Date().toISOString();
+    const schools = this.getAdminRegisteredSchools();
+    const idx = schools.findIndex(s => s.license_key === key);
+    if (idx === -1) return false;
+    const school = schools[idx];
+    const isDefaultTrial = key.toUpperCase() === DEFAULT_INITIAL_LICENSE.license_key.toUpperCase();
+    schools[idx] = {
+      ...school,
+      revoked: false,
+      subscription_status: isDefaultTrial ? 'trial' : 'active',
+      trial_ends_at: isDefaultTrial
+        ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        : school.trial_ends_at,
+      subscription_ends_at: isDefaultTrial
+        ? school.subscription_ends_at
+        : (school.subscription_ends_at || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()),
+      last_verified_at: nowIso,
+    };
+    this.saveAdminRegisteredSchools(schools);
+    this.pushToFirestore(schools[idx]).catch(() => {});
+    if ((this.getActiveLicenseKey() || '').toUpperCase() === key.toUpperCase()) {
+      const cached = this.getCachedLicense();
+      if (cached) {
+        this.setCachedLicense({ ...cached, revoked: false, subscription_status: schools[idx].subscription_status, trial_ends_at: schools[idx].trial_ends_at, subscription_ends_at: schools[idx].subscription_ends_at });
+      }
+    }
+    return true;
+  }
+
+  /**
+   * دمج سجل التراخيص المُصدرة من جهاز المورّد (ملف issued-licenses.jsonl)
+   * في سجل المدارس المعروض بلوحة المالك. الحالة تُحسب من تاريخ الانتهاء،
+   * مع الإبقاء على أي إلغاء/تعليق سجّله المالك يدوياً.
+   */
+  static importIssuedLedger(entries: Array<{
+    token: string; schoolName: string; hwid: string;
+    licenseType: string; issuedAt: string; expiresAt: string; adminPhone?: string;
+  }>): void {
+    const list = this.getAdminRegisteredSchools();
+    const typeLabel: Record<string, string> = { annual: 'سنوي', lifetime: 'دائم', trial_extended: 'تمديد تجريبي' };
+    for (const e of entries) {
+      if (!e || !e.token) continue;
+      const expired = new Date(e.expiresAt).getTime() < Date.now();
+      const existing = list.find(s => s.license_key === e.token);
+      const manuallyBlocked = existing && (existing.revoked || existing.subscription_status === 'suspended');
+      const doc: SchoolLicenseDoc = {
+        ...(existing || {}),
+        license_key: e.token,
+        school_name: e.schoolName,
+        subscription_status: manuallyBlocked ? 'suspended' : expired ? 'expired' : 'active',
+        trial_ends_at: e.expiresAt,
+        subscription_ends_at: e.expiresAt,
+        created_at: e.issuedAt,
+        admin_phone: e.adminPhone || existing?.admin_phone || '',
+        bound_hwid: e.hwid,
+        notes: existing?.notes || `ترخيص ${typeLabel[e.licenseType] || e.licenseType} موقّع — الجهاز ${e.hwid}`,
+      };
+      if (existing) Object.assign(existing, doc);
+      else list.push(doc);
+    }
+    // إخفاء المدرسة الافتراضية الوهمية من سجل المالك
+    const cleaned = list.filter(s => s.license_key !== DEFAULT_INITIAL_LICENSE.license_key);
+    cleaned.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    this.saveAdminRegisteredSchools(cleaned);
+  }
+
+  /**
+   * هل هذا المفتاح في قائمة الإلغاء؟ (السجل المحلي + الكاش)
+   */
+  static isLicenseRevoked(licenseKey: string): boolean {
+    const key = licenseKey.trim().toUpperCase();
+    if (!key) return false;
+    const inRegistry = this.getAdminRegisteredSchools().some(
+      s => s.license_key.toUpperCase() === key && (s.revoked === true || s.subscription_status === 'suspended')
+    );
+    if (inRegistry) return true;
+    try {
+      const cached = this.getCachedLicense();
+      if (cached && cached.license_key.toUpperCase() === key && (cached.revoked === true || cached.subscription_status === 'suspended')) {
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
+  /**
    * توليد ترخيص مشفر وموقع رقمياً لمدرسة محددة وبصمة جهاز (للسوبر أدمن فقط)
    */
-  static generateOfflineLicense(params: {
+  static async generateOfflineLicense(params: {
     schoolName: string;
     hwid: string;
     licenseType: 'lifetime' | 'annual' | 'trial_extended';
     adminPhone?: string;
-  }): {
+  }): Promise<{
     token: string;
     formattedCard: {
       schoolName: string;
@@ -803,8 +976,8 @@ export class LicenseService {
       licenseTypeLabel: string;
       token: string;
     };
-  } {
-    const token = CryptoLicenseHelper.generateLicenseToken(
+  }> {
+    const token = await CryptoLicenseHelper.signLicenseToken(
       params.schoolName,
       params.hwid,
       params.licenseType,
@@ -815,7 +988,7 @@ export class LicenseService {
         ? 'ترخيص دائم مدى الحياة (Enterprise Unlimited)'
         : params.licenseType === 'annual'
         ? 'ترخيص سنوي معتمد (1 Year)'
-        : 'تمديد تجريبي (14 يوماً إضافية)';
+        : 'تمديد تجريبي (7 أيام)';
 
     return {
       token,

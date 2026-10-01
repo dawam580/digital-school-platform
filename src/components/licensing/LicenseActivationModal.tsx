@@ -1,3 +1,4 @@
+import { isSignedLicenseFormat } from '../../services/licensing/cryptoHelper';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { KeyRound, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Building2, Phone } from 'lucide-react';
@@ -21,8 +22,16 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
 
   if (!isOpen) return null;
 
+  // تطبيع المفتاح: مفاتيح MADRASA-v3 حساسة لحالة الأحرف (Base64) فلا تُوحَّد،
+  // والمفاتيح الكلاسيكية تُوحَّد أحرفها. تُزال الفراغات (التفاف أسطر الواتساب).
+  const normalizeKeyInput = (raw: string): string => {
+    const noSpaces = raw.replace(/\s+/g, '').trim();
+    if (isSignedLicenseFormat(noSpaces)) return noSpaces; // Base64 حساسة لحالة الأحرف
+    return noSpaces.toUpperCase();
+  };
+
   const handleVerify = async (keyToVerify?: string) => {
-    const key = (keyToVerify || licenseKey).trim().toUpperCase();
+    const key = normalizeKeyInput(keyToVerify || licenseKey);
     if (!key) {
       setErrorMsg('يرجى إدخال رمز الترخيص المعتمد.');
       return;
@@ -92,8 +101,8 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
             <input
               type="text"
               value={licenseKey}
-              onChange={e => { setLicenseKey(e.target.value.toUpperCase()); setErrorMsg(''); }}
-              placeholder="SCH-2026-XXXX-XXXX"
+              onChange={e => { setLicenseKey(normalizeKeyInput(e.target.value)); setErrorMsg(''); }}
+              placeholder="MADRASA-v3-..."
               className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-base font-mono font-black text-center tracking-widest text-indigo-700 dark:text-indigo-300 focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase"
               dir="ltr"
             />
@@ -133,7 +142,7 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
               className="w-full py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>تفعيل ترخيص مدرسة الشهيد امحمد الباعور (تجريبي)</span>
+              <span>تفعيل ترخيص تجريبي للمعاينة (DEV_MODE)</span>
             </button>
             )}
 

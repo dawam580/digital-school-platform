@@ -17,7 +17,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
 import { AiConfigService } from '../../services/ai/aiConfig';
-import { SecurityEngine } from '../../services/security/securityEngine';
+import { SecurityEngine, isWeakPin } from '../../services/security/securityEngine';
 
 interface AccountSettingsModalProps {
   isOpen: boolean;
@@ -42,9 +42,9 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
   const [directorPin, setDirectorPin] = useState(() => SecurityEngine.getDirectorPin());
   const [examsPassword, setExamsPassword] = useState(() => {
     try {
-      return localStorage.getItem('madrasa_exams_password') || '2026';
+      return localStorage.getItem('madrasa_exams_password') || '';
     } catch {
-      return '2026';
+      return '';
     }
   });
   const [currentPassword, setCurrentPassword] = useState('');
@@ -73,8 +73,8 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
       return;
     }
 
-    if (directorPin && directorPin.trim().length < 4) {
-      showToast('error', 'رمز الأمان PIN', 'يجب أن يتكون رمز أمان المدير من 4 أرقام على الأقل.');
+    if (currentRole === 'admin' && directorPin && directorPin !== SecurityEngine.getDirectorPin() && isWeakPin(directorPin)) {
+      showToast('error', 'رمز الأمان PIN', 'رمز المدير: 4 أرقام على الأقل، غير متكرر وغير متسلسل وغير الرمز الافتراضي.');
       return;
     }
 
@@ -88,22 +88,26 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
       localStorage.setItem('madrasa_admin_phone', phone.trim());
 
       // 2. Update Password across all recognized storage keys
+      // كل دور يغيّر كلمة مروره هو فقط — كلمة المعلم لا تصبح أبداً كلمة مدير.
       if (newPassword) {
-        localStorage.setItem(`madrasa_pwd_${phone.trim()}`, newPassword);
-        localStorage.setItem('madrasa_global_pwd', newPassword);
-        localStorage.setItem('madrasa_admin_password', newPassword);
         if (currentRole === 'teacher' && currentTeacher) {
-          localStorage.setItem(`madrasa_teacher_pwd_${currentTeacher.code.toUpperCase()}`, newPassword);
+          const code = currentTeacher.code.toUpperCase();
+          localStorage.setItem(`madrasa_teacher_pwd_${code}`, newPassword);
+          localStorage.setItem(`madrasa_pwd_${code}`, newPassword);
+        } else if (currentRole === 'admin') {
+          localStorage.setItem(`madrasa_pwd_${phone.trim()}`, newPassword);
+          localStorage.setItem('madrasa_global_pwd', newPassword);
+          localStorage.setItem('madrasa_admin_password', newPassword);
         }
       }
 
-      // 3. Update Director Security PIN
-      if (directorPin && directorPin.trim().length >= 4) {
+      // 3. Update Director Security PIN (المدير فقط)
+      if (currentRole === 'admin' && directorPin && directorPin !== SecurityEngine.getDirectorPin()) {
         SecurityEngine.setDirectorPin(directorPin.trim());
       }
 
-      // 4. Update Exams Coordinator Password
-      if (examsPassword && examsPassword.trim()) {
+      // 4. Update Exams Coordinator Password (المدير فقط)
+      if (currentRole === 'admin' && examsPassword && examsPassword.trim()) {
         localStorage.setItem('madrasa_exams_password', examsPassword.trim());
       }
 

@@ -24,4 +24,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // System Diagnostics
   getSystemInfo: () => ipcRenderer.invoke('get-system-info'),
+
+  // Licensing (بصمة الجهاز الحقيقية + ختم التجربة + التوقيع على جهاز المورّد فقط)
+  getMachineId: () => ipcRenderer.sendSync('license-machine-id'),
+  isVendorMachine: () => ipcRenderer.sendSync('license-is-vendor'),
+  getTrialStart: (rendererStart) => ipcRenderer.sendSync('license-trial-start', rendererStart || 0),
+  canSignLicense: () => ipcRenderer.invoke('license-can-sign'),
+  signLicense: (params) => ipcRenderer.invoke('license-sign', params || {}),
+  getIssuedLicenses: () => ipcRenderer.invoke('license-ledger'),
+
+  // الحفظ الدائم على القرص + النسخ الاحتياطية
+  loadPersistedStore: () => ipcRenderer.sendSync('store-load'),
+  persistStore: (changes) => ipcRenderer.invoke('store-persist', changes || {}),
+  persistStoreSync: (changes) => ipcRenderer.sendSync('store-persist-sync', changes || {}),
+  listBackups: () => ipcRenderer.invoke('backups-list'),
+  openBackupsFolder: () => ipcRenderer.invoke('backups-open-folder'),
 });

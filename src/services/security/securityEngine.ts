@@ -6,6 +6,27 @@
  */
 
 import { UserRole, Student } from '../../types';
+import { DEV_MODE } from '../../config/devMode';
+
+/** كلمة مرور عشوائية من 6 أرقام (للحسابات الجديدة بدل رمز افتراضي موحد) */
+export function generateNumericPassword(length = 6): string {
+  for (;;) {
+    const buf = new Uint32Array(length);
+    crypto.getRandomValues(buf);
+    const pwd = Array.from(buf, n => String(n % 10)).join('');
+    if (!isWeakPin(pwd)) return pwd;
+  }
+}
+
+/** رموز مرفوضة: الافتراضية القديمة والمتكررة والمتسلسلة */
+export function isWeakPin(pin: string): boolean {
+  const p = (pin || '').trim();
+  if (p.length < 4) return true;
+  if (['2026', '9988', '1234', '12345', '123456', '0000', '1111', '4321', '654321'].includes(p)) return true;
+  if (/^(\d)\1+$/.test(p)) return true;
+  const asc = '01234567890123456789', desc = '98765432109876543210';
+  return asc.includes(p) || desc.includes(p);
+}
 
 export type Permission =
   | 'VIEW_STUDENT_PROFILE'
@@ -186,7 +207,7 @@ export class SecurityEngine {
   }
 
   public static setDirectorPin(newPin: string): boolean {
-    if (!newPin || newPin.length < 4) return false;
+    if (!newPin || isWeakPin(newPin)) return false;
     try {
       localStorage.setItem(this.STORAGE_KEY_PIN, newPin);
       return true;
@@ -202,6 +223,11 @@ export class SecurityEngine {
       return { isLocked: true, remainingSeconds: remaining };
     }
     return { isLocked: false, remainingSeconds: 0 };
+  }
+
+  public static resetDirectorPinLockout(): void {
+    this.failedAttempts = 0;
+    this.lockoutUntil = 0;
   }
 
   public static verifyDirectorPin(inputPin: string): { valid: boolean; message: string } {
@@ -242,14 +268,15 @@ export class SecurityEngine {
 
   public static getSuperAdminPin(): string {
     try {
-      return localStorage.getItem(this.STORAGE_KEY_SUPER_PIN) || '9988';
+      // لا رمز افتراضي في الإنتاج: البوابة غير مفعّلة حتى يُعيَّن رمز على جهاز المورّد
+      return localStorage.getItem(this.STORAGE_KEY_SUPER_PIN) || (DEV_MODE ? '9988' : '');
     } catch {
-      return '9988';
+      return DEV_MODE ? '9988' : '';
     }
   }
 
   public static setSuperAdminPin(newPin: string): boolean {
-    if (!newPin || newPin.length < 4) return false;
+    if (!newPin || newPin.length < 6 || isWeakPin(newPin)) return false;
     try {
       localStorage.setItem(this.STORAGE_KEY_SUPER_PIN, newPin);
       return true;
@@ -277,6 +304,17 @@ export class SecurityEngine {
     }
 
     const expected = this.getSuperAdminPin();
+    if (!expected) {
+      // أول دخول: مسموح فقط على جهاز المورّد (الذي يحمل مفتاح توقيع التراخيص)
+      const isVendor = typeof window !== 'undefined' && window.electronAPI?.isVendorMachine?.() === true;
+      if (!isVendor) {
+        return { valid: false, message: 'بوابة المدير العام غير مفعّلة على هذا الجهاز.' };
+      }
+      if (!this.setSuperAdminPin(inputPin.trim())) {
+        return { valid: false, message: 'أول دخول على جهاز المورّد: اختر رمز ماستر من 6 أرقام على الأقل (غير متكرر وغير متسلسل). سيُحفظ رمزاً دائماً.' };
+      }
+      return { valid: true, message: 'تم تعيين رمز الماستر لأول مرة على جهاز المورّد.' };
+    }
     if (inputPin.trim() === expected.trim()) {
       this.superFailedAttempts = 0;
       this.superLockoutUntil = 0;

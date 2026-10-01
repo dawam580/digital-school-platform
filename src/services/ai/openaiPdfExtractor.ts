@@ -58,7 +58,7 @@ export class OpenAiPdfExtractor {
     "motherName": "—",
     "gender": "male" أو "female",
     "birthDate": "2011-04-12",
-    "birthPlace": "توكرة",
+    "birthPlace": "مكان الميلاد",
     "grade": "${targetGrade}",
     "className": "9/1 صباح",
     "sectionCode": "أ",
@@ -209,7 +209,7 @@ export class OpenAiPdfExtractor {
         motherName: '—', // Enforce no fake mother names
         gender: st.gender === 'female' || String(st.gender).includes('انثى') || String(st.gender).includes('أنثى') ? 'female' : 'male',
         birthDate: String(st.birthDate || '2011-01-01').trim(),
-        birthPlace: String(st.birthPlace || 'توكرة').trim(),
+        birthPlace: String(st.birthPlace || '').trim(),
         grade: String(st.grade || targetGrade).trim(),
         className: String(st.className || `${targetGrade.includes('9') ? '9/1 صباح' : 'فصل 1'}`).trim(),
         sectionCode: 'أ',

@@ -121,7 +121,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ isOpen, onCl
           </button>
           <button
             onClick={handlePrint}
-            className="px-6 py-2.5 rounded-2xl text-xs font-bold bg-[#00288e] hover:bg-[#002072] text-white shadow-soft flex items-center gap-2 transition-all active:scale-95"
+            className="px-6 py-2.5 rounded-2xl text-xs font-bold bg-[#00288e] hover:bg-[#002072] text-white shadow-soft flex items-center gap-2 transition-colors active:scale-95"
           >
             <Printer className="w-4 h-4" />
             <span>طباعة الشهادة الرسمية</span>

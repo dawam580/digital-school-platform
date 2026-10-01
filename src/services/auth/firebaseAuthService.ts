@@ -71,7 +71,7 @@ export class FirebaseAuthService {
 
       // Determine verified role (From signed JWT claim, fallback to safe role)
       const verifiedRole: UserRole = (claims.role as UserRole) || 'parent';
-      const verifiedSchoolId: string = claims.schoolId || 'SCH-BAOUR-01';
+      const verifiedSchoolId: string = claims.schoolId || '';
       const verifiedPermissions: string[] = claims.permissions || [];
 
       const sessionUser: AuthSessionUser = {

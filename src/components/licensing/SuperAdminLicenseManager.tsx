@@ -22,12 +22,12 @@ import {
   Laptop
 } from 'lucide-react';
 import { LicenseService } from '../../services/licensing/licenseService';
-import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest } from '../../services/licensing/licenseTypes';
+import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest, RequestedLicenseType } from '../../services/licensing/licenseTypes';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
 import { ClientDeliveryModal } from '../common/ClientDeliveryModal';
-import { ClientDeliveryOptions } from '../../utils/inviteMessageHelper';
+import { ClientDeliveryOptions, toIntlWhatsAppPhone } from '../../utils/inviteMessageHelper';
 
 export const SuperAdminLicenseManager: React.FC = () => {
   const [schools, setSchools] = useState<SchoolLicenseDoc[]>([]);
@@ -58,20 +58,26 @@ export const SuperAdminLicenseManager: React.FC = () => {
     typeLabel: string;
   } | null>(null);
 
-  const handleGenerateOfflineKey = (e: React.FormEvent) => {
+  const handleGenerateOfflineKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!genSchoolName.trim()) {
       alert('يرجى كتابة اسم المدرسة.');
       return;
     }
+    let res: Awaited<ReturnType<typeof LicenseService.generateOfflineLicense>>;
+    try {
+      res = await LicenseService.generateOfflineLicense({
+        schoolName: genSchoolName.trim(),
+        hwid: genHwid.trim() || '*',
+        licenseType: genType,
+        adminPhone: genPhone.trim()
+      });
+    } catch (err: any) {
+      alert(err?.message || 'تعذر توليد الترخيص.');
+      return;
+    }
     sound.playSuccess();
     triggerConfetti();
-    const res = LicenseService.generateOfflineLicense({
-      schoolName: genSchoolName.trim(),
-      hwid: genHwid.trim() || '*',
-      licenseType: genType,
-      adminPhone: genPhone.trim()
-    });
     setGeneratedResult({
       token: res.token,
       schoolName: genSchoolName.trim(),
@@ -86,21 +92,48 @@ export const SuperAdminLicenseManager: React.FC = () => {
       details: `توليد مفتاح مشفر (${res.formattedCard.licenseTypeLabel}) لمدرسة: ${genSchoolName.trim()}`,
       severity: 'WARN'
     });
+    loadSchools();
   };
 
   useEffect(() => {
     loadSchools();
     loadRenewals();
+    // تحديث القائمة عند العودة للنافذة (مثلاً بعد إصدار ترخيص من سطر الأوامر)
+    const onFocus = () => loadSchools();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, []);
 
   const loadSchools = () => {
-    const list = LicenseService.getAdminRegisteredSchools();
-    setSchools(list);
+    setSchools(LicenseService.getAdminRegisteredSchools());
+    // على جهاز المورّد: دمج كل التراخيص المُصدرة (من الواجهة أو سطر الأوامر)
+    const api = typeof window !== 'undefined' ? window.electronAPI : undefined;
+    if (api?.getIssuedLicenses) {
+      api.getIssuedLicenses()
+        .then(entries => {
+          LicenseService.importIssuedLedger(entries || []);
+          setSchools(LicenseService.getAdminRegisteredSchools());
+        })
+        .catch(() => {});
+    }
   };
 
   // طلبات التجديد المعلقة (محلية + سحابية)
   const [renewals, setRenewals] = useState<RenewalRequest[]>([]);
   const [isLoadingRenewals, setIsLoadingRenewals] = useState(false);
+
+  // تنفيذ الطلب بمفتاح مقيد بضغطة واحدة (الأتمتة الكاملة)
+  const [fulfillTypes, setFulfillTypes] = useState<Record<string, RequestedLicenseType>>({});
+  const [fulfillingId, setFulfillingId] = useState<string | null>(null);
+  const [lastFulfilled, setLastFulfilled] = useState<{
+    reqId: string; token: string; schoolName: string; phone: string; typeLabel: string; hwid: string;
+  } | null>(null);
+
+  const LICENSE_TYPE_LABEL: Record<RequestedLicenseType, string> = {
+    annual: 'سنوي معتمد (سنة كاملة)',
+    lifetime: 'دائم مدى الحياة',
+    trial_extended: 'تجريبي موسع (+7 أيام)',
+  };
 
   const loadRenewals = async () => {
     setIsLoadingRenewals(true);
@@ -136,6 +169,87 @@ export const SuperAdminLicenseManager: React.FC = () => {
     }
   };
 
+  /**
+   * التنفيذ المؤتمت بضغطة واحدة: توليد مفتاح مشفر مقيد ببصمة جهاز الزبون
+   * المرفقة بالطلب + اعتباره مسلَّماً + تجهيز رسالة الواتساب — ثم القبول اليدوي
+   * القديم يبقى للمفاتيح السحابية الكلاسيكية فقط.
+   */
+  const handleFulfillRenewal = async (req: RenewalRequest) => {
+    sound.playTap();
+    const type: RequestedLicenseType = fulfillTypes[req.id] || req.licenseType || 'annual';
+    if (!req.hwid && !window.confirm('هذا الطلب بدون بصمة جهاز (HWID) — سيُولَّد مفتاح عام يعمل على أي جهاز. متابعة؟')) return;
+    setFulfillingId(req.id);
+    try {
+      const res = await LicenseService.fulfillRenewalWithOfflineKey(req.id, type);
+      if (res) {
+        sound.playSuccess();
+        triggerConfetti();
+        setLastFulfilled({
+          reqId: res.request.id,
+          token: res.token,
+          schoolName: res.request.school_name,
+          phone: res.request.admin_phone,
+          typeLabel: LICENSE_TYPE_LABEL[type],
+          hwid: res.request.hwid || '*',
+        });
+        auditLogger.log({
+          actorName: 'المدير العام',
+          actorRole: 'superadmin',
+          action: 'RENEWAL_FULFILLED_OFFLINE_KEY',
+          entity: 'Licensing',
+          details: `تنفيذ طلب (${res.request.school_name}) بمفتاح مقيد (${type}) للبصمة ${res.request.hwid || '*'}`,
+          severity: 'WARN'
+        });
+        loadRenewals();
+        loadSchools();
+      }
+    } catch (err: any) {
+      alert(err?.message || 'تعذر توقيع الترخيص.');
+    } finally {
+      setFulfillingId(null);
+    }
+  };
+
+  const handleRevoke = async (school: SchoolLicenseDoc) => {
+    sound.playTap();
+    const isSelf = (LicenseService.getActiveLicenseKey() || '').toUpperCase() === school.license_key.toUpperCase();
+    const warn = isSelf
+      ? `⚠️ تنبيه خطير: هذا هو ترخيص هذا الجهاز نفسه (${school.license_key}) — إلغاؤه سيقفل هذه الشاشة فوراً!\n\n`
+      : '';
+    if (!window.confirm(`${warn}إلغاء ترخيص (${school.school_name}) نهائياً؟ سيُقفل فوراً على جهاز الزبون عند التحقق التالي.`)) return;
+    const ok = await LicenseService.revokeLicense(school.license_key);
+    if (ok) {
+      sound.playSuccess();
+      auditLogger.log({
+        actorName: 'المدير العام',
+        actorRole: 'superadmin',
+        action: 'LICENSE_REVOKED',
+        entity: 'Licensing',
+        details: `إلغاء ترخيص (${school.school_name} — ${school.license_key})${isSelf ? ' [على نفس الجهاز]' : ''}`,
+        severity: 'CRITICAL'
+      });
+      loadSchools();
+    }
+  };
+
+  const handleRestore = async (school: SchoolLicenseDoc) => {
+    sound.playTap();
+    const ok = await LicenseService.restoreLicense(school.license_key);
+    if (ok) {
+      sound.playSuccess();
+      triggerConfetti();
+      auditLogger.log({
+        actorName: 'المدير العام',
+        actorRole: 'superadmin',
+        action: 'LICENSE_RESTORED',
+        entity: 'Licensing',
+        details: `فك إلغاء واستعادة ترخيص (${school.school_name} — ${school.license_key})`,
+        severity: 'WARN'
+      });
+      loadSchools();
+    }
+  };
+
   const handleCopy = (key: string) => {
     sound.playTap();
     navigator.clipboard.writeText(key);
@@ -155,6 +269,11 @@ export const SuperAdminLicenseManager: React.FC = () => {
   const handleToggleStatus = async (school: SchoolLicenseDoc) => {
     sound.playTap();
     const nextStatus: SubscriptionStatus = school.subscription_status === 'active' ? 'suspended' : 'active';
+    if (nextStatus === 'suspended') {
+      const isSelf = (LicenseService.getActiveLicenseKey() || '').toUpperCase() === school.license_key.toUpperCase();
+      const warn = isSelf ? '⚠️ هذا هو ترخيص هذا الجهاز نفسه — تعليقه سيقفل هذه الشاشة فوراً!\n\n' : '';
+      if (!window.confirm(`${warn}تعليق ترخيص (${school.school_name}) مؤقتاً؟`)) return;
+    }
     const updated = await LicenseService.updateStatus(school.license_key, nextStatus);
     if (updated) {
       sound.playSuccess();
@@ -216,6 +335,10 @@ export const SuperAdminLicenseManager: React.FC = () => {
     trial: schools.filter(s => s.subscription_status === 'trial').length,
     suspendedOrExpired: schools.filter(s => s.subscription_status === 'suspended' || s.subscription_status === 'expired').length,
   };
+
+  // أرقام واتساب بالصيغة الدولية (wa.me يرفض الصيغة المحلية 09.. فيعلق بدون محادثة)
+  const genIntlPhone = toIntlWhatsAppPhone(genPhone);
+  const lastFulfilledIntlPhone = lastFulfilled ? toIntlWhatsAppPhone(lastFulfilled.phone) : null;
 
   return (
     <div className="space-y-6 font-cairo text-right">
@@ -292,9 +415,9 @@ export const SuperAdminLicenseManager: React.FC = () => {
               onChange={e => setGenType(e.target.value as any)}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs text-white focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             >
+              <option value="annual">اشتراك سنوي معتمد (2,000 د.ل - سنة كاملة)</option>
+              <option value="trial_extended">أسبوع تجريبي للاختبار (7 أيام)</option>
               <option value="lifetime">مدى الحياة دائم (Lifetime Unlimited)</option>
-              <option value="annual">سنوي كامل (1 Year - للعام 2026)</option>
-              <option value="trial_extended">تمديد تجريبي إضافي (14 يوماً)</option>
             </select>
           </div>
 
@@ -349,9 +472,9 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     </>
                   )}
                 </button>
-                {genPhone && (
+                {genIntlPhone ? (
                   <a
-                    href={`https://wa.me/${genPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                    href={`https://wa.me/${genIntlPhone}?text=${encodeURIComponent(
                       `السلام عليكم مدير مدرسة ${generatedResult.schoolName}،\nتم اعتماد وترخيص منظومتكم المدرسية بنجاح 🎓\n\n🔑 مفتاح الترخيص المعتمد الخاص بكم:\n${generatedResult.token}\n\nنوع الترخيص: ${generatedResult.typeLabel}\n\nيرجى فتح المنظومة على حاسوبكم ولصق المفتاح في خانة التفعيل للبدء الفوري.`
                     )}`}
                     target="_blank"
@@ -361,12 +484,18 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     <Send className="w-3.5 h-3.5" />
                     <span>إرسال عبر واتساب 💬</span>
                   </a>
+                ) : (
+                  genPhone.trim() !== '' && (
+                    <span className="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                      ⚠️ رقم الهاتف غير صالح — أدخل رقماً ليبياً (09xxxxxxxx) ليتفعل زر الواتساب
+                    </span>
+                  )
                 )}
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-black/60 border border-slate-800">
-              <p className="text-[10px] text-slate-400 mb-1">كود الترخيص المشفر (MADRASA-v2 Token):</p>
+              <p className="text-[10px] text-slate-400 mb-1">كود الترخيص المشفر (MADRASA-v3 Token):</p>
               <code className="text-xs font-mono text-emerald-400 select-all break-all" dir="ltr">
                 {generatedResult.token}
               </code>
@@ -415,23 +544,87 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     <span className="font-bold">• {new Date(req.created_at).toLocaleDateString('ar-LY')}</span>
                   </p>
                   {req.message && <p className="text-[11px] text-slate-600 dark:text-slate-300">«{req.message}»</p>}
+                  <p className="text-[11px] font-mono flex items-center gap-1.5" dir="ltr">
+                    <Laptop className="w-3 h-3 text-slate-400" />
+                    <span className={req.hwid ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-rose-500 font-bold'}>
+                      {req.hwid || 'NO-HWID (عام)'}
+                    </span>
+                    <span className="text-slate-400">• {LICENSE_TYPE_LABEL[req.licenseType || 'annual']}</span>
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-                  <button
-                    onClick={() => handleResolveRenewal(req.id, true)}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center gap-1.5"
-                    title="تفعيل اشتراك سنة كاملة فوراً"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>قبول وتفعيل سنة ⚡</span>
-                  </button>
-                  <button
-                    onClick={() => handleResolveRenewal(req.id, false)}
-                    className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800 hover:bg-rose-50 text-rose-600 text-xs font-black transition active:scale-95 flex items-center gap-1.5"
-                  >
-                    <XCircle className="w-4 h-4" />
-                    <span>رفض</span>
-                  </button>
+                <div className="flex flex-col gap-2 self-end md:self-center shrink-0 w-full md:w-auto">
+                  {/* التنفيذ المؤتمت: مفتاح مقيد بالبصمة + تسليم واتساب */}
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={fulfillTypes[req.id] || req.licenseType || 'annual'}
+                      onChange={e => setFulfillTypes(prev => ({ ...prev, [req.id]: e.target.value as RequestedLicenseType }))}
+                      className="px-2.5 py-2 rounded-xl bg-slate-950 text-white text-xs font-bold border border-indigo-800 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                      title="نوع الترخيص المزمع إصداره"
+                    >
+                      <option value="annual">سنوي</option>
+                      <option value="lifetime">دائم</option>
+                      <option value="trial_extended">تجريبي موسع</option>
+                    </select>
+                    <button
+                      onClick={() => handleFulfillRenewal(req)}
+                      disabled={fulfillingId === req.id}
+                      className="flex-1 md:flex-initial px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      title="توليد مفتاح مشفر مقيد ببصمة جهاز الزبون وتجهيزه للتسليم"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>{fulfillingId === req.id ? 'جاري التوليد...' : 'تنفيذ بمفتاح مقيد ⚡'}</span>
+                    </button>
+                  </div>
+                  {lastFulfilled && lastFulfilled.reqId === req.id && (
+                    <div className="p-3 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-2">
+                      <p className="text-[11px] font-black text-emerald-300">تم التوليد ({lastFulfilled.typeLabel}) — انسخ وأرسل واتساب:</p>
+                      <code className="block text-[10px] font-mono text-emerald-400 select-all break-all" dir="ltr">{lastFulfilled.token}</code>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(lastFulfilled.token)}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1 transition"
+                        >
+                          {copiedKey === lastFulfilled.token ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{copiedKey === lastFulfilled.token ? 'تم النسخ!' : 'نسخ المفتاح'}</span>
+                        </button>
+                        {lastFulfilledIntlPhone ? (
+                          <a
+                            href={`https://wa.me/${lastFulfilledIntlPhone}?text=${encodeURIComponent(
+                              `السلام عليكم مدير مدرسة ${lastFulfilled.schoolName}،\nتم اعتماد ترخيصكم (${lastFulfilled.typeLabel}) 🎓\n\n🔑 مفتاح التفعيل الخاص بجهازكم:\n${lastFulfilled.token}\n\nالخطوات:\n1- افتح المنظومة على نفس الحاسوب\n2- الصق المفتاح في خانة التفعيل واضغط تفعيل\n\nملاحظة: المفتاح مقيد ببصمة جهازكم (${lastFulfilled.hwid}) ولا يعمل على جهاز آخر.`
+                            )}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition"
+                          >
+                            <Send className="w-3.5 h-3.5" />
+                            <span>إرسال واتساب 💬</span>
+                          </a>
+                        ) : (
+                          <span className="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                            ⚠️ رقم الزبون غير صالح — انسخ المفتاح وأرسله يدوياً
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleResolveRenewal(req.id, true)}
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition active:scale-95 flex items-center gap-1.5"
+                      title="تفعيل اشتراك سحابي كلاسيكي (للمفاتيح غير المشفرة)"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>قبول كلاسيكي (سنة) ⚡</span>
+                    </button>
+                    <button
+                      onClick={() => handleResolveRenewal(req.id, false)}
+                      className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800 hover:bg-rose-50 text-rose-600 text-xs font-black transition active:scale-95 flex items-center gap-1.5"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      <span>رفض</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -495,7 +688,9 @@ export const SuperAdminLicenseManager: React.FC = () => {
 
                     {/* Status Badge */}
                     <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1 ${
-                      school.subscription_status === 'active'
+                      school.revoked
+                        ? 'bg-slate-800 text-slate-200'
+                        : school.subscription_status === 'active'
                         ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
                         : school.subscription_status === 'suspended'
                         ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
@@ -505,7 +700,9 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     }`}>
                       <span className="w-1.5 h-1.5 rounded-full bg-current" />
                       <span>
-                        {school.subscription_status === 'active'
+                        {school.revoked
+                          ? 'ملغي من الإدارة ⛔'
+                          : school.subscription_status === 'active'
                           ? 'اشتراك ساري (Active)'
                           : school.subscription_status === 'suspended'
                           ? 'معلق (Suspended)'
@@ -514,6 +711,11 @@ export const SuperAdminLicenseManager: React.FC = () => {
                           : `تجريبي (متبقي ${daysLeft} يوم)`}
                       </span>
                     </span>
+                    {school.bound_hwid && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-900 text-emerald-400 border border-slate-700" dir="ltr" title="بصمة الجهاز المقيد بها">
+                        {school.bound_hwid}
+                      </span>
+                    )}
                   </div>
 
                   {/* License Key with Copy */}
@@ -521,10 +723,10 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     <span className="text-slate-400">مفتاح الترخيص:</span>
                     <button
                       onClick={() => handleCopy(school.license_key)}
-                      className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-mono font-bold flex items-center gap-1.5 text-xs transition"
+                      className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-mono font-bold flex items-center gap-1.5 min-w-0 max-w-full text-xs transition"
                       title="نسخ مفتاح الترخيص"
                     >
-                      <span>{school.license_key}</span>
+                      <span className="break-all text-left max-w-full" dir="ltr">{school.license_key.length > 48 ? `${school.license_key.slice(0, 24)}…${school.license_key.slice(-12)}` : school.license_key}</span>
                       {copiedKey === school.license_key ? (
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
                       ) : (
@@ -588,6 +790,24 @@ export const SuperAdminLicenseManager: React.FC = () => {
                   >
                     {school.subscription_status === 'active' ? 'تعليق ⏸️' : 'تفعيل دائم ⚡'}
                   </button>
+
+                  {!school.revoked ? (
+                    <button
+                      onClick={() => handleRevoke(school)}
+                      className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition active:scale-95"
+                      title="إلغاء نهائي: يُقفل على جهاز الزبون عند التحقق التالي (متصل أو غير متصل)"
+                    >
+                      إلغاء ⛔
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleRestore(school)}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs transition active:scale-95 shadow-md"
+                      title="فك الإلغاء وإعادة التفعيل (للترخيص التجريبي الافتراضي يعيده تجريبياً)"
+                    >
+                      استعادة ✅
+                    </button>
+                  )}
                 </div>
 
               </div>

@@ -67,7 +67,7 @@ function createWindow() {
         {
           label: 'فتح مجلد المستندات المدرسية',
           click: async () => {
-            const docsDir = path.join(app.getPath('documents'), 'منظومة مدرسة الباعور');
+            const docsDir = path.join(app.getPath('documents'), 'منظومة المدرسة الرقمية');
             if (!fs.existsSync(docsDir)) {
               fs.mkdirSync(docsDir, { recursive: true });
             }
@@ -94,8 +94,11 @@ function createWindow() {
         { label: 'تكبير (Zoom In)', role: 'zoomIn', accelerator: 'CmdOrCtrl+Plus' },
         { label: 'تصغير (Zoom Out)', role: 'zoomOut', accelerator: 'CmdOrCtrl+-' },
         { label: 'الحجم الافتراضي (Reset Zoom)', role: 'resetZoom', accelerator: 'CmdOrCtrl+0' },
-        { type: 'separator' },
-        { label: 'أدوات المطور (DevTools)', role: 'toggleDevTools', accelerator: 'CmdOrCtrl+Shift+I' },
+        // أدوات المطور متاحة في نسخة التطوير فقط — لا تظهر في النسخة المباعة
+        ...(app.isPackaged ? [] : [
+          { type: 'separator' },
+          { label: 'أدوات المطور (DevTools)', role: 'toggleDevTools', accelerator: 'CmdOrCtrl+Shift+I' },
+        ]),
       ],
     },
     {
@@ -130,9 +133,9 @@ function createWindow() {
           click: () => {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
-              title: 'منظومة مدرسة الشهيد امحمد الباعور الرقمية',
+              title: 'منظومة المدرسة الرقمية الشاملة',
               message: 'منظومة الإدارة المدرسية والامتحانات الشاملة (Windows Edition)',
-              detail: 'الإصدار: 2.0.0 (Native Desktop)\nالمدرسة: الشهيد امحمد الباعور للتعليم الأساسي\nقاعدة البيانات: 873 طالباً و 33 فصلاً معتمدة وفق لائحة الامتحانات الليبية.\n\nتطبيق مكتبي مخصص لنظام ويندوز مع تكامل الطباعة وحفظ الملفات محلياً.',
+              detail: 'الإصدار: 2.0.0 (Native Desktop)\nنظام إدارة التعليم والامتحانات الشامل للمدارس الليبية.\nتطبيق مكتبي مخصص لنظام ويندوز مع تكامل الطباعة وحفظ الملفات محلياً.',
               buttons: ['حسناً'],
             });
           },
@@ -146,10 +149,33 @@ function createWindow() {
 
   // Load production dist or local dev server
   const distPath = path.join(__dirname, '..', 'dist', 'index.html');
+  // وضع المالك (--owner): يفتح بوابة المدير العام مباشرة — على جهاز المورّد فقط
+  const ownerMode = process.argv.includes('--owner') && !!loadPrivateKey();
+  if (ownerMode) mainWindow.setTitle('بوابة المالك — إدارة التراخيص والمدارس المشتركة');
   if (fs.existsSync(distPath)) {
-    mainWindow.loadFile(distPath);
-  } else {
+    mainWindow.loadFile(distPath, ownerMode ? { query: { role: 'superadmin' } } : undefined);
+  } else if (!app.isPackaged) {
     mainWindow.loadURL('http://localhost:3000');
+  } else {
+    dialog.showErrorBox('خطأ في التثبيت', 'ملفات المنظومة غير مكتملة. يرجى إعادة التثبيت.');
+    app.quit();
+    return;
+  }
+
+  // حماية: لا تنقل داخل النافذة لمواقع خارجية، والروابط الخارجية تفتح في المتصفح
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    const allowed = url.startsWith('file://') || (!app.isPackaged && url.startsWith('http://localhost:3000'));
+    if (!allowed) {
+      event.preventDefault();
+      if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    }
+  });
+  if (app.isPackaged) {
+    mainWindow.webContents.on('devtools-opened', () => mainWindow && mainWindow.webContents.closeDevTools());
   }
 
   mainWindow.once('ready-to-show', () => {
@@ -211,7 +237,7 @@ ipcMain.handle('print-native', async (event, options = {}) => {
 ipcMain.handle('save-file-dialog', async (event, { defaultFileName, filters, base64Data, textData }) => {
   if (!mainWindow) return { success: false, error: 'No window' };
 
-  const defaultDir = path.join(app.getPath('documents'), 'منظومة مدرسة الباعور');
+  const defaultDir = path.join(app.getPath('documents'), 'منظومة المدرسة الرقمية');
   if (!fs.existsSync(defaultDir)) {
     try {
       fs.mkdirSync(defaultDir, { recursive: true });
@@ -280,9 +306,20 @@ ipcMain.handle('open-file-dialog', async (event, { filters }) => {
 // Open Folder in Windows File Explorer
 ipcMain.handle('open-path', async (event, targetPath) => {
   try {
-    const resolvedPath = targetPath || path.join(app.getPath('documents'), 'منظومة مدرسة الباعور');
+    // يُسمح بفتح مجلدات المنظومة فقط — لا تشغيل ملفات تنفيذية أو مسارات عشوائية
+    const docsRoot = path.join(app.getPath('documents'), 'منظومة المدرسة الرقمية');
+    const allowedRoots = [docsRoot, path.join(app.getPath('userData'), 'backups')];
+    const resolvedPath = path.resolve(targetPath || docsRoot);
+    const insideAllowed = allowedRoots.some(root => resolvedPath === root || resolvedPath.startsWith(root + path.sep));
+    if (!insideAllowed) {
+      return { success: false, error: 'مسار غير مسموح.' };
+    }
     if (!fs.existsSync(resolvedPath)) {
       fs.mkdirSync(resolvedPath, { recursive: true });
+    }
+    if (!fs.statSync(resolvedPath).isDirectory()) {
+      shell.showItemInFolder(resolvedPath);
+      return { success: true };
     }
     await shell.openPath(resolvedPath);
     return { success: true };
@@ -296,7 +333,7 @@ ipcMain.handle('show-native-notification', (event, { title, body }) => {
   const { Notification } = require('electron');
   if (Notification.isSupported()) {
     const notif = new Notification({
-      title: title || 'منظومة مدرسة الشهيد امحمد الباعور',
+      title: title || 'منظومة المدرسة الرقمية',
       body: body || '',
       icon: resolveIconPath(),
     });
@@ -319,6 +356,146 @@ ipcMain.handle('get-system-info', () => {
     documentsPath: app.getPath('documents'),
     desktopPath: app.getPath('desktop'),
   };
+});
+
+
+// -------------------------------------------------------------
+// الترخيص: بصمة الجهاز + ختم الفترة التجريبية + التوقيع (لجهاز المورّد فقط)
+// -------------------------------------------------------------
+const crypto = require('crypto');
+const { execFileSync } = require('child_process');
+const { loadPrivateKey, signLicense, readLedger } = require('./vendorKey.cjs');
+
+let cachedMachineId = null;
+function getMachineId() {
+  if (cachedMachineId) return cachedMachineId;
+  let raw = '';
+  try {
+    if (process.platform === 'win32') {
+      const out = execFileSync('reg', ['query', 'HKLM\\SOFTWARE\\Microsoft\\Cryptography', '/v', 'MachineGuid'], { encoding: 'utf8', windowsHide: true, timeout: 5000 });
+      const m = out.match(/MachineGuid\s+REG_SZ\s+([0-9a-fA-F-]+)/);
+      if (m) raw = m[1];
+    }
+  } catch {}
+  if (!raw) raw = `${os.hostname()}|${os.cpus()[0] ? os.cpus()[0].model : ''}|${os.totalmem()}`;
+  const h = crypto.createHash('sha256').update('madrasa-hwid-v3|' + raw.toLowerCase()).digest('hex').toUpperCase();
+  cachedMachineId = `HWID-LY-${h.slice(0, 4)}-${h.slice(4, 8)}-${h.slice(8, 12)}`;
+  return cachedMachineId;
+}
+
+// ختم بداية التجربة في موضعين خارج بيانات المتصفح؛ يُعتمد الأقدم دائماً.
+function trialSealPaths() {
+  const list = [path.join(app.getPath('userData'), '.ts-seal')];
+  if (process.env.LOCALAPPDATA) list.push(path.join(process.env.LOCALAPPDATA, '.madrasa-sys', 'ts'));
+  return list;
+}
+function getTrialStart(rendererStart) {
+  const seals = [];
+  for (const p of trialSealPaths()) {
+    try { const v = Number(fs.readFileSync(p, 'utf8').trim()); if (v > 0) seals.push(v); } catch {}
+  }
+  const r = Number(rendererStart) || 0;
+  if (r > 0) seals.push(r);
+  const start = seals.length ? Math.min(...seals) : Date.now();
+  for (const p of trialSealPaths()) {
+    try { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, String(start)); } catch {}
+  }
+  return start;
+}
+
+ipcMain.on('license-machine-id', (event) => { event.returnValue = getMachineId(); });
+ipcMain.on('license-trial-start', (event, rendererStart) => { event.returnValue = getTrialStart(rendererStart); });
+ipcMain.handle('license-can-sign', () => !!loadPrivateKey());
+ipcMain.on('license-is-vendor', (event) => { event.returnValue = !!loadPrivateKey(); });
+ipcMain.handle('license-ledger', () => (loadPrivateKey() ? readLedger() : []));
+ipcMain.handle('license-sign', (event, params) => {
+  const key = loadPrivateKey();
+  if (!key) return { success: false, error: 'هذا الجهاز ليس جهاز المورّد المعتمد — لا يوجد مفتاح توقيع.' };
+  try {
+    return { success: true, ...signLicense(key, params || {}) };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// -------------------------------------------------------------
+// الحفظ الدائم على القرص + نسخ احتياطية يومية (حماية بيانات المدرسة)
+// بيانات المتصفح وحدها قد تضيع؛ هنا نحفظ نسخة كاملة في ملف، ونسخة يومية
+// في "المستندات\منظومة المدرسة الرقمية\النسخ الاحتياطية" (آخر 30 يوماً).
+// -------------------------------------------------------------
+const BACKUP_KEEP_DAYS = 30;
+function storeFilePath() { return path.join(app.getPath('userData'), 'data', 'school-store.json'); }
+function backupsDir() { return path.join(app.getPath('documents'), 'منظومة المدرسة الرقمية', 'النسخ الاحتياطية'); }
+
+function writeFileAtomic(file, contents) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = file + '.tmp';
+  fs.writeFileSync(tmp, contents, 'utf8');
+  fs.renameSync(tmp, file);
+}
+
+let persistedEntries = null;
+function loadStore() {
+  if (persistedEntries) return persistedEntries;
+  for (const file of [storeFilePath(), storeFilePath() + '.prev']) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (parsed && parsed.entries && typeof parsed.entries === 'object') {
+        persistedEntries = parsed.entries;
+        return persistedEntries;
+      }
+    } catch {}
+  }
+  persistedEntries = {};
+  return persistedEntries;
+}
+
+function rotateDailyBackup(json) {
+  try {
+    const dir = backupsDir();
+    const today = new Date().toISOString().slice(0, 10);
+    const file = path.join(dir, `نسخة-احتياطية-${today}.json`);
+    writeFileAtomic(file, json);
+    const old = fs.readdirSync(dir).filter(f => /^نسخة-احتياطية-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
+    while (old.length > BACKUP_KEEP_DAYS) {
+      try { fs.unlinkSync(path.join(dir, old.shift())); } catch {}
+    }
+  } catch {}
+}
+
+function persistEntries(changes) {
+  const entries = { ...loadStore() };
+  for (const [k, v] of Object.entries(changes || {})) {
+    if (typeof k !== 'string' || !k.startsWith('madrasa_')) continue;
+    if (v === null) delete entries[k];
+    else entries[k] = String(v);
+  }
+  persistedEntries = entries;
+  const json = JSON.stringify({ app: 'madrasa', version: 1, savedAt: new Date().toISOString(), entries });
+  try { if (fs.existsSync(storeFilePath())) fs.copyFileSync(storeFilePath(), storeFilePath() + '.prev'); } catch {}
+  writeFileAtomic(storeFilePath(), json);
+  rotateDailyBackup(json);
+}
+
+ipcMain.on('store-load', (event) => { event.returnValue = loadStore(); });
+ipcMain.on('store-persist-sync', (event, changes) => {
+  try { persistEntries(changes); event.returnValue = true; } catch { event.returnValue = false; }
+});
+ipcMain.handle('store-persist', (event, changes) => {
+  try { persistEntries(changes); return true; } catch { return false; }
+});
+ipcMain.handle('backups-list', () => {
+  try {
+    const dir = backupsDir();
+    return fs.readdirSync(dir).filter(f => f.endsWith('.json')).map(name => {
+      const st = fs.statSync(path.join(dir, name));
+      return { name, path: path.join(dir, name), size: st.size, mtime: st.mtimeMs };
+    }).sort((a, b) => b.mtime - a.mtime);
+  } catch { return []; }
+});
+ipcMain.handle('backups-open-folder', async () => {
+  try { fs.mkdirSync(backupsDir(), { recursive: true }); await shell.openPath(backupsDir()); return { success: true }; }
+  catch (err) { return { success: false, error: err.message }; }
 });
 
 // App Lifecycle

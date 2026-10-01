@@ -19,7 +19,7 @@ import {
 } from '../types';
 import { SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from './counselor/warningTriggerEngine';
 import { CryptoVaultService } from './security/cryptoVault';
-import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
+import { DEMO_STUDENTS } from '../data/demoSchoolDataset';
 import { getCleanAvatar } from '../utils/avatarHelper';
 import {
   studentRepository,
@@ -36,7 +36,7 @@ export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
 
 export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
   id: 'school-main-01',
-  name: 'منظومة المدرسة الرقمية الذكية',
+  name: 'مدرسة شريان الحياة للتعليم الأساسي',
   code: 'SCH-2026',
   district: 'مراقبة التربية والتعليم',
   directorName: 'مدير المدرسة المعتمد',
@@ -589,8 +589,40 @@ export const SEED_SCHEDULE: DaySchedule[] = [
 ];
 
 // Clean Libyan Students Dataset (12-Digit National Numbers & 2025/2026 Academic Year)
-// Real 873 Libyan Students from Official School Records
-export const SEED_STUDENTS: Student[] = LIBYAN_BAOUR_STUDENTS;
+// بيانات وهمية بالكامل — تُحمَّل عند الطلب فقط للمعاينة
+export const SEED_STUDENTS: Student[] = DEMO_STUDENTS;
+
+// Fallback safe student object used when database is clean and has 0 students
+export const DEFAULT_FALLBACK_STUDENT: Student = {
+  id: 'std-empty-fallback',
+  name: 'طالب جديد',
+  nationalId: '120260000000',
+  nationalNumber: '120260000000',
+  studentNumber: '2026-0000',
+  linkCode: 'SCH-2026-EMPTY',
+  avatar: getCleanAvatar('طالب جديد', 'male'),
+  grade: 'الصف الأول الأساسي',
+  className: '1/1',
+  gender: 'male',
+  parentName: 'ولي الأمر',
+  parentPhone: '0912345678',
+  parentEmail: 'parent@school.edu.ly',
+  status: 'present',
+  attendanceRate: 100,
+  academicAverage: 100,
+  courseworkScore: 40,
+  examScore: 60,
+  totalScore: 100,
+  appreciation: 'ممتاز',
+  behaviorRating: 'ممتاز',
+  behaviorPointsTotal: 0,
+  behaviorPoints: [],
+  competencies: [],
+  subjects: [],
+  recentAttendance: [],
+  notes: [],
+  badges: []
+};
 
 export const SEED_CLASSES: SchoolClass[] = [
   { id: 'cls-1-1', name: '1/1 مساء', grade: 'الصف الأول الأساسي', studentCount: 33, presentCount: 32, absentCount: 1, lateCount: 0, supervisor: 'أ. طارق الفيتوري' },
@@ -1095,15 +1127,14 @@ export const db = {
     try {
       const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
       let list: Student[] = [];
-      if (data) {
+      if (data !== null) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           list = CryptoVaultService.decryptStudentsBatch(parsed);
         }
-      }
-      if (!list || list.length < 50) {
-        list = LIBYAN_BAOUR_STUDENTS;
-        this.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
+      } else {
+        // Initial setup for new school: clean slate (0 students)
+        list = [];
       }
       // Guarantee clean vector avatars (never unsplash)
       const cleaned = list.map(s => ({
@@ -1115,10 +1146,7 @@ export const db = {
       // فرض النطاق على مستوى البيانات (الرفض هنا لا في العرض فقط)
       return this.scopeStudents(cleaned);
     } catch {
-      return LIBYAN_BAOUR_STUDENTS.map(s => ({
-        ...s,
-        avatar: getCleanAvatar(s.name, s.gender)
-      }));
+      return [];
     }
   },
 
@@ -1130,15 +1158,14 @@ export const db = {
     try {
       const data = localStorage.getItem(STORAGE_KEY_STUDENTS);
       let list: Student[] = [];
-      if (data) {
+      if (data !== null) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           list = CryptoVaultService.decryptStudentsBatch(parsed);
         }
-      }
-      if (!list || list.length < 50) {
-        list = LIBYAN_BAOUR_STUDENTS;
-        this.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
+      } else {
+        // Initial setup for new school: clean slate (0 students)
+        list = [];
       }
       return list.map(s => ({
         ...s,
@@ -1147,11 +1174,22 @@ export const db = {
           : s.avatar
       }));
     } catch {
-      return LIBYAN_BAOUR_STUDENTS.map(s => ({
-        ...s,
-        avatar: getCleanAvatar(s.name, s.gender)
-      }));
+      return [];
     }
+  },
+
+  /**
+   * تحميل بيانات تجريبية وهمية بنقرة زر اختيارية للمعاينة فقط
+   */
+  loadDemoStudents(): Student[] {
+    const cleaned = DEMO_STUDENTS.map(s => ({
+      ...s,
+      avatar: (!s.avatar || s.avatar.includes('unsplash.com'))
+        ? getCleanAvatar(s.name, s.gender)
+        : s.avatar
+    }));
+    this.saveStudents(cleaned, true);
+    return cleaned;
   },
 
   saveStudents(students: Student[], force: boolean = false): void {

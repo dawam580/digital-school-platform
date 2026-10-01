@@ -8,7 +8,10 @@ import {
   AlertCircle,
   Tag,
   User,
-  GraduationCap
+  GraduationCap,
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 
@@ -21,6 +24,9 @@ export const CustomCodeModal: React.FC<CustomCodeModalProps> = ({ isOpen, onClos
   const { currentTeacher, updateTeacherCode, showToast } = useSchool();
 
   const [newCode, setNewCode] = useState(currentTeacher?.code || 'LIB-MATH-01');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen || !currentTeacher) return null;
 
@@ -30,7 +36,7 @@ export const CustomCodeModal: React.FC<CustomCodeModalProps> = ({ isOpen, onClos
   const presets = [
     `أستاذ-${teacherFirstName}`,
     `${teacherFirstName}-${subjectSlug}`,
-    currentTeacher.phone,
+    currentTeacher.phone || '0912345678',
     `${subjectSlug}-1`
   ];
 
@@ -41,8 +47,23 @@ export const CustomCodeModal: React.FC<CustomCodeModalProps> = ({ isOpen, onClos
       return;
     }
 
-    const success = updateTeacherCode(currentTeacher.id, newCode.trim());
+    if (newPassword && newPassword !== confirmPassword) {
+      sound.playAlert();
+      showToast('error', 'تطابق كلمة المرور', 'كلمة المرور الجديدة وتأكيدها غير متطابقين.');
+      return;
+    }
+
+    const cleanCode = newCode.trim().toUpperCase();
+    const success = updateTeacherCode(currentTeacher.id, cleanCode);
     if (success) {
+      if (newPassword) {
+        try {
+          localStorage.setItem(`madrasa_teacher_pwd_${cleanCode}`, newPassword.trim());
+          localStorage.setItem(`madrasa_pwd_${cleanCode}`, newPassword.trim());
+        } catch {}
+      }
+      sound.playSuccess();
+      showToast('gold', 'تم حفظ الرمز وكلمة المرور 🔒', `تم تحديث رمز الدخول إلى (${cleanCode}) بنجاح.`);
       onClose();
     }
   };
@@ -134,6 +155,54 @@ export const CustomCodeModal: React.FC<CustomCodeModalProps> = ({ isOpen, onClos
                   ⚡ {preset}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Password Change Section (Optional) */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <Lock className="w-4 h-4 text-emerald-600" />
+                <span>تغيير كلمة المرور الخاصة بك (اختياري):</span>
+              </span>
+              <span className="text-[10px] text-slate-400">الافتراضية: 2026</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                  كلمة المرور الجديدة:
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder="اتركها فارغة إن لم ترغب بتغييرها"
+                    className="w-full py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                  تأكيد كلمة المرور الجديدة:
+                </label>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="أعد كتابة كلمة المرور"
+                  className="w-full py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
             </div>
           </div>
 

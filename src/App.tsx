@@ -175,7 +175,7 @@ const MainContent: React.FC = () => {
     );
   }
 
-  if (!isAuthenticated && activeTab !== 'parent-signup') {
+  if (!isAuthenticated && activeTab !== 'parent-signup' && activeTab !== 'landing') {
     return (
       <>
         <Login />
@@ -189,6 +189,10 @@ const MainContent: React.FC = () => {
         />
       </>
     );
+  }
+
+  if (activeTab === 'landing') {
+    return <LandingPage />;
   }
 
   if (activeTab === 'login') {

@@ -19,6 +19,9 @@ export interface SchoolLicenseDoc {
   notes?: string;                   // ملاحظات أو المدينة
   last_verified_at?: string;        // آخر توقيت تم فيه التحقق بنجاح
   offline_grace_allowed_days?: number; // عدد أيام السماح بدون إنترنت (افتراضياً 7 أيام)
+  bound_hwid?: string;              // بصمة الجهاز المقيد بها المفتاح المشفر (إن وجدت)
+  revoked?: boolean;                // true = ملغي من المدير العام (قائمة الإلغاء)
+  delivered_at?: string;            // تاريخ تسليم المفتاح للزبون (ISO 8601)
 }
 export interface LicenseVerificationResult {
   isValid: boolean;                 // هل الترخيص يسمح بالعمل؟
@@ -32,8 +35,11 @@ export interface LicenseVerificationResult {
   licenseDoc?: SchoolLicenseDoc;
 }
 
-/** طلب تجديد اشتراك ترسله المدرسة للمدير العام (حلقة التجديد المغلقة) */
+/** طلب تجديد/شراء ترسله المدرسة للمدير العام (حلقة التجديد المغلقة) */
 export type RenewalStatus = 'pending' | 'approved' | 'rejected';
+
+/** نوع الترخيص المطلوب إصداره مقابل الطلب */
+export type RequestedLicenseType = 'annual' | 'lifetime' | 'trial_extended';
 
 export interface RenewalRequest {
   id: string;                       // REQ-<timestamp>-<rand>
@@ -44,4 +50,8 @@ export interface RenewalRequest {
   status: RenewalStatus;
   created_at: string;               // ISO
   resolved_at?: string;             // ISO
+  hwid?: string;                    // بصمة جهاز الزبون (تُرفق تلقائياً من شاشة الانتهاء)
+  licenseType?: RequestedLicenseType; // نوع الترخيص المطلوب (افتراضي annual)
+  deliveredKey?: string;            // المفتاح المشفر المسلَّم للزبون بعد القبول
+  delivered_at?: string;            // تاريخ التسليم (ISO)
 }

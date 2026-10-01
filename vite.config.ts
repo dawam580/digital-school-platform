@@ -104,11 +104,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        // جراحة 1: فصل كشف الباعور (1.6MB) والمكتبات الثقيلة عن الباندل الرئيسي.
-        // السبب: db.getStudents() متزامن + Electron يعمل بـ file:// (fetch محظور)
-        // لذلك نُبقي الـ import الثابت ونكتفي بالتقسيم لملفات cache مستقلة.
+        // فصل المكتبات الثقيلة عن الباندل الرئيسي (ملفات cache مستقلة).
         manualChunks(id) {
-          if (id.includes('libyanBaourSchoolDataset')) return 'baour-data';
           if (id.includes('node_modules/pdfjs-dist')) return 'pdf-vendor';
           if (id.includes('node_modules/xlsx')) return 'excel-vendor';
           // clsx مشتركة بين الباندل الرئيسي وRecharts — تُثبَّت في vendor صراحةً

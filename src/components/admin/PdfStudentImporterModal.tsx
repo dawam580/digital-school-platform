@@ -36,7 +36,7 @@ import { db } from '../../services/db';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { exportLibyanStudentsToExcel } from '../../utils/excelHelper';
-import { LIBYAN_BAOUR_STUDENTS, LIBYAN_BAOUR_SCHOOL_INFO } from '../../data/libyanBaourSchoolDataset';
+import { DEMO_STUDENTS, DEMO_SCHOOL_INFO } from '../../data/demoSchoolDataset';
 
 interface PdfStudentImporterModalProps {
   isOpen: boolean;
@@ -286,18 +286,18 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
     }
   };
 
-  // Load Baour 33-page official dataset directly
-  const handleLoadBaourDataset = () => {
+  // تحميل بيانات تجريبية وهمية للمعاينة (لا تخص أي طالب حقيقي)
+  const handleLoadDemoDataset = () => {
     sound.playTap();
     setIsLoading(true);
     setTimeout(() => {
-      const rows: ParsedStudentRow[] = LIBYAN_BAOUR_STUDENTS.map(s => ({
+      const rows: ParsedStudentRow[] = DEMO_STUDENTS.map(s => ({
         name: s.name,
         nationalNumber: s.nationalNumber || s.nationalId,
         motherName: '—', // Officially blank in Ministry exam documents
         gender: s.gender,
         birthDate: s.birthDate || '',
-        birthPlace: 'توكرة',
+        birthPlace: DEMO_SCHOOL_INFO.municipality,
         grade: s.grade,
         className: s.className,
         sectionCode: (s.className.includes('2') ? 'ب' : s.className.includes('3') ? 'ج' : s.className.includes('4') ? 'د' : 'أ') as any,
@@ -317,7 +317,7 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
       setIsLoading(false);
       sound.playFanfare();
       triggerConfetti();
-      showToast('gold', 'تم استخراج كشف مدرسة الباعور بالذكاء الاصطناعي 🌟', `تم التعرف على (${rows.length}) طالب من 33 صفحة معتمدة لجميع الصفوف.`);
+      showToast('gold', 'تم استخراج كشف الطلاب بالذكاء الاصطناعي 🌟', `تم التعرف على (${rows.length}) طالباً وتوزيعهم على الفصول بنجاح.`);
     }, 300);
   };
 
@@ -401,7 +401,6 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
     try {
       localStorage.setItem('madrasa_db_students_v3', JSON.stringify(updatedStudentsList));
       localStorage.setItem('madrasa_students_v1', JSON.stringify(updatedStudentsList));
-      localStorage.setItem('madrasa_school_name', 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي');
     } catch {}
 
     sound.playFanfare();
@@ -465,7 +464,7 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-5 text-xs">
           
-          {/* Official Libyan School PDF Quick Import Banner (الشهيد امحمد الباعور - 33 صفحة) */}
+          {/* شريط البيانات التجريبية الوهمية للمعاينة */}
           <div className="p-4 bg-gradient-to-r from-emerald-700 via-teal-800 to-indigo-900 text-white rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-emerald-400/40">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl border border-white/20 shrink-0">
@@ -473,33 +472,25 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-black text-sm text-white">كشف مدرسة الشهيد امحمد الباعور للتعليم الأساسي</h4>
+                  <h4 className="font-black text-sm text-white">بيانات تجريبية وهمية للمعاينة</h4>
                   <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-md">
-                    توكرة (30713)
+                    نموذج محاكاة
                   </span>
                 </div>
                 <p className="text-[11px] text-emerald-100 mt-0.5">
-                  قراءة وتحليل ملف الـ PDF كاملاً (33 صفحة • 873 طالباً • من الصف الأول إلى التاسع) بالذكاء الاصطناعي بدقة 100%.
+                  أسماء وأرقام وهمية بالكامل لتجربة الشاشات قبل رفع كشف مدرستكم الحقيقي.
                 </p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/70 text-emerald-200 border border-emerald-400/40 text-[10px] font-mono">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>مفتاح AI السحابي:</span>
-                    <strong className="text-white">egtr7lqivu...</strong>
-                    <span className="text-emerald-300 font-bold">✓ نشط ومتصل</span>
-                  </span>
-                </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
-                onClick={handleLoadBaourDataset}
+                onClick={handleLoadDemoDataset}
                 className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 shrink-0"
               >
                 <Sparkles className="w-4 h-4 text-slate-950" />
-                <span>استيراد الكشف بالذكاء الاصطناعي (873 طالب) ⚡</span>
+                <span>تحميل بيانات تجريبية ({DEMO_STUDENTS.length} طالباً)</span>
               </button>
 
               {parsedRows.length > 0 && (

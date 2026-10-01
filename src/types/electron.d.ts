@@ -29,6 +29,26 @@ export interface ElectronAPI {
     documentsPath: string;
     desktopPath: string;
   }>;
+  getMachineId?: () => string;
+  isVendorMachine?: () => boolean;
+  getIssuedLicenses?: () => Promise<Array<{
+    id?: string; token: string; schoolName: string; hwid: string;
+    licenseType: 'lifetime' | 'annual' | 'trial_extended';
+    issuedAt: string; expiresAt: string; adminPhone?: string;
+  }>>;
+  getTrialStart?: (rendererStart?: number) => number;
+  canSignLicense?: () => Promise<boolean>;
+  signLicense?: (params: {
+    schoolName: string;
+    hwid: string;
+    licenseType: 'lifetime' | 'annual' | 'trial_extended';
+    adminPhone?: string;
+  }) => Promise<{ success: boolean; token?: string; error?: string }>;
+  loadPersistedStore?: () => Record<string, string> | null;
+  persistStore?: (changes: Record<string, string | null>) => Promise<boolean>;
+  persistStoreSync?: (changes: Record<string, string | null>) => boolean;
+  listBackups?: () => Promise<Array<{ name: string; path: string; size: number; mtime: number }>>;
+  openBackupsFolder?: () => Promise<{ success?: boolean; error?: string }>;
 }
 
 declare global {

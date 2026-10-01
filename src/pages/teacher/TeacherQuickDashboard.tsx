@@ -1181,6 +1181,9 @@ export const TeacherQuickDashboard: React.FC = () => {
                                 value={score.coursework}
                                 onChange={e => handleUpdateStudentScore(st.id, 'coursework', Number(e.target.value))}
                                 className="w-20 py-2 px-2 rounded-xl text-center font-mono font-black text-sm border-2 border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                 inputMode="numeric"
+                                 autoComplete="off"
+                                 spellCheck={false}
                               />
                             </td>
 
@@ -1193,6 +1196,9 @@ export const TeacherQuickDashboard: React.FC = () => {
                                 value={score.exam}
                                 onChange={e => handleUpdateStudentScore(st.id, 'exam', Number(e.target.value))}
                                 className="w-20 py-2 px-2 rounded-xl text-center font-mono font-black text-sm border-2 border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                 inputMode="numeric"
+                                 autoComplete="off"
+                                 spellCheck={false}
                               />
                             </td>
                           </>

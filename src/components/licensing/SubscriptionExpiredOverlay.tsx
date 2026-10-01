@@ -113,6 +113,8 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
         schoolName: result.schoolName,
         adminPhone: renewPhone,
         message: renewMsg,
+        hwid: clientHwid,
+        licenseType: 'annual',
       });
       if (res.ok && res.request) {
         sound.playSuccess();
@@ -137,9 +139,9 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
   const isGrace = result.status === 'grace_expired';
   const isSuspended = result.status === 'suspended';
 
-  // Prefilled WhatsApp message
+  // Prefilled WhatsApp message for 2,000 LYD annual renewal
   const whatsappText = encodeURIComponent(
-    `السلام عليكم، أرغب في شراء وتفعيل الترخيص الدائم لمنظومة مدرسة: ${result.schoolName || 'مدرستنا'}\nكود جهازي (HWID): ${clientHwid}`
+    `السلام عليكم، أرغب في تفعيل/تجديد الاشتراك السنوي الرسمي (2,000 دينار ليبي) لمنظومة مدرسة: ${result.schoolName || 'مدرستنا'}\nكود بصمة جهازي (HWID): ${clientHwid}`
   );
   const whatsappUrl = `https://wa.me/218922465676?text=${whatsappText}`;
 
@@ -182,6 +184,23 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
             <p className="text-[11px] text-amber-800 dark:text-amber-300">
               {result.errorMessage || 'انتهت مدة التجربة الممنوحة لجهازكم (7 أيام). تم قفل المنظومة أمنياً لحين إدخال مفتاح التفعيل الدائم المعتمد.'}
             </p>
+          </div>
+
+          {/* Official Annual Pricing Box */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white border border-blue-400/40 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <span className="text-[11px] text-amber-300 font-bold block">
+                رسوم الترخيص والاشتراك السنوي المعتمد:
+              </span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-black text-white font-mono">2,000 د.ل</span>
+                <span className="text-xs text-blue-200">/ سنوياً للمدرسة</span>
+              </div>
+            </div>
+            <div className="text-right sm:text-left text-[11px] text-blue-200/90 leading-tight">
+              <span className="block font-bold text-emerald-400">✓ عدد غير محدود من الطلاب</span>
+              <span className="block">✓ دعم فني وتحديثات مستمرة</span>
+            </div>
           </div>
 
           {/* Machine HWID (بصمة هذا الجهاز) Box */}
@@ -253,7 +272,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
                 type="text"
                 value={inputKey}
                 onChange={e => setInputKey(e.target.value)}
-                placeholder="الصق كود الترخيص هنا (MADRASA-v2-...)"
+                placeholder="الصق كود الترخيص هنا (MADRASA-v3-...)"
                 dir="ltr"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-900 text-xs font-mono text-indigo-950 dark:text-indigo-200 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               />
@@ -278,6 +297,57 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
                 <span>{isActivating ? 'جاري التحقق والتفعيل...' : 'تفعيل المنظومة الآن 🚀'}</span>
               </button>
             </form>
+          </div>
+
+          {/* In-app renewal/purchase request (auto HWID attached) */}
+          <div className="p-4 rounded-2xl border-2 border-dashed border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-2.5">
+            <div className="flex items-center gap-1.5 text-xs font-black text-emerald-900 dark:text-emerald-200">
+              <Send className="w-4 h-4 text-emerald-600" />
+              <span>طلب شراء/تجديد من داخل المنظومة 📩 (يصل المدير العام مباشرة)</span>
+            </div>
+            {alreadyPending ? (
+              <p className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 p-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>طلبك قيد المراجعة لدى المدير العام{sentRequestId ? ` (${sentRequestId})` : ''} — سيصلك مفتاح التفعيل عبر واتساب.</span>
+              </p>
+            ) : (
+              <form onSubmit={handleRenewal} className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input
+                    type="tel"
+                    value={renewPhone}
+                    onChange={e => setRenewPhone(e.target.value)}
+                    placeholder="رقم هاتف المدير 09xxxxxxxx"
+                    dir="ltr"
+                    className="px-3.5 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white dark:bg-slate-900 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={renewMsg}
+                    onChange={e => setRenewMsg(e.target.value)}
+                    placeholder="ملاحظة اختيارية (اسم المدرسة...)"
+                    className="px-3.5 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+                {renewError && (
+                  <p className="text-[11px] font-bold text-rose-600 flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{renewError}</span>
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={isSending}
+                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>{isSending ? 'جاري الإرسال...' : 'إرسال طلب التفعيل للمدير العام 📨'}</span>
+                </button>
+                <p className="text-[10px] text-slate-400 text-center">
+                  تُرفق بصمة جهازك (<span className="font-mono" dir="ltr">{clientHwid || '...'}</span>) تلقائياً ليصلك مفتاح يعمل على هذا الجهاز فقط.
+                </p>
+              </form>
+            )}
           </div>
 
           {/* Data Protection Reassurance */}

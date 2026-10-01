@@ -1,6 +1,11 @@
 const https = require('https');
 
-const API_KEY = process.env.ANTHROPIC_API_KEY || 'sk-OvgVwHOJ3ihfyxn3ZTe5LS82v0SyW0ebmvbizFlXH7GeEhfy';
+// المفتاح يُقرأ من متغيرات البيئة فقط — لا تكتب أي مفتاح داخل ملفات المشروع
+const API_KEY = process.env.ANTHROPIC_API_KEY;
+if (!API_KEY) {
+  console.error('ANTHROPIC_API_KEY غير معرّف. عرّفه في متغيرات بيئة ويندوز للمستخدم ثم أعد المحاولة.');
+  process.exit(1);
+}
 const BASE_URL = process.env.ANTHROPIC_BASE_URL || 'https://seekai.cc';
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
 

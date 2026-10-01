@@ -235,10 +235,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
     }, 500);
   };
 
-  // WhatsApp Director Link
-  const schoolWhatsAppNumber = '218922465676';
+  const schoolWhatsAppNumber = schoolProfile?.directorPhone ? `218${schoolProfile.directorPhone.replace(/^0/, '')}` : '218922465676';
   const directorWhatsAppUrl = `https://wa.me/${schoolWhatsAppNumber}?text=${encodeURIComponent(
-    `السلام عليكم ورحمة الله، أنا ولي أمر الطالب (${activeChild?.name || ''}) بالصف (${activeChild?.className || ''}) بمدرسة الباعور، أود الاستفسار بخصوص متابعة ابني.`
+    `السلام عليكم ورحمة الله، أنا ولي أمر الطالب (${activeChild?.name || ''}) بالصف (${activeChild?.className || ''}) بمدرسة (${schoolProfile?.name || 'المدرسة'})، أود الاستفسار بخصوص متابعة ابني.`
   )}`;
 
   // Attendance stats
@@ -931,7 +930,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               {(notifications && notifications.length > 0 ? notifications : [
                 { id: '1', title: 'رسالة من معلم الرياضيات', message: 'أظهر الطالب تميزاً كبيراً في حل تمارين الضرب. شكراً لمتابعتكم المستمرة.', date: 'اليوم', time: '10:15 ص', read: false },
                 { id: '2', title: 'رصد درجات اختبار مادة العلوم', message: 'تم نشر تقييم الشهر الأول لمادة العلوم، حصل الطالب على 78/100.', date: 'اليوم', time: '09:00 ص', read: false },
-                { id: '3', title: 'تعميم إداري: اجتماع أولياء الأمور', message: 'تتشرف إدارة مدرسة الباعور بدعوتكم لحضور الاجتماع الفصلي يوم الخميس القادم.', date: 'أمس', time: '04:30 م', read: true }
+                { id: '3', title: 'تعميم إداري: اجتماع أولياء الأمور', message: `تتشرف إدارة (${schoolProfile?.name || 'المدرسة'}) بدعوتكم لحضور الاجتماع الفصلي يوم الخميس القادم.`, date: 'أمس', time: '04:30 م', read: true }
               ]).map((notif) => (
                 <div
                   key={notif.id}

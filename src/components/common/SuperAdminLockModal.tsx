@@ -16,15 +16,15 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [pinDigits, setPinDigits] = useState<string[]>(['', '', '', '']);
+  const [pin, setPin] = useState('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [shake, setShake] = useState(false);
   const [lockoutSecs, setLockoutSecs] = useState<number>(0);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
-      setPinDigits(['', '', '', '']);
+      setPin('');
       setErrorMessage('');
       return;
     }
@@ -42,7 +42,7 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
     const timer = setInterval(checkLockout, 1000);
 
     setTimeout(() => {
-      inputRefs.current[0]?.focus();
+      inputRef.current?.focus();
     }, 150);
 
     return () => clearInterval(timer);
@@ -50,37 +50,9 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleDigitChange = (index: number, val: string) => {
-    const char = val.slice(-1);
-    if (char && !/^\d$/.test(char)) return;
-
-    const next = [...pinDigits];
-    next[index] = char;
-    setPinDigits(next);
-    setErrorMessage('');
-
-    if (char && index < 3) {
-      inputRefs.current[index + 1]?.focus();
-    }
-
-    // If completed 4 digits, automatically verify
-    if (char && index === 3 && next.every(d => d !== '')) {
-      verifyPin(next.join(''));
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !pinDigits[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-    if (e.key === 'Enter') {
-      verifyPin(pinDigits.join(''));
-    }
-  };
-
   const verifyPin = (pin: string) => {
-    if (pin.length < 4) {
-      setErrorMessage('يرجى إدخال الرمز السري المكون من 4 أرقام');
+    if (pin.length < 6) {
+      setErrorMessage('يرجى إدخال رمز الماستر (6 أرقام أو أكثر)');
       return;
     }
 
@@ -95,15 +67,15 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
       setErrorMessage(res.message);
       setShake(true);
       setTimeout(() => setShake(false), 500);
-      setPinDigits(['', '', '', '']);
-      inputRefs.current[0]?.focus();
+      setPin('');
+      inputRef.current?.focus();
     }
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[1000000] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
       <div
-        className={`relative w-full max-w-md bg-[#0b192c] border border-blue-500/30 rounded-3xl shadow-2xl overflow-hidden text-slate-100 p-6 ${
+        className={`relative m-auto w-full max-w-md bg-[#0b192c] border border-blue-500/30 rounded-3xl shadow-2xl overflow-hidden text-slate-100 p-5 sm:p-6 ${
           shake ? 'animate-bounce' : ''
         }`}
         dir="rtl"
@@ -138,21 +110,19 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
 
         {/* PIN Inputs */}
         <div className="my-6">
-          <div className="flex justify-center gap-3" dir="ltr">
-            {[0, 1, 2, 3].map(idx => (
-              <input
-                key={idx}
-                ref={el => (inputRefs.current[idx] = el)}
-                type="password"
-                inputMode="numeric"
-                maxLength={1}
-                disabled={lockoutSecs > 0}
-                value={pinDigits[idx]}
-                onChange={e => handleDigitChange(idx, e.target.value)}
-                onKeyDown={e => handleKeyDown(idx, e)}
-                className="w-13 h-14 text-center text-2xl font-black rounded-2xl bg-white/5 border-2 border-white/10 focus:border-blue-500 focus:bg-blue-950/40 text-white outline-none transition-all shadow-inner disabled:opacity-50"
-              />
-            ))}
+          <div className="flex justify-center gap-2 sm:gap-3" dir="ltr">
+            <input
+              ref={inputRef}
+              type="password"
+              inputMode="numeric"
+              maxLength={8}
+              disabled={lockoutSecs > 0}
+              value={pin}
+              onChange={e => { setPin(e.target.value.replace(/\D/g, '').slice(0, 8)); setErrorMessage(''); }}
+              onKeyDown={e => { if (e.key === 'Enter') verifyPin(pin); }}
+              placeholder="••••••"
+              className="w-64 h-14 sm:h-16 text-center text-2xl font-black tracking-[0.4em] rounded-2xl bg-white/5 border-2 border-white/10 focus:border-blue-500 focus:bg-blue-950/40 text-white outline-none transition-all shadow-inner disabled:opacity-50"
+            />
           </div>
 
           {/* Hint */}
@@ -181,8 +151,8 @@ export const SuperAdminLockModal: React.FC<SuperAdminLockModalProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center gap-3 font-cairo">
           <button
-            onClick={() => verifyPin(pinDigits.join(''))}
-            disabled={lockoutSecs > 0 || pinDigits.some(d => d === '')}
+            onClick={() => verifyPin(pin)}
+            disabled={lockoutSecs > 0 || pin.length < 6}
             className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-black shadow-lg shadow-blue-600/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
           >
             <KeyRound className="w-4 h-4" />

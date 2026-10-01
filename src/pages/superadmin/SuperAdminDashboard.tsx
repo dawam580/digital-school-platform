@@ -60,7 +60,7 @@ export const SuperAdminDashboard: React.FC = () => {
   // New School Form State
   const [newSchoolName, setNewSchoolName] = useState('');
   const [newSchoolCode, setNewSchoolCode] = useState('');
-  const [newDistrict, setNewDistrict] = useState('مراقبة التربية والتعليم - توكرة');
+  const [newDistrict, setNewDistrict] = useState('');
   const [newDirector, setNewDirector] = useState('');
   const [newPhone, setNewPhone] = useState('0912345678');
   const [startFresh, setStartFresh] = useState(true);
@@ -434,7 +434,7 @@ export const SuperAdminDashboard: React.FC = () => {
                   type="text"
                   value={newSchoolName}
                   onChange={e => setNewSchoolName(e.target.value)}
-                  placeholder="مثال: مدرسة توكرة الثانوية للبنين"
+                  placeholder="مثال: مدرسة النور للتعليم الأساسي"
                   required
                   className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -462,7 +462,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     type="text"
                     value={newDistrict}
                     onChange={e => setNewDistrict(e.target.value)}
-                    placeholder="مراقبة التربية والتعليم توكرة"
+                    placeholder="مثال: مراقبة التربية والتعليم - طرابلس"
                     className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-900 dark:text-white focus:outline-none"
                   />
                 </div>

@@ -9,8 +9,7 @@
 import { UserRole, Student, TeacherAccount } from '../../types';
 import { SecurityEngine } from './securityEngine';
 import { auditLogger } from '../audit/auditLogger';
-import { getSchoolProfile, SEED_TEACHERS } from '../db';
-import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
+import { getSchoolProfile, SEED_TEACHERS, db } from '../db';
 import { DEV_MODE } from '../../config/devMode';
 
 export const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
@@ -114,6 +113,14 @@ export class AuthEngine {
    */
   public static clearAttempts(identifier: string): void {
     this.attemptsMap.delete(identifier.trim().toLowerCase());
+  }
+
+  /**
+   * إعادة ضبط كافة محاولات الدخول وفك أي تجميد
+   */
+  public static clearAllAttempts(): void {
+    this.attemptsMap.clear();
+    SecurityEngine.resetDirectorPinLockout();
   }
 
   /**
@@ -488,13 +495,9 @@ export class AuthEngine {
 
     // ── و. بوابة ولي الأمر (Parent) ──
     if (role === 'parent') {
-      let studentList: Student[] = LIBYAN_BAOUR_STUDENTS;
+      let studentList: Student[] = [];
       try {
-        const stored = localStorage.getItem('madrasa_db_students_v3');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) studentList = parsed;
-        }
+        studentList = db.getAllStudents();
       } catch {}
 
       const foundStudent = studentList.find(

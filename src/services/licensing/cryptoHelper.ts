@@ -1,94 +1,57 @@
 /**
  * ============================================================================
  * منصة المدرسة الرقمية | Digital School Platform
- * محرك التشفير والتوقيع الرقمي وبصمة الجهاز (Offline Cryptographic Engine)
- * متوافق 100% مع نمط منظومة بنيان للتراخيص المستقلة بدون إنترنت
+ * محرك التحقق من تواقيع التراخيص وبصمة الجهاز (Offline Ed25519)
+ * ----------------------------------------------------------------------------
+ * - التراخيص موقّعة بـ Ed25519. البرنامج يحمل المفتاح العام فقط (للتحقق)،
+ *   والمفتاح الخاص (للإصدار) يبقى لدى المورّد خارج المشروع.
+ *   ⇒ فك ملفات البرنامج لا يكفي لتوليد مفاتيح مزورة.
+ * - بصمة الجهاز في نسخة ويندوز مأخوذة من MachineGuid عبر عملية Electron الرئيسية.
+ * - ختم بداية التجربة محفوظ خارج بيانات المتصفح أيضاً (لا يُصفَّر بمسح الكاش).
  * ============================================================================
  */
 
-// Pure TypeScript implementation of standard SHA-256
-function sha256(ascii: string): string {
-  function rightRotate(value: number, amount: number): number {
-    return (value >>> amount) | (value << (32 - amount));
-  }
+import { ed25519 } from '@noble/curves/ed25519';
+import { LICENSE_PUBLIC_KEY_HEX } from './licensePublicKey';
 
-  const mathPow = Math.pow;
-  const maxWord = mathPow(2, 32);
-  let i = 0, j = 0;
-  let result = '';
-
-  const words: number[] = [];
-  const asciiBitLength = ascii.length * 8;
-
-  let hash: number[] = [];
-  let k: number[] = [];
-  let primeCounter = 0;
-
-  const isComposite: Record<number, number> = {};
-  for (let candidate = 2; primeCounter < 64; candidate++) {
-    if (!isComposite[candidate]) {
-      for (i = 0; i < 313; i += candidate) {
-        isComposite[i] = candidate;
-      }
-      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
-      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
-    }
-  }
-
-  ascii += '\x80';
-  while ((ascii.length % 64) - 56) ascii += '\x00';
-  for (i = 0; i < ascii.length; i++) {
-    j = ascii.charCodeAt(i);
-    if (j >> 8) return '';
-    words[i >> 2] |= j << (((3 - i) % 4) * 8);
-  }
-  words[words.length] = (asciiBitLength / maxWord) | 0;
-  words[words.length] = asciiBitLength;
-
-  for (j = 0; j < words.length;) {
-    const w = words.slice(j, (j += 16));
-    const oldHash = hash;
-    hash = hash.slice(0, 8);
-
-    for (i = 0; i < 64; i++) {
-      const w15 = w[i - 15], w2 = w[i - 2];
-      const s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
-      const s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
-      const ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
-      const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
-      const temp1 = hash[7] + (rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25)) + ch + k[i] + (w[i] = (i < 16) ? w[i] : (w[i - 16] + s0 + w[i - 7] + s1) | 0);
-      const temp2 = (rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22)) + maj;
-
-      hash = [(temp1 + temp2) | 0].concat(hash);
-      hash[4] = (hash[4] + temp1) | 0;
-    }
-
-    for (i = 0; i < 8; i++) {
-      hash[i] = (hash[i] + oldHash[i]) | 0;
-    }
-  }
-
-  for (i = 0; i < 8; i++) {
-    for (let b = 3; b >= 0; b--) {
-      const byte = (hash[i] >> (b * 8)) & 255;
-      result += (byte < 16 ? '0' : '') + byte.toString(16);
-    }
-  }
-  return result;
-}
-
-// Master private signing secret (حصري للمشروع لضمان عدم تزوير التراخيص)
-const MASTER_SIGNING_SALT = 'MADRASA-SUPER-2026-SECURE-KEY-LIBYA-EDUTECH';
+const TOKEN_PREFIX = 'MADRASA-v3-';
+const TRIAL_DAYS = 7;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const STORAGE_KEYS = {
   CLIENT_HWID: 'madrasa_machine_hwid_v2',
   TRIAL_START: 'madrasa_trial_start_timestamp_v2',
+  // أختام احتياطية لبداية التجربة: أي حذف لختم واحد يُرمَّم من الباقي،
+  // وعند التعارض يُعتمد الأقدم (يمنع تمديد التجربة بحذف المفتاح الأساسي).
+  TRIAL_START_MIRROR_A: 'madrasa_trial_seal_a_v2',
+  TRIAL_START_MIRROR_B: 'madrasa_trial_seal_b_v2',
   LAST_SEEN_TIME: 'madrasa_clock_guard_last_seen_v2',
-  PERMANENT_KEY: 'madrasa_permanent_license_v2'
 };
+
+/**
+ * عشوائية مشفرة آمنة (crypto.getRandomValues) مع تراجع آمن لـ Math.random
+ * عند غياب WebCrypto — تُستخدم لكل المفاتيح والأكواد المولدة.
+ */
+export function secureRandomSuffix(length: number): string {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // بدون الملتبس (0/O/1/I)
+  const out: string[] = [];
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const buf = new Uint32Array(length);
+      crypto.getRandomValues(buf);
+      for (let i = 0; i < length; i++) out.push(alphabet[buf[i] % alphabet.length]);
+      return out.join('');
+    }
+  } catch {}
+  for (let i = 0; i < length; i++) {
+    out.push(alphabet[Math.floor(Math.random() * alphabet.length)]);
+  }
+  return out.join('');
+}
 
 export interface OfflineLicensePayload {
   v: number;
+  id?: string;
   schoolName: string;
   hwid: string; // Machine Hardware ID or '*' for all
   licenseType: 'lifetime' | 'annual' | 'trial_extended';
@@ -104,30 +67,54 @@ export interface SignedLicenseToken {
   signature: string;
 }
 
+function hexToBytes(hex: string): Uint8Array {
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+
+function base64UrlToBytes(input: string): Uint8Array {
+  const b64 = input.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((input.length + 3) % 4);
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+const PUBLIC_KEY = hexToBytes(LICENSE_PUBLIC_KEY_HEX);
+
+function desktopApi() {
+  return typeof window !== 'undefined' ? window.electronAPI : undefined;
+}
+
+/** هل المفتاح بصيغة الترخيص الموقّع (الحالية أو القديمة)؟ */
+export function isSignedLicenseFormat(key: string): boolean {
+  return /^MADRASA-V[23]-/i.test((key || '').trim());
+}
+
 export const CryptoLicenseHelper = {
   /**
-   * توليد أو جلب بصمة الجهاز الفريدة (Hardware ID)
-   * تظهر للعميل ككود من 16 خانة مثلاً: HWID-LY-9A2F-4E10
+   * بصمة الجهاز (Hardware ID) بصيغة HWID-LY-XXXX-XXXX-XXXX
+   * نسخة ويندوز: مشتقة من MachineGuid (ثابتة ولا تتغير بمسح بيانات البرنامج).
+   * نسخة الويب: معرّف عشوائي محفوظ محلياً (للمعاينة فقط).
    */
   getOrCreateMachineHwid(): string {
     try {
-      let hwid = localStorage.getItem(STORAGE_KEYS.CLIENT_HWID);
-      if (hwid && hwid.trim().startsWith('HWID-LY-')) {
-        return hwid.trim().toUpperCase();
+      const api = desktopApi();
+      if (api?.getMachineId) {
+        const id = api.getMachineId();
+        if (id && id.startsWith('HWID-LY-')) return id.toUpperCase();
       }
-
-      // Generate stable pseudo-hardware ID
-      const screenInfo = typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : '1920x1080';
-      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'desktop-client';
-      const randomSalt = Math.random().toString(36).substring(2, 10);
-      const rawEntropy = `${screenInfo}-${userAgent}-${randomSalt}-${Date.now()}`;
-      const hash = sha256(rawEntropy).toUpperCase();
-
-      hwid = `HWID-LY-${hash.substring(0, 4)}-${hash.substring(4, 8)}-${hash.substring(8, 12)}`;
+    } catch {}
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CLIENT_HWID);
+      if (saved && saved.trim().startsWith('HWID-LY-')) return saved.trim().toUpperCase();
+      const r = secureRandomSuffix(12);
+      const hwid = `HWID-LY-${r.slice(0, 4)}-${r.slice(4, 8)}-${r.slice(8, 12)}`;
       localStorage.setItem(STORAGE_KEYS.CLIENT_HWID, hwid);
       return hwid;
     } catch {
-      return 'HWID-LY-DEFAULT-2026';
+      return 'HWID-LY-UNKNOWN';
     }
   },
 
@@ -156,78 +143,74 @@ export const CryptoLicenseHelper = {
   },
 
   /**
-   * حساب حالة الفترة التجريبية المجانية (7 أيام)
+   * حالة الفترة التجريبية المجانية (7 أيام).
+   * الأقدم بين أختام المتصفح وأختام نظام الملفات (نسخة ويندوز) هو المرجع.
    */
   getTrialStatus(): { isTrialActive: boolean; daysRemaining: number; trialEndsAt: string } {
+    const now = Date.now();
+    let startMs = now;
     try {
-      let startMs = Number(localStorage.getItem(STORAGE_KEYS.TRIAL_START) || 0);
-      const now = Date.now();
+      const readSeal = (k: string): number => Number(localStorage.getItem(k) || 0) || 0;
+      const seals = [
+        readSeal(STORAGE_KEYS.TRIAL_START),
+        readSeal(STORAGE_KEYS.TRIAL_START_MIRROR_A),
+        readSeal(STORAGE_KEYS.TRIAL_START_MIRROR_B),
+      ].filter(v => v > 0);
+      startMs = seals.length ? Math.min(...seals) : now;
 
-      if (!startMs) {
-        startMs = now;
-        localStorage.setItem(STORAGE_KEYS.TRIAL_START, String(startMs));
+      const api = desktopApi();
+      if (api?.getTrialStart) {
+        const fsStart = Number(api.getTrialStart(startMs)) || 0;
+        if (fsStart > 0) startMs = Math.min(startMs, fsStart);
       }
 
-      const trialDurationMs = 7 * 24 * 60 * 60 * 1000; // 7 Days
-      const trialEndsMs = startMs + trialDurationMs;
-      const diffMs = trialEndsMs - now;
-      const daysRemaining = Math.max(0, Math.ceil(diffMs / (24 * 60 * 60 * 1000)));
+      localStorage.setItem(STORAGE_KEYS.TRIAL_START, String(startMs));
+      localStorage.setItem(STORAGE_KEYS.TRIAL_START_MIRROR_A, String(startMs));
+      localStorage.setItem(STORAGE_KEYS.TRIAL_START_MIRROR_B, String(startMs));
+    } catch {}
 
-      return {
-        isTrialActive: diffMs > 0,
-        daysRemaining,
-        trialEndsAt: new Date(trialEndsMs).toISOString()
-      };
-    } catch {
-      return { isTrialActive: true, daysRemaining: 7, trialEndsAt: new Date(Date.now() + 7 * 86400000).toISOString() };
-    }
+    const trialEndsMs = startMs + TRIAL_DAYS * DAY_MS;
+    const diffMs = trialEndsMs - now;
+    return {
+      isTrialActive: diffMs > 0,
+      daysRemaining: Math.max(0, Math.ceil(diffMs / DAY_MS)),
+      trialEndsAt: new Date(trialEndsMs).toISOString(),
+    };
   },
 
   /**
-   * توليد مفتاح ترخيص مشفر وموقع رقمياً (خاص بالسوبر أدمن فقط)
+   * إصدار مفتاح ترخيص موقّع — يعمل فقط على جهاز المورّد (نسخة ويندوز
+   * التي يوجد عليها ملف المفتاح الخاص). في أي جهاز آخر يُرفض الطلب.
    */
-  generateLicenseToken(
+  async signLicenseToken(
     schoolName: string,
     hwid: string,
     licenseType: 'lifetime' | 'annual' | 'trial_extended',
     adminPhone: string = ''
-  ): string {
-    const now = new Date();
-    let expiresAt: string;
-
-    if (licenseType === 'lifetime') {
-      expiresAt = '2099-12-31T23:59:59.000Z'; // مدى الحياة
-    } else if (licenseType === 'annual') {
-      const nextYear = new Date(now.getTime() + (365 * 24 * 60 * 60 * 1000));
-      expiresAt = nextYear.toISOString(); // سنة كاملة
-    } else {
-      const extra14 = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000));
-      expiresAt = extra14.toISOString(); // تمديد تجريبي
+  ): Promise<string> {
+    const api = desktopApi();
+    if (!api?.signLicense) {
+      throw new Error('إصدار التراخيص متاح فقط من نسخة ويندوز على جهاز المورّد المعتمد.');
     }
+    const res = await api.signLicense({ schoolName, hwid: hwid || '*', licenseType, adminPhone });
+    if (!res.success || !res.token) {
+      throw new Error(res.error || 'تعذر توقيع الترخيص.');
+    }
+    return res.token;
+  },
 
-    const payload: OfflineLicensePayload = {
-      v: 2,
-      schoolName: schoolName.trim(),
-      hwid: (hwid.trim() || '*').toUpperCase(),
-      licenseType,
-      issuedAt: now.toISOString(),
-      expiresAt,
-      adminPhone: adminPhone.trim()
-    };
-
-    const canonicalString = JSON.stringify(payload);
-    const signature = sha256(`${canonicalString}|${MASTER_SIGNING_SALT}`);
-
-    // Base64 encoding for safe transport
-    const base64Payload = typeof btoa !== 'undefined'
-      ? btoa(unescape(encodeURIComponent(canonicalString)))
-      : Buffer.from(canonicalString, 'utf-8').toString('base64');
-
-    return `MADRASA-v2-${base64Payload}.${signature}`;
+  /** هل هذا الجهاز قادر على إصدار التراخيص (جهاز المورّد)؟ */
+  async canSignLicenses(): Promise<boolean> {
+    try {
+      const api = desktopApi();
+      return api?.canSignLicense ? await api.canSignLicense() : false;
+    } catch {
+      return false;
+    }
   },
 
   /**
-   * التحقق من مفتاح الترخيص المشفر ومطابقته لبصمة هذا الجهاز
+   * التحقق من مفتاح الترخيص الموقّع ومطابقته لبصمة هذا الجهاز
    */
   verifyLicenseToken(token: string): {
     isValid: boolean;
@@ -235,45 +218,40 @@ export const CryptoLicenseHelper = {
     errorMessage?: string;
   } {
     try {
-      const cleanToken = token.trim();
-      if (!cleanToken.startsWith('MADRASA-v2-')) {
+      const cleanToken = token.replace(/\s+/g, '').trim();
+      if (/^MADRASA-v2-/i.test(cleanToken)) {
+        return { isValid: false, errorMessage: 'هذا المفتاح من إصدار قديم لم يعد مدعوماً. تواصل معنا لاستبداله بمفتاح جديد مجاناً.' };
+      }
+      if (!cleanToken.startsWith(TOKEN_PREFIX)) {
         return { isValid: false, errorMessage: 'صيغة مفتاح الترخيص غير صالحة.' };
       }
 
-      const rest = cleanToken.slice('MADRASA-v2-'.length);
+      const rest = cleanToken.slice(TOKEN_PREFIX.length);
       const dotIndex = rest.lastIndexOf('.');
-      if (dotIndex === -1) {
+      if (dotIndex <= 0) {
         return { isValid: false, errorMessage: 'بنية التوقيع الرقمي للمفتاح غير مكتملة.' };
       }
 
-      const base64Payload = rest.substring(0, dotIndex);
-      const signature = rest.substring(dotIndex + 1);
-
-      // Decode payload
-      const jsonStr = typeof atob !== 'undefined'
-        ? decodeURIComponent(escape(atob(base64Payload)))
-        : Buffer.from(base64Payload, 'base64').toString('utf-8');
-
-      const payload = JSON.parse(jsonStr) as OfflineLicensePayload;
-      if (!payload || !payload.schoolName || !payload.expiresAt) {
-        return { isValid: false, errorMessage: 'محتوى الترخيص تالف أو غير مقروء.' };
-      }
-
-      // Verify Signature
-      const expectedSig = sha256(`${jsonStr}|${MASTER_SIGNING_SALT}`);
-      if (signature.toLowerCase() !== expectedSig.toLowerCase()) {
+      const body = rest.substring(0, dotIndex);
+      const signature = base64UrlToBytes(rest.substring(dotIndex + 1));
+      const signedOk = signature.length === 64 &&
+        ed25519.verify(signature, new TextEncoder().encode(body), PUBLIC_KEY);
+      if (!signedOk) {
         return { isValid: false, errorMessage: 'التوقيع الرقمي للترخيص غير صالح أو تم التعديل عليه.' };
       }
 
-      // Verify Clock Tampering
+      const payload = JSON.parse(new TextDecoder().decode(base64UrlToBytes(body))) as OfflineLicensePayload;
+      if (!payload || payload.v !== 3 || !payload.schoolName || !payload.expiresAt) {
+        return { isValid: false, errorMessage: 'محتوى الترخيص تالف أو غير مقروء.' };
+      }
+
       const clockCheck = this.checkClockTampering();
       if (clockCheck.tampered) {
         return { isValid: false, errorMessage: clockCheck.reason };
       }
 
-      // Verify Hardware ID Binding
       const currentHwid = this.getOrCreateMachineHwid().toUpperCase();
-      const licenseHwid = payload.hwid.toUpperCase();
+      const licenseHwid = (payload.hwid || '').toUpperCase();
       if (licenseHwid !== '*' && licenseHwid !== currentHwid) {
         return {
           isValid: false,
@@ -281,9 +259,8 @@ export const CryptoLicenseHelper = {
         };
       }
 
-      // Verify Expiration Date
       const expiresMs = new Date(payload.expiresAt).getTime();
-      if (Date.now() > expiresMs) {
+      if (!Number.isFinite(expiresMs) || Date.now() > expiresMs) {
         return {
           isValid: false,
           payload,
@@ -291,12 +268,9 @@ export const CryptoLicenseHelper = {
         };
       }
 
-      return {
-        isValid: true,
-        payload
-      };
-    } catch (err: any) {
-      return { isValid: false, errorMessage: 'فشل فك تشفير المفتاح. تأكد من نسخه كاملاً.' };
+      return { isValid: true, payload };
+    } catch {
+      return { isValid: false, errorMessage: 'فشل قراءة المفتاح. تأكد من نسخه كاملاً.' };
     }
   }
 };

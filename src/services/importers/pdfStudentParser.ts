@@ -190,9 +190,6 @@ export class LibyanPdfStudentParser {
       let pageSectionCode: 'أ' | 'ب' | 'ج' | 'د' = 'أ';
 
       const pageHeaderFull = lines.slice(0, 6).map(l => l.fullLineText).join(' ');
-      if (pageHeaderFull.includes('الشهيد امحمد الباعور')) {
-        detectedSchoolName = 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي - 30713 - توكرة';
-      }
 
       // Check for e.g. "الصف الأول / فصل 1 - 1 مساء" or "الصف السابع / فصل 7 - 2 صباح"
       const classHeaderMatch = pageHeaderFull.match(/الصف\s+([^\/\n]+?)\s*\/\s*فصل\s+(\d+)\s*-\s*(\d+)\s*(مساء|صباح)?/);
@@ -261,7 +258,7 @@ export class LibyanPdfStudentParser {
               motherName: '—',
               gender,
               birthDate,
-              birthPlace: 'توكرة',
+              birthPlace: '',
               grade: pageGrade,
               className: targetClass,
               sectionCode: pageSectionCode,
@@ -400,7 +397,7 @@ export class LibyanPdfStudentParser {
       ]);
 
       let detectedAcademicYear = '2025 - 2026 م';
-      let detectedSchoolName = 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي';
+      let detectedSchoolName = '';
       let detectedGrade = 'التعليم الأساسي (الصفوف 1 - 9)';
 
       for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
@@ -414,8 +411,9 @@ export class LibyanPdfStudentParser {
         if (yearMatch) detectedAcademicYear = `${yearMatch[1]} م`;
 
         // Detect School Name
-        if (pageText.includes('الشهيد امحمد الباعور') || pageText.includes('الباعور')) {
-          detectedSchoolName = 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي';
+        if (!detectedSchoolName) {
+          const schoolMatch = pageText.match(/(مدرسة\s+[^\d\n]{3,60}?)(?:\s+-|\s+\d|$)/);
+          if (schoolMatch) detectedSchoolName = schoolMatch[1].trim();
         }
 
         // Detect Page Class & Grade
@@ -502,7 +500,7 @@ export class LibyanPdfStudentParser {
                   motherName,
                   gender,
                   birthDate,
-                  birthPlace: 'توكرة',
+                  birthPlace: '',
                   grade: pageGrade,
                   className: pageClassName,
                   sectionCode: pageSectionCode,
@@ -523,7 +521,7 @@ export class LibyanPdfStudentParser {
         totalStudentsFound: parsedStudents.length,
         students: parsedStudents,
         detectedAcademicYear,
-        detectedSchoolName,
+        detectedSchoolName: detectedSchoolName || 'مدرسة التعليم الأساسي',
         detectedGrade: pdfDoc.numPages > 5 ? 'التعليم الأساسي (الصفوف 1 - 9)' : parsedStudents[0]?.grade || detectedGrade,
         rawTextSample: `تم استخراج ${parsedStudents.length} طالباً بنجاح من ${pdfDoc.numPages} صفحة رسمية.`
       };

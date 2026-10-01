@@ -99,7 +99,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       className={twMerge(
         clsx(
           'group relative overflow-hidden p-5 rounded-3xl border-2 bg-white dark:bg-slate-900 shadow-sm',
-          'transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          'transition-colors transition-shadow duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
           'hover:-translate-y-1 hover:shadow-xl',
           clickable && 'cursor-pointer active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
           active ? `${t.ring} shadow-lg` : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'

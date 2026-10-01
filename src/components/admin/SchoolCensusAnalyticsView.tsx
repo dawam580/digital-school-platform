@@ -120,7 +120,7 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
 
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     saveExportedFile({
-      fileName: `كشف_تعداد_مدرسة_الباعور_${new Date().getFullYear()}.csv`,
+      fileName: `كشف_تعداد_${(schoolProfile?.name || 'المدرسة').replace(/\s+/g, '_')}_${new Date().getFullYear()}.csv`,
       blob,
       filters: [{ name: 'ملفات CSV / Excel', extensions: ['csv'] }]
     });
@@ -409,7 +409,7 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
             <h3 className="text-base font-bold font-tajawal text-slate-900 dark:text-white">
               جدول الإحصاء والتعداد الرسمي لصفوف المدرسة (الصفوف 1 إلى 9)
             </h3>
-            <p className="text-xs text-slate-400">توزيع الطلاب والشعب حسب الكشوفات الرسمية لمدرسة الشهيد امحمد الباعور</p>
+            <p className="text-xs text-slate-400">توزيع الطلاب والشعب حسب السجلات الرسمية المعتمدة للمدرسة</p>
           </div>
 
           {/* Shift Filter */}
@@ -491,10 +491,10 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
             <tfoot>
               <tr className="bg-blue-50/70 dark:bg-blue-950/40 font-black border-t-2 border-blue-200 dark:border-blue-800 text-slate-900 dark:text-white">
                 <td className="py-4 px-4 text-sm" colSpan={2}>
-                  الإجمالي العام لمدرسة الشهيد امحمد الباعور
+                  الإجمالي العام لـ {schoolProfile.name}
                 </td>
                 <td className="py-4 px-4 font-mono text-purple-600 dark:text-purple-400">
-                  33 شعبة دراسية
+                  {students.length > 0 ? Array.from(new Set(students.map(s => s.className))).length : 0} شعبة دراسية
                 </td>
                 <td className="py-4 px-4 text-center font-mono text-base text-blue-700 dark:text-blue-300">
                   {totalStudents} طالباً

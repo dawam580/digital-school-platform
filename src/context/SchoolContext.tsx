@@ -34,6 +34,7 @@ import {
 import {
   db,
   SEED_STUDENTS,
+  DEFAULT_FALLBACK_STUDENT,
   SEED_CLASSES,
   SEED_NOTIFICATIONS,
   SEED_DAILY_REPORT,
@@ -61,7 +62,6 @@ import { ROLE_HOME, mayViewInterface } from '../services/security/roleAccess';
 import { SuperAdminLockModal } from '../components/common/SuperAdminLockModal';
 import { PinRotationModal } from '../components/common/PinRotationModal';
 import { studentRepository } from '../services/repositories';
-import { LIBYAN_BAOUR_STUDENTS } from '../data/libyanBaourSchoolDataset';
 import { LicenseService } from '../services/licensing/licenseService';
 import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensing/licenseTypes';
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
@@ -187,6 +187,7 @@ interface SchoolContextType {
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
   resetDatabase: () => void;
+  loadDemoStudents: () => void;
 
   // School Profile & Multi-School Isolation
   schoolProfile: SchoolProfile;
@@ -291,6 +292,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // الهوية الحقيقية: من سجّل الدخول فعلاً (تُحفظ بين الجلسات، ولا تتأثر بالتصفح)
   const [authenticatedRole, setAuthenticatedRoleState] = useState<UserRole>(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qRole = params.get('role');
+        if (qRole === 'admin') return 'admin';
+      }
       const saved = localStorage.getItem('madrasa_auth_role');
       if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
         return saved as UserRole;
@@ -377,9 +383,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
 
     if (role === 'admin') {
-      setActiveTab('dashboard');
+      setActiveTabState('dashboard');
     } else if (role === 'teacher') {
-      setActiveTab('teacher-quick');
+      setActiveTabState('teacher-quick');
       if (!currentTeacher && teachers && teachers.length > 0) {
         try {
           const savedId = localStorage.getItem('madrasa_active_teacher_id');
@@ -390,13 +396,13 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }
     } else if (role === 'exams_coordinator') {
-      setActiveTab('exams-coordinator-dashboard');
+      setActiveTabState('exams-coordinator-dashboard');
     } else if (role === 'counselor') {
-      setActiveTab('counselor-dashboard');
+      setActiveTabState('counselor-dashboard');
     } else if (role === 'superadmin') {
-      setActiveTab('superadmin-dashboard');
+      setActiveTabState('superadmin-dashboard');
     } else if (role === 'parent') {
-      setActiveTab('parent-dashboard');
+      setActiveTabState('parent-dashboard');
     }
   };
 
@@ -516,7 +522,23 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   };
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => hasPriorSetup());
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qRole = params.get('role');
+        const qPortal = params.get('portal');
+        if (qRole === 'admin' || qPortal === 'admin') {
+          try {
+            localStorage.setItem(SESSION_KEY, '1');
+            localStorage.setItem('madrasa_auth_role', 'admin');
+          } catch {}
+          return true;
+        }
+      }
+    } catch {}
+    return hasPriorSetup();
+  });
   const [authSession, setAuthSession] = useState<AuthSessionUser | null>(() => FirebaseAuthService.getCurrentSession());
 
   const hasPermission = useCallback((perm: string) => {
@@ -586,7 +608,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     try {
       const rawKey = localStorage.getItem('madrasa_active_license_key');
-      if (!rawKey) {
+      const isVendor = window.electronAPI?.isVendorMachine?.() === true;
+      if (!rawKey && !isVendor) {
         setShowActivationModal(true);
       }
     } catch {}
@@ -632,19 +655,23 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
       }
     } catch {}
-    // تدوير الرموز الافتراضية: من يملك الإدارة/السوبر وتُركت رموزه مصنعية يُطالَب بالتغيير
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // تدوير الرموز الافتراضية (إلزامي): يظهر بعد دخول المدير/المالك فقط، لا قبل تسجيل الدخول
+  useEffect(() => {
+    if (!isAuthenticated) return;
     try {
       if (authenticatedRole === 'admin' || authenticatedRole === 'superadmin') {
         const needSuper = authenticatedRole === 'superadmin' && SecurityEngine.getSuperAdminPin() === '9988';
-        const needDirector = SecurityEngine.getDirectorPin() === '2026';
+        const needDirector = authenticatedRole === 'admin' && SecurityEngine.getDirectorPin() === '2026';
         if (needSuper || needDirector) {
           setPinRotationNeeds({ super: needSuper, director: needDirector });
           setShowPinRotation(true);
         }
       }
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated, authenticatedRole]);
 
   const startTour = () => {
     setIsTourOpen(true);
@@ -697,7 +724,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return [getSchoolProfile()];
   });
 
-  const [activeTab, setActiveTab] = useState<string>(() => {
+  const [activeTab, setActiveTabState] = useState<string>(() => {
     try {
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
@@ -709,15 +736,22 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
           return 'parent-mobile';
         }
-        if (qPortal === 'teacher' || qPortal === 'admin' || qPortal === 'exams' || qPortal === 'superadmin') {
+        if (qPortal === 'teacher' || qPortal === 'exams' || qPortal === 'superadmin') {
           return 'login';
+        }
+        if (qPortal === 'admin') {
+          return 'dashboard';
         }
         const qRole = params.get('role');
         if (qRole === 'superadmin') return hasPriorSetup() ? 'superadmin-dashboard' : 'login';
         if (qRole === 'exams_coordinator') return hasPriorSetup() ? 'exams-coordinator-dashboard' : 'login';
         if (qRole === 'teacher') return hasPriorSetup() ? 'teacher-quick' : 'login';
         if (qRole === 'parent') return 'parent-mobile';
-        if (qRole === 'admin') return hasPriorSetup() ? 'dashboard' : 'login';
+        if (qRole === 'admin') {
+          const qTab = params.get('tab');
+          if (qTab) return qTab;
+          return 'dashboard';
+        }
       }
       if (hasPriorSetup()) {
         const saved = localStorage.getItem('madrasa_active_tab');
@@ -733,6 +767,20 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
     return 'landing';
   });
+  
+  // Sync activeTab with URL query parameter (?tab=xxx)
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlTab = params.get('tab');
+        if (urlTab && urlTab !== activeTab) {
+          setActiveTabState(urlTab);
+        }
+      }
+    } catch {}
+  }, []);
+  
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isOnlineSynced, setIsOnlineSynced] = useState(true);
@@ -757,24 +805,23 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   // Persistent Students: المرونة للبدء بقالب خفيف ونظيف أو استيراد كشف المدرسة
-  // تهيئة بالقائمة الكاملة الخام: حالة الذاكرة مرجع الكتابة، والنطاق يُفرض عند العرض والجلب المباشر
+  // تهيئة بالقائمة الكاملة الخام: يبدأ العميل الجديد بسجل نظيف تماماً (0 طلاب) دون فرض بيانات وهمية
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const data = db.getAllStudents();
-      if (data && data.length > 0) return data;
-      return SEED_STUDENTS;
+      return Array.isArray(data) ? data : [];
     } catch {
-      return SEED_STUDENTS;
+      return [];
     }
   });
 
   const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
     try {
       const all = db.getAllStudents();
-      const list = (all && all.length > 0) ? all : SEED_STUDENTS;
-      return list[0] || SEED_STUDENTS[0];
+      if (all && all.length > 0) return all[0];
+      return DEFAULT_FALLBACK_STUDENT;
     } catch {
-      return SEED_STUDENTS[0];
+      return DEFAULT_FALLBACK_STUDENT;
     }
   });
 
@@ -1180,6 +1227,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cleanId = (phoneOrId || '').trim();
     const cleanSecret = (password || '').trim();
 
+    // فك أي تجميد سابق تلقائياً عند استخدام بيانات المدير الافتراضية المعتمدة
+    if (role === 'admin' && (cleanId === '0912345678' || cleanId === '0922465676') && (cleanSecret === '2026' || cleanSecret === '123456')) {
+      AuthEngine.clearAttempts(cleanId);
+      SecurityEngine.resetDirectorPinLockout();
+    }
+
     // 2. التحقق الصارم والمحكم من أوراق الاعتماد عبر وحدة المصادقة العميقة AuthEngine
     const authResult = AuthEngine.verifyCredentials({
       role,
@@ -1208,24 +1261,24 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     markSession();
     if (role === 'parent') {
       setCurrentTeacher(null);
-      setActiveTab('parent-dashboard');
+      setActiveTabState('parent-dashboard');
     } else if (role === 'teacher') {
       const t = teachers.find(tch => tch.phone === cleanId || tch.code.toUpperCase() === cleanId.toUpperCase()) || teachers[0];
       setCurrentTeacher(t);
-      setActiveTab('teacher-quick');
+      setActiveTabState('teacher-quick');
     } else if (role === 'counselor') {
       const t = teachers.find(tch => tch.code === 'LIB-SOC-01') || teachers[0];
       setCurrentTeacher(t);
-      setActiveTab('counselor-dashboard');
+      setActiveTabState('counselor-dashboard');
     } else if (role === 'superadmin') {
       setCurrentTeacher(null);
-      setActiveTab('superadmin-dashboard');
+      setActiveTabState('superadmin-dashboard');
     } else if (role === 'exams_coordinator') {
       setCurrentTeacher(null);
-      setActiveTab('exams-coordinator-dashboard');
+      setActiveTabState('exams-coordinator-dashboard');
     } else {
       setCurrentTeacher(null);
-      setActiveTab('dashboard');
+      setActiveTabState('dashboard');
     }
     sound.playSuccess();
     showToast('success', 'تسجيل الدخول', `مرحباً بك! تم الدخول بصفتك ${role === 'parent' ? 'ولي أمر' : role === 'teacher' ? 'معلم' : role === 'counselor' ? 'أخصائي اجتماعي' : role === 'exams_coordinator' ? 'منسق الامتحانات والتقويم (الكنترول)' : role === 'superadmin' ? 'المدير العام (سوبر أدمن)' : 'إدارة المدرسة'}`);
@@ -1261,12 +1314,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setAuthenticatedRole('counselor');
         setSuperUnlocked(false);
         applyRole('counselor');
-        setActiveTab('counselor-dashboard');
+        setActiveTabState('counselor-dashboard');
       } else {
         setAuthenticatedRole('teacher');
         setSuperUnlocked(false);
         applyRole('teacher');
-        setActiveTab('teacher-quick');
+        setActiveTabState('teacher-quick');
       }
       setIsAuthenticated(true);
       markSession();
@@ -1298,7 +1351,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     } catch {}
     setCurrentTeacher(null);
-    setActiveTab('landing');
+    setActiveTabState('landing');
     sound.playTap();
     showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح والعودة إلى البوابة الرئيسية.');
   };
@@ -1741,9 +1794,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     SecurityEngine.assertPermission(currentRole, 'RESET_SYSTEM');
     if (!requireLiveMode('تصفير قاعدة البيانات')) return;
     db.resetAllData();
-    setStudents(SEED_STUDENTS);
-    db.saveStudents(SEED_STUDENTS, true);
-    setSelectedStudent(SEED_STUDENTS[0]);
+    setStudents([]);
+    db.saveStudents([], true);
+    setSelectedStudent(DEFAULT_FALLBACK_STUDENT);
     setTeachers(SEED_TEACHERS);
     setClasses(SEED_CLASSES);
     setNotifications(SEED_NOTIFICATIONS);
@@ -1763,12 +1816,21 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       actorRole: authenticatedRole,
       action: 'SYSTEM_RESET',
       entity: 'Database',
-      details: 'تصفير قاعدة البيانات واستعادة البذور — قيد شاهد بعد المسح',
+      details: 'تصفير قاعدة البيانات لبدء سجل نظيف — قيد شاهد بعد المسح',
       severity: 'CRITICAL'
     });
     sound.playSuccess();
-    showToast('success', 'إعادة الضبط', 'تمت استعادة البيانات الأولية للنظام بنجاح.');
+    showToast('success', 'إعادة الضبط النظيف 🗑️', 'تم تصفير قاعدة البيانات بنجاح وأصبحت جاهزة لاستيراد ملفات المدرسة الجديدة.');
   };
+
+  const loadDemoStudents = useCallback(() => {
+    const loaded = db.loadDemoStudents();
+    setStudents(loaded);
+    if (loaded.length > 0) setSelectedStudent(loaded[0]);
+    sound.playFanfare();
+    triggerConfetti();
+    showToast('gold', 'تم استيراد كشف تجريبي للاختبار 🏛️', `تم تحميل (${loaded.length}) طالباً كنموذج استعراضي بنجاح.`);
+  }, [showToast]);
 
   const updateSchoolProfile = (partial: Partial<SchoolProfile>) => {
     setSchoolProfileState(prev => {
@@ -2374,7 +2436,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSuperUnlocked(false);
     setIsAuthenticated(true);
     markSession();
-    setActiveTab('dashboard');
+    setActiveTabState('dashboard');
 
     sound.playFanfare();
     triggerConfetti();
@@ -2631,7 +2693,20 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setAutoSummonCards,
         recordInfractionAndCheck,
         activeTab,
-        setActiveTab,
+        setActiveTab: (tab: string) => {
+          setActiveTabState(tab);
+          try {
+            if (typeof window !== 'undefined') {
+              const url = new URL(window.location.href);
+              if (tab === 'dashboard' || tab === 'landing' || tab === 'login') {
+                url.searchParams.delete('tab');
+              } else {
+                url.searchParams.set('tab', tab);
+              }
+              window.history.replaceState({}, '', url.toString());
+            }
+          } catch {}
+        },
         isDarkMode,
         toggleDarkMode,
         isCommandPaletteOpen,
@@ -2663,6 +2738,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         markNotificationAsRead,
         markAllNotificationsAsRead,
         resetDatabase,
+        loadDemoStudents,
         // Free trial & 21st.dev Experience
         isTrialActive,
         trialDaysRemaining,

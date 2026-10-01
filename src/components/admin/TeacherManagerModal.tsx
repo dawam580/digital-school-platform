@@ -1,3 +1,4 @@
+import { generateNumericPassword } from '../../services/security/securityEngine';
 import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { TeacherAccount } from '../../types';
@@ -11,7 +12,13 @@ import {
   Phone,
   Tag,
   Layers,
-  GraduationCap
+  GraduationCap,
+  Lock,
+  Copy,
+  Check,
+  Sparkles,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { getCleanAvatar } from '../../utils/avatarHelper';
@@ -31,6 +38,9 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
 
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
+  const [password, setPassword] = useState(() => generateNumericPassword());
+  const [showPassword, setShowPassword] = useState(false);
+  const [copiedSlip, setCopiedSlip] = useState(false);
   const [subject, setSubject] = useState('الرياضيات');
   const [phone, setPhone] = useState('0912345678');
   const [assignedClassesText, setAssignedClassesText] = useState('9/أ, 9/ب');
@@ -40,16 +50,52 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
       setName(teacherToEdit.name);
       setCode(teacherToEdit.code);
       setSubject(teacherToEdit.subject);
-      setPhone(teacherToEdit.phone);
+      setPhone(teacherToEdit.phone || '0912345678');
       setAssignedClassesText(teacherToEdit.assignedClasses.join(', '));
+      const existingPwd = localStorage.getItem(`madrasa_teacher_pwd_${teacherToEdit.code.toUpperCase()}`) || '';
+      setPassword(existingPwd);
     } else {
       setName('');
-      setCode(`TCH-${Math.floor(100 + Math.random() * 900)}`);
+      setCode(`LIB-MATH-${Math.floor(10 + Math.random() * 90)}`);
       setSubject('الرياضيات');
       setPhone('0912345678');
       setAssignedClassesText('9/أ, 9/ب');
+      setPassword(generateNumericPassword());
     }
   }, [teacherToEdit, isOpen]);
+
+  const generateRandomCode = () => {
+    sound.playTap();
+    const subCodeMap: { [k: string]: string } = {
+      'الرياضيات': 'MATH',
+      'اللغة العربية': 'ARA',
+      'العلوم الطبيعية': 'SCI',
+      'اللغة الإنجليزية': 'ENG',
+      'التربية الإسلامية': 'ISL',
+      'الحاسوب': 'COMP',
+      'الدراسات الاجتماعية': 'SOC'
+    };
+    const prefix = subCodeMap[subject] || 'EDU';
+    const randNum = Math.floor(10 + Math.random() * 90);
+    setCode(`LIB-${prefix}-${randNum}`);
+  };
+
+  const copyTeacherCard = () => {
+    sound.playTap();
+    const slip = `🎓 بطاقة اعتماد معلم - منصة المدرسة الرقمية
+👤 اسم المعلم: ${name || 'المعلم'}
+📚 المادة: ${subject}
+🔑 رمز الدخول (الكود): ${code}
+🔒 كلمة المرور: ${password || '—'}
+🏫 الفصول المسندة: ${assignedClassesText}
+🌐 رابط المنظومة: ${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}`;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(slip);
+      setCopiedSlip(true);
+      setTimeout(() => setCopiedSlip(false), 2500);
+      showToast('gold', 'تم نسخ بطاقة المعلم 📋', 'يمكنك الآن إرسالها للأستاذ عبر الواتساب مباشرة.');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -116,6 +162,14 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
       showToast('gold', 'تمت إضافة المعلم وتفعيله 👨‍🏫', `تم تسجيل وتفعيل المعلم ${name} برمز دخول: ${code}`);
     }
 
+    // Save customized password for this teacher in storage
+    const cleanCode = code.trim().toUpperCase();
+    const cleanPwd = password.trim() || generateNumericPassword();
+    try {
+      localStorage.setItem(`madrasa_teacher_pwd_${cleanCode}`, cleanPwd);
+      localStorage.setItem(`madrasa_pwd_${cleanCode}`, cleanPwd);
+    } catch {}
+
     sound.playSuccess();
     onClose();
   };
@@ -166,17 +220,28 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
             />
           </div>
 
-          {/* Teacher Code */}
+          {/* Teacher Code & Auto Generator */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              رمز المعلم (رمز الدخول):
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                رمز المعلم (رمز الدخول):
+              </label>
+              <button
+                type="button"
+                onClick={generateRandomCode}
+                className="px-2.5 py-0.5 rounded-lg bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 text-[11px] font-black border border-amber-300 dark:border-amber-800 transition active:scale-95 flex items-center gap-1"
+                title="توليد كود مميز وسريع تلقائياً"
+              >
+                <Sparkles className="w-3 h-3 text-amber-600" />
+                <span>توليد كود تلقائي ⚡</span>
+              </button>
+            </div>
             <div className="relative">
               <input
                 type="text"
                 value={code}
                 onChange={e => setCode(e.target.value)}
-                placeholder="مثال: LIB-XXX-00"
+                placeholder="مثال: LIB-MATH-01"
                 className="w-full py-2.5 px-3.5 pl-10 rounded-xl border-2 border-amber-400 bg-amber-50/50 dark:bg-slate-800 text-sm font-black text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                 required
               />
@@ -184,6 +249,33 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
             </div>
             <p className="text-[10px] text-slate-400">
               هذا هو الرمز الذي سيستخدمه المعلم لتسجيل الدخول في بوابة المعلم.
+            </p>
+          </div>
+
+          {/* Teacher Password */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+              كلمة مرور المعلم:
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="2026"
+                className="w-full py-2.5 px-3.5 pl-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-black text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-center"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-400">
+              الرمز الافتراضي: (2026). يستطيع المعلم أيضاً تغييره لاحقاً بنفسه من حسابه.
             </p>
           </div>
 
@@ -252,6 +344,27 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Copy Slip WhatsApp Button */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={copyTeacherCard}
+              className="w-full py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-black text-xs transition active:scale-95 flex items-center justify-center gap-2"
+            >
+              {copiedSlip ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>تم نسخ بطاقة دخول المعلم للواتساب بنجاح! ✓</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 text-emerald-600" />
+                  <span>نسخ بطاقة دخول المعلم لإرسالها بالواتساب 📋</span>
+                </>
+              )}
+            </button>
           </div>
 
           {/* Action Buttons */}

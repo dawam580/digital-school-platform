@@ -69,7 +69,7 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `كشف_${selectedClass.replace(/\s+/g, '_')}_مدرسة_الباعور.csv`);
+    link.setAttribute('download', `كشف_${selectedClass.replace(/\s+/g, '_')}_${(schoolProfile?.name || 'المدرسة').replace(/\s+/g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -166,7 +166,7 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
                 للعام الدراسي 1447-1448 هـ الموافق 2025-2026 م
               </p>
               <p className="text-xs font-black text-slate-900 bg-slate-100 px-3 py-0.5 rounded-md inline-block">
-                مدرسة الشهيد امحمد الباعور للتعليم الأساسي - 30713 - توكرة
+                {schoolProfile?.name || 'مدرسة شريان الحياة للتعليم الأساسي'} - {schoolProfile?.code || 'SCH-2026'} - {schoolProfile?.district || 'مراقبة التربية والتعليم'}
               </p>
               <div className="text-xs font-black text-blue-900 pt-0.5">
                 الصف: {selectedClass.includes('مساء') ? 'التعليم الأساسي (الفترة المسائية)' : 'التعليم الأساسي (الفترة الصباحية)'} / فصل {selectedClass}

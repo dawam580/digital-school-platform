@@ -11,16 +11,22 @@
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "test": "node tests/run-all.js",
+    "test": "node tests/run-all.js && npm run test:real",
     "desktop": "npm run build && electron electron/main.cjs",
     "electron": "electron electron/main.cjs",
     "dist:dir": "npm run build && electron-builder --win --dir",
     "dist:win": "npm run build && electron-builder --win",
     "predist:dir": "powershell -NoProfile -NonInteractive -Command \"if (Test-Path 'dist') { Remove-Item -LiteralPath 'dist' -Recurse -Force }\"",
     "predist:win": "powershell -NoProfile -NonInteractive -Command \"if (Test-Path 'dist') { Remove-Item -LiteralPath 'dist' -Recurse -Force }\"",
-    "graph:sync": "node scripts/sync-architecture-graph.cjs"
+    "graph:sync": "node scripts/sync-architecture-graph.cjs",
+    "package:commercial": "node scripts/package-commercial-zip.cjs",
+    "test:real": "node --test \"tests/real/*.test.mjs\"",
+    "license:keygen": "node tools/license/keygen.cjs",
+    "license:issue": "node tools/license/issue-license.cjs",
+    "owner": "electron electron/main.cjs --owner"
   },
   "dependencies": {
+    "@noble/curves": "^1.9.7",
     "clsx": "^2.1.1",
     "firebase": "^12.19.0",
     "jsqr": "^1.4.0",
@@ -59,7 +65,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "منظومة مدرسة الباعور",
+      "shortcutName": "منظومة المدرسة الرقمية",
       "deleteAppDataOnUninstall": false,
       "artifactName": "${productName}-Setup-${version}.${ext}"
     },

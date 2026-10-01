@@ -72,7 +72,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       </button>
       <div
         className={clsx(
-          'grid transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          'grid transition-rows transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
           open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         )}
       >

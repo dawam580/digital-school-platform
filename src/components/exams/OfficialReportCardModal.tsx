@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getSchoolProfile } from '../../services/db';
 import {
   Printer,
   X,
@@ -260,7 +261,7 @@ const ReportCardPaperContent: React.FC<ReportCardPaperContentProps> = ({
             <div>دولة ليبيا</div>
             <div>وزارة التربية والتعليم</div>
             <div>المركز الوطني للامتحانات</div>
-            <div>مراقبة التربية والتعليم - توكرة</div>
+            <div>{getSchoolProfile().district || 'مراقبة التربية والتعليم'}</div>
           </div>
 
           {/* Republic Emblem */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ShieldAlert, KeyRound, X, Check, Eye, EyeOff } from 'lucide-react';
-import { SecurityEngine } from '../../services/security/securityEngine';
+import { ShieldAlert, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { SecurityEngine, isWeakPin } from '../../services/security/securityEngine';
 import { sound } from '../../utils/soundEffects';
 
 interface PinRotationModalProps {
@@ -75,15 +75,15 @@ export const PinRotationModal: React.FC<PinRotationModalProps> = ({
   const handleSave = () => {
     setError('');
     if (needsSuper) {
-      if (superPin.length < 4 || superPin !== superConfirm) {
-        setError('رمز الماستر: 4 أرقام على الأقل مع تطابق التأكيد.');
+      if (superPin.length < 6 || isWeakPin(superPin) || superPin !== superConfirm) {
+        setError('رمز الماستر: 6 أرقام على الأقل، غير متكرر وغير متسلسل، مع تطابق التأكيد.');
         sound.playAlert();
         return;
       }
     }
     if (needsDirector) {
-      if (dirPin.length < 4 || dirPin !== dirConfirm) {
-        setError('رمز المدير: 4 أرقام على الأقل مع تطابق التأكيد.');
+      if (isWeakPin(dirPin) || dirPin !== dirConfirm) {
+        setError('رمز المدير: 4 أرقام على الأقل، غير متكرر وغير متسلسل وغير الرمز الافتراضي، مع تطابق التأكيد.');
         sound.playAlert();
         return;
       }
@@ -99,14 +99,6 @@ export const PinRotationModal: React.FC<PinRotationModalProps> = ({
   return createPortal(
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
       <div className="relative w-full max-w-md bg-[#0b192c] border border-amber-500/30 rounded-3xl shadow-2xl overflow-hidden text-slate-100 p-6" dir="rtl">
-        <button
-          onClick={onClose}
-          className="absolute top-4 left-4 w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
-          title="تذكيري لاحقاً"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
         <div className="flex flex-col items-center text-center space-y-3 pt-2">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30 border border-amber-400/40">
             <ShieldAlert className="w-8 h-8 text-white" />
@@ -114,7 +106,7 @@ export const PinRotationModal: React.FC<PinRotationModalProps> = ({
           <div>
             <h3 className="text-xl font-black text-white">رموزك ما زالت افتراضية ⚠️</h3>
             <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-              أي شخص يعرف الرموز الافتراضية يستطيع فتح بواباتك. غيّرها الآن لمرة واحدة — تستغرق 20 ثانية وتحمي مدرستك بالكامل.
+              أي شخص يعرف الرموز الافتراضية يستطيع فتح بواباتك. تغييرها إلزامي قبل المتابعة — يستغرق 20 ثانية ويحمي مدرستك بالكامل.
             </p>
           </div>
         </div>
@@ -138,13 +130,6 @@ export const PinRotationModal: React.FC<PinRotationModalProps> = ({
           >
             <KeyRound className="w-4 h-4" />
             <span>حفظ الرموز الجديدة</span>
-          </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition-all flex items-center gap-1"
-          >
-            <Check className="w-4 h-4" />
-            <span>لاحقاً</span>
           </button>
         </div>
       </div>

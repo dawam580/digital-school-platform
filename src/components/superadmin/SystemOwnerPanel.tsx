@@ -4,8 +4,9 @@ import {
   CheckCircle2, Database, FileWarning, Eye, EyeOff
 } from 'lucide-react';
 import { useSchool } from '../../context/SchoolContext';
-import { SecurityEngine } from '../../services/security/securityEngine';
+import { SecurityEngine, isWeakPin } from '../../services/security/securityEngine';
 import { auditLogger } from '../../services/audit/auditLogger';
+import { databaseEngine } from '../../services/databaseEngine';
 import { SecurityPinConfirmModal } from '../common/SecurityPinConfirmModal';
 import { sound } from '../../utils/soundEffects';
 
@@ -34,6 +35,7 @@ export const SystemOwnerPanel: React.FC = () => {
 
   const [showResetPin, setShowResetPin] = useState(false);
   const [showSealWipe, setShowSealWipe] = useState(false);
+  const [showDeliveryPrep, setShowDeliveryPrep] = useState(false);
 
   // المركز الأمني من سجل التدقيق الحقيقي
   const securityStats = useMemo(() => {
@@ -81,8 +83,8 @@ export const SystemOwnerPanel: React.FC = () => {
   const handleRotatePin = (e: React.FormEvent) => {
     e.preventDefault();
     setPinMsg(null);
-    if (newPin.length < 4 || newPin !== confirmPin) {
-      setPinMsg({ ok: false, text: 'الرمز الجديد: 4 أرقام على الأقل مع تطابق التأكيد.' });
+    if ((pinTarget === 'super' ? newPin.length < 6 : newPin.length < 4) || isWeakPin(newPin) || newPin !== confirmPin) {
+      setPinMsg({ ok: false, text: 'الرمز الجديد: (الماستر 6 أرقام والمدير 4 على الأقل)، غير متكرر وغير متسلسل، مع تطابق التأكيد.' });
       sound.playAlert();
       return;
     }
@@ -114,8 +116,76 @@ export const SystemOwnerPanel: React.FC = () => {
     });
   };
 
-  const handleWipeSeals = () => {
+  /**
+   * تجهيز تسليم نظيف بضغطة واحدة: نسخة احتياطية للتنزيل أولاً، ثم تصفير
+   * قاعدة البيانات + مسح التراخيص والأختام والبصمة والطلبات + إعادة الرموز
+   * للافتراضية — بيئة معقمة جاهزة للزبون التالي مع قيد شاهد في السجل.
+   */
+  const handleDeliveryPrep = () => {
+    // 1. نسخة احتياطية تُنزَّل قبل المسح (شبكة الأمان)
     try {
+      const json = databaseEngine.exportJSONBackup();
+      const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `madrasa_delivery_backup_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {}
+
+    // 2. تصفير قاعدة البيانات (طلاب/فصول/درجات/إعدادات)
+    resetDatabase();
+
+    // 3. مسح آثار الترخيص والتجربة والبصمة والطلبات والرموز المخصصة
+    const wipeKeys = [
+      'madrasa_active_license_key',
+      'madrasa_cached_license_doc_v1',
+      'madrasa_admin_schools_registry_v1',
+      'madrasa_renewal_requests_v1',
+      'madrasa_license_attempt_lock_v1',
+      'madrasa_trial_start_timestamp_v2',
+      'madrasa_trial_seal_a_v2',
+      'madrasa_trial_seal_b_v2',
+      'madrasa_clock_guard_last_seen_v2',
+      'madrasa_machine_hwid_v2',
+      'madrasa_permanent_license_v2',
+      'madrasa_device_trial_v1',
+      'madrasa_trial_used_v1',
+      'madrasa_trial_ext_v1',
+      'madrasa_superadmin_pin_sec',
+      'madrasa_director_pin_sec',
+    ];
+    try {
+      for (const k of wipeKeys) localStorage.removeItem(k);
+      // لقطات المدارس المحفوظة (madrasa_school_data_<id>) — عزل تام بين التسليمات
+      const snapshotKeys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i) || '';
+        if (k.startsWith('madrasa_school_data_')) snapshotKeys.push(k);
+      }
+      snapshotKeys.forEach(k => localStorage.removeItem(k));
+      localStorage.removeItem('madrasa_saved_schools_v1');
+      localStorage.removeItem('madrasa_school_profile_v1');
+    } catch {}
+
+    // 4. السجل: مسح + قيد شاهد (نزاهة التدقيق)
+    auditLogger.clearLogs();
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'DELIVERY_PREP_CLEAN',
+      entity: 'Licensing',
+      details: 'تجهيز تسليم نظيف: نسخة احتياطية + تصفير شامل + أختام وتراخيص ورموز افتراضية',
+      severity: 'CRITICAL'
+    });
+
+    sound.playSuccess();
+    setShowDeliveryPrep(false);
+    showToast('gold', 'البيئة نظيفة وجاهزة للتسليم 📦', 'نُزّلت نسخة احتياطية، وصُفّرت البيانات، وعادت التجربة 7 أيام والرموز افتراضية (9988/2026).');
+  };
+
+  const handleWipeSeals = () => {    try {
       localStorage.removeItem('madrasa_device_trial_v1');
       localStorage.removeItem('madrasa_trial_used_v1');
       localStorage.removeItem('madrasa_trial_ext_v1');
@@ -285,6 +355,14 @@ export const SystemOwnerPanel: React.FC = () => {
           </h3>
           <button
             type="button"
+            onClick={() => { setShowDeliveryPrep(true); sound.playTap(); }}
+            className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow transition flex items-center justify-center gap-1.5 active:scale-95"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            <span>تجهيز تسليم نظيف للزبون التالي 📦 (نسخة احتياطية + تصفير شامل)</span>
+          </button>
+          <button
+            type="button"
             onClick={() => { logout(); sound.playTap(); }}
             className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-black transition flex items-center justify-center gap-1.5 active:scale-95"
           >
@@ -318,6 +396,15 @@ export const SystemOwnerPanel: React.FC = () => {
         title="تصفير المصنع الكامل"
         description="سيُمسح كل شيء (طلاب، درجات، إعدادات) وتُستعاد البذور — مع بقاء شاهد التصفير في السجل. أدخل رمز المدير للتأكيد."
         actionBadge="تصفير جذري ⚠️"
+        isDestructive={true}
+      />
+      <SecurityPinConfirmModal
+        isOpen={showDeliveryPrep}
+        onClose={() => setShowDeliveryPrep(false)}
+        onSuccess={handleDeliveryPrep}
+        title="تجهيز تسليم نظيف 📦"
+        description="ستُنزَّل نسخة احتياطية أولاً، ثم يُمسح كل شيء: الطلاب والدرجات، التراخيص والطلبات، أختام التجربة والبصمة، لقطات المدارس — وتعود التجربة 7 أيام والرموز افتراضية (9988/2026). مثالي قبل تسليم الجهاز/المنظومة لزبون جديد."
+        actionBadge="تجهيز التسليم 📦"
         isDestructive={true}
       />
       <SecurityPinConfirmModal

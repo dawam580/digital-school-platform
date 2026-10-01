@@ -26,7 +26,9 @@ import {
   Printer,
   FileSpreadsheet,
   HelpCircle,
-  TrendingUp
+  TrendingUp,
+  KeyRound,
+  Copy
 } from 'lucide-react';
 import { StudentManagerModal } from '../../components/admin/StudentManagerModal';
 import { TeacherManagerModal } from '../../components/admin/TeacherManagerModal';
@@ -43,7 +45,7 @@ import { SubjectManagementModal } from '../../components/admin/SubjectManagement
 import { SecurityPinConfirmModal } from '../../components/common/SecurityPinConfirmModal';
 import { SchoolCensusAnalyticsView } from '../../components/admin/SchoolCensusAnalyticsView';
 import { AttractiveUserGuideBanner } from '../../components/common/AttractiveUserGuideBanner';
-import { LIBYAN_BAOUR_STUDENTS } from '../../data/libyanBaourSchoolDataset';
+import { DEMO_STUDENTS } from '../../data/demoSchoolDataset';
 import {
   LibyanExamEngine,
   StudentFullExamReport,
@@ -82,6 +84,8 @@ export const AdminDashboard: React.FC = () => {
     setTeachers,
     schoolProfile,
     setShowPdfImporterModal,
+    setShowAccountSettingsModal,
+    loadDemoStudents,
     logout,
     showToast,
     updateAttendance,
@@ -142,14 +146,11 @@ export const AdminDashboard: React.FC = () => {
 
   const handleDirectLoadBaour = () => {
     sound.playTap();
-    setStudents(LIBYAN_BAOUR_STUDENTS);
-    db.saveStudents(LIBYAN_BAOUR_STUDENTS, true);
-    try {
-      localStorage.setItem('madrasa_school_name', 'مدرسة الشهيد امحمد الباعور للتعليم الأساسي');
-    } catch {}
+    setStudents(DEMO_STUDENTS);
+    db.saveStudents(DEMO_STUDENTS, true);
     sound.playFanfare();
     triggerConfetti();
-    showToast('gold', 'تم استيراد كشف مدرسة الباعور 🏛️', `تم تحميل (${LIBYAN_BAOUR_STUDENTS.length}) طالباً موزعين على الفصول بنجاح.`);
+    showToast('gold', 'تم تحميل بيانات تجريبية وهمية 🏛️', `تم تحميل (${DEMO_STUDENTS.length}) طالباً كنموذج استعراضي للاختبار.`);
   };
 
   // Available classes dynamically extracted from real students in the database
@@ -224,6 +225,42 @@ export const AdminDashboard: React.FC = () => {
       db.saveTeachers(updated);
       sound.playTap();
       showToast('info', 'تم حذف المعلم', `تمت إزالة ${name} بنجاح.`);
+    }
+  };
+
+  // Copy Single Teacher Credentials Slip for WhatsApp
+  const handleCopyTeacherCard = (teacher: TeacherAccount) => {
+    sound.playTap();
+    const pwd = localStorage.getItem(`madrasa_teacher_pwd_${teacher.code.toUpperCase()}`) || '(غير معيّنة)';
+    const slip = `🎓 بطاقة اعتماد معلم - منصة المدرسة الرقمية
+👤 اسم المعلم: ${teacher.name}
+📚 المادة: ${teacher.subject}
+🔑 رمز الدخول (الكود): ${teacher.code}
+🔒 كلمة المرور: ${pwd}
+🏫 الفصول المسندة: ${teacher.assignedClasses.join(', ')}
+🌐 رابط المنظومة: ${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}`;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(slip);
+      showToast('gold', 'تم نسخ بطاقة المعلم 📋', `تم نسخ بيانات دخول (${teacher.name}) لإرسالها بالواتساب.`);
+    }
+  };
+
+  // Copy All Teachers Credentials Table for WhatsApp
+  const handleCopyAllTeachers = () => {
+    sound.playTap();
+    const header = `🎓 كشف بطاقات دخول المعلمين - ${schoolProfile.name}\n${'='.repeat(40)}\n`;
+    const lines = teachers.map((t, idx) => {
+      const pwd = localStorage.getItem(`madrasa_teacher_pwd_${t.code.toUpperCase()}`) || '(غير معيّنة)';
+      return `${idx + 1}. ${t.name} (${t.subject})
+   - رمز الدخول: ${t.code}
+   - كلمة المرور: ${pwd}
+   - الفصول: ${t.assignedClasses.join(', ')}`;
+    }).join('\n\n');
+    const footer = `\n${'='.repeat(40)}\n🌐 رابط المنظومة: ${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}`;
+    const fullText = header + lines + footer;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(fullText);
+      showToast('gold', 'تم نسخ كافة البطاقات 📋', `تم نسخ كشف (${teachers.length}) معلماً جاهزاً للمشاركة.`);
     }
   };
 
@@ -318,6 +355,16 @@ export const AdminDashboard: React.FC = () => {
         {/* Primary Action Buttons — داخل قسم قابل للطي لتخفيف الازدحام */}
         <CollapsibleSection id="admin-actions" title="إجراءات سريعة" subtitle="استيراد، موظفون، أدلة، كنترول" className="w-full xl:w-auto xl:min-w-[320px]">
         <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto justify-start xl:justify-end">
+          {/* Principal Security & Account Settings Button */}
+          <button
+            onClick={() => { setShowAccountSettingsModal(true); sound.playTap(); }}
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95 border border-amber-300"
+            title="تغيير هاتف المدير، رمز PIN الأمني، وكلمات المرور"
+          >
+            <KeyRound className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>🔐 إعدادات المدير وتغيير الرمز</span>
+          </button>
+
           {/* OpenAI PDF Importer Button */}
           <button
             onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
@@ -636,6 +683,9 @@ export const AdminDashboard: React.FC = () => {
                 onChange={e => setStudentSearch(e.target.value)}
                 placeholder="بحث باسم الطالب، الرقم الوطني، أو اسم الأم..."
                 className="w-full py-2.5 px-3.5 pr-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  spellCheck={false}
               />
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             </div>
@@ -662,10 +712,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 onClick={handleDirectLoadBaour}
                 className="whitespace-nowrap px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-sm transition flex items-center gap-1.5 active:scale-95"
-                title="استيراد كشف مدرسة الشهيد امحمد الباعور (33 صفحة • 873 طالباً)"
+                title="تحميل كشف مدرسي تجريبي للاختبار والمحاكاة قبل إدخال بيانات مدرستكم"
               >
                 <span>🏛️</span>
-                <span>كشف مدرسة الباعور (873 طالب) ⚡</span>
+                <span>كشف تجريبي للمعاينة (873 طالباً) ⚡</span>
               </button>
 
               {/* Official Ministry Roster Modal (100% Exact 7-column replica A4) */}
@@ -741,8 +791,11 @@ export const AdminDashboard: React.FC = () => {
                   onChange={e => { setSelectedClassFilter(e.target.value); sound.playTap(); }}
                   aria-label="تصفية حسب الفصل"
                   className="flex-1 md:w-64 py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-black text-blue-700 dark:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  spellCheck={false}
                 >
-                  <option value="all">جميع الفصول (33 فصلاً • {students.length} طالب)</option>
+                  <option value="all">جميع الفصول ({availableClasses.length} فصلاً • {students.length} طالب)</option>
                   {availableClasses.map(cls => {
                     const count = students.filter(s => s.className === cls).length;
                     return (
@@ -811,16 +864,53 @@ export const AdminDashboard: React.FC = () => {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
                   {filteredStudents.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-slate-400">
-                        <div className="flex flex-col items-center justify-center gap-3">
-                          <Users className="w-12 h-12 text-slate-300" />
-                          <p className="text-sm font-bold">لم يتم العثور على أي طلاب مطابقين</p>
-                          <button
-                            onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
-                            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow transition"
-                          >
-                            📄 اضغط هنا لاستيراد كشف الطلبة من PDF
-                          </button>
+                      <td colSpan={8} className="py-14 text-center text-slate-500">
+                        <div className="flex flex-col items-center justify-center gap-4 max-w-xl mx-auto px-4">
+                          <div className="w-16 h-16 rounded-3xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center text-3xl shadow-inner border border-blue-100 dark:border-blue-900">
+                            🏛️
+                          </div>
+                          <div>
+                            <h4 className="text-base font-black text-slate-900 dark:text-white">
+                              قاعدة بيانات الطلاب نظيفة ومستعدة لبدء إدخال مدرستكم!
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                              لا توجد سجلات بعد. يمكنك البدء بإدخال طلاب مدرستكم يدوياً، أو استيراد الكشف الوزاري الرسمي، أو استيراد ملف إكسل:
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => { setStudentToEdit(null); setShowStudentModal(true); sound.playTap(); }}
+                              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 active:scale-95"
+                            >
+                              <UserPlus className="w-4 h-4" />
+                              <span>+ إضافة طالب يدوياً</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setShowPdfImporterModal(true); sound.playTap(); }}
+                              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 active:scale-95"
+                            >
+                              <FileText className="w-4 h-4 text-amber-300" />
+                              <span>📄 استيراد كشف PDF الوزاري</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setShowExcelImporterModal(true); sound.playTap(); }}
+                              className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 active:scale-95"
+                            >
+                              <FileSpreadsheet className="w-4 h-4" />
+                              <span>📊 استيراد كشف Excel</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleDirectLoadBaour}
+                              className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 active:scale-95 border border-amber-500"
+                              title="تحميل كشف تجريبي للاختبار والمحاكاة قبل إدخال بيانات مدرستكم"
+                            >
+                              <span>⚡ تحميل كشف تجريبي للاختبار (873 طالباً)</span>
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -1001,6 +1091,9 @@ export const AdminDashboard: React.FC = () => {
                 value={selectedExamClass}
                 onChange={e => { setSelectedExamClass(e.target.value); sound.playTap(); }}
                 className="w-full py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-black text-purple-700 dark:text-purple-300 focus:outline-none"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  spellCheck={false}
               >
                 {availableClasses.map(cls => (
                   <option key={cls} value={cls}>فصل ({cls})</option>
@@ -1201,6 +1294,16 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
+                onClick={handleCopyAllTeachers}
+                className="whitespace-nowrap px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs shadow-sm transition active:scale-95 flex items-center gap-1.5 shrink-0 border border-slate-300 dark:border-slate-700"
+                title="نسخ بيانات دخول كافة المعلمين كرسالة واحدة جاهزة للواتساب"
+              >
+                <Copy className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>📋 نسخ بطاقات كافة المعلمين للواتساب</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => {
                   setCurrentRole('teacher');
                   sound.playTap();
@@ -1247,23 +1350,32 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Teacher Login Code Pill (Giant & Clear) */}
-                  <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/60 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">
-                        رمز الدخول للبوابة:
-                      </span>
-                      <span className="font-mono font-black text-sm text-slate-900 dark:text-white">
-                        {teacher.code}
-                      </span>
+                  {/* Teacher Login Code & Password Box */}
+                  <div className="p-3 bg-amber-50/70 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/60 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">
+                          رمز الدخول (الكود):
+                        </span>
+                        <span className="font-mono font-black text-sm text-slate-900 dark:text-white">
+                          {teacher.code}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => { setTeacherToEdit(teacher); setShowTeacherModal(true); sound.playTap(); }}
+                        className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg shadow-sm transition active:scale-95"
+                        title="تغيير وتخصيص رمز وكلمة مرور المعلم"
+                      >
+                        تعديل الرمز ✏️
+                      </button>
                     </div>
-                    <button
-                      onClick={() => { setTeacherToEdit(teacher); setShowTeacherModal(true); sound.playTap(); }}
-                      className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-[11px] rounded-lg shadow-sm transition active:scale-95"
-                      title="تغيير وتخصيص رمز المعلم"
-                    >
-                      تعديل الرمز ✏️
-                    </button>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-amber-200/60 dark:border-amber-800/40 text-xs">
+                      <span className="text-[10px] text-slate-500 font-bold">كلمة المرور:</span>
+                      <code className="font-mono font-bold text-slate-800 dark:text-slate-200 bg-white/70 dark:bg-slate-800 px-2 py-0.5 rounded border border-amber-200/40">
+                        {localStorage.getItem(`madrasa_teacher_pwd_${teacher.code.toUpperCase()}`) || '(غير معيّنة)'}
+                      </code>
+                    </div>
                   </div>
 
                   {/* Phone & Assigned Classes */}
@@ -1289,14 +1401,24 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <button
                       onClick={() => { setTeacherToEdit(teacher); setShowTeacherModal(true); sound.playTap(); }}
                       className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                       <span>تعديل</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopyTeacherCard(teacher)}
+                      className="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-black border border-blue-200 dark:border-blue-800 transition active:scale-95 flex items-center gap-1 shadow-sm"
+                      title="نسخ بطاقة دخول المعلم لإرسالها بالواتساب"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>نسخ البطاقة 📋</span>
                     </button>
 
                     <button

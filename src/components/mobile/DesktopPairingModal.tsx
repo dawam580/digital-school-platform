@@ -52,7 +52,7 @@ export const DesktopPairingModal: React.FC<DesktopPairingModalProps> = ({
   };
 
   const whatsappText = encodeURIComponent(
-    `السلام عليكم ورحمة الله،\nرابط تطبيق الهاتف المباشر لمتابعة الطالب (${student?.name || 'ابنكم'})\nالصف: ${student?.className || 'مدرسة الباعور'}\nكود الربط المباشر: ${studentCode}\nاضغط الرابط للدخول المباشر والتثبيت:\n${targetUrl}`
+    `السلام عليكم ورحمة الله،\nرابط تطبيق الهاتف المباشر لمتابعة الطالب (${student?.name || 'ابنكم'})\nالصف: ${student?.className || 'المدرسة'}\nكود الربط المباشر: ${studentCode}\nاضغط الرابط للدخول المباشر والتثبيت:\n${targetUrl}`
   );
   const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
 

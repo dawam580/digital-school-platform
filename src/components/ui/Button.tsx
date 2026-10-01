@@ -31,7 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = twMerge(
     'relative inline-flex items-center justify-center gap-2 select-none whitespace-nowrap',
     'font-cairo font-extrabold rounded-2xl min-h-[44px]',
-    'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+    'transition-colors transition-shadow duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     'hover:-translate-y-px active:translate-y-0 active:scale-[0.97]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'disabled:opacity-50 disabled:pointer-events-none disabled:hover:translate-y-0'

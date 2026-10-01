@@ -182,7 +182,7 @@ export const AnalyticsCharts: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white">أكبر 8 فصول كثافة</h3>
-              <p className="text-xs text-slate-400 font-bold">الكثافة الطلابية وتوزيع القاعات في مدرسة الباعور</p>
+              <p className="text-xs text-slate-400 font-bold">الكثافة الطلابية وتوزيع القاعات الدراسية بالمدرسة</p>
             </div>
           </div>
           <div dir="ltr" className="h-64">

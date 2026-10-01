@@ -31,7 +31,7 @@ import {
   getRoleLink,
   getWhatsAppShareUrl
 } from '../../utils/inviteMessageHelper';
-import { SecurityEngine } from '../../services/security/securityEngine';
+import { SecurityEngine, isWeakPin } from '../../services/security/securityEngine';
 
 export const SchoolClientOnboardingPage: React.FC = () => {
   const {
@@ -60,7 +60,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
   const [schoolName, setSchoolName] = useState(urlSchoolName);
   const [directorName, setDirectorName] = useState(urlDirectorName);
   const [directorPhone, setDirectorPhone] = useState(urlPhone);
-  const [directorPin, setDirectorPin] = useState('2026');
+  const [directorPin, setDirectorPin] = useState('');
   const [password, setPassword] = useState('123456');
   const [district, setDistrict] = useState(urlDistrict);
   const [isActivated, setIsActivated] = useState(false);
@@ -85,8 +85,8 @@ export const SchoolClientOnboardingPage: React.FC = () => {
       return;
     }
 
-    if (directorPin.length !== 4 || !/^\d{4}$/.test(directorPin)) {
-      showToast('error', 'تنبيه', 'رمز أمان المدير PIN يجب أن يتكون من 4 أرقام.');
+    if (!/^\d{4,8}$/.test(directorPin) || isWeakPin(directorPin)) {
+      showToast('error', 'تنبيه', 'رمز أمان المدير PIN: من 4 إلى 8 أرقام، غير متكرر وغير متسلسل (مثل 1234 أو 2026 مرفوض).');
       return;
     }
 
@@ -313,7 +313,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
                     value={schoolName}
                     onChange={e => setSchoolName(e.target.value)}
                     required
-                    placeholder="مدرسة الشهيد امحمد الباعور"
+                    placeholder="مثال: مدرسة شريان الحياة للتعليم الأساسي والثانوي"
                     className="w-full p-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>

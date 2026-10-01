@@ -139,27 +139,28 @@ export const Sidebar: React.FC = () => {
                 const isActive = activeTab === item.id;
 
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      sound.playTap();
-                      // عناصر التقاطع بين الواجهات تعاين الدور (لا تبويب ميت يُرتد)
-                      if (item.id === 'counselor-dashboard') {
-                        setActiveTab('counselor-dashboard');
-                      } else if (item.id === 'school-manager') {
-                        setShowSchoolManagerModal(true);
-                      } else if (item.isCustomAction) {
-                        setShowExcelModal(true);
-                      } else {
-                        setActiveTab(item.id);
-                      }
-                    }}
-                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all group ${
-                      isActive
-                        ? 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-md font-bold'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400'
-                    }`}
-                  >
+<button
+                      key={item.id}
+                      onClick={() => {
+                        sound.playTap();
+                        // عناصر التقاطع بين الواجهات تعاين الدور (لا تبويب ميت يُرتد)
+                        if (item.id === 'counselor-dashboard') {
+                          setActiveTab('counselor-dashboard');
+                        } else if (item.id === 'school-manager') {
+                          setShowSchoolManagerModal(true);
+                        } else if (item.isCustomAction) {
+                          setShowExcelModal(true);
+                        } else {
+                          setActiveTab(item.id);
+                        }
+                      }}
+                      aria-label={item.label}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all group ${
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-md font-bold'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400'
+                      }`}
+                    >
                     <div className="flex items-center gap-3">
                       <Icon
                         className={`w-4 h-4 transition-transform duration-200 group-hover:scale-110 ${
