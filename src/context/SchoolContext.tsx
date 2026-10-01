@@ -295,7 +295,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const qRole = params.get('role');
-        if (qRole === 'admin') return 'admin';
+        const qPortal = params.get('portal');
+        if (qRole === 'admin' || qPortal === 'admin') return 'admin';
+        if (qRole === 'superadmin' || qPortal === 'superadmin') return 'superadmin';
       }
       const saved = localStorage.getItem('madrasa_auth_role');
       if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
@@ -312,8 +314,23 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   };
 
-  // جلسة الماستر: تُفتح برمز السوبر فقط، ولا تُحفظ (تنتهي بإعادة التحميل)
-  const [superUnlocked, setSuperUnlocked] = useState(false);
+  // جلسة الماستر: تُفتح برمز السوبر أو مباشرة للمالك برابط السوبر
+  const [superUnlocked, setSuperUnlocked] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qRole = params.get('role');
+        const qPortal = params.get('portal');
+        if (qRole === 'superadmin' || qPortal === 'superadmin') {
+          return true;
+        }
+      }
+      if (localStorage.getItem('madrasa_auth_role') === 'superadmin' || localStorage.getItem('madrasa_superadmin_unlocked') === 'true') {
+        return true;
+      }
+    } catch {}
+    return false;
+  });
 
   const denyRoleSwitch = (target: UserRole) => {
     sound.playAlert();
@@ -476,6 +493,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSuperUnlocked(true);
     setIsAuthenticated(true);
     markSession();
+    try {
+      localStorage.setItem('madrasa_superadmin_unlocked', 'true');
+    } catch {}
     applyRole('superadmin');
     sound.playSuccess();
     triggerConfetti();
@@ -493,6 +513,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // الخروج من بوابة السوبر (تُعرض بعد إعادة التحميل عندما تكون الهوية سوبر والجلسة مقفلة)
   const exitSuperAdminGate = () => {
     setSuperUnlocked(false);
+    try {
+      localStorage.removeItem('madrasa_superadmin_unlocked');
+    } catch {}
     setAuthenticatedRole('admin');
     setIsAuthenticated(true);
     markSession();
@@ -532,6 +555,16 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           try {
             localStorage.setItem(SESSION_KEY, '1');
             localStorage.setItem('madrasa_auth_role', 'admin');
+            localStorage.setItem('madrasa_active_role', 'admin');
+          } catch {}
+          return true;
+        }
+        if (qRole === 'superadmin' || qPortal === 'superadmin') {
+          try {
+            localStorage.setItem(SESSION_KEY, '1');
+            localStorage.setItem('madrasa_auth_role', 'superadmin');
+            localStorage.setItem('madrasa_active_role', 'superadmin');
+            localStorage.setItem('madrasa_superadmin_unlocked', 'true');
           } catch {}
           return true;
         }
@@ -739,25 +772,24 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           return 'onboarding';
         }
         const qPortal = params.get('portal');
+        const qRole = params.get('role');
+        if (qRole === 'superadmin' || qPortal === 'superadmin') {
+          return 'superadmin-dashboard';
+        }
         if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
           return 'parent-mobile';
         }
-        if (qPortal === 'teacher' || qPortal === 'exams' || qPortal === 'superadmin') {
-          return 'login';
-        }
-        if (qPortal === 'admin') {
-          return 'dashboard';
-        }
-        const qRole = params.get('role');
-        if (qRole === 'superadmin') return hasPriorSetup() ? 'superadmin-dashboard' : 'login';
-        if (qRole === 'exams_coordinator') return hasPriorSetup() ? 'exams-coordinator-dashboard' : 'login';
-        if (qRole === 'teacher') return hasPriorSetup() ? 'teacher-quick' : 'login';
-        if (qRole === 'parent') return 'parent-mobile';
-        if (qRole === 'admin') {
+        if (qPortal === 'admin' || qRole === 'admin') {
           const qTab = params.get('tab');
           if (qTab) return qTab;
           return 'dashboard';
         }
+        if (qPortal === 'teacher' || qPortal === 'exams') {
+          return 'login';
+        }
+        if (qRole === 'exams_coordinator') return hasPriorSetup() ? 'exams-coordinator-dashboard' : 'login';
+        if (qRole === 'teacher') return hasPriorSetup() ? 'teacher-quick' : 'login';
+        if (qRole === 'parent') return 'parent-mobile';
       }
       if (hasPriorSetup()) {
         const saved = localStorage.getItem('madrasa_active_tab');
@@ -1350,6 +1382,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       localStorage.removeItem('madrasa_auth_role');
       localStorage.removeItem('madrasa_active_role');
+      localStorage.removeItem('madrasa_superadmin_unlocked');
       localStorage.removeItem('madrasa_active_teacher_id');
       localStorage.removeItem('madrasa_active_tab');
       if (typeof window !== 'undefined') {

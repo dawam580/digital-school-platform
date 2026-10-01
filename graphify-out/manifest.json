@@ -372,10 +372,10 @@
     "semantic_hash": "7bed02e3c7a49b8849da553ed007b6be"
   },
   "src/components/licensing/SubscriptionExpiredOverlay.tsx": {
-    "mtime": 1790848544.8110025,
-    "seen": 1790850227.292434,
-    "ast_hash": "3cc3af988d613228253e4639b3d8667a",
-    "semantic_hash": "3cc3af988d613228253e4639b3d8667a"
+    "mtime": 1790853750.555542,
+    "seen": 1790853919.217668,
+    "ast_hash": "bb8cba12bbde600a4a8cc43cb405e0c9",
+    "semantic_hash": "bb8cba12bbde600a4a8cc43cb405e0c9"
   },
   "src/components/licensing/SuperAdminLicenseManager.tsx": {
     "mtime": 1790849087.47069,
@@ -432,10 +432,10 @@
     "semantic_hash": "20927cffb3705a34c4db0e56d4f1bf2d"
   },
   "src/components/trial/FreeTrialModal.tsx": {
-    "mtime": 1789858965.0228214,
-    "seen": 1789931720.1388845,
-    "ast_hash": "afed62abe00b2e57d8371a8e900bfc3c",
-    "semantic_hash": "afed62abe00b2e57d8371a8e900bfc3c"
+    "mtime": 1790853668.1502655,
+    "seen": 1790853919.2306507,
+    "ast_hash": "6b8347e02bda019076d7250e4e68406d",
+    "semantic_hash": "6b8347e02bda019076d7250e4e68406d"
   },
   "src/components/trial/TrialBanner.tsx": {
     "mtime": 1789561175.1873672,
@@ -534,10 +534,10 @@
     "semantic_hash": "920aa1ce26b0002dbaf2ce8e1f1d54ff"
   },
   "src/context/SchoolContext.tsx": {
-    "mtime": 1790849762.546398,
-    "seen": 1790850227.3042717,
-    "ast_hash": "7c74dff14d1c51dbe2318022a46cc32a",
-    "semantic_hash": "7c74dff14d1c51dbe2318022a46cc32a"
+    "mtime": 1790857150.7539673,
+    "seen": 1790857443.6884503,
+    "ast_hash": "10e0f9293e584efbf650f5db593ba8a1",
+    "semantic_hash": "10e0f9293e584efbf650f5db593ba8a1"
   },
   "src/data/mockData.ts": {
     "mtime": 1790844683.3479803,
@@ -606,10 +606,10 @@
     "semantic_hash": "e5d2ed302bbdf542a26dabfd6a594de5"
   },
   "src/pages/auth/Login.tsx": {
-    "mtime": 1790850017.9288561,
-    "seen": 1790850227.3062656,
-    "ast_hash": "fc2cb3ab156fbadafb926b1ad1170c2b",
-    "semantic_hash": "fc2cb3ab156fbadafb926b1ad1170c2b"
+    "mtime": 1790857216.1071787,
+    "seen": 1790857443.703837,
+    "ast_hash": "83f98e14c0267e13ea9e2ccf2b92011d",
+    "semantic_hash": "83f98e14c0267e13ea9e2ccf2b92011d"
   },
   "src/pages/auth/ParentSignUp.tsx": {
     "mtime": 1789947371.0937092,
@@ -756,10 +756,10 @@
     "semantic_hash": "a8fd3f3cddf4780ef3f22a28e2d69deb"
   },
   "src/services/db.ts": {
-    "mtime": 1790844683.3438134,
-    "seen": 1790850227.3126276,
-    "ast_hash": "ee3603f5ecd639ab5173c606f726e77d",
-    "semantic_hash": "ee3603f5ecd639ab5173c606f726e77d"
+    "mtime": 1790853633.292782,
+    "seen": 1790853919.2767305,
+    "ast_hash": "204a95d4b08474f89763f424d485c459",
+    "semantic_hash": "204a95d4b08474f89763f424d485c459"
   },
   "src/services/exams/examStorageService.ts": {
     "mtime": 1789561175.2798913,
@@ -780,10 +780,10 @@
     "semantic_hash": "df556ef82f77b898c610f04ac785c241"
   },
   "src/services/licensing/licenseService.ts": {
-    "mtime": 1790848549.2222772,
-    "seen": 1790850227.3146224,
-    "ast_hash": "e18f9dc8bfa1527a341a1baa3c929082",
-    "semantic_hash": "e18f9dc8bfa1527a341a1baa3c929082"
+    "mtime": 1790854901.7132778,
+    "seen": 1790854970.1645253,
+    "ast_hash": "d43235275cacc5d4bbc741226f0f4ecf",
+    "semantic_hash": "d43235275cacc5d4bbc741226f0f4ecf"
   },
   "src/services/licensing/licenseTypes.ts": {
     "mtime": 1790262997.6361716,
@@ -828,10 +828,10 @@
     "semantic_hash": "70de99159770c48fab75d13c526319dd"
   },
   "src/services/security/securityEngine.ts": {
-    "mtime": 1790849668.1747108,
-    "seen": 1790850227.3156195,
-    "ast_hash": "fa0ac78ca01c7fcde9cbb5bab1236645",
-    "semantic_hash": "fa0ac78ca01c7fcde9cbb5bab1236645"
+    "mtime": 1790855723.564937,
+    "seen": 1790855852.6274083,
+    "ast_hash": "10982a6f8d6b40a16d5ec5be1fa9d9d9",
+    "semantic_hash": "10982a6f8d6b40a16d5ec5be1fa9d9d9"
   },
   "src/services/storage/autoBackup.ts": {
     "mtime": 1789931007.278804,
@@ -1176,10 +1176,10 @@
     "semantic_hash": "5f734bc51ac0bb08bee18c11c23cd4f7"
   },
   "src/services/storage/desktopPersistence.ts": {
-    "mtime": 1790846645.4306,
-    "seen": 1790850227.3166173,
-    "ast_hash": "2fd104ddc342e38d1f994010b70692e2",
-    "semantic_hash": "2fd104ddc342e38d1f994010b70692e2"
+    "mtime": 1790853801.5017202,
+    "seen": 1790853919.2827466,
+    "ast_hash": "17d4e9babc7f81b5454e2f93c2feb17c",
+    "semantic_hash": "17d4e9babc7f81b5454e2f93c2feb17c"
   },
   "src/services/storage/desktopPersistenceBoot.ts": {
     "mtime": 1790846657.1689236,

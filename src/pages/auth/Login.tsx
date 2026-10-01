@@ -466,15 +466,27 @@ export const Login: React.FC = () => {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleDirectAdminLogin}
-              disabled={loading}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-sm shadow-xl shadow-amber-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-            >
-              <span>دخول لوحة تحكم المدير الآن 🚀</span>
-              <ArrowLeft className="w-4 h-4" />
-            </button>
+            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto shrink-0">
+              <button
+                type="button"
+                onClick={handleDirectAdminLogin}
+                disabled={loading}
+                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-xs shadow-xl shadow-amber-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>دخول لوحة تحكم المدير الآن 🚀</span>
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDirectSuperAdminLogin}
+                disabled={loading}
+                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-xl shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer border border-blue-400/40"
+              >
+                <Shield className="w-4 h-4 text-blue-200" />
+                <span>المدير العام والاشتراكات 🌐</span>
+              </button>
+            </div>
           </div>
         </div>
 

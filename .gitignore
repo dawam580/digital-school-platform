@@ -6,3 +6,11 @@ dist-electron
 cloudflared.exe
 server_db.json
 graphify-out/cache/
+
+# حزم التسليم والنسخ الاحتياطية (قد تحتوي بيانات مدارس حقيقية — لا تُرفع أبداً)
+*.zip
+server_db.backup*.json
+منظومة_المدرسة_الرقمية_النسخة_التجارية/
+# مفتاح توقيع التراخيص الخاص (يجب أن يبقى خارج المشروع أصلاً)
+*.pem
+.madrasa-license/
