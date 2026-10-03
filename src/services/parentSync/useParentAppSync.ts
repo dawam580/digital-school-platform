@@ -6,7 +6,7 @@ import { LibyanExamEngine } from '../exams/libyanExamEngine';
 import { LicenseService } from '../licensing/licenseService';
 import { isSignedLicenseFormat } from '../licensing/cryptoHelper';
 import { SecurityEngine } from '../security/securityEngine';
-import { getParentSyncConfig, publishParentViews, pullParentInbox, PublishResult } from './schoolSync';
+import { getParentSyncConfig, publishParentViews, pullParentInbox, PublishResult, recordReceived, receivedFor } from './schoolSync';
 
 export interface ParentSyncStatus {
   state: 'off' | 'syncing' | 'ok' | 'error';
@@ -59,6 +59,8 @@ export function useParentAppSync(d: Deps) {
     for (const m of msgs) {
       const st = students.find(s => s.id === m.studentId);
       if (!st) continue;
+      // إيصال استلام حتى لو رُفضت الرسالة (معلم لم يعد للفصل...) — كي لا يكرر الهاتف الإرسال
+      recordReceived(st.id, [m.id]);
       if (m.type === 'chat') {
         const contact = contactsForStudent(st, teachers).find(c => c.teacherId === m.teacherId);
         const teacher = teachers.find(t => t.id === m.teacherId);
@@ -143,6 +145,7 @@ export function useParentAppSync(d: Deps) {
           summons: parentSummons,
           nameIsUnique: (nameCount.get(s.name) || 0) === 1,
           exam: { held: !!lock?.isLocked && !released, official },
+          received: receivedFor(s.id),
         }),
       };
     });

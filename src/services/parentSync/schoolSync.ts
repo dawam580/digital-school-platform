@@ -15,6 +15,7 @@ const KEY_KEYS = 'madrasa_parent_sync_keys_v1';
 const KEY_HASHES = 'madrasa_parent_sync_hashes_v1';
 const KEY_CURSOR = 'madrasa_parent_sync_cursor_v1';
 const KEY_APPLIED = 'madrasa_parent_inbox_applied_v1';
+const KEY_RECEIVED = 'madrasa_parent_inbox_received_v1';
 const BATCH = 40;
 
 export interface ParentSyncConfig {
@@ -107,11 +108,13 @@ export async function publishParentViews(entries: PublishEntry[], license: strin
   const hashes: Record<string, string> = readJson(KEY_HASHES, {});
   const lidMap = new Map<string, { keys: ParentKeys; studentId: string }>();
   const pending: { lid: string; blob: string; hash: string }[] = [];
+  const viewByLid = new Map<string, { keys: ParentKeys; view: ParentView; hash: string }>();
 
   for (const e of entries) {
     const keys = await keysFor(e.loginId, e.code);
     lidMap.set(keys.lid, { keys, studentId: e.studentId });
     const hash = await sha256Hex(viewFingerprintSource(e.view));
+    viewByLid.set(keys.lid, { keys, view: e.view, hash });
     if (hashes[keys.lid] === hash) continue;
     pending.push({ lid: keys.lid, blob: await sealJson(keys, e.view), hash });
   }
@@ -140,8 +143,22 @@ export async function publishParentViews(entries: PublishEntry[], license: strin
   }
 
   const prune = await request<{ missing: string[] }>(base, '/v1/prune', license, { method: 'POST', body: { lids: [...lidMap.keys()] } });
+
+  // الخادم فقد بيانات (إعادة تشغيل/استضافة مجانية بلا قرص): تُعاد في نفس الدورة
+  const missing = (prune.missing || []).filter(lid => viewByLid.has(lid));
+  for (let i = 0; i < missing.length; i += BATCH) {
+    const items = [];
+    for (const lid of missing.slice(i, i + BATCH)) {
+      const { keys, view, hash } = viewByLid.get(lid)!;
+      items.push({ lid, blob: await sealJson(keys, view) });
+      hashes[lid] = hash;
+    }
+    await request(base, '/v1/publish', license, { method: 'POST', body: { items } });
+    uploaded += items.length;
+  }
+
   const nextHashes: Record<string, string> = {};
-  for (const lid of lidMap.keys()) if (hashes[lid] && !(prune.missing || []).includes(lid)) nextHashes[lid] = hashes[lid];
+  for (const lid of lidMap.keys()) if (hashes[lid]) nextHashes[lid] = hashes[lid];
   writeJson(KEY_HASHES, nextHashes);
 
   return { total: entries.length, uploaded, conflicts, lidMap };
@@ -176,6 +193,9 @@ export async function pullParentInbox(
       if (msg && !seen.has(msg.id)) {
         out.push(msg);
         seen.add(msg.id);
+      } else if (msg) {
+        // إعادة إرسال من الهاتف لرسالة طُبّقت سابقاً: نجدد إيصالها فقط
+        recordReceived(msg.studentId, [msg.id]);
       }
     } catch {
       // نص لا يُفك بمفتاح البطاقة: يُهمل
@@ -197,4 +217,24 @@ export async function fetchRelaySchoolStatus(license: string, url: string) {
   const base = normalizeRelayUrl(url);
   if (!base) throw new Error('عنوان الخادم غير صالح');
   return request<{ schoolName: string; views: number; pendingInbox: number; expiresAt: string }>(base, '/v1/school-status', license);
+}
+
+// ─── إيصالات الاستلام: يرى ولي الأمر أن رسالته وصلت، وما لم يصل يعيد هاتفه إرساله ───
+type ReceivedMap = Record<string, { id: string; at: number }[]>;
+const RECEIPT_TTL = 7 * 24 * 3600_000;
+
+export function recordReceived(studentId: string, ids: string[]): void {
+  if (!ids.length) return;
+  const map: ReceivedMap = readJson(KEY_RECEIVED, {});
+  const now = Date.now();
+  const list = (map[studentId] || []).filter(r => now - r.at < RECEIPT_TTL);
+  for (const id of ids) if (!list.some(r => r.id === id)) list.push({ id, at: now });
+  map[studentId] = list.slice(-100);
+  writeJson(KEY_RECEIVED, map);
+}
+
+export function receivedFor(studentId: string): string[] {
+  const map: ReceivedMap = readJson(KEY_RECEIVED, {});
+  const now = Date.now();
+  return (map[studentId] || []).filter(r => now - r.at < RECEIPT_TTL).map(r => r.id);
 }

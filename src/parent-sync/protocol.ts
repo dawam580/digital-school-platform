@@ -47,6 +47,8 @@ export interface ParentView {
   summons: { id: string; reason: string; requestedDate: string; requestedTime: string; status: ParentSummon['status']; parentConfirmedAt?: string }[];
   contacts: { teacherId: string; name: string; subject: string; isCounselor: boolean }[];
   threads: { teacherId: string; messages: ParentViewThreadMessage[] }[];
+  /** معرّفات رسائل ولي الأمر التي وصلت المدرسة (آخر 7 أيام) — ما ليس فيها يُعاد إرساله */
+  received?: string[];
 }
 
 export type ParentInboxMessage =
@@ -95,6 +97,7 @@ export interface BuildParentViewInput {
   summons: ParentSummon[];
   nameIsUnique: boolean;
   exam: { held: boolean; official: StudentFullExamReport | null };
+  received?: string[];
   now?: Date;
 }
 
@@ -163,6 +166,7 @@ export function buildParentView(i: BuildParentViewInput): ParentView {
       })),
     contacts,
     threads,
+    received: i.received || [],
   };
 }
 

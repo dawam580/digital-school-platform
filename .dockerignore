@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-electron
+dist-parent
+relay-data
+.git
+graphify-out
+*.zip
+*.madrasa.json

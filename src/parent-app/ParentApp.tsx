@@ -174,11 +174,17 @@ export const ParentApp: React.FC = () => {
       const next = { view: v, updatedAt, fetchedAt: new Date().toISOString() };
       store.saveView(active.lid, next);
       setCached(next);
-      // الرسائل التي ظهرت في سجل المدرسة وصلت — تُحذف من قائمة الانتظار
-      const delivered = new Set(v.threads.flatMap(t => t.messages.map(m => m.id)));
+      // ما أكدت المدرسة استلامه يُحذف من قائمة الانتظار؛ وما لم يصل بعد ٢٠ دقيقة يُعاد إرساله
+      // (الخادم قد يُعاد تشغيله، والمدرسة تتجاهل المكرر بمعرّفه)
+      const delivered = new Set([...(v.received || []), ...v.threads.flatMap(t => t.messages.map(m => m.id))]);
       const confirmed = new Set(v.summons.filter(s => s.parentConfirmedAt).map(s => s.id));
       const remaining = store.outbox(active.lid).filter(m =>
-        m.type === 'chat' ? !delivered.has(m.id) : m.type === 'summons-confirm' ? !confirmed.has(m.summonsId) : Date.now() - Date.parse(m.sentAt) < 7 * 864e5);
+        !delivered.has(m.id) && !(m.type === 'summons-confirm' && confirmed.has(m.summonsId)) && Date.now() - Date.parse(m.sentAt) < 7 * 864e5);
+      for (const m of remaining) {
+        if (Date.now() - store.lastSent(active.lid, m.id, m.sentAt) > 20 * 60_000) {
+          sendToSchool(active, m).then(() => store.markSent(active.lid, m.id)).catch(() => {});
+        }
+      }
       store.saveOutbox(active.lid, remaining);
       setOutbox(remaining);
       if (v.student.name !== active.name || v.student.className !== active.className) {
@@ -187,7 +193,12 @@ export const ParentApp: React.FC = () => {
       }
       setNotice('');
     } catch (err) {
-      if (err instanceof ApiError && err.status === 404) setNotice('هذه البطاقة لم تعد صالحة (ربما أصدرت المدرسة رمزاً جديداً). أضف البطاقة الجديدة.');
+      if (err instanceof ApiError && err.status === 404) {
+        // ملخص محفوظ سابقاً = البطاقة صحيحة والخادم ينتظر تحديث حاسوب المدرسة (بعد إعادة تشغيل مثلاً)
+        setNotice(store.view(active.lid)
+          ? 'بانتظار تحديث بيانات المدرسة — تُعرض آخر نسخة محفوظة. إن استمر ذلك أياماً فربما أصدرت المدرسة رمزاً جديداً لبطاقتك.'
+          : 'هذه البطاقة لم تعد صالحة (ربما أصدرت المدرسة رمزاً جديداً). أضف البطاقة الجديدة.');
+      }
       else setNotice(err instanceof Error ? err.message : 'تعذر التحديث');
     } finally {
       setRefreshing(false);
@@ -218,6 +229,7 @@ export const ParentApp: React.FC = () => {
     if (!active) return false;
     try {
       await sendToSchool(active, msg);
+      store.markSent(active.lid, msg.id);
       const next = [...store.outbox(active.lid), msg];
       store.saveOutbox(active.lid, next);
       setOutbox(next);
