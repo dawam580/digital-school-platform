@@ -176,7 +176,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
                 {studentToEdit ? 'تعديل بيانات الطالب في المنظومة' : 'تسجيل وإضافة طالب جديد في المنظومة'}
               </h3>
               <p className="text-xs text-blue-200/80">
-                مطابق لسجلات وزارة التربية والتعليم والمركز الوطني للامتحانات (ليبيا)
+                بيانات القيد كما في كتيب العائلة / شهادة الميلاد
               </p>
             </div>
           </div>

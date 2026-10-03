@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Student } from '../../types';
 import { sound } from '../../utils/soundEffects';
+import { currentAcademicYear, academicYearStart } from '../../services/domain/libyanCalendar';
 import { StudentFullExamReport } from '../../services/exams/libyanExamEngine';
 
 interface OfficialReportCardModalProps {
@@ -110,7 +111,7 @@ export const OfficialReportCardModal: React.FC<OfficialReportCardModalProps> = (
                 )}
               </h3>
               <p className="text-[11px] text-emerald-300/80">
-                مطابق للمقاييس الرسمية لوزارة التربية والتعليم والمركز الوطني للامتحانات بدولة ليبيا
+                وفق نظام التقييم في التعليم الأساسي (أعمال 40 + امتحان 60) — يُعتمد بختم المدرسة
               </p>
             </div>
           </div>
@@ -260,8 +261,8 @@ const ReportCardPaperContent: React.FC<ReportCardPaperContentProps> = ({
           <div className="text-right space-y-0.5 text-xs font-bold text-slate-700">
             <div>دولة ليبيا</div>
             <div>وزارة التربية والتعليم</div>
-            <div>المركز الوطني للامتحانات</div>
             <div>{getSchoolProfile().district || 'مراقبة التربية والتعليم'}</div>
+            <div>مكتب الامتحانات بالمدرسة</div>
           </div>
 
           {/* Republic Emblem */}
@@ -274,9 +275,9 @@ const ReportCardPaperContent: React.FC<ReportCardPaperContentProps> = ({
 
           <div className="text-left space-y-0.5 text-xs font-bold text-slate-700">
             <div className="text-emerald-900 font-black">{schoolName}</div>
-            <div>العام الدراسي: 2025 - 2026 م</div>
+            <div>العام الدراسي: {currentAcademicYear()}</div>
             <div>مكتب الامتحانات وشؤون الطلاب</div>
-            <div className="font-mono text-[10px] text-slate-400">DOC-REF: LY-EXAM-2026</div>
+            <div className="font-mono text-[10px] text-slate-400">DOC-REF: LY-EXAM-{academicYearStart(currentAcademicYear())}</div>
           </div>
         </div>
 

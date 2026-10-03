@@ -230,7 +230,8 @@ export class SecurityEngine {
     this.lockoutUntil = 0;
   }
 
-  public static verifyDirectorPin(inputPin: string): { valid: boolean; message: string } {
+  /** alsoAccept: أسرار إضافية مقبولة لنفس العملية (مثل كلمة مرور رئيس الكنترول لاعتماد شيته) */
+  public static verifyDirectorPin(inputPin: string, alsoAccept: string[] = []): { valid: boolean; message: string } {
     const lockout = this.isPinLockedOut();
     if (lockout.isLocked) {
       return {
@@ -240,7 +241,8 @@ export class SecurityEngine {
     }
 
     const expected = this.getDirectorPin();
-    if (inputPin.trim() === expected.trim()) {
+    const input = inputPin.trim();
+    if (input && (input === expected.trim() || alsoAccept.some(sec => !!sec && sec.trim() === input))) {
       this.failedAttempts = 0;
       this.lockoutUntil = 0;
       return { valid: true, message: 'رمز الأمان صحيح' };

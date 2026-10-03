@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
 import {
@@ -38,15 +38,18 @@ export const ExamCoordinatorDashboard: React.FC = () => {
     students.forEach(s => {
       if (s.className) set.add(s.className.trim());
     });
-    if (set.size === 0) {
-      ['9/1 صباح', '9/2 صباح', '8/1 صباح', '7/1 صباح', '1/1 مساء'].forEach(c => set.add(c));
-    }
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'ar', { numeric: true }));
   }, [students]);
 
   const [selectedExamClass, setSelectedExamClass] = useState<string>(() => {
-    return availableClasses[0] || '9/1 صباح';
+    return availableClasses[0] || '';
   });
+  // الطلاب قد يُحمَّلون بعد أول عرض (IndexedDB) — نضمن أن الفصل المختار موجود فعلاً
+  useEffect(() => {
+    if (availableClasses.length > 0 && !availableClasses.includes(selectedExamClass)) {
+      setSelectedExamClass(availableClasses[0]);
+    }
+  }, [availableClasses, selectedExamClass]);
 
   // Modals
   const [reportCardStudent, setReportCardStudent] = useState<Student | null>(null);
@@ -185,7 +188,13 @@ export const ExamCoordinatorDashboard: React.FC = () => {
 
       {/* Main Tab Content */}
       <main>
-        {activeTab === 'master_sheet' && (
+        {availableClasses.length === 0 && (
+          <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-1">
+            <p className="text-sm font-black">لا يوجد طلاب مسجلون بعد</p>
+            <p className="text-xs text-slate-500">يستورد المدير كشف الطلاب أولاً (إكسل / PDF / حزمة المدرسة)، ثم تظهر الفصول هنا للرصد.</p>
+          </div>
+        )}
+        {availableClasses.length > 0 && activeTab === 'master_sheet' && (
           <MasterControlSheet
             students={students}
             availableClasses={availableClasses}
@@ -198,7 +207,7 @@ export const ExamCoordinatorDashboard: React.FC = () => {
           />
         )}
 
-        {activeTab === 'seating_committees' && (
+        {availableClasses.length > 0 && activeTab === 'seating_committees' && (
           <SeatingAndCommitteesManager
             students={students}
             availableClasses={availableClasses}
@@ -207,7 +216,7 @@ export const ExamCoordinatorDashboard: React.FC = () => {
           />
         )}
 
-        {activeTab === 'second_round' && (
+        {availableClasses.length > 0 && activeTab === 'second_round' && (
           <SecondRoundManager
             students={students}
             availableClasses={availableClasses}

@@ -40,6 +40,10 @@ export interface ExamGradeRecord {
   examScore: number;       // 0 - 60
   totalScore: number;      // 0 - 100
   makeupExamScore?: number;// 0 - 60
+  /** false = لم يُرصد جزء الأعمال بعد (السجلات القديمة بلا الحقل تُعد مرصودة) */
+  courseworkEntered?: boolean;
+  /** false = لم يُرصد الامتحان النهائي بعد */
+  examEntered?: boolean;
   isPassed: boolean;
   isSecondRound: boolean;
   appreciation: string;
@@ -151,8 +155,31 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
 
 const LOCAL_KEY_SUBJECTS = 'madrasa_exam_subjects_v2';
 const LOCAL_KEY_GRADES = 'madrasa_exam_grades_v2';
+/** نسخة localStorage المضغوطة (المرجع الكامل في IndexedDB) — 900 طالب × 10 مواد ≈ 0.5MB بدل 3MB */
+const LOCAL_KEY_GRADES_COMPACT = 'madrasa_exam_grades_v3';
+type CompactGradeRow = [string, string, string, string, number, number, number | null, number, string];
+
+function packGrade(r: ExamGradeRecord): CompactGradeRow {
+  const flags = (r.courseworkEntered === false ? 1 : 0) | (r.examEntered === false ? 2 : 0) | (r.isSecondRound ? 4 : 0);
+  return [r.id, r.studentId, r.className, r.subjectCode, r.courseworkScore, r.examScore, r.makeupExamScore ?? null, flags, r.updatedAt || ''];
+}
+
+function unpackGrade(row: CompactGradeRow): ExamGradeRecord {
+  const [id, studentId, className, subjectCode, cw, ex, makeup, flags, updatedAt] = row;
+  const total = cw + ex;
+  return {
+    id, studentId, className, subjectCode,
+    studentNationalId: '', studentName: '', subjectName: subjectCode,
+    courseworkScore: cw, examScore: ex, totalScore: total,
+    makeupExamScore: makeup ?? undefined,
+    courseworkEntered: !(flags & 1), examEntered: !(flags & 2),
+    isPassed: total >= 50, isSecondRound: !!(flags & 4),
+    appreciation: '', updatedAt, updatedBy: '',
+  };
+}
 const LOCAL_KEY_COMMITTEES = 'madrasa_exam_committees_v2';
 const LOCAL_KEY_LOCKS = 'madrasa_exam_locks_v2';
+const LOCAL_KEY_SEATING = 'madrasa_exam_seating_v1';
 
 export class ExamStorageService {
   // In-memory caches
@@ -235,6 +262,12 @@ export class ExamStorageService {
     } catch {}
 
     try {
+      const compact = localStorage.getItem(LOCAL_KEY_GRADES_COMPACT);
+      if (compact) {
+        const parsed = (JSON.parse(compact) as CompactGradeRow[]).map(unpackGrade);
+        parsed.forEach(r => this.cachedGrades.set(r.id, r));
+        return parsed;
+      }
       const local = localStorage.getItem(LOCAL_KEY_GRADES);
       if (local) {
         const parsed: ExamGradeRecord[] = JSON.parse(local);
@@ -274,13 +307,30 @@ export class ExamStorageService {
     if (this.persistTimer) clearTimeout(this.persistTimer);
     this.persistTimer = setTimeout(() => {
       try {
-        const arr = Array.from(this.cachedGrades.values());
-        localStorage.setItem(LOCAL_KEY_GRADES, JSON.stringify(arr));
+        const arr = Array.from(this.cachedGrades.values()).map(packGrade);
+        localStorage.setItem(LOCAL_KEY_GRADES_COMPACT, JSON.stringify(arr));
+        localStorage.removeItem(LOCAL_KEY_GRADES);
       } catch {}
     }, 500);
   }
 
   // ================= EXAM COMMITTEES & SEATING ================= //
+
+  /** أرقام الجلوس (معرّف الطالب ← رقم الجلوس) — منفصلة عن رقم القيد ولا تُكتب فوقه أبداً */
+  static getSeatingMap(): Map<string, string> {
+    try {
+      const raw = localStorage.getItem(LOCAL_KEY_SEATING);
+      if (raw) return new Map(Object.entries(JSON.parse(raw) as Record<string, string>));
+    } catch {}
+    return new Map();
+  }
+
+  static saveSeatingMap(map: Map<string, string>): void {
+    try {
+      localStorage.setItem(LOCAL_KEY_SEATING, JSON.stringify(Object.fromEntries(map)));
+    } catch {}
+  }
+
 
   static async getCommittees(): Promise<ExamCommittee[]> {
     if (this.cachedCommittees) return this.cachedCommittees;

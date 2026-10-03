@@ -56,7 +56,7 @@ export const AttractiveUserGuideBanner: React.FC<AttractiveUserGuideBannerProps>
       ]
     },
     exams: {
-      title: 'بوابة منسق الامتحانات والكنترول (1120 درجة)',
+      title: 'بوابة منسق الامتحانات والكنترول',
       badge: 'رئيس الكنترول وشيت الامتحانات 📑',
       badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
       desc: 'إدارة شيت الامتحانات الشامل وفق لائحة تنظيم شؤون التعليم والامتحانات الليبية، حساب المعدلات والترتيب العام تلقائياً، وتوليد بطاقات النتائج وإخطارات الفترات.',
@@ -207,7 +207,7 @@ export const AttractiveUserGuideBanner: React.FC<AttractiveUserGuideBannerProps>
               </div>
               <div>
                 <span className="font-bold text-xs block">2. للكنترول والامتحانات</span>
-                <span className="text-[10px] text-slate-400">شيت 1120 درجة والبطاقات</span>
+                <span className="text-[10px] text-slate-400">شيت الدرجات والبطاقات</span>
               </div>
             </button>
 

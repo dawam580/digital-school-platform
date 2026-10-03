@@ -40,7 +40,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
   const [committees, setCommittees] = useState<ExamCommittee[]>([]);
   const [seatingStartNumber, setSeatingStartNumber] = useState<number>(26001);
   const [selectedClassScope, setSelectedClassScope] = useState<string>('all');
-  const [seatingMap, setSeatingMap] = useState<Map<string, string>>(new Map());
+  const [seatingMap, setSeatingMap] = useState<Map<string, string>>(() => ExamStorageService.getSeatingMap());
 
   // Printable Modal States
   const [printingCardStudent, setPrintingCardStudent] = useState<Student | null>(null);
@@ -57,45 +57,19 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
           if (coms && coms.length > 0) {
             setCommittees(coms);
           } else {
-            // Seed 4 standard exam halls
-            const seedHalls: ExamCommittee[] = [
-              {
-                id: 'comm-1',
-                name: 'لجنة رقم 1 (قاعة الخوارزمي)',
-                roomNumber: 'قاعة 101',
-                capacity: 35,
-                supervisorName: 'أ. عبدالسلام الورفلي',
-                proctorNames: ['أ. طارق الفيتوري', 'أ. سالم المقريف'],
-                seatStart: 26001,
-                seatEnd: 26035,
-                assignedStudentIds: [],
-                academicYear: currentAcademicYear()
-              },
-              {
-                id: 'comm-2',
-                name: 'لجنة رقم 2 (قاعة ابن الهيثم)',
-                roomNumber: 'قاعة 102',
-                capacity: 35,
-                supervisorName: 'أ. عثمان السويحلي',
-                proctorNames: ['أ. محمد الزوي', 'أ. خالد الترهوني'],
-                seatStart: 26036,
-                seatEnd: 26070,
-                assignedStudentIds: [],
-                academicYear: currentAcademicYear()
-              },
-              {
-                id: 'comm-3',
-                name: 'لجنة رقم 3 (مختبر الحاسوب)',
-                roomNumber: 'مختبر 1',
-                capacity: 30,
-                supervisorName: 'أ. فاطمة المجبري',
-                proctorNames: ['أ. خديجة الترهوني', 'أ. مريم المنفي'],
-                seatStart: 26071,
-                seatEnd: 26100,
-                assignedStudentIds: [],
-                academicYear: currentAcademicYear()
-              }
-            ];
+            // قاعات بداية بلا أسماء مشرفين — يكتبها رئيس الكنترول (لا أسماء وهمية على الكشوف المطبوعة)
+            const seedHalls: ExamCommittee[] = [1, 2, 3].map(n => ({
+              id: `comm-${n}`,
+              name: `لجنة رقم ${n}`,
+              roomNumber: `قاعة ${n}`,
+              capacity: 30,
+              supervisorName: '',
+              proctorNames: [],
+              seatStart: 0,
+              seatEnd: 0,
+              assignedStudentIds: [],
+              academicYear: currentAcademicYear()
+            }));
             setCommittees(seedHalls);
             await ExamStorageService.saveCommittees(seedHalls);
           }
@@ -123,13 +97,12 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
     }
 
     const generated = LibyanExamEngine.generateSeatingNumbers(targetStudents, seatingStartNumber);
-    setSeatingMap(generated);
 
-    // Save to student objects in memory
-    targetStudents.forEach(st => {
-      const sNum = generated.get(st.id);
-      if (sNum) st.studentNumber = sNum;
-    });
+    // تُحفظ منفصلة — رقم القيد (studentNumber) يبقى كما هو لأنه رقم دخول ولي الأمر عند غياب الرقم الوطني
+    const merged = new Map(seatingMap);
+    generated.forEach((seat, id) => merged.set(id, seat));
+    setSeatingMap(merged);
+    ExamStorageService.saveSeatingMap(merged);
 
     sound.playFanfare();
     triggerConfetti();
@@ -146,9 +119,12 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
 
     // Ensure seating numbers generated
     let curMap = seatingMap;
-    if (curMap.size === 0) {
-      curMap = LibyanExamEngine.generateSeatingNumbers(targetStudents, seatingStartNumber);
+    if (!targetStudents.every(st => curMap.has(st.id))) {
+      const generated = LibyanExamEngine.generateSeatingNumbers(targetStudents, seatingStartNumber);
+      curMap = new Map(seatingMap);
+      generated.forEach((seat, id) => curMap.set(id, seat));
       setSeatingMap(curMap);
+      ExamStorageService.saveSeatingMap(curMap);
     }
 
     const distributed = LibyanExamEngine.distributeStudentsToCommittees(
@@ -171,10 +147,10 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
     const newComm: ExamCommittee = {
       id: `comm-${Date.now()}`,
       name: `لجنة رقم ${committees.length + 1}`,
-      roomNumber: `قاعة ${100 + committees.length + 1}`,
-      capacity: 35,
-      supervisorName: 'أ. مشرف القاعة',
-      proctorNames: ['أ. مراقب أول', 'أ. مراقب ثانٍ'],
+      roomNumber: `قاعة ${committees.length + 1}`,
+      capacity: 30,
+      supervisorName: '',
+      proctorNames: [],
       seatStart: 0,
       seatEnd: 0,
       assignedStudentIds: [],
@@ -185,6 +161,13 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
     setCommittees(updated);
     await ExamStorageService.saveCommittees(updated);
     showToast('info', 'تمت إضافة قاعة', `تمت إضافة ${newComm.name} بنجاح.`);
+  };
+
+  // تعديل بيانات القاعة (المشرف، المراقبون، الرقم، السعة)
+  const handleUpdateCommittee = async (id: string, patch: Partial<ExamCommittee>) => {
+    const updated = committees.map(c => (c.id === id ? { ...c, ...patch } : c));
+    setCommittees(updated);
+    await ExamStorageService.saveCommittees(updated);
   };
 
   // Delete committee
@@ -206,7 +189,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
 
     const headers = ['ت', 'رقم الجلوس', 'رقم القيد', 'اسم الطالب الرباعي', 'الصف والفصل', 'القاعة / اللجنة'];
     const rows = targetStudents.map((st, idx) => {
-      const seat = seatingMap.get(st.id) || st.studentNumber || '—';
+      const seat = seatingMap.get(st.id) || '—';
       const assignedComm = committees.find(c => c.assignedStudentIds.includes(st.id));
       return [
         String(idx + 1),
@@ -223,7 +206,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `كشف_أرقام_الجلوس_وتوزيع_اللجان_2026.csv`;
+    link.download = `كشف_أرقام_الجلوس_وتوزيع_اللجان_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 
@@ -361,17 +344,46 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
               </div>
 
               <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 pt-1 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">رئيس القاعة:</span>
-                  <span className="font-bold">{comm.supervisorName}</span>
-                </div>
+                <label className="flex items-center justify-between gap-2">
+                  <span className="text-slate-400 shrink-0">رئيس القاعة:</span>
+                  <input
+                    defaultValue={comm.supervisorName}
+                    onBlur={e => e.target.value.trim() !== comm.supervisorName && handleUpdateCommittee(comm.id, { supervisorName: e.target.value.trim() })}
+                    placeholder="اسم رئيس القاعة"
+                    aria-label={`رئيس ${comm.name}`}
+                    className="min-w-0 flex-1 max-w-[180px] px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-xs"
+                  />
+                </label>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">المراقبون:</span>
-                  <span className="font-bold truncate max-w-[160px]">
-                    {comm.proctorNames?.join(' ، ') || '—'}
-                  </span>
-                </div>
+                <label className="flex items-center justify-between gap-2">
+                  <span className="text-slate-400 shrink-0">المراقبون:</span>
+                  <input
+                    defaultValue={comm.proctorNames?.join('، ') || ''}
+                    onBlur={e => {
+                      const names = e.target.value.split(/[,،]+/).map(n => n.trim()).filter(Boolean);
+                      if (names.join('،') !== (comm.proctorNames || []).join('،')) handleUpdateCommittee(comm.id, { proctorNames: names });
+                    }}
+                    placeholder="أسماء مفصولة بفاصلة"
+                    aria-label={`مراقبو ${comm.name}`}
+                    className="min-w-0 flex-1 max-w-[180px] px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-xs"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between gap-2">
+                  <span className="text-slate-400 shrink-0">السعة:</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={200}
+                    defaultValue={comm.capacity}
+                    onBlur={e => {
+                      const cap = Math.max(1, Math.min(200, parseInt(e.target.value, 10) || comm.capacity));
+                      if (cap !== comm.capacity) handleUpdateCommittee(comm.id, { capacity: cap });
+                    }}
+                    aria-label={`سعة ${comm.name}`}
+                    className="w-20 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono font-bold text-xs"
+                  />
+                </label>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400">نطاق أرقام الجلوس:</span>
@@ -430,7 +442,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredStudents.map(st => {
-            const seat = seatingMap.get(st.id) || st.studentNumber || '—';
+            const seat = seatingMap.get(st.id) || '—';
             const comm = committees.find(c => c.assignedStudentIds.includes(st.id));
 
             return (
@@ -468,7 +480,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
             {/* Header */}
             <div className="text-center border-b-2 border-indigo-100 pb-3 space-y-1">
               <div className="text-xs font-black text-slate-700">دولة ليبيا • وزارة التربية والتعليم</div>
-              <div className="text-xs text-slate-500">المركز الوطني للامتحانات • مكتب الامتحانات</div>
+              <div className="text-xs text-slate-500">مكتب الامتحانات بالمدرسة</div>
               <div className="text-sm font-black text-indigo-800 mt-1">{schoolName}</div>
               <div className="inline-block px-3 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[11px] font-black border border-indigo-300">
                 بطاقة رقم جلوس طالب (امتحانات النقل والشهادة)
@@ -498,7 +510,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
               <div className="flex justify-between items-center pt-1">
                 <span className="text-slate-700 font-black text-sm">رقم الجلوس:</span>
                 <span className="font-mono font-black text-2xl text-indigo-700 px-3 py-1 bg-white rounded-xl border border-indigo-300 shadow-inner">
-                  {seatingMap.get(printingCardStudent.id) || printingCardStudent.studentNumber || '—'}
+                  {seatingMap.get(printingCardStudent.id) || '—'}
                 </span>
               </div>
             </div>
@@ -513,7 +525,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
 
               <div className="text-center font-mono text-[10px] text-slate-400">
                 <div className="tracking-widest text-base font-black text-slate-800">||| | |||| | ||| ||</div>
-                <span>SCH-2026-LY</span>
+                <span>{seatingMap.get(printingCardStudent.id) || ''}</span>
               </div>
 
               <div className="text-center space-y-1">
@@ -554,7 +566,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
                 كشف مناداة وتوقيع حضور الطلاب في اللجنة الامتحانية ({printingCommittee.name})
               </h4>
               <p className="text-xs text-slate-500">
-                {printingCommittee.roomNumber} • المشرف: {printingCommittee.supervisorName} • العام الدراسي: {printingCommittee.academicYear}
+                {printingCommittee.roomNumber} • المشرف: {printingCommittee.supervisorName || '................'} • العام الدراسي: {printingCommittee.academicYear}
               </p>
             </div>
 
@@ -577,7 +589,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
                       <tr key={st.id}>
                         <td className="p-2 text-center font-mono text-slate-400">{idx + 1}</td>
                         <td className="p-2 text-center font-mono font-black text-indigo-700">
-                          {seatingMap.get(st.id) || st.studentNumber}
+                          {seatingMap.get(st.id) || '—'}
                         </td>
                         <td className="p-2 text-center font-mono text-slate-500">{st.nationalNumber}</td>
                         <td className="p-2 font-bold">{st.name}</td>
@@ -592,7 +604,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
             <div className="flex justify-between items-center pt-3 text-xs border-t">
               <div className="space-y-1">
                 <span className="font-bold block">توقيع مراقبي اللجنة:</span>
-                <span className="text-slate-500">{printingCommittee.proctorNames.join(' • ')}</span>
+                <span className="text-slate-500">{printingCommittee.proctorNames.length ? printingCommittee.proctorNames.join(' • ') : '................'}</span>
               </div>
 
               <div className="flex items-center gap-2">

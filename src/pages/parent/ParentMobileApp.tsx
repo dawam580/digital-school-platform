@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { todayAttendanceStatus, libyanAppreciation } from '../../services/domain/libyanCalendar';
 import { useRequireRole } from '../../hooks/useRequireRole';
-import { ExamStorageService } from '../../services/exams/examStorageService';
+import { useOfficialExamResult } from '../../hooks/useOfficialExamResult';
+import { OfficialResultCard } from '../../components/parent/OfficialResultCard';
 import { Student, DaySchedule } from '../../types';
 import {
   Home,
@@ -52,6 +53,8 @@ import logoImg from '../../assets/logo.png';
 
 interface ParentMobileAppProps {
   embeddedInFrame?: boolean;
+  /** معروض خارج الإطار العام (بلا شريط علوي) — يحتاج زر خروج خاصاً به */
+  standalone?: boolean;
 }
 
 interface HomeworkItem {
@@ -64,7 +67,7 @@ interface HomeworkItem {
 
 
 
-export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFrame = false }) => {
+export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFrame = false, standalone = false }) => {
   const {
     selectedStudent,
     setSelectedStudent,
@@ -84,7 +87,8 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
     authenticatedRole,
     setActiveTab,
     parentSummons,
-    confirmParentSummon
+    confirmParentSummon,
+    logout
   } = useSchool();
   // الزائر غير المسجل لا يرى أي ملف — نموذج الربط/الدخول فقط
   const isParentSession = isAuthenticated && authenticatedRole === 'parent';
@@ -159,20 +163,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const todayPeriods = (schedule || []).find(d => d.dayIndex === todayIndex)?.periods || [];
 
   // Control Gate for Exam Release
-  const [gradesReleased, setGradesReleased] = useState<boolean | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    setGradesReleased(null);
-    const cls = activeChild?.className;
-    if (!cls) { setGradesReleased(true); return; }
-    ExamStorageService.getExamLock(cls).then(lock => {
-      if (cancelled) return;
-      if (lock.releasedAt) setGradesReleased(true);
-      else if (lock.lockedAt) setGradesReleased(false);
-      else setGradesReleased(true);
-    }).catch(() => { if (!cancelled) setGradesReleased(true); });
-    return () => { cancelled = true; };
-  }, [activeChild?.className]);
+  // قفل الكنترول بلا نشر = الدرجات محجوبة؛ النتيجة الرسمية تظهر فقط بعد النشر
+  const { held: gradesHeld, report: officialReport } = useOfficialExamResult(activeChild);
+  const gradesReleased: boolean | null = gradesHeld === null ? null : !gradesHeld;
 
   // Handle URL link code auto-population
   useEffect(() => {
@@ -403,11 +396,11 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
           </div>
         )}
 
-        {/* Top Header Bar */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Top Header Bar — يلتف على الشاشات الضيقة بدل أن يخرج عن الإطار */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
           
           {/* Child Selector */}
-          <div className="relative">
+          <div className="relative min-w-0">
             <button
               type="button"
               onClick={() => { sound.playTap(); setShowChildPicker(!showChildPicker); }}
@@ -419,7 +412,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 className="w-8 h-8 rounded-full object-cover border border-amber-400/50 shrink-0"
               />
               <div className="text-right leading-tight">
-                <span className="text-xs font-black text-white block max-w-[110px] truncate">
+                <span className="text-xs font-black text-white block max-w-[96px] truncate">
                   {activeChild.name.split(' ').slice(0, 2).join(' ')}
                 </span>
                 <span className="text-[10px] text-amber-300/90 font-medium block">
@@ -482,7 +475,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             <button
               type="button"
               onClick={() => { setPortalMode('parent'); sound.playTap(); }}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-black whitespace-nowrap transition flex items-center gap-1 ${
                 portalMode === 'parent'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white'
@@ -493,7 +486,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             <button
               type="button"
               onClick={() => { setPortalMode('student'); sound.playTap(); }}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-black whitespace-nowrap transition flex items-center gap-1 ${
                 portalMode === 'student'
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-white'
@@ -504,7 +497,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
           </div>
 
           {/* Top Quick Actions (QR Scanner & Refresh) */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0 mr-auto">
             <button
               type="button"
               onClick={() => { sound.playTap(); setShowScannerModal(true); }}
@@ -522,6 +515,18 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             >
               <RefreshCw className="w-4 h-4" />
             </button>
+
+            {standalone && (
+              <button
+                type="button"
+                onClick={() => { sound.playTap(); logout(); }}
+                className="p-2 rounded-xl bg-white/10 hover:bg-rose-500/20 text-rose-300 border border-white/10 transition active:scale-95"
+                title="تسجيل الخروج"
+                aria-label="تسجيل الخروج"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
         </div>
@@ -803,11 +808,13 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               </div>
             ) : (
               <>
+                {officialReport && <OfficialResultCard report={officialReport} dark />}
+
                 {/* GPA Hero Banner */}
                 <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border border-amber-500/30 text-center space-y-2 shadow-xl">
                   <span className="px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black inline-flex items-center gap-1 shadow-sm">
                     <Sparkles className="w-3 h-3" />
-                    <span>النتيجة الرسمية المعتمدة 🇱🇾</span>
+                    <span>متوسط رصد المعلمين (متابعة مستمرة)</span>
                   </span>
                   <div className="text-4xl font-black font-mono text-white tracking-tight">
                     {showAverage ? `${activeChild.academicAverage}%` : '—'}

@@ -11,6 +11,8 @@ interface SecurityPinConfirmModalProps {
   description: string;
   actionBadge?: string;
   isDestructive?: boolean;
+  /** يقبل أيضاً كلمة مرور رئيس الكنترول (اعتماد/نشر شيته) إضافة لرمز المدير */
+  acceptExamsPassword?: boolean;
 }
 
 export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = ({
@@ -20,18 +22,20 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
   title,
   description,
   actionBadge = 'عملية حرجة',
-  isDestructive = false
+  isDestructive = false,
+  acceptExamsPassword = false
 }) => {
-  const [pinDigits, setPinDigits] = useState<string[]>(['', '', '', '']);
+  // حقل واحد: رمز المدير قد يكون كلمة مرور كاملة (يُعيَّن عند التفعيل) لا 4 أرقام فقط
+  const [secret, setSecret] = useState('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [shake, setShake] = useState(false);
   const [lockoutSecs, setLockoutSecs] = useState<number>(0);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Check lockout on mount and interval
   useEffect(() => {
     if (!isOpen) {
-      setPinDigits(['', '', '', '']);
+      setSecret('');
       setErrorMessage('');
       return;
     }
@@ -50,7 +54,7 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
 
     // Auto-focus first input
     setTimeout(() => {
-      inputRefs.current[0]?.focus();
+      inputRef.current?.focus();
     }, 100);
 
     return () => clearInterval(timer);
@@ -58,39 +62,17 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
 
   if (!isOpen) return null;
 
-  const handleDigitChange = (index: number, value: string) => {
-    if (lockoutSecs > 0) return;
-    const clean = value.replace(/\D/g, '').slice(-1); // Only 1 digit
-    const updated = [...pinDigits];
-    updated[index] = clean;
-    setPinDigits(updated);
-    setErrorMessage('');
-
-    if (clean && index < 3) {
-      inputRefs.current[index + 1]?.focus();
-    }
-
-    // If 4 digits entered, verify automatically
-    if (clean && index === 3 && updated.every(d => d !== '')) {
-      verifyPin(updated.join(''));
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !pinDigits[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    } else if (e.key === 'Enter') {
-      verifyPin(pinDigits.join(''));
-    }
-  };
-
   const verifyPin = (fullPin: string) => {
-    if (fullPin.length < 4) {
-      setErrorMessage('يرجى إدخال رمز الأمان المكون من 4 أرقام');
+    if (!fullPin.trim()) {
+      setErrorMessage('أدخل رمز الأمان');
       return;
     }
 
-    const res = SecurityEngine.verifyDirectorPin(fullPin);
+    let extra: string[] = [];
+    if (acceptExamsPassword) {
+      try { extra = [localStorage.getItem('madrasa_exams_password') || '']; } catch {}
+    }
+    const res = SecurityEngine.verifyDirectorPin(fullPin, extra);
     if (res.valid) {
       sound.playSuccess();
       onSuccess();
@@ -100,8 +82,8 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
       setErrorMessage(res.message);
       setShake(true);
       setTimeout(() => setShake(false), 500);
-      setPinDigits(['', '', '', '']);
-      inputRefs.current[0]?.focus();
+      setSecret('');
+      inputRef.current?.focus();
     }
   };
 
@@ -150,28 +132,25 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
         <div className="mt-5 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            يتطلب هذا الإجراء تأكيداً برمز الأمان الإداري لمدير المدرسة لمنع أي تعديل أو مسح غير مصرح به (الرمز معروف لإدارة المدرسة فقط).
+            {acceptExamsPassword ? 'أكّد بكلمة مرور رئيس الكنترول أو رمز مدير المدرسة — يُسجَّل الإجراء في سجل التدقيق.' : 'يتطلب هذا الإجراء تأكيداً برمز الأمان الإداري لمدير المدرسة لمنع أي تعديل أو مسح غير مصرح به.'}
           </p>
         </div>
 
-        {/* 4-digit PIN Inputs */}
+        {/* Secret input */}
         <div className="mt-6 space-y-4">
-          <div className="flex items-center justify-center gap-3 dir-ltr">
-            {[0, 1, 2, 3].map((idx) => (
-              <input
-                key={idx}
-                ref={(el) => (inputRefs.current[idx] = el)}
-                type="password"
-                inputMode="numeric"
-                maxLength={1}
-                disabled={lockoutSecs > 0}
-                value={pinDigits[idx]}
-                onChange={(e) => handleDigitChange(idx, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(idx, e)}
-                className="w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-amber-500/20 outline-none transition disabled:opacity-50"
-              />
-            ))}
-          </div>
+          <input
+            ref={inputRef}
+            type="password"
+            autoComplete="current-password"
+            dir="ltr"
+            aria-label="رمز الأمان"
+            disabled={lockoutSecs > 0}
+            value={secret}
+            onChange={(e) => { setSecret(e.target.value); setErrorMessage(''); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') verifyPin(secret); }}
+            placeholder="••••••"
+            className="w-full h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-amber-500/20 outline-none transition disabled:opacity-50"
+          />
 
           {/* Error / Lockout Messages */}
           {lockoutSecs > 0 ? (
@@ -197,8 +176,8 @@ export const SecurityPinConfirmModal: React.FC<SecurityPinConfirmModalProps> = (
 
           <button
             type="button"
-            disabled={lockoutSecs > 0 || pinDigits.some((d) => d === '')}
-            onClick={() => verifyPin(pinDigits.join(''))}
+            disabled={lockoutSecs > 0 || !secret.trim()}
+            onClick={() => verifyPin(secret)}
             className={`flex-1 py-3 px-4 rounded-2xl font-black text-xs sm:text-sm text-white shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
               isDestructive
                 ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/30'

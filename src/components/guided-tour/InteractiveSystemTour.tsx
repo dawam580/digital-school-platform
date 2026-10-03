@@ -76,7 +76,7 @@ export const InteractiveSystemTour: React.FC = () => {
     },
     {
       id: 'step-exams',
-      title: 'الكنترول والتصحيح الإلكتروني (1120 درجة) 📝',
+      title: 'الكنترول والتصحيح الإلكتروني (أعمال 40 + امتحان 60) 📝',
       badge: 'الخطوة 3: الامتحانات والتقويم',
       badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-200',
       description: 'قم بهذا: افتح بوابة الكنترول المركزي لرصد درجات الفترات والامتحانات النهائية، ودعم التصحيح الآلي لنماذج الإجابة البابل شيت (OMR).',

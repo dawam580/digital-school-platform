@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
-import { ExamStorageService } from '../../services/exams/examStorageService';
+import { useOfficialExamResult } from '../../hooks/useOfficialExamResult';
+import { OfficialResultCard } from '../../components/parent/OfficialResultCard';
 import {
   Award,
   CalendarCheck,
@@ -83,20 +84,9 @@ export const ParentDashboard: React.FC = () => {
 
   // بوابة النشر: الدرجات محجوبة حتى يعتمد الكنترول ويُنشر الكشف رسمياً.
   // القاعدة: لا سجل قفل إطلاقاً = حالة legacy مفتوحة | قفل بلا نشر = محجوب | نشر = مرئي.
-  const [gradesReleased, setGradesReleased] = useState<boolean | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    setGradesReleased(null);
-    const cls = activeChild?.className;
-    if (!cls) { setGradesReleased(true); return; }
-    ExamStorageService.getExamLock(cls).then(lock => {
-      if (cancelled) return;
-      if (lock.releasedAt) setGradesReleased(true);
-      else if (lock.lockedAt) setGradesReleased(false);
-      else setGradesReleased(true);
-    }).catch(() => { if (!cancelled) setGradesReleased(true); });
-    return () => { cancelled = true; };
-  }, [activeChild?.className]);
+  // قفل الكنترول بلا نشر = الدرجات محجوبة؛ النتيجة الرسمية تظهر فقط بعد النشر
+  const { held: gradesHeld, report: officialReport } = useOfficialExamResult(activeChild);
+  const gradesReleased: boolean | null = gradesHeld === null ? null : !gradesHeld;
 
   // إحصائيات حضور حقيقية من السجل (بدل الأرقام الثابتة)
   const showAverage = gradesReleased === true && (activeChild?.academicAverage ?? 0) > 0;
@@ -428,6 +418,7 @@ export const ParentDashboard: React.FC = () => {
             </div>
           ) : (
           <>
+          {officialReport && <OfficialResultCard report={officialReport} />}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">

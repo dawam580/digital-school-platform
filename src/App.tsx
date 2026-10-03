@@ -102,7 +102,7 @@ const MainContent: React.FC = () => {
   if (activeTab === 'parent-mobile') {
     return (
       <>
-        <ParentMobileApp />
+        <ParentMobileApp standalone />
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}

@@ -95,7 +95,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
 
   // Calculate full rankings and reports
   const examReports = useMemo(() => {
-    return LibyanExamEngine.calculateClassRankings(classStudents, subjects, gradeRecords);
+    return LibyanExamEngine.calculateClassRankings(classStudents, subjects, gradeRecords, ExamStorageService.getSeatingMap());
   }, [classStudents, subjects, gradeRecords]);
 
   // Search filtered reports
@@ -111,11 +111,13 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
 
   // KPIs
   const totalCount = examReports.length;
+  // النسب من الطلاب مكتملي الرصد فقط — طالب بلا درجات ليس "راسباً"
+  const completedCount = examReports.filter(r => r.status !== 'pending').length;
   const passedCount = examReports.filter(r => r.status === 'passed' || r.status === 'passed_honors' || r.status === 'passed_makeup').length;
   const makeupCount = examReports.filter(r => r.status === 'makeup_exam').length;
   const failedCount = examReports.filter(r => r.status === 'failed').length;
-  const passPercentage = totalCount > 0 ? Math.round((passedCount / totalCount) * 100) : 0;
-  const topStudent = examReports.length > 0 ? examReports[0] : null;
+  const passPercentage = completedCount > 0 ? Math.round((passedCount / completedCount) * 100) : 0;
+  const topStudent = examReports.find(r => r.status !== 'pending') || null;
 
   // Handle live grade change
   const handleScoreChange = async (
@@ -129,24 +131,30 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
       return;
     }
 
-    const val = valueStr === '' ? 0 : Math.max(0, parseInt(valueStr, 10) || 0);
+    const cleared = valueStr.trim() === '';
+    const val = cleared ? 0 : Math.max(0, parseInt(valueStr, 10) || 0);
     const courseworkMax = subject.courseworkMax || 40;
     const examMax = subject.examMax || 60;
 
     const recordId = `${student.id}_${subject.code}`;
     const existing = gradeRecords.get(recordId);
 
-    let courseworkScore = existing ? existing.courseworkScore : 35;
-    let examScore = existing ? existing.examScore : 50;
+    // لا قيم افتراضية: الجزء غير المرصود يبقى فارغاً وتبقى نتيجة المادة "بانتظار الرصد"
+    let courseworkScore = existing ? existing.courseworkScore : 0;
+    let examScore = existing ? existing.examScore : 0;
+    let courseworkEntered = existing ? existing.courseworkEntered !== false : false;
+    let examEntered = existing ? existing.examEntered !== false : false;
 
     if (field === 'coursework') {
       courseworkScore = Math.min(val, courseworkMax);
+      courseworkEntered = !cleared;
     } else {
       examScore = Math.min(val, examMax);
+      examEntered = !cleared;
     }
 
     const totalScore = courseworkScore + examScore;
-    const isPassed = totalScore >= (subject.minScore || 50);
+    const isPassed = courseworkEntered && examEntered && totalScore >= (subject.minScore || 50);
 
     const updatedRecord: ExamGradeRecord = {
       id: recordId,
@@ -154,14 +162,17 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
       studentNationalId: student.nationalNumber || student.nationalId || '—',
       studentName: student.name,
       className: selectedClass,
-      seatNumber: student.studentNumber,
+      seatNumber: ExamStorageService.getSeatingMap().get(student.id) || '',
       subjectCode: subject.code,
       subjectName: subject.name,
       courseworkScore,
       examScore,
       totalScore,
+      courseworkEntered,
+      examEntered,
+      makeupExamScore: existing?.makeupExamScore,
       isPassed,
-      isSecondRound: !isPassed,
+      isSecondRound: courseworkEntered && examEntered && !isPassed,
       appreciation: LibyanExamEngine.getAppreciation((totalScore / (subject.maxScore || 100)) * 100),
       updatedAt: new Date().toISOString(),
       updatedBy: 'منسق الامتحانات'
@@ -201,11 +212,14 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
     if (!examLock) return;
 
     const newLockState = !examLock.isLocked;
+    const wasReleased = examLock.isReleasedToParents;
     const updatedLock: ExamLock = {
       ...examLock,
       isLocked: newLockState,
       lockedBy: newLockState ? 'أ. منسق الامتحانات والمدير' : undefined,
-      lockedAt: newLockState ? new Date().toLocaleString('ar-LY') : undefined
+      lockedAt: newLockState ? new Date().toLocaleString('ar-LY') : undefined,
+      // فتح الشيت للتعديل يسحب النتائج المنشورة — لا يرى ولي الأمر درجات تتغير بعد إعلانها
+      ...(newLockState ? {} : { isReleasedToParents: false, releasedAt: undefined })
     };
 
     setExamLock(updatedLock);
@@ -220,7 +234,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
         'admin'
       );
     } else {
-      showToast('info', 'تم إلغاء القفل 🔓', `شيت درجات فصل (${selectedClass}) مفتوح الآن للتعديل.`);
+      showToast('info', 'تم إلغاء القفل 🔓', `شيت درجات فصل (${selectedClass}) مفتوح الآن للتعديل${wasReleased ? ' — وسُحبت النتائج من حسابات أولياء الأمور حتى إعادة النشر' : ''}.`);
     }
   };
 
@@ -277,11 +291,11 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
     const headers = [
       'ت',
       'رقم الجلوس',
-      'رقم القيد',
+      'الرقم الوطني',
       'الاسم الكامل',
       'الصف والفصل',
       ...subjects.flatMap(s => [`${s.name} (أعمال)`, `${s.name} (نهائي)`, `${s.name} (المجموع)`]),
-      'المجموع الكلي (من 800)',
+      `المجموع الكلي (من ${subjects.reduce((a, s) => a + (s.maxScore || 100), 0)})`,
       'النسبة المئوية %',
       'الترتيب على الفصل',
       'التقدير العام',
@@ -293,9 +307,9 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
       const subjectCols = subjects.flatMap(s => {
         const item = rep.results.find(res => res.subjectCode === s.code);
         return [
-          item ? String(item.courseworkScore) : '0',
-          item ? String(item.examScore) : '0',
-          item ? String(item.totalScore) : '0'
+          item && !item.isEstimated ? String(item.courseworkScore) : '',
+          item && !item.isEstimated ? String(item.examScore) : '',
+          item && !item.isEstimated ? String(item.totalScore) : ''
         ];
       });
 
@@ -320,7 +334,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `شيت_كنترول_فصل_${selectedClass.replace(/[\/\s]/g, '_')}_2026.csv`;
+    link.download = `شيت_كنترول_فصل_${selectedClass.replace(/[\/\s]/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 
@@ -331,6 +345,11 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
   const handleImportExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (examLock?.isLocked) {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      showToast('error', 'الكنترول مقفل 🔒', 'لا يمكن استيراد درجات لفصل معتمد ومقفل. ألغِ القفل أولاً.');
+      return;
+    }
 
     sound.playTap();
     const reader = new FileReader();
@@ -359,10 +378,14 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
           let colIdx = 5;
           for (const sub of subjects) {
             if (colIdx + 1 < cols.length) {
-              const cw = Math.min(Math.max(0, parseInt(cols[colIdx], 10) || 0), sub.courseworkMax || 40);
-              const ex = Math.min(Math.max(0, parseInt(cols[colIdx + 1], 10) || 0), sub.examMax || 60);
+              const cwRaw = (cols[colIdx] || '').trim();
+              const exRaw = (cols[colIdx + 1] || '').trim();
+              // خلية فارغة = لم تُرصد (لا تتحول إلى صفر)
+              if (cwRaw === '' && exRaw === '') { colIdx += 3; continue; }
+              const cw = Math.min(Math.max(0, parseInt(cwRaw, 10) || 0), sub.courseworkMax || 40);
+              const ex = Math.min(Math.max(0, parseInt(exRaw, 10) || 0), sub.examMax || 60);
               const tot = cw + ex;
-              const isPassed = tot >= (sub.minScore || 50);
+              const isPassed = cwRaw !== '' && exRaw !== '' && tot >= (sub.minScore || 50);
 
               newRecords.push({
                 id: `${st.id}_${sub.code}`,
@@ -376,8 +399,10 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                 courseworkScore: cw,
                 examScore: ex,
                 totalScore: tot,
+                courseworkEntered: cwRaw !== '',
+                examEntered: exRaw !== '',
                 isPassed,
-                isSecondRound: !isPassed,
+                isSecondRound: cwRaw !== '' && exRaw !== '' && !isPassed,
                 appreciation: LibyanExamEngine.getAppreciation((tot / (sub.maxScore || 100)) * 100),
                 updatedAt: new Date().toISOString(),
                 updatedBy: 'استيراد إكسل'
@@ -560,8 +585,8 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
           </div>
 
           <div className="p-3 bg-teal-50 dark:bg-teal-950/30 rounded-2xl border border-teal-200 dark:border-teal-800">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">نسبة النجاح العامة</span>
-            <span className="text-xl font-black text-teal-800 dark:text-teal-300 font-mono">{passPercentage}%</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">نسبة النجاح ({completedCount} من {totalCount} مكتمل الرصد)</span>
+            <span className="text-xl font-black text-teal-800 dark:text-teal-300 font-mono">{completedCount > 0 ? `${passPercentage}%` : '—'}</span>
           </div>
 
           <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-2xl border border-blue-200 dark:border-blue-800">
@@ -610,7 +635,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
               <tr>
                 <th className="p-3 w-10 text-center font-black border-b border-slate-200 dark:border-slate-700">ت</th>
                 <th className="p-3 w-20 text-center font-black border-b border-slate-200 dark:border-slate-700">رقم الجلوس</th>
-                <th className="p-3 w-24 text-center font-black border-b border-slate-200 dark:border-slate-700">رقم القيد</th>
+                <th className="p-3 w-24 text-center font-black border-b border-slate-200 dark:border-slate-700">الرقم الوطني</th>
                 <th className="p-3 min-w-[180px] font-black border-b border-slate-200 dark:border-slate-700">اسم الطالب الرباعي</th>
                 
                 {/* Subjects Column Headers */}
@@ -690,9 +715,11 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                     {/* Subject Score Inputs */}
                     {subjects.map(sub => {
                       const item = report.results.find(res => res.subjectCode === sub.code);
-                      const cwScore = item ? item.courseworkScore : 35;
-                      const exScore = item ? item.examScore : 50;
-                      const totScore = item ? item.totalScore : cwScore + exScore;
+                      const rec = gradeRecords.get(`${report.studentId}_${sub.code}`);
+                      // الخانة غير المرصودة تظهر فارغة (لا أصفار ولا قيم افتراضية)
+                      const cwScore: number | '' = rec ? (rec.courseworkEntered === false ? '' : rec.courseworkScore) : (item && !item.isEstimated ? item.courseworkScore : '');
+                      const exScore: number | '' = rec ? (rec.examEntered === false ? '' : rec.examScore) : (item && !item.isEstimated ? item.examScore : '');
+                      const totScore = item ? item.totalScore : 0;
                       const isSubPassed = totScore >= (sub.minScore || 50);
 
                       if (viewMode === 'both') {
@@ -748,7 +775,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
                                 className="text-amber-600 dark:text-amber-400"
                                 title="درجة تقديرية — لم تُرصد رسمياً بعد"
                               >
-                                ~{totScore}
+                                {totScore > 0 ? `~${totScore}` : "—"}
                               </span>
                             ) : (
                               <span className={isSubPassed ? 'text-slate-800 dark:text-slate-200' : 'text-rose-600 font-black'}>
@@ -838,6 +865,7 @@ export const MasterControlSheet: React.FC<MasterControlSheetProps> = ({
 
       {/* 2FA Security PIN Confirmation Modal for Exam Lock & Results Release */}
       <SecurityPinConfirmModal
+        acceptExamsPassword
         isOpen={showLockPinModal}
         onClose={() => setShowLockPinModal(false)}
         onSuccess={() => { lockModalMode === 'release' ? executeToggleRelease() : executeToggleLock(); }}

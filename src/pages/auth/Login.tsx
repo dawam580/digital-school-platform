@@ -868,7 +868,7 @@ export const Login: React.FC = () => {
                   <Award className="w-5 h-5" />
                 </div>
                 <h2 className="text-base font-black text-slate-800 dark:text-white">بوابة منسق الامتحانات والتقويم (رئيس الكنترول)</h2>
-                <p className="text-xs text-slate-400 mt-0.5">شيت الكنترول المركزي (1120 درجة)، رصد أعمال السنة، وأرقام الجلوس والشهادات</p>
+                <p className="text-xs text-slate-400 mt-0.5">شيت الكنترول المركزي، رصد أعمال السنة، وأرقام الجلوس والشهادات</p>
               </div>
 
 

@@ -35,6 +35,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           { id: 'counselor-dashboard', label: 'المكتب الاجتماعي', icon: LayoutDashboard },
           { id: 'chat', label: 'المحادثة', icon: MessageSquare },
         ];
+      case 'exams_coordinator':
+        return [
+          { id: 'exams-coordinator-dashboard', label: 'شيت الكنترول', icon: Award },
+          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+        ];
       case 'parent':
         return [
           { id: 'student-profile', label: 'ملف الطالب', icon: UserCheck },

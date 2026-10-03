@@ -119,7 +119,8 @@ export class LibyanExamEngine {
         coursework = rec.courseworkScore;
         exam = rec.examScore;
         makeupScore = rec.makeupExamScore;
-        isEstimated = false;
+        // رصد جزئي (الأعمال دون الامتحان أو العكس) لا يُعد نتيجة مكتملة
+        isEstimated = rec.courseworkEntered === false || rec.examEntered === false;
       } else if (student.subjects && student.subjects.length > 0) {
         const existing = student.subjects.find(
           s => s.code === sub.code || s.name === sub.name
@@ -209,7 +210,8 @@ export class LibyanExamEngine {
       statusLabel = 'راسب وباقٍ للإعادة في صفه 🔴';
     }
 
-    const seatNumber = seatNumberOverride || student.studentNumber || `26${String(1000 + (parseInt((student.id || '').replace(/\D/g, '').slice(-4) || '101', 10))).slice(-4)}`;
+    // رقم الجلوس من توزيع اللجان فقط — لا يُشتق من رقم القيد ولا يُختلق
+    const seatNumber = seatNumberOverride || '—';
 
     return {
       studentId: student.id,
