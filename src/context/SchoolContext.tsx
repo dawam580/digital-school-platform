@@ -850,6 +850,25 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   });
 
+  // بداية يوم دراسي جديد: حالة "اليوم" لا تُورَّث من الأمس (غائب أمس لا يظهر غائباً اليوم)
+  useEffect(() => {
+    const today = localISODate();
+    let changed = false;
+    const rolled = students.map(st => {
+      const latest = st.recentAttendance?.[0]?.date;
+      if (st.status !== 'present' && latest !== today) {
+        changed = true;
+        return { ...st, status: 'present' as AttendanceStatus };
+      }
+      return st;
+    });
+    if (changed) {
+      setStudents(rolled);
+      db.saveStudents(rolled);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // كل طالب يحمل رمز دخول ولي أمر عشوائياً (يشمل من أُضيف عبر الاستيراد أو التعديل اليدوي)
   useEffect(() => {
     const withCodes = withParentAccessCodes(students);

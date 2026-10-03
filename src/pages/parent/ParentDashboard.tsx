@@ -31,6 +31,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
 import { ParentStudentGate } from '../../components/parent/ParentStudentGate';
+import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
 import { Student } from '../../types';
 
 export const ParentDashboard: React.FC = () => {
@@ -99,6 +100,7 @@ export const ParentDashboard: React.FC = () => {
 
   // إحصائيات حضور حقيقية من السجل (بدل الأرقام الثابتة)
   const attHistory = activeChild?.recentAttendance || [];
+  const childToday = todayAttendanceStatus(activeChild);
   const attPresent = attHistory.filter(r => r.status === 'present').length;
   const attAbsent = attHistory.filter(r => r.status === 'unexcused').length;
 
@@ -274,12 +276,14 @@ export const ParentDashboard: React.FC = () => {
             />
             <span
               className={`absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-black border ${
-                activeChild.status === 'present'
+                childToday === null
+                  ? 'bg-slate-500 text-white border-white'
+                  : childToday === 'present' || childToday === 'late'
                   ? 'bg-emerald-500 text-white border-white'
                   : 'bg-rose-500 text-white border-white'
               }`}
             >
-              {activeChild.status === 'present' ? 'حاضر اليوم' : 'غائب'}
+              {childToday === null ? 'لم يُرصد' : childToday === 'present' ? 'حاضر اليوم' : childToday === 'late' ? 'متأخر' : childToday === 'excused' ? 'غائب بعذر' : 'غائب'}
             </span>
           </div>
 

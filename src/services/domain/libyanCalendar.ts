@@ -51,3 +51,12 @@ export function libyanAppreciation(percentage: number): LibyanAppreciation {
 export function localISODate(date: Date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
+
+/** حالة حضور الطالب المسجلة لليوم فقط (null = لم يُرصد اليوم بعد) */
+export function todayAttendanceStatus(
+  student: { recentAttendance?: { date: string; status: 'present' | 'late' | 'excused' | 'unexcused' }[] } | null | undefined,
+  date: Date = new Date()
+): 'present' | 'late' | 'excused' | 'unexcused' | null {
+  const key = localISODate(date);
+  return student?.recentAttendance?.find(r => r.date === key)?.status ?? null;
+}

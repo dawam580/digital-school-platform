@@ -132,13 +132,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               />
               <div className="hidden md:block text-right">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight max-w-[260px] truncate" title={schoolProfile.name}>
+                  <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight max-w-[320px] truncate" title={schoolProfile.name}>
                     {schoolProfile.name}
                   </h1>
                   {/* Libyan Badge */}
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap shrink-0 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>ليبيا {schoolProfile.academicYear}</span>
+                    <span>{schoolProfile.academicYear}</span>
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 font-medium">{schoolProfile.district}</p>
@@ -147,7 +147,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
           </div>
 
           {/* Center Search Spotlight Trigger (Desktop) */}
-          <div className="hidden xl:flex flex-1 max-w-sm mx-4">
+          <div className="hidden 2xl:flex flex-1 max-w-sm mx-4">
             <button
               onClick={() => { setIsCommandPaletteOpen(true); sound.playTap(); }}
               className="w-full bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 rounded-2xl py-2.5 pr-10 pl-4 text-xs text-slate-400 text-right flex items-center justify-between transition-all group"
@@ -156,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
                 <span className="truncate">بحث عن طالب أو صفحة...</span>
               </div>
-              <span className="font-mono text-[10px] bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 font-bold">
+              <span className="font-mono text-[10px] whitespace-nowrap bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 font-bold">
                 Ctrl K
               </span>
             </button>
@@ -227,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 title={`أنت تعمل بصفتك: ${currentRoleInfo.label}`}
               >
                 {currentRoleInfo.icon}
-                <span className="hidden sm:inline">{currentRoleInfo.label}</span>
+                <span className="hidden sm:inline whitespace-nowrap">{currentRoleInfo.label}</span>
               </div>
             )}
 
@@ -316,7 +316,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 title="أدوات ومميزات المنظومة السريعة"
               >
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span className="hidden sm:inline">أدوات المنظومة</span>
+                <span className="hidden sm:inline whitespace-nowrap">أدوات المنظومة</span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
 

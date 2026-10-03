@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
 import { useRequireRole } from '../../hooks/useRequireRole';
 import { ExamStorageService } from '../../services/exams/examStorageService';
 import { Student, DaySchedule } from '../../types';
@@ -292,7 +293,8 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const attTotal = attHistory.length || 1;
   const attRate = Math.round(((attPresent + attExcused + attLate * 0.5) / attTotal) * 100);
 
-  const todayStatus = activeChild?.status || 'present';
+  // من سجل اليوم فقط — لا افتراض "حاضر" قبل أن يرصد المعلم
+  const todayStatus = todayAttendanceStatus(activeChild);
 
   // Role Gate
   const allowed = useRequireRole('parent', { allowGuest: true });
@@ -542,7 +544,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             
             {/* Live Attendance Alert Banner */}
             <div className={`p-3.5 rounded-2xl border flex items-center justify-between shadow-lg ${
-              todayStatus === 'present'
+              todayStatus === null
+                ? 'bg-gradient-to-r from-slate-800/80 to-[#0b1329] border-white/10'
+                : todayStatus === 'present'
                 ? 'bg-gradient-to-r from-emerald-950/80 to-[#0b1329] border-emerald-500/30'
                 : todayStatus === 'late'
                 ? 'bg-gradient-to-r from-amber-950/80 to-[#0b1329] border-amber-500/30'
@@ -552,11 +556,13 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
             }`}>
               <div className="flex items-center gap-2.5">
                 <div className={`p-2 rounded-xl text-white ${
+                  todayStatus === null ? 'bg-slate-600' :
                   todayStatus === 'present' ? 'bg-emerald-600' :
                   todayStatus === 'late' ? 'bg-amber-600' :
                   todayStatus === 'excused' ? 'bg-blue-600' : 'bg-rose-600'
                 }`}>
-                  {todayStatus === 'present' ? <UserCheck className="w-4 h-4" /> :
+                  {todayStatus === null ? <Clock className="w-4 h-4" /> :
+                   todayStatus === 'present' ? <UserCheck className="w-4 h-4" /> :
                    todayStatus === 'late' ? <Clock className="w-4 h-4" /> :
                    todayStatus === 'excused' ? <HeartHandshake className="w-4 h-4" /> :
                    <AlertTriangle className="w-4 h-4" />}
@@ -564,7 +570,8 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 block">حالة الحضور اليوم</span>
                   <h4 className="text-xs font-black text-white">
-                    {todayStatus === 'present' ? 'حاضر اليوم في المدرسة ✅' :
+                    {todayStatus === null ? (isWeekend ? 'عطلة نهاية الأسبوع' : 'لم يُرصد حضور اليوم بعد') :
+                     todayStatus === 'present' ? 'حاضر اليوم في المدرسة ✅' :
                      todayStatus === 'late' ? 'مسجل كمتأخر عن الطابور ⏳' :
                      todayStatus === 'excused' ? 'غياب بعذر طبي معتمد 📝' :
                      'مسجل كغائب عن الحصص ⚠️'}

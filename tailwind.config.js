@@ -37,7 +37,7 @@ export default {
         }
       },
       fontFamily: {
-        cairo: ['Cairo', 'Be Vietnam Pro', 'sans-serif'],
+        cairo: ['Cairo Variable', 'Cairo', 'Tajawal', 'sans-serif'],
         tajawal: ['Tajawal', 'sans-serif']
       },
       boxShadow: {

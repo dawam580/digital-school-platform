@@ -61,6 +61,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { CollapsibleSection } from '../../components/ui/CollapsibleSection';
 import { AppErrorBoundary } from '../../components/common/AppErrorBoundary';
 import { ParentAccessCardsModal } from '../../components/admin/ParentAccessCardsModal';
+import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
 
 // لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
 const AnalyticsCharts = React.lazy(() =>
@@ -190,13 +191,16 @@ export const AdminDashboard: React.FC = () => {
 
   // Attendance Metrics
   const totalStudentsCount = students.length;
-  const presentCount = students.filter(s => s.status === 'present').length;
-  const absentCount = students.filter(s => s.status === 'unexcused').length;
-  const lateCount = students.filter(s => s.status === 'late').length;
-  const excusedCount = students.filter(s => s.status === 'excused').length;
-  const attendancePercentage = totalStudentsCount > 0
-    ? Math.round((presentCount / totalStudentsCount) * 100 * 10) / 10
-    : 0;
+  // حضور اليوم من سجل اليوم فقط (من لم يُرصد لا يُحتسب حاضراً)
+  const todayStatuses = students.map(s => todayAttendanceStatus(s));
+  const presentCount = todayStatuses.filter(t => t === 'present').length;
+  const absentCount = todayStatuses.filter(t => t === 'unexcused').length;
+  const lateCount = todayStatuses.filter(t => t === 'late').length;
+  const excusedCount = todayStatuses.filter(t => t === 'excused').length;
+  const recordedToday = presentCount + absentCount + lateCount + excusedCount;
+  const attendancePercentage: number | null = recordedToday > 0
+    ? Math.round(((presentCount + lateCount) / recordedToday) * 1000) / 10
+    : null;
 
   // Exam Calculations for Selected Class (Tab 4)
   const examStudents = useMemo(() => {
@@ -529,9 +533,9 @@ export const AdminDashboard: React.FC = () => {
         />
         <StatCard
           title="تسجيل الحضور اليومي"
-          value={`${attendancePercentage}%`}
+          value={attendancePercentage === null ? '—' : `${attendancePercentage}%`}
           badge="اليوم 📍"
-          hint={`${presentCount} حاضر • ${absentCount} غائب`}
+          hint={recordedToday === 0 ? 'لم يُرصد حضور اليوم بعد' : `${presentCount} حاضر • ${absentCount} غائب • ${totalStudentsCount - recordedToday} لم يُرصد`}
           icon={UserCheck}
           tone="emerald"
           active={activeTab === 'attendance'}

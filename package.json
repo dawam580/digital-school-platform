@@ -23,9 +23,12 @@
     "test:real": "node --test \"tests/real/*.test.mjs\"",
     "license:keygen": "node tools/license/keygen.cjs",
     "license:issue": "node tools/license/issue-license.cjs",
-    "owner": "electron electron/main.cjs --owner"
+    "owner": "electron electron/main.cjs --owner",
+    "test:e2e": "node tests/e2e/roles-journey.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/cairo": "^5.3.0",
+    "@fontsource/tajawal": "^5.3.0",
     "@noble/curves": "^1.9.7",
     "clsx": "^2.1.1",
     "firebase": "^12.19.0",
