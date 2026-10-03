@@ -109,7 +109,7 @@ class TestAuthEngine {
     }
 
     if (role === 'parent') {
-      const validStudents = ['120195864392', 'SCH-2026-B1', '1001', '1002'];
+      const validStudents = ['120150000001', 'SCH-DEMO-01', '1001', '1002'];
       if (!validStudents.includes(cleanId)) {
         this.recordFail(cleanId);
         return { success: false, error: 'الرقم الوطني غير مسجل في كشف المدرسة.' };
@@ -305,7 +305,7 @@ export function createTier5Suite() {
     runner.test('SEC.15 - Parent with valid student National ID and password succeeds', () => {
       const res = TestAuthEngine.verify({
         role: 'parent',
-        identifier: '120195864392',
+        identifier: '120150000001',
         password: '123456'
       });
       expect(res.success).toBe(true);

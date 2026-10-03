@@ -18,6 +18,7 @@ import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
 import { AiConfigService } from '../../services/ai/aiConfig';
 import { SecurityEngine, isWeakPin } from '../../services/security/securityEngine';
+import { LIBYAN_PHONE_RE, normalizeLibyanPhone } from '../../services/security/authEngine';
 
 interface AccountSettingsModalProps {
   isOpen: boolean;
@@ -40,13 +41,12 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
   const [phone, setPhone] = useState(currentUserPhone || '');
   const [teacherCode, setTeacherCode] = useState(currentTeacher?.code || 'LIB-MATH-01');
   const [directorPin, setDirectorPin] = useState(() => SecurityEngine.getDirectorPin());
-  const [examsPassword, setExamsPassword] = useState(() => {
-    try {
-      return localStorage.getItem('madrasa_exams_password') || '';
-    } catch {
-      return '';
-    }
+  // حساب رئيس الكنترول: هاتفه وكلمة مروره يعيّنهما المدير (لا قيم افتراضية)
+  const [examsPhone, setExamsPhone] = useState(() => {
+    try { return localStorage.getItem('madrasa_exams_phone') || ''; } catch { return ''; }
   });
+  const hasExamsPassword = (() => { try { return !!localStorage.getItem('madrasa_exams_password'); } catch { return false; } })();
+  const [examsPassword, setExamsPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -70,6 +70,22 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
 
     if (newPassword && newPassword !== confirmPassword) {
       showToast('error', 'تطابق كلمة المرور', 'كلمة المرور الجديدة وتأكيدها غير متطابقين.');
+      return;
+    }
+
+    const cleanExamsPhone = normalizeLibyanPhone(examsPhone);
+    if (currentRole === 'admin' && examsPhone.trim()) {
+      if (!LIBYAN_PHONE_RE.test(cleanExamsPhone)) {
+        showToast('error', 'هاتف رئيس الكنترول', 'أدخل رقماً ليبياً صحيحاً (09xxxxxxxx) أو اتركه فارغاً لإيقاف حساب الكنترول.');
+        return;
+      }
+      if (!hasExamsPassword && !examsPassword.trim()) {
+        showToast('error', 'كلمة مرور الكنترول', 'عيّن كلمة مرور لرئيس الكنترول قبل تفعيل حسابه.');
+        return;
+      }
+    }
+    if (currentRole === 'admin' && examsPassword.trim() && isWeakPin(examsPassword.trim())) {
+      showToast('error', 'كلمة مرور الكنترول', 'كلمة مرور ضعيفة: 4 خانات على الأقل، غير متكررة وغير متسلسلة.');
       return;
     }
 
@@ -106,9 +122,11 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
         SecurityEngine.setDirectorPin(directorPin.trim());
       }
 
-      // 4. Update Exams Coordinator Password (المدير فقط)
-      if (currentRole === 'admin' && examsPassword && examsPassword.trim()) {
-        localStorage.setItem('madrasa_exams_password', examsPassword.trim());
+      // 4. حساب رئيس الكنترول (المدير فقط): الهاتف المسجل + كلمة المرور. إفراغ الهاتف يوقف الحساب.
+      if (currentRole === 'admin') {
+        if (examsPhone.trim()) localStorage.setItem('madrasa_exams_phone', cleanExamsPhone);
+        else localStorage.removeItem('madrasa_exams_phone');
+        if (examsPassword.trim()) localStorage.setItem('madrasa_exams_password', examsPassword.trim());
       }
 
       // 5. Update Teacher Code if teacher role
@@ -217,29 +235,42 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                   <span>رمز أمان المدير (Director PIN)</span>
                 </label>
                 <input
-                  type="text"
-                  maxLength={6}
+                  type="password"
+                  autoComplete="new-password"
+                  maxLength={32}
                   value={directorPin}
                   onChange={e => setDirectorPin(e.target.value)}
-                  placeholder="2026"
+                  placeholder="••••"
                   className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 />
-                <p className="text-[10px] text-slate-400 mt-1">الرمز المعتمد لدخول المدير وتأكيد العمليات الحساسة (افتراضي: 2026).</p>
+                <p className="text-[10px] text-slate-400 mt-1">الرمز المعتمد لدخول المدير وتأكيد العمليات الحساسة (اعتماد الكنترول، الحذف...).</p>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-amber-600" />
-                  <span>كلمة مرور رئيس الكنترول</span>
+                  <span>حساب رئيس الكنترول</span>
                 </label>
                 <input
-                  type="text"
+                  type="tel"
+                  inputMode="tel"
+                  dir="ltr"
+                  value={examsPhone}
+                  onChange={e => setExamsPhone(e.target.value)}
+                  placeholder="هاتف رئيس الكنترول 09xxxxxxxx"
+                  aria-label="هاتف رئيس الكنترول"
+                  className="w-full mb-2 px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                />
+                <input
+                  type="password"
+                  autoComplete="new-password"
                   value={examsPassword}
                   onChange={e => setExamsPassword(e.target.value)}
-                  placeholder="2026"
+                  placeholder={hasExamsPassword ? 'اتركها فارغة للإبقاء على الحالية' : 'كلمة مرور رئيس الكنترول'}
+                  aria-label="كلمة مرور رئيس الكنترول"
                   className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
                 />
-                <p className="text-[10px] text-slate-400 mt-1">كلمة المرور الخاصة ببوابة شيت الامتحانات (افتراضي: 2026).</p>
+                <p className="text-[10px] text-slate-400 mt-1">يدخل بها رئيس الكنترول من «دخول المنظومة ← الكنترول». إفراغ الهاتف يوقف حسابه.</p>
               </div>
             </div>
 

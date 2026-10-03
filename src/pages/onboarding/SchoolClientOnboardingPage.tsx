@@ -516,7 +516,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
                   <span>كتيب تعليمات المنظومة الشامل (دليل المستخدم الليبي)</span>
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  وفق لائحة وزارة التربية والتعليم رقم 1013 لسنة 2022م والقرار 560 لسنة 2024م
+                  وفق نظام التعليم الأساسي في ليبيا
                 </p>
               </div>
 
@@ -538,7 +538,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
                   <span>🏛️ الفصل الأول: لوحة تحكم المدير والإشراف العام</span>
                 </h4>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                  تتيح للمدير متابعة مؤشرات المدرسة اليومية، وإحصائيات الطلاب (873 طالباً أو بحسب الكشف المعتمد)، ونسب الحضور والغياب، والإشراف على اعتماد أعمال الكنترول والجداول المدرسية.
+                  تتيح للمدير متابعة مؤشرات المدرسة اليومية، وإحصائيات الطلاب بحسب الكشف المعتمد، ونسب الحضور والغياب، والإشراف على اعتماد أعمال الكنترول والجداول المدرسية.
                 </p>
               </div>
 
@@ -565,7 +565,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
                   <span>📜 الفصل الرابع: شيت الكنترول وتوزيع لجان الامتحانات</span>
                 </h4>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                  نظام شيت الدرجات المعتمد بمجموع 1120 درجة لصفوف مرحلة التعليم الأساسي، ورصد أعمال السنة والفترات، وتوليد أرقام الجلوس وبطاقات الدرجات والشهادات الفردية والجماعية A4.
+                  نظام شيت الدرجات (أعمال 40 + امتحان 60 لكل مادة) لصفوف مرحلة التعليم الأساسي، ورصد أعمال السنة والفترات، وتوليد أرقام الجلوس وبطاقات الدرجات والشهادات الفردية والجماعية A4.
                 </p>
               </div>
 
@@ -644,7 +644,7 @@ export const SchoolClientOnboardingPage: React.FC = () => {
                 <div className="text-[11px] text-amber-900 dark:text-amber-200/90 space-y-1 leading-relaxed">
                   <p><strong>طريقة الدخول:</strong> هاتف رئيس الكنترول المعتمد (<code className="font-mono font-bold">0912345678</code> أو هاتف المسؤول).</p>
                   <p><strong>كلمة المرور المعتمدة:</strong> <span className="font-mono font-bold">2026</span> (يمكن للمدير تعديلها من إعدادات الحساب).</p>
-                  <p><strong>المسؤوليات:</strong> شيت الكنترول 1120 درجة، توزيع أرقام الجلوس، رصد الفترات، وقفل الشيت.</p>
+                  <p><strong>المسؤوليات:</strong> شيت الكنترول، توزيع أرقام الجلوس، رصد الفترات، وقفل الشيت.</p>
                 </div>
 
                 <div className="pt-2 border-t border-amber-200 dark:border-amber-800/60 flex items-center justify-between gap-2">

@@ -11,7 +11,6 @@ import {
   Award,
   BookOpen,
   MessageSquare,
-  Clock,
   FileText,
   Bell
 } from 'lucide-react';
@@ -25,20 +24,20 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const getMobileNav = () => {
     switch (currentRole) {
+      // تبويبات مسموحة فعلاً لكل دور (roleAccess) — لا أزرار ترتد للرئيسية
       case 'teacher':
         return [
-          { id: 'teacher-quick', label: 'الرئيسية السريعة', icon: LayoutDashboard },
-          { id: 'grades', label: 'الدرجات', icon: Award },
-          { id: 'chat', label: 'المحادثة', icon: MessageSquare },
-          { id: 'schedule', label: 'الجدول', icon: Clock },
-          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+          { id: 'teacher-quick', label: 'الحضور والدرجات', icon: LayoutDashboard },
+          { id: 'chat', label: 'رسائل أولياء الأمور', icon: MessageSquare },
         ];
       case 'counselor':
         return [
-          { id: 'counselor-dashboard', label: 'الرئيسية', icon: LayoutDashboard },
-          { id: 'student-profile', label: 'الطلاب', icon: UserCheck },
-          { id: 'attendance', label: 'المتابعة', icon: CalendarCheck },
+          { id: 'counselor-dashboard', label: 'المكتب الاجتماعي', icon: LayoutDashboard },
           { id: 'chat', label: 'المحادثة', icon: MessageSquare },
+        ];
+      case 'exams_coordinator':
+        return [
+          { id: 'exams-coordinator-dashboard', label: 'شيت الكنترول', icon: Award },
           { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
         ];
       case 'parent':
@@ -74,7 +73,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {showSidebar && <Sidebar />}
         
-        <main className={`flex-1 ${currentRole === 'parent' ? 'pb-12 p-3 sm:p-5 lg:p-7' : 'pb-28 md:pb-12 p-3 sm:p-5 lg:p-7'}`}>
+        <main className={`flex-1 min-w-0 ${currentRole === 'parent' ? 'pb-12 p-3 sm:p-5 lg:p-7' : 'pb-28 md:pb-12 p-3 sm:p-5 lg:p-7'}`}>
           <div className="max-w-7xl mx-auto space-y-5">
             {children}
           </div>
@@ -82,6 +81,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Official Libyan School Platform Footer (يمنع أي انقطاع أو فراغ مشوه أسفل الشاشة) */}
+      {currentRole !== 'parent' && (
       <footer className="mt-auto border-t border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md py-6 px-4 font-cairo text-right">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
@@ -100,14 +100,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           <div className="flex items-center gap-2 flex-wrap justify-center text-[11px] text-slate-500 dark:text-slate-400 font-bold">
             <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-              نظام تشغيل محلي معتمد (IndexedDB) 🛡️
+              يعمل بدون إنترنت • نسخ احتياطي تلقائي 🛡️
             </span>
             <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-              الإصدار v4.8 التجاري
+              الإصدار {__APP_VERSION__}
             </span>
           </div>
         </div>
       </footer>
+      )}
 
       {/* Mobile Bottom Navigation Bar (Hidden for parent who has a self-contained WhatsApp-like UI) */}
       {currentRole !== 'parent' && (
@@ -144,8 +145,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
       )}
 
-      {/* 60fps & 21st.dev Interactive Guided Tour Overlay */}
-      <InteractiveSystemTour />
+      {/* الجولة التعريفية للكادر فقط — تطبيق ولي الأمر بسيط بذاته */}
+      {currentRole !== 'parent' && <InteractiveSystemTour />}
     </div>
   );
 };

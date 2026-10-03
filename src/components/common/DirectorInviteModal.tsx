@@ -114,7 +114,7 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
       role: 'exams_coordinator' as const,
       icon: <FileSpreadsheet className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
       color: 'border-amber-200 dark:border-amber-800/60 bg-amber-50/70 dark:bg-amber-950/30 text-amber-950 dark:text-amber-200',
-      badge: 'بوابة شيت الكنترول (1120 درجة) 📜',
+      badge: 'بوابة شيت الكنترول 📜',
       desc: 'رصد درجات الفترات والامتحانات، استخراج بطاقات النتيجة وكشوفات الجلوس.'
     },
     {
@@ -209,7 +209,7 @@ export const DirectorInviteModal: React.FC<DirectorInviteModalProps> = ({ isOpen
               </div>
               <div className="p-2.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-purple-100 dark:border-purple-900/60 shadow-xs">
                 <strong className="text-amber-700 dark:text-amber-400 block mb-0.5">📜 رابط منسق الامتحانات:</strong>
-                <span>يفتح شيت الكنترول المركزي ورصد الـ 1120 درجة وبطاقات النتائج.</span>
+                <span>يفتح شيت الكنترول المركزي ورصد الدرجات وبطاقات النتائج.</span>
               </div>
               <div className="p-2.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-purple-100 dark:border-purple-900/60 shadow-xs">
                 <strong className="text-teal-700 dark:text-teal-400 block mb-0.5">👨‍👩‍👧‍👦 رابط ولي الأمر:</strong>

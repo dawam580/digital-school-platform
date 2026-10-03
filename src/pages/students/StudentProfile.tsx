@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { localISODate } from '../../services/domain/libyanCalendar';
 import {
   Calendar,
   CheckCircle2,
@@ -45,8 +46,11 @@ export const StudentProfile: React.FC = () => {
     addBehaviorPoint, 
     updateStudentAvatar, 
     currentRole,
-    updateStudentDocuments
+    updateStudentDocuments,
+    students
   } = useSchool();
+  // الطالب المعروض يجب أن يكون طالباً حقيقياً في كشف المدرسة (لا "طالب جديد" افتراضي بنسب 100%)
+  const isRealStudent = students.some(s => s.id === selectedStudent?.id);
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'competencies' | 'academic' | 'attendance' | 'points'>('overview');
   
   // Modals
@@ -57,7 +61,7 @@ export const StudentProfile: React.FC = () => {
   const [showExcuseModal, setShowExcuseModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showDossierModal, setShowDossierModal] = useState(false);
-  const [excuseDate, setExcuseDate] = useState('2026-09-01');
+  const [excuseDate, setExcuseDate] = useState(() => localISODate());
   const [excuseReason, setExcuseReason] = useState('');
   const [excuseSubmitted, setExcuseSubmitted] = useState(false);
 
@@ -78,6 +82,27 @@ export const StudentProfile: React.FC = () => {
       setExcuseReason('');
     }, 1200);
   };
+
+  if (!isRealStudent) {
+    return (
+      <div className="max-w-xl mx-auto p-10 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 font-cairo space-y-3">
+        <p className="text-3xl">🎒</p>
+        <p className="text-sm font-black text-slate-800 dark:text-white">
+          {students.length === 0 ? 'لا يوجد طلاب في المدرسة بعد' : 'اختر طالباً من الكشف'}
+        </p>
+        <p className="text-xs text-slate-500">
+          {students.length === 0 ? 'استورد كشف الطلاب (Excel أو PDF) من لوحة المدير، أو أضف طالباً يدوياً.' : 'ابحث عن الطالب بالاسم أو رقم القيد من لوحة التحكم.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => setActiveTab(currentRole === 'parent' ? 'parent-dashboard' : 'dashboard')}
+          className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-black"
+        >
+          العودة
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-5xl mx-auto pb-10">

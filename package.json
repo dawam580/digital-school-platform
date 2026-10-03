@@ -23,15 +23,22 @@
     "test:real": "node --test \"tests/real/*.test.mjs\"",
     "license:keygen": "node tools/license/keygen.cjs",
     "license:issue": "node tools/license/issue-license.cjs",
-    "owner": "electron electron/main.cjs --owner"
+    "owner": "electron electron/main.cjs --owner",
+    "test:e2e": "node tests/e2e/roles-journey.mjs && node tests/e2e/control-journey.mjs",
+    "roster:package": "node tools/roster/build-roster-package.cjs",
+    "build:parent": "vite build --config vite.parent.config.ts",
+    "relay": "node server/parent-relay.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/cairo": "^5.3.0",
+    "@fontsource/tajawal": "^5.3.0",
     "@noble/curves": "^1.9.7",
     "clsx": "^2.1.1",
     "firebase": "^12.19.0",
     "jsqr": "^1.4.0",
     "lucide-react": "^0.475.0",
     "pdfjs-dist": "^3.11.174",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^3.10.1",
@@ -74,6 +81,7 @@
     }
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

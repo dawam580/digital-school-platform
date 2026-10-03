@@ -31,6 +31,7 @@ import { DEFAULT_LIBYAN_SUBJECT_EVALUATIONS } from '../../services/db';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import logoImg from '../../assets/logo.png';
+import { currentAcademicYear } from '../../services/domain/libyanCalendar';
 
 interface StudentFollowUpFormModalProps {
   isOpen: boolean;
@@ -53,7 +54,7 @@ export const StudentFollowUpFormModal: React.FC<StudentFollowUpFormModalProps> =
     existingForm?.studentId || initialStudentId || students[0]?.id || ''
   );
 
-  const [academicYear, setAcademicYear] = useState(existingForm?.academicYear || '2025 - 2026 م');
+  const [academicYear, setAcademicYear] = useState(existingForm?.academicYear || currentAcademicYear());
   const [semester, setSemester] = useState(existingForm?.semester || 'الفصل الدراسي الأول');
   const [counselorName, setCounselorName] = useState(existingForm?.counselorName || 'أ. نجوى القماطي');
 

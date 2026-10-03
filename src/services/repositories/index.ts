@@ -46,7 +46,8 @@ export class StudentRepository implements IRepository<Student> {
   async saveAll(students: Student[]): Promise<boolean> {
     try {
       const encrypted = CryptoVaultService.encryptStudentsBatch(students);
-      localStorage.setItem(this.localKey, JSON.stringify(encrypted));
+      // IndexedDB هو المرجع الأوسع؛ امتلاء localStorage لا يمنع الحفظ فيه
+      try { localStorage.setItem(this.localKey, JSON.stringify(encrypted)); } catch {}
       await indexedDBManager.putAll(this.storeName, encrypted);
       return true;
     } catch {

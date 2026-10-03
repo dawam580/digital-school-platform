@@ -1,0 +1,10 @@
+{"schoolProfile":{"name":"مدرسة الأمل التجريبية"},
+ "students":[
+  {"id":"st-a","name":"يوسف سالم الهادي","nationalId":"120150000101","nationalNumber":"120150000101","studentNumber":"5001","linkCode":"STD-5001","avatar":"","grade":"الصف الخامس الأساسي","className":"5/1 صباح","gender":"male","parentName":"","parentPhone":"","parentEmail":"","status":"present","attendanceRate":100,"academicAverage":0,"behaviorRating":"جيد","behaviorPointsTotal":0,"behaviorPoints":[],"competencies":[],"subjects":[],"recentAttendance":[]},
+  {"id":"st-b","name":"مريم علي الفاخري","nationalId":"220150000102","nationalNumber":"220150000102","studentNumber":"5002","linkCode":"STD-5002","avatar":"","grade":"الصف الخامس الأساسي","className":"5/1 صباح","gender":"female","parentName":"","parentPhone":"","parentEmail":"","status":"present","attendanceRate":100,"academicAverage":0,"behaviorRating":"جيد","behaviorPointsTotal":0,"behaviorPoints":[],"competencies":[],"subjects":[],"recentAttendance":[]}
+ ],
+ "teachers":[
+  {"id":"t-math","code":"LIB-MATH-21","name":"أ. خالد المبروك","phone":"0915550021","subject":"الرياضيات","subjectCode":"MATH","assignedClasses":["5/1 صباح"],"avatar":"","status":"active"},
+  {"id":"t-soc","code":"LIB-SOC-01","name":"أ. هدى الزوي","phone":"0915550022","subject":"الخدمة الاجتماعية","subjectCode":"COUNSEL","assignedClasses":[],"avatar":"","status":"active"}
+ ],
+ "classes":[{"id":"c51","name":"5/1 صباح","grade":"الصف الخامس الأساسي","studentCount":2,"presentCount":0,"absentCount":0,"lateCount":0,"supervisor":""}]}

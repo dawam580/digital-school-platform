@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
+import { studentDedupKey } from '../../services/importers/rosterSanitizer';
 
 interface ExcelStudentImporterModalProps {
   isOpen: boolean;
@@ -83,13 +84,25 @@ export const ExcelStudentImporterModal: React.FC<ExcelStudentImporterModalProps>
 
         if (importType === 'students') {
           const mappedList: Student[] = jsonRows.map((row: any, index: number) => {
-            const rawName = row['الاسم'] || row['اسم الطالب'] || row['الاسم الرباعي'] || row['اسم التلميذ'] || row['Name'] || '';
-            const rawNatId = row['الرقم الوطني'] || row['الرقم_الوطني'] || row['الوطني'] || row['NationalId'] || '';
-            const studentNumber = row['رقم القيد'] || row['رقم_القيد'] || row['رقم الجلوس'] || '';
-            const className = row['الفصل'] || row['الشعبة'] || row['الصف/الشعبة'] || '';
-            const grade = row['الصف'] || row['المرحلة'] || '';
-            const motherName = row['اسم الأم'] || row['الأم'] || '';
-            const parentPhone = row['هاتف ولي الأمر'] || row['الهاتف'] || row['رقم ولي الأمر'] || '';
+            const pick = (...keys: string[]) => {
+              for (const k of keys) {
+                const v = row[k];
+                if (v !== undefined && String(v).trim() !== '') return String(v).trim();
+              }
+              return '';
+            };
+            // يقبل أعمدة كشف المنظومة الرسمي (التصدير) وأسماء الأعمدة الشائعة
+            const rawName = pick('الاسم', 'اسم الطالب', 'اسم الطالب رباعي', 'الاسم الرباعي', 'اسم التلميذ', 'Name');
+            const rawNatId = pick('الرقم الوطني', 'الرقم الوطني (12 خانة)', 'الرقم_الوطني', 'الوطني', 'NationalId');
+            const studentNumber = pick('رقم القيد', 'رقم_القيد', 'الرقم الأكاديمي', 'رقم الجلوس');
+            const className = pick('الفصل', 'الفصل / الشعبة', 'الشعبة', 'الصف/الشعبة');
+            const grade = pick('الصف', 'الصف الدراسي', 'المرحلة');
+            const motherName = pick('اسم الأم', 'الأم');
+            const parentName = pick('اسم ولي الأمر', 'ولي الأمر');
+            const parentPhone = pick('هاتف ولي الأمر', 'الهاتف', 'رقم ولي الأمر');
+            const birthDate = pick('تاريخ الميلاد');
+            const birthPlace = pick('مكان الميلاد');
+            const genderRaw = pick('الجنس');
 
             const completed = SmartDataEngine.completeStudentData({
               name: rawName,
@@ -98,7 +111,11 @@ export const ExcelStudentImporterModal: React.FC<ExcelStudentImporterModalProps>
               className,
               grade,
               motherName,
-              parentPhone
+              parentName,
+              parentPhone,
+              birthDate,
+              birthPlace,
+              gender: (genderRaw === 'أنثى' || genderRaw === 'female') ? 'female' : (genderRaw === 'ذكر' || genderRaw === 'male') ? 'male' : undefined
             }, index);
 
             if (completed.name !== rawName) correctedNamesCount++;
@@ -123,8 +140,9 @@ export const ExcelStudentImporterModal: React.FC<ExcelStudentImporterModalProps>
             const nationalNumber = row['الرقم الوطني'] || row['الوطني'] || '';
             const fileNumber = row['رقم الملف'] || row['الملف'] || row['منظومة الشاطئ'] || '';
             const quota = Number(row['نصاب الحصص'] || row['النصاب'] || 20);
-            const rawClasses = row['الفصول'] || row['الفصول المسندة'] || '7/أ، 7/ب';
-            const assignedClasses = String(rawClasses).split(/[,،\s]+/).filter(Boolean);
+            const rawClasses = row['الفصول'] || row['الفصول المسندة'] || '';
+            // فاصلة/فاصلة منقوطة/سطر فقط — اسم الفصل قد يحوي مسافة ("5/1 صباح")
+            const assignedClasses = String(rawClasses).split(/[,،؛;\n]+/).map(c => c.trim()).filter(Boolean);
 
             return SmartDataEngine.completeTeacherData({
               name: rawName,
@@ -167,22 +185,22 @@ export const ExcelStudentImporterModal: React.FC<ExcelStudentImporterModalProps>
     sound.playFanfare();
     triggerConfetti();
 
-    const existingIds = new Set(students.map(s => s.nationalNumber || s.nationalId || ''));
+    const existingKeys = new Set(students.map(studentDedupKey));
     const newStudents: Student[] = [];
+    let duplicates = 0;
 
     parsedStudents.forEach(row => {
-      const nat = row.nationalNumber || row.nationalId || '';
-      if (nat && !existingIds.has(nat)) {
-        newStudents.push(row);
-        existingIds.add(nat);
-      }
+      const key = studentDedupKey(row);
+      if (existingKeys.has(key)) { duplicates++; return; }
+      newStudents.push(row);
+      existingKeys.add(key);
     });
 
     const updated = [...students, ...newStudents];
     setStudents(updated);
     db.saveStudents(updated, true);
 
-    showToast('gold', 'تم الاستيراد بنجاح 🎉', `تمت إضافة وتحديث (${newStudents.length}) طالباً في قاعدة البيانات.`);
+    showToast('gold', 'تم الاستيراد بنجاح 🎉', `أُضيف ${newStudents.length} طالباً${duplicates ? ` • تُجوهل ${duplicates} مكرر (موجود مسبقاً)` : ''}. الدرجات والحضور تُرصد من داخل المنظومة.`);
     onClose();
   };
 

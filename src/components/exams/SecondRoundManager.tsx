@@ -105,11 +105,17 @@ export const SecondRoundManager: React.FC<SecondRoundManagerProps> = ({
     const recordId = `${studentId}_${subjectCode}`;
     const existing = gradeRecords.get(recordId);
 
-    const cw = existing ? existing.courseworkScore : 35;
-    const ex = existing ? existing.examScore : 30;
+    // الدور الثاني يُبنى على رصد الدور الأول الفعلي فقط — لا قيم افتراضية
+    if (!existing) {
+      showToast('error', 'لا يوجد رصد للدور الأول', `ارصد أعمال السنة والامتحان لمادة ${sub.name} في شيت الكنترول أولاً.`);
+      return;
+    }
+    const cw = existing.courseworkScore;
+    const ex = existing.examScore;
     const isPassed = val !== undefined ? (cw + val >= (sub.minScore || 50)) : false;
 
     const updatedRecord: ExamGradeRecord = {
+      ...existing,
       id: recordId,
       studentId,
       studentNationalId: student.nationalNumber || student.nationalId || '—',
@@ -176,7 +182,7 @@ export const SecondRoundManager: React.FC<SecondRoundManagerProps> = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `كشف_طلبة_الدور_الثاني_2026.csv`;
+    link.download = `كشف_طلبة_الدور_الثاني_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 

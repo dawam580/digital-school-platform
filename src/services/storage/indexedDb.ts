@@ -20,6 +20,8 @@ class IndexedDBManager {
 
   constructor() {
     this.isReadyPromise = this.initDB();
+    // بيئة بلا IndexedDB (متصفح مقيد/اختبارات): الرفض يُعالَج عند كل استخدام، لا رفض يتيم
+    this.isReadyPromise.catch(() => {});
   }
 
   private initDB(): Promise<IDBDatabase> {

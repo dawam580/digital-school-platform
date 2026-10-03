@@ -115,7 +115,7 @@ export const SchoolCensusAnalyticsView: React.FC = () => {
       csvContent += `"${val.gradeName}","${val.shift === 'morning' ? 'صباحي' : 'مسائي'}","${val.classes.length} شعب",${val.total},${val.males},${val.females},${fRatio}%\n`;
     });
 
-    csvContent += `\n"الإجمالي العام للمدرسة","33 فصلاً",${totalStudents},${maleStudents},${femaleStudents},${femalePercent}%\n`;
+    csvContent += `\n"الإجمالي العام للمدرسة","${new Set(students.map(st => st.className).filter(Boolean)).size} فصلاً",${totalStudents},${maleStudents},${femaleStudents},${femalePercent}%\n`;
     csvContent += `\n"إجمالي الكادر التعليمي والإداري",${totalStaff},"المعلمون",${totalTeachers},"الإداريون",${adminStaffCount}\n`;
 
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });

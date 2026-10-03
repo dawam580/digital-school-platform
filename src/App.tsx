@@ -6,7 +6,6 @@ import { AppErrorBoundary } from './components/common/AppErrorBoundary';
 import { Eye, ShieldAlert, RotateCcw } from 'lucide-react';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/auth/Login';
-import { ParentSignUp } from './pages/auth/ParentSignUp';
 import { LinkStudent } from './pages/auth/LinkStudent';
 import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { AttendanceTracker } from './pages/attendance/AttendanceTracker';
@@ -103,7 +102,7 @@ const MainContent: React.FC = () => {
   if (activeTab === 'parent-mobile') {
     return (
       <>
-        <ParentMobileApp />
+        <ParentMobileApp standalone />
         <SchoolManagerModal
           isOpen={showSchoolManagerModal}
           onClose={() => setShowSchoolManagerModal(false)}
@@ -149,7 +148,7 @@ const MainContent: React.FC = () => {
         </div>
         <h2 className="text-xl font-black text-white">جلسة المدير العام مقفلة 🔒</h2>
         <p className="text-xs text-slate-400 mt-2 max-w-sm leading-relaxed">
-          أُعيد تحميل المنظومة وجلسة الماستر انتهت حفاظاً على الأمان. أدخل رمز السوبر للمتابعة، أو ادخل كمدير مدرسة.
+          أُعيد تحميل المنظومة وجلسة الماستر انتهت حفاظاً على الأمان. أدخل رمز السوبر للمتابعة، أو سجّل الخروج.
         </p>
         <div className="flex items-center gap-3 mt-5">
           <button
@@ -163,7 +162,7 @@ const MainContent: React.FC = () => {
             className="px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition active:scale-95 flex items-center gap-1.5"
           >
             <RotateCcw className="w-4 h-4" />
-            دخول كمدير مدرسة
+            تسجيل الخروج
           </button>
         </div>
         <SuperAdminLockModal
@@ -211,8 +210,9 @@ const MainContent: React.FC = () => {
     );
   }
 
+  // التسجيل الذاتي برمز OTP وهمي أُلغي: حساب ولي الأمر يُفتح ببطاقة المدرسة (الرقم + رمز الدخول)
   if (activeTab === 'parent-signup') {
-    return <ParentSignUp />;
+    return <ParentMobileApp />;
   }
 
   const renderActivePage = () => {

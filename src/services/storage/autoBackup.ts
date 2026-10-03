@@ -42,9 +42,29 @@ function safeGet(key: string): FullSnapshot | null {
   }
 }
 
+/** لا تأخذ اللقطات التلقائية أكثر من هذا من مساحة localStorage (حرفاً) — البيانات الحية أولى */
+const MAX_TOTAL_CHARS = 3_500_000;
+
+function usedChars(exceptKey: string): number {
+  let total = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || k === exceptKey) continue;
+    total += k.length + (localStorage.getItem(k) || '').length;
+  }
+  return total;
+}
+
 function safeSet(key: string, snap: FullSnapshot): boolean {
   try {
-    localStorage.setItem(key, JSON.stringify(snap));
+    const json = JSON.stringify(snap);
+    // مدرسة كبيرة: اللقطة الداخلية تُهمل حتى لا تزاحم حفظ الطلاب والدرجات
+    // (نسخة ويندوز تحفظ نسخة يومية كاملة على القرص في المستندات على أي حال)
+    if (usedChars(key) + json.length > MAX_TOTAL_CHARS) {
+      try { localStorage.removeItem(key); } catch {}
+      return false;
+    }
+    localStorage.setItem(key, json);
     return true;
   } catch {
     return false; // امتلاء المساحة: تُهمل اللقطة بصمت ولا تكسر الإقلاع

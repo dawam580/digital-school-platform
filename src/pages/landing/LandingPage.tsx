@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { VENDOR_PHONE, VENDOR_WHATSAPP, ANNUAL_PRICE_LABEL } from '../../config/vendor';
 import { useSchool } from '../../context/SchoolContext';
 import { UserRole } from '../../types';
 import {
@@ -67,7 +68,7 @@ export const LandingPage: React.FC = () => {
       setActiveTab('counselor-dashboard');
     } else if (role === 'parent') {
       const firstStudent = students[0];
-      const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '120195864392';
+      const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '';
       login(idToUse, 'parent', '123456');
     }
   };
@@ -100,14 +101,14 @@ export const LandingPage: React.FC = () => {
       id: 'annual',
       name: 'الباقة السنوية المعتمدة 🏆',
       tagline: 'الأكثر طلباً للمدارس الليبية',
-      price: '2,000',
+      price: ANNUAL_PRICE_LABEL,
       period: 'دينار ليبي / للعام الدراسي الكامل',
       description: 'الترخيص الرسمي الدائم للمدرسة شاملاً جميع البوابات الست، التحديثات، والدعم الفني المباشر.',
       features: [
         'ترخيص سنوي معتمد بكود فريد لكل مدرسة',
         'جميع البوابات الست (مدير، كنترول، معلمين، أولياء أمور)',
         'استخراج غير محدود لكشوفات الـ PDF بالذكاء الاصطناعي',
-        'شيت الامتحانات المعتمد ولائحة وزارة التربية والتعليم',
+        'شيت الامتحانات وفق نظام التقييم الليبي',
         'أتمتة أرقام الجلوس ولجان الامتحانات الرسمية',
         'دعم فني ليبي مباشر وتدريب للمدير والمعلمين عبر واتساب',
         'تحديثات مستمرة ونسخ احتياطي محلي وسحابي مؤمن'
@@ -120,7 +121,7 @@ export const LandingPage: React.FC = () => {
         const msg = encodeURIComponent(
           `السلام عليكم ورحمة الله، أود الاشتراك في "الباقة السنوية المعتمدة" لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}\nالمدينة: ${schoolProfile.city || 'طرابلس'}`
         );
-        window.open(`https://wa.me/218922465676?text=${msg}`, '_blank');
+        window.open(`https://wa.me/${VENDOR_WHATSAPP}?text=${msg}`, '_blank');
       }
     },
     {
@@ -146,7 +147,7 @@ export const LandingPage: React.FC = () => {
         const msg = encodeURIComponent(
           `السلام عليكم ورحمة الله، أود الاستفسار عن باقة الفصل الدراسي لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}`
         );
-        window.open(`https://wa.me/218922465676?text=${msg}`, '_blank');
+        window.open(`https://wa.me/${VENDOR_WHATSAPP}?text=${msg}`, '_blank');
       }
     }
   ];
@@ -172,7 +173,7 @@ export const LandingPage: React.FC = () => {
       badge: 'شيت الدرجات والامتحانات',
       icon: <Award className="w-5 h-5 text-amber-600" />,
       colorClass: 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300',
-      desc: 'إدارة متكاملة للامتحانات النصفية والنهائية، توليد أرقام الجلوس آلياً، توزيع اللجان، وشيت رصد الدرجات المطابق للائحة الامتحانات الليبية مع حساب النسب والدور الثاني تلقائياً.',
+      desc: 'إدارة متكاملة للامتحانات النصفية والنهائية، توليد أرقام الجلوس آلياً، توزيع اللجان، وشيت رصد الدرجات وفق نظام التقييم الليبي مع حساب النسب والدور الثاني تلقائياً.',
       features: [
         'شيت درجات معتمد مع حساب الدرجة الصغرى والكبرى ومعدل النجاح',
         'توليد أرقام الجلوس والتوزيع الآلي على لجان وقاعات الامتحانات',
@@ -257,7 +258,7 @@ export const LandingPage: React.FC = () => {
     },
     {
       q: 'كيف أحصل على مفتاح ترخيص رسمي لتفعيل المنظومة لمدرستي؟',
-      a: 'يمكنك التواصل معنا مباشرة عبر الهاتف أو الواتساب على الرقم 0922465676، وسيقوم فريق الدعم الفني بتزويدك بمفتاح ترخيص مخصص لمدرستك وتفعيل اشتراكك الفوري وتقديم التدريب الكامل لمدير المدرسة ورئيس الكنترول.'
+      a: `يمكنك التواصل معنا مباشرة عبر الهاتف أو الواتساب على الرقم ${VENDOR_PHONE}، وسيقوم فريق الدعم الفني بتزويدك بمفتاح ترخيص مخصص لمدرستك وتفعيل اشتراكك الفوري وتقديم التدريب الكامل لمدير المدرسة ورئيس الكنترول.`
     },
     {
       q: 'هل يمكن تشغيل المنظومة على الهواتف والأجهزة اللوحية (التابلت) للمعلمين وأولياء الأمور؟',
@@ -348,7 +349,7 @@ export const LandingPage: React.FC = () => {
             {/* Libyan Ministry Badge */}
             <div className="inline-flex items-center justify-center">
               <TailgridsBadge variant="success" size="md" icon={<Sparkles className="w-4 h-4" />}>
-                🇱🇾 معتمدة وفق لوائح وزارة التربية والتعليم والمركز الوطني للامتحانات
+                🇱🇾 مصممة وفق لائحة التقويم الليبية ونماذج المركز الوطني للامتحانات
               </TailgridsBadge>
             </div>
 
@@ -380,7 +381,7 @@ export const LandingPage: React.FC = () => {
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-sm sm:text-base font-black border border-slate-200 dark:border-slate-700 shadow-md transition active:scale-95 flex items-center gap-2"
               >
                 <Shield className="w-5 h-5 text-purple-600" />
-                <span>دخول لوحة المدير (كشف 873 طالباً)</span>
+                <span>دخول لوحة المدير (عرض تجريبي)</span>
               </button>
               )}
 
@@ -394,7 +395,7 @@ export const LandingPage: React.FC = () => {
               </button>
 
               <a
-                href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9"
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-3.5 sm:py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm sm:text-base font-bold shadow-md transition active:scale-95 flex items-center gap-2"
@@ -410,17 +411,17 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-6">
             <TailgridsStatCard
               icon={<Users className="w-6 h-6" />}
-              value={students.length > 5 ? `${students.length}` : '+1,000'}
-              label="طالباً مسجلاً بالكشوف الرسمية"
-              trend="سعة استيعاب مرنة"
+              value="1 – 9"
+              label="صفوف مرحلة التعليم الأساسي"
+              trend="بنين وبنات • صباحي ومسائي"
               trendUp={true}
               colorClass="from-blue-600 to-indigo-600"
             />
             <TailgridsStatCard
               icon={<Layers className="w-6 h-6" />}
-              value="33"
-              label="فصلاً دراسياً معتمداً"
-              trend="من 1/1 حتى 9/4 صباحي ومسائي"
+              value="20+"
+              label="مدرسة على جهاز المالك الواحد"
+              trend="بيانات كل مدرسة معزولة تماماً"
               trendUp={true}
               colorClass="from-purple-600 to-pink-600"
             />
@@ -428,15 +429,15 @@ export const LandingPage: React.FC = () => {
               icon={<Lock className="w-6 h-6" />}
               value="6"
               label="بوابات وصلاحيات أمان معزولة"
-              trend="مدير • كنترول • معلم • ولي أمر"
+              trend="مدير • كنترول • معلم • أخصائي • ولي أمر"
               trendUp={true}
               colorClass="from-amber-500 to-orange-600"
             />
             <TailgridsStatCard
               icon={<Database className="w-6 h-6" />}
-              value="100%"
-              label="عمل أوفلاين بدون نت"
-              trend="حفظ فوري في IndexedDB"
+              value="أوفلاين"
+              label="يعمل بدون إنترنت"
+              trend="حفظ فوري ونسخ احتياطي تلقائي"
               trendUp={true}
               colorClass="from-emerald-500 to-teal-600"
             />
@@ -663,13 +664,13 @@ export const LandingPage: React.FC = () => {
 
             <div className="flex items-center gap-3">
               <a
-                href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9"
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md transition flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>واتساب: 0922465676</span>
+                <span>واتساب: {VENDOR_PHONE}</span>
               </a>
 
               <button

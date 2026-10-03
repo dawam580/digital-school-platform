@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import { LIBYAN_CITIES } from '../../data/mockFinanceData';
 import { sound } from '../../utils/soundEffects';
+import { normalizeLibyanPhone, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
+import { isWeakPin } from '../../services/security/securityEngine';
 import { triggerConfetti } from '../../utils/confetti';
 
 interface FreeTrialModalProps {
@@ -43,8 +45,9 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
   const [isInternational, setIsInternational] = useState(false);
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  const [username, setUsername] = useState('مدير_المدرسة');
-  const [password, setPassword] = useState('123456');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [step2Error, setStep2Error] = useState('');
   const [seedRichData, setSeedRichData] = useState(true);
 
   // Provisioning Simulation state (Step 4)
@@ -95,6 +98,7 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
             phone: phone.trim(),
             address: address.trim() || city,
             username: username.trim() || 'المدير العام',
+            password: password.trim(),
             seedRichData
           });
           onClose();
@@ -116,6 +120,17 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
 
   const handleNextToStep3 = (e: React.FormEvent) => {
     e.preventDefault();
+    const normalized = normalizeLibyanPhone(phone);
+    if (!LIBYAN_PHONE_RE.test(normalized)) {
+      setStep2Error('أدخل رقم هاتف ليبي صحيح للمدير (مثال: 0912345678) — يُستخدم لتسجيل الدخول.');
+      return;
+    }
+    if (password.trim().length < 6 || isWeakPin(password.trim())) {
+      setStep2Error('اختر كلمة مرور من 6 خانات على الأقل، غير متسلسلة وغير مكررة (مثل 123456 أو 111111).');
+      return;
+    }
+    setPhone(normalized);
+    setStep2Error('');
     sound.playTap();
     setStep(3);
   };
@@ -327,8 +342,8 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
                     <input
                       type="tel"
                       required
-                      pattern="09[1234][0-9]{7}"
-                      title="رقم ليبي بصيغة 09xxxxxxxx"
+                      inputMode="tel"
+                      dir="ltr"
                       value={phone}
                       onChange={e => setPhone(e.target.value)}
                       placeholder="09xxxxxxxx"
@@ -395,9 +410,16 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
                       />
                       <Lock className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     </div>
+                    <span className="text-[10px] text-slate-400">6 خانات على الأقل — احفظها، ستدخل بها مع رقم الهاتف</span>
                   </div>
                 </div>
               </div>
+
+              {step2Error && (
+                <div role="alert" className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold">
+                  {step2Error}
+                </div>
+              )}
 
               {/* Navigation buttons */}
               <div className="pt-4 flex items-center justify-between gap-3">
@@ -458,7 +480,7 @@ export const FreeTrialModal: React.FC<FreeTrialModalProps> = ({ isOpen, onClose 
                       بيئة نموذجية متكاملة وغنية بالبيانات
                     </h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                      تتضمن 873 طالباً، 28 فصلاً، كشوفات حضور وغياب، سجل الدرجات المعتمد، سندات مالية تجريبية، ومحرك التصحيح الإلكتروني جاهزاً للعمل مباشرة.
+                      تتضمن طلاباً وفصولاً بأسماء تجريبية، كشوفات حضور وغياب، سجل الدرجات المعتمد، سندات مالية تجريبية، ومحرك التصحيح الإلكتروني جاهزاً للعمل مباشرة.
                     </p>
                   </div>
 

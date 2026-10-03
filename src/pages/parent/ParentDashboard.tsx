@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
-import { ExamStorageService } from '../../services/exams/examStorageService';
+import { useOfficialExamResult } from '../../hooks/useOfficialExamResult';
+import { OfficialResultCard } from '../../components/parent/OfficialResultCard';
 import {
   Award,
   CalendarCheck,
@@ -31,6 +32,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
 import { ParentStudentGate } from '../../components/parent/ParentStudentGate';
+import { todayAttendanceStatus, libyanAppreciation } from '../../services/domain/libyanCalendar';
 import { Student } from '../../types';
 
 export const ParentDashboard: React.FC = () => {
@@ -59,6 +61,7 @@ export const ParentDashboard: React.FC = () => {
   // Link Another Child Modal
   const [showLinkModal, setShowLinkModal] = useState<boolean>(false);
   const [childCodeInput, setChildCodeInput] = useState<string>('');
+  const [childAccessCode, setChildAccessCode] = useState<string>('');
 
   // Submit Absence Excuse Modal / Form
   const [showExcuseModal, setShowExcuseModal] = useState<boolean>(false);
@@ -73,38 +76,22 @@ export const ParentDashboard: React.FC = () => {
     previouslyLinkedStudents.forEach(s => {
       if (!list.some(x => x.id === s.id)) list.push(s);
     });
-    // If parent phone matches any other students, include them too
-    if (currentUserPhone) {
-      students.forEach(s => {
-        if (s.parentPhone === currentUserPhone && !list.some(x => x.id === s.id)) {
-          list.push(s);
-        }
-      });
-    }
+    // الإخوة بنفس الهاتف يُضافون عند التحقق في بوابة الدخول (لا مطابقة غير موثقة هنا)
     return list;
-  }, [parentLinkedStudent, previouslyLinkedStudents, currentUserPhone, students]);
+  }, [parentLinkedStudent, previouslyLinkedStudents]);
 
   const activeChild = parentLinkedStudent || parentChildren[0];
 
   // بوابة النشر: الدرجات محجوبة حتى يعتمد الكنترول ويُنشر الكشف رسمياً.
   // القاعدة: لا سجل قفل إطلاقاً = حالة legacy مفتوحة | قفل بلا نشر = محجوب | نشر = مرئي.
-  const [gradesReleased, setGradesReleased] = useState<boolean | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    setGradesReleased(null);
-    const cls = activeChild?.className;
-    if (!cls) { setGradesReleased(true); return; }
-    ExamStorageService.getExamLock(cls).then(lock => {
-      if (cancelled) return;
-      if (lock.releasedAt) setGradesReleased(true);
-      else if (lock.lockedAt) setGradesReleased(false);
-      else setGradesReleased(true);
-    }).catch(() => { if (!cancelled) setGradesReleased(true); });
-    return () => { cancelled = true; };
-  }, [activeChild?.className]);
+  // قفل الكنترول بلا نشر = الدرجات محجوبة؛ النتيجة الرسمية تظهر فقط بعد النشر
+  const { held: gradesHeld, report: officialReport } = useOfficialExamResult(activeChild);
+  const gradesReleased: boolean | null = gradesHeld === null ? null : !gradesHeld;
 
   // إحصائيات حضور حقيقية من السجل (بدل الأرقام الثابتة)
+  const showAverage = gradesReleased === true && (activeChild?.academicAverage ?? 0) > 0;
   const attHistory = activeChild?.recentAttendance || [];
+  const childToday = todayAttendanceStatus(activeChild);
   const attPresent = attHistory.filter(r => r.status === 'present').length;
   const attAbsent = attHistory.filter(r => r.status === 'unexcused').length;
 
@@ -116,13 +103,12 @@ export const ParentDashboard: React.FC = () => {
   if (!activeChild) {
     return (
       <ParentStudentGate
-        students={students}
+        onLink={(identifier, code) => linkStudent(identifier, code)}
         onSelectStudent={child => {
           setParentLinkedStudent(child);
           setSelectedStudent(child);
         }}
         previouslyLinkedStudents={previouslyLinkedStudents}
-        onUnlinkStudent={unlinkParentStudent}
       />
     );
   }
@@ -140,16 +126,12 @@ export const ParentDashboard: React.FC = () => {
     e.preventDefault();
     if (!childCodeInput.trim()) return;
 
-    const success = linkStudent(childCodeInput.trim());
+    const success = linkStudent(childCodeInput.trim(), childAccessCode.trim());
     if (success) {
-      sound.playSuccess();
       triggerConfetti();
-      showToast('gold', 'تم ربط الطالب بنجاح 🎉', 'تمت إضافة ابنك إلى حسابك والمتابعة الفورية.');
       setShowLinkModal(false);
       setChildCodeInput('');
-    } else {
-      sound.playAlert();
-      showToast('error', 'رمز غير صحيح', 'تأكد من رمز الطالب أو رقمه الوطني المكون من 4 أرقام أو 12 رقماً.');
+      setChildAccessCode('');
     }
   };
 
@@ -285,12 +267,14 @@ export const ParentDashboard: React.FC = () => {
             />
             <span
               className={`absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-black border ${
-                activeChild.status === 'present'
+                childToday === null
+                  ? 'bg-slate-500 text-white border-white'
+                  : childToday === 'present' || childToday === 'late'
                   ? 'bg-emerald-500 text-white border-white'
                   : 'bg-rose-500 text-white border-white'
               }`}
             >
-              {activeChild.status === 'present' ? 'حاضر اليوم' : 'غائب'}
+              {childToday === null ? 'لم يُرصد' : childToday === 'present' ? 'حاضر اليوم' : childToday === 'late' ? 'متأخر' : childToday === 'excused' ? 'غائب بعذر' : 'غائب'}
             </span>
           </div>
 
@@ -340,14 +324,14 @@ export const ParentDashboard: React.FC = () => {
         {/* Card 2: Academic Average & Rank */}
         <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-center flex flex-col items-center justify-center space-y-2">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-50 dark:bg-blue-950/50 border-4 border-blue-500 flex items-center justify-center text-blue-700 dark:text-blue-300 font-black text-lg sm:text-xl shadow-inner">
-            {activeChild.academicAverage != null ? `${activeChild.academicAverage}%` : '—'}
+            {showAverage ? `${activeChild.academicAverage}%` : '—'}
           </div>
           <div>
             <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 block">
-              المعدل العام ({activeChild.appreciation || 'لم يُحتسب بعد'})
+              المعدل العام ({showAverage ? libyanAppreciation(activeChild.academicAverage) : 'لم يُحتسب بعد'})
             </span>
             <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold block">
-              {activeChild.academicAverage != null ? 'وفق آخر رصد معتمد' : 'بانتظار رصد الدرجات'}
+              {showAverage ? 'وفق آخر رصد معتمد' : gradesReleased === false ? 'بانتظار اعتماد الكنترول' : 'بانتظار رصد الدرجات'}
             </span>
           </div>
         </div>
@@ -434,6 +418,7 @@ export const ParentDashboard: React.FC = () => {
             </div>
           ) : (
           <>
+          {officialReport && <OfficialResultCard report={officialReport} />}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -783,33 +768,41 @@ export const ParentDashboard: React.FC = () => {
 
             <form onSubmit={handleLinkNewChild} className="space-y-4 text-xs">
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                أدخل رمز الطالب (المكون من 4 أرقام أو كود الربط أو الرقم الوطني الصادر من المدرسة):
+                أدخل الرقم الوطني للابن (أو رقم القيد) ورمز دخول ولي الأمر الخاص به من بطاقة المدرسة:
               </p>
 
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  رمز الربط أو الرقم الوطني:
-                </label>
-                <input
-                  type="text"
-                  placeholder="مثال: SCH-2026-L2 أو 220082345678"
-                  value={childCodeInput}
-                  onChange={e => setChildCodeInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              {/* Demo Hint */}
-              <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[11px] text-blue-900 dark:text-blue-200">
-                <span>💡 للتجربة السريعة: اضغط لربط الابنة آية الترهوني: </span>
-                <button
-                  type="button"
-                  onClick={() => setChildCodeInput('SCH-2026-L2')}
-                  className="font-black text-blue-700 dark:text-blue-300 underline"
-                >
-                  SCH-2026-L2
-                </button>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="pd-child-id" className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    الرقم الوطني أو رقم القيد:
+                  </label>
+                  <input
+                    id="pd-child-id"
+                    type="text"
+                    inputMode="numeric"
+                    value={childCodeInput}
+                    onChange={e => setChildCodeInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
+                    dir="ltr"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="pd-child-code" className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    رمز دخول ولي الأمر (6 أرقام):
+                  </label>
+                  <input
+                    id="pd-child-code"
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={childAccessCode}
+                    onChange={e => setChildAccessCode(e.target.value.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/\D/g, ''))}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm tracking-[0.4em] text-center border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
+                    dir="ltr"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-2">

@@ -1,6 +1,7 @@
 import { Student } from '../../types';
 import { getCleanAvatar } from '../../utils/avatarHelper';
 import * as pdfjsLib from 'pdfjs-dist';
+import { currentAcademicYear } from '../domain/libyanCalendar';
 
 // Configure pdfjs worker to load from CDN or bundled worker
 if (typeof window !== 'undefined' && 'Worker' in window) {
@@ -146,7 +147,7 @@ export class LibyanPdfStudentParser {
    */
   static parseSpatialPages(pagesLines: TextLine[][]): PdfParseResult {
     const parsedStudents: ParsedStudentRow[] = [];
-    let detectedAcademicYear = '2025 - 2026 م';
+    let detectedAcademicYear = currentAcademicYear();
     let detectedGrade = 'الصف التاسع الأساسي';
     let detectedSchoolName = 'مدرسة التعليم الأساسي';
 
@@ -251,7 +252,7 @@ export class LibyanPdfStudentParser {
 
           const targetClass = pageClassName || `${pageGrade.includes('التاسع') ? '9' : pageGrade.includes('السابع') ? '7' : '1'}/${pageSectionCode}`;
 
-          if (!parsedStudents.some(s => s.nationalNumber === nationalNumber || s.name === studentName)) {
+          if (!parsedStudents.some(s => (nationalNumber && s.nationalNumber === nationalNumber) || s.name === studentName)) {
             parsedStudents.push({
               name: studentName,
               nationalNumber,
@@ -396,7 +397,7 @@ export class LibyanPdfStudentParser {
         'قائمة', 'بالطلبة', 'المسجلين', 'السجلين', 'حسب', 'المستوى', 'الستوى', 'الدراسي', 'الدراسيي', 'والفصل'
       ]);
 
-      let detectedAcademicYear = '2025 - 2026 م';
+      let detectedAcademicYear = currentAcademicYear();
       let detectedSchoolName = '';
       let detectedGrade = 'التعليم الأساسي (الصفوف 1 - 9)';
 
@@ -591,9 +592,11 @@ export class LibyanPdfStudentParser {
       const words = cleanName.split(/\s+/).filter(w => w.length > 1);
 
       if (words.length >= 2) {
-        const nationalNumber = natMatch ? natMatch[1] : `12008${String(i + 1000000).slice(-7)}`;
-        const gender: 'male' | 'female' = nationalNumber.startsWith('1') ? 'male' : 'female';
-        const birthYear = nationalNumber.substring(1, 5);
+        // الرقم الوطني الليبي: الخانة الأولى الجنس (1 ذكر، 2 أنثى) والأربع التالية سنة الميلاد.
+        // لا يُختلق رقم عند غيابه — يُترك فارغاً ليكمله المدير.
+        const nationalNumber = natMatch ? natMatch[1] : '';
+        const gender: 'male' | 'female' = nationalNumber.startsWith('2') ? 'female' : 'male';
+        const birthYear = nationalNumber ? nationalNumber.substring(1, 5) : '';
 
         const studentName = words.join(' ');
         const motherName = '—';
@@ -612,14 +615,14 @@ export class LibyanPdfStudentParser {
             nationalNumber,
             motherName,
             gender,
-            birthDate: `${birthYear}-01-15`,
-            birthPlace: 'طرابلس',
+            birthDate: birthYear ? `${birthYear}-01-01` : '',
+            birthPlace: '',
             grade,
             className,
             sectionCode,
-            academicYear: '2025 - 2026 م',
-            parentPhone: '0922465676',
-            confidenceScore: 92
+            academicYear: currentAcademicYear(),
+            parentPhone: '',
+            confidenceScore: natMatch ? 80 : 50
           });
         }
       }
@@ -630,7 +633,7 @@ export class LibyanPdfStudentParser {
       totalPages: 1,
       totalStudentsFound: parsedStudents.length,
       students: parsedStudents,
-      detectedAcademicYear: '2025 - 2026 م',
+      detectedAcademicYear: currentAcademicYear(),
       detectedGrade: fullText.includes('التاسع') ? 'الصف التاسع الأساسي' : 'الصف الثالث الأساسي',
       rawTextSample: fullText.substring(0, 500)
     };
@@ -656,41 +659,19 @@ export class LibyanPdfStudentParser {
       birthPlace: row.birthPlace,
       sectionCode: row.sectionCode,
       academicYear: row.academicYear,
-      parentName: `ولي أمر الطالب ${row.name}`,
+      parentName: '',
       parentPhone: row.parentPhone,
-      parentEmail: `parent.${row.nationalNumber.slice(-4)}@madrasa.ly`,
+      parentEmail: '',
       status: 'present',
-      attendanceRate: 98,
-      academicAverage: 90,
-      behaviorRating: 'ممتاز',
-      behaviorPointsTotal: 25,
-      points: 25,
-      behaviorPoints: [
-        {
-          id: `bp-${Date.now()}-1`,
-          category: 'positive',
-          title: 'استيراد السجل الرسمي المعتمد من المنظومة',
-          points: 5,
-          icon: '⭐',
-          date: 'الآن',
-          teacher: 'إدارة المنظومة'
-        }
-      ],
-      competencies: [
-        { name: 'الاستيعاب والفهم', score: 90, maxScore: 100 },
-        { name: 'الانضباط والحضور', score: 95, maxScore: 100 },
-        { name: 'المشاركة والأنشطة', score: 88, maxScore: 100 },
-        { name: 'حل الواجبات', score: 92, maxScore: 100 }
-      ],
-      subjects: [
-        { name: 'الرياضيات', score: 95, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'ممتاز' },
-        { name: 'اللغة العربية', score: 92, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'ممتاز' },
-        { name: 'العلوم', score: 90, maxScore: 100, teacher: 'أ. فاطمة المجبري', evaluation: 'ممتاز' },
-        { name: 'الحاسوب', score: 96, maxScore: 100, teacher: 'أ. محمد الزوي', evaluation: 'ممتاز' },
-        { name: 'اللغة الإنجليزية', score: 88, maxScore: 100, teacher: 'أ. خديجة الترهوني', evaluation: 'جيد جداً' },
-        { name: 'التربية الإسلامية', score: 98, maxScore: 100, teacher: 'أ. عثمان السويحلي', evaluation: 'ممتاز' },
-        { name: 'الدراسات الاجتماعية', score: 91, maxScore: 100, teacher: 'أ. مريم المنفي', evaluation: 'ممتاز' }
-      ]
+      attendanceRate: 100,
+      academicAverage: 0,
+      behaviorRating: 'جيد',
+      behaviorPointsTotal: 0,
+      behaviorPoints: [],
+      competencies: [],
+      // لا درجات مختلقة: تُرصد من سجل الدرجات وتظهر لولي الأمر بعد اعتماد الكنترول
+      subjects: [],
+      recentAttendance: [],
     };
   }
 }

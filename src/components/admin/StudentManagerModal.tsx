@@ -4,6 +4,8 @@ import { Student, AttendanceStatus } from '../../types';
 import { useSchool } from '../../context/SchoolContext';
 import { sound } from '../../utils/soundEffects';
 import { getCleanAvatar } from '../../utils/avatarHelper';
+import { cleanNationalNumber, gradeFromClassName } from '../../services/importers/rosterSanitizer';
+import { LIBYAN_PHONE_RE, normalizeLibyanPhone } from '../../services/security/authEngine';
 
 interface StudentManagerModalProps {
   isOpen: boolean;
@@ -60,7 +62,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
       setClassName(availableClasses[0] || '1/1 مساء');
       setNationalNumber('');
       setStudentNumber(String(Math.floor(1000000 + Math.random() * 9000000))); // Random 7-digit registration number
-      setMotherName('—');
+      setMotherName('');
       setBirthDate('');
       setGender('male');
       setParentName('');
@@ -71,17 +73,6 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Auto-generate Libyan National Number if empty
-  const handleAutoGenerateNationalId = () => {
-    const genderDigit = gender === 'male' ? '1' : '2';
-    const birthYear = birthDate ? birthDate.split('-')[0] : '2015';
-    const randomSuffix = String(Math.floor(1000000 + Math.random() * 9000000));
-    const generated = `${genderDigit}${birthYear}${randomSuffix}`;
-    setNationalNumber(generated);
-    sound.playSuccess();
-    showToast('info', 'تم توليد رقم وطني افتراضي', generated);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -90,8 +81,18 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
       return;
     }
 
-    const finalNationalNumber = nationalNumber.trim() || `${gender === 'male' ? '1' : '2'}${birthDate.split('-')[0]}${studentNumber}`;
-    const cleanMother = motherName.trim() || '—';
+    // لا يُولَّد رقم وطني: إما الرقم الحقيقي (12 خانة) أو يُترك فارغاً ليُستكمل
+    const finalNationalNumber = cleanNationalNumber(nationalNumber);
+    if (nationalNumber.trim() && !finalNationalNumber) {
+      showToast('error', 'الرقم الوطني', 'الرقم الوطني الليبي 12 خانة — صححه أو اتركه فارغاً.');
+      return;
+    }
+    const cleanPhone = parentPhone.trim() && parentPhone.trim() !== '09' ? normalizeLibyanPhone(parentPhone) : '';
+    if (cleanPhone && !LIBYAN_PHONE_RE.test(cleanPhone)) {
+      showToast('error', 'هاتف ولي الأمر', 'أدخل رقماً ليبياً صحيحاً (09xxxxxxxx) أو اتركه فارغاً.');
+      return;
+    }
+    const cleanMother = motherName.trim() === '—' ? '' : motherName.trim();
 
     if (studentToEdit) {
       // Edit existing student
@@ -101,15 +102,15 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
             ...s,
             name: name.trim(),
             className,
-            grade: className.split('/')[0] ? `الصف ${className.split('/')[0]}` : s.grade,
+            grade: gradeFromClassName(className) || s.grade,
             nationalNumber: finalNationalNumber,
             nationalId: finalNationalNumber,
             studentNumber: studentNumber.trim(),
             motherName: cleanMother,
             birthDate,
             gender,
-            parentName: parentName.trim() || `ولي أمر ${name.trim()}`,
-            parentPhone: parentPhone.trim(),
+            parentName: parentName.trim(),
+            parentPhone: cleanPhone,
             status
           };
         }
@@ -126,45 +127,29 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
         id: newId,
         name: name.trim(),
         className,
-        grade: className.split('/')[0] ? `الصف ${className.split('/')[0]}` : 'الصف الأول',
+        grade: gradeFromClassName(className),
         nationalNumber: finalNationalNumber,
         nationalId: finalNationalNumber,
         studentNumber: studentNumber.trim(),
-        linkCode: `SCH-${finalNationalNumber.slice(-4)}`,
+        linkCode: `STD-${finalNationalNumber || newId}`,
         avatar: getCleanAvatar(name.trim(), gender),
         gender,
-        parentName: parentName.trim() || `ولي أمر ${name.trim()}`,
-        parentPhone: parentPhone.trim(),
+        parentName: parentName.trim(),
+        parentPhone: cleanPhone,
         parentEmail: '',
         motherName: cleanMother,
         birthDate,
-        birthPlace: schoolProfile.district || 'ليبيا',
+        birthPlace: '',
         status,
         attendanceRate: 100,
-        academicAverage: 88,
-        courseworkScore: 36,
-        examScore: 52,
-        totalScore: 88,
-        appreciation: 'جيد جداً',
-        behaviorRating: 'ممتاز',
-        behaviorPointsTotal: 10,
+        academicAverage: 0,
+        behaviorRating: 'جيد',
+        behaviorPointsTotal: 0,
         behaviorPoints: [],
-        competencies: [
-          { name: 'القراءة والكتابة', score: 90, maxScore: 100 },
-          { name: 'الرياضيات والعمليات الحسابية', score: 85, maxScore: 100 },
-          { name: 'المشاركة الصفية', score: 95, maxScore: 100 },
-          { name: 'الانضباط والغياب', score: 100, maxScore: 100 }
-        ],
-        subjects: [
-          { name: 'اللغة العربية', code: 'ARB', score: 90, maxScore: 100, teacher: 'أ. فاطمة الترهوني', evaluation: 'ممتاز', courseworkScore: 36, examScore: 54, totalScore: 90 },
-          { name: 'الرياضيات', code: 'MATH', score: 85, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'جيد جداً', courseworkScore: 34, examScore: 51, totalScore: 85 },
-          { name: 'العلوم', code: 'SCI', score: 88, maxScore: 100, teacher: 'أ. هناء الورفلي', evaluation: 'جيد جداً', courseworkScore: 35, examScore: 53, totalScore: 88 },
-          { name: 'اللغة الإنجليزية', code: 'ENG', score: 84, maxScore: 100, teacher: 'أ. عمر السنوسي', evaluation: 'جيد جداً', courseworkScore: 33, examScore: 51, totalScore: 84 },
-          { name: 'التربية الإسلامية', code: 'ISL', score: 95, maxScore: 100, teacher: 'أ. عبد السلام الزوي', evaluation: 'ممتاز', courseworkScore: 38, examScore: 57, totalScore: 95 },
-          { name: 'التاريخ', code: 'HIST', score: 80, maxScore: 100, teacher: 'أ. مروان القماطي', evaluation: 'جيد', courseworkScore: 32, examScore: 48, totalScore: 80 },
-          { name: 'الجغرافيا', code: 'GEOG', score: 82, maxScore: 100, teacher: 'أ. نجاة الكيلاني', evaluation: 'جيد', courseworkScore: 32, examScore: 50, totalScore: 82 },
-          { name: 'الحاسوب والتقنية', code: 'COMP', score: 92, maxScore: 100, teacher: 'أ. خديجة العريبي', evaluation: 'ممتاز', courseworkScore: 36, examScore: 56, totalScore: 92 }
-        ]
+        competencies: [],
+        // لا درجات مختلقة: تُرصد من سجل الدرجات وتظهر لولي الأمر بعد اعتماد الكنترول
+        subjects: [],
+        recentAttendance: [],
       };
 
       const updated = [newStudent, ...students];
@@ -191,7 +176,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
                 {studentToEdit ? 'تعديل بيانات الطالب في المنظومة' : 'تسجيل وإضافة طالب جديد في المنظومة'}
               </h3>
               <p className="text-xs text-blue-200/80">
-                مطابق لسجلات وزارة التربية والتعليم والمركز الوطني للامتحانات (ليبيا)
+                بيانات القيد كما في كتيب العائلة / شهادة الميلاد
               </p>
             </div>
           </div>
@@ -280,14 +265,7 @@ export const StudentManagerModal: React.FC<StudentManagerModalProps> = ({
                   <Hash className="w-4 h-4 text-emerald-600" />
                   <span>الرقم الوطني الليبي (12 رقماً):</span>
                 </label>
-                <button
-                  type="button"
-                  onClick={handleAutoGenerateNationalId}
-                  className="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-0.5"
-                >
-                  <Sparkles className="w-3 h-3" />
-                  <span>توليد آلي ⚡</span>
-                </button>
+                <span className="text-[10px] text-slate-400">اختياري — 12 خانة من الكتيب/الشهادة</span>
               </div>
               <input
                 type="text"

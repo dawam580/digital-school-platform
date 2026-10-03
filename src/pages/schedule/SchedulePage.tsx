@@ -500,7 +500,7 @@ export const SchedulePage: React.FC = () => {
               </p>
               <p>الفترة: الصباحية (08:00 - 01:00)</p>
               <p>زمن الحصة: 45 دقيقة</p>
-              <p className="text-[10px] text-slate-500">لائحة 1013 لسنة 2022م</p>
+              <p className="text-[10px] text-slate-500">نظام التعليم الأساسي</p>
             </div>
           </div>
         </div>

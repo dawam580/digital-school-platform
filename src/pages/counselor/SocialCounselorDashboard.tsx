@@ -48,6 +48,7 @@ import { LIBYAN_COMMON_PROBLEMS } from '../../services/counselor/libyanSchoolPro
 import { NewCaseStudyModal } from '../../components/counselor/NewCaseStudyModal';
 import { NewSessionModal } from '../../components/counselor/NewSessionModal';
 import { NewSummonModal } from '../../components/counselor/NewSummonModal';
+import { CounselorFollowUpPanel } from '../../components/counselor/CounselorFollowUpPanel';
 import { AutoSummonCardModal } from '../../components/counselor/AutoSummonCardModal';
 import { StudentFollowUpFormModal } from '../../components/counselor/StudentFollowUpFormModal';
 import { sound } from '../../utils/soundEffects';
@@ -72,11 +73,14 @@ export const SocialCounselorDashboard: React.FC = () => {
     teachers,
     showToast,
     addNotification,
-    currentUserPhone
+    currentUserPhone,
+    currentTeacher,
+    schoolProfile
   } = useSchool();
 
   // Navigation mode: 'main_menu' (2 buttons), 'reports'
-  const [currentView, setCurrentView] = useState<'main_menu' | 'reports'>('main_menu');
+  const [currentView, setCurrentView] = useState<'main_menu' | 'reports' | 'followup'>('main_menu');
+  const [summonStudentId, setSummonStudentId] = useState<string | undefined>(undefined);
 
   // Reports sub-tab: 'weekly' or 'monthly'
   const [reportSubTab, setReportSubTab] = useState<'weekly' | 'monthly'>('weekly');
@@ -102,7 +106,8 @@ export const SocialCounselorDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Current selected student object
-  const currentReportStudent = students.find(s => s.id === selectedStudentForReportId) || students[0];
+  // مدرسة جديدة بلا طلاب: كائن فارغ آمن بدل انهيار الشاشة
+  const currentReportStudent: Student = students.find(s => s.id === selectedStudentForReportId) || students[0] || ({ id: '', name: '—', className: '—', subjects: [] } as unknown as Student);
 
   // Specific student follow-up form if exists
   const studentForm = followUpForms.find(f => f.studentId === currentReportStudent.id) || followUpForms[0];
@@ -221,11 +226,13 @@ export const SocialCounselorDashboard: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-emerald-200/90 mt-1">
-                وزارة التربية والتعليم - دولة ليبيا (2025 - 2026 م) • استمارات متابعة مستوى الطلاب والتقارير
+                {schoolProfile.name} • العام الدراسي {schoolProfile.academicYear}
               </p>
+              {currentTeacher && (
               <p className="text-[11px] text-slate-400 mt-0.5">
-                المرشد التربوي / الأخصائية الاجتماعية: <strong className="text-white">أ. نجوى القماطي</strong> (الرمز: <span className="font-mono text-emerald-300">LIB-SOC-01</span>)
+                الأخصائي الاجتماعي: <strong className="text-white">{currentTeacher.name}</strong> (الرمز: <span className="font-mono text-emerald-300">{currentTeacher.code}</span>)
               </p>
+              )}
             </div>
           </div>
 
@@ -235,7 +242,7 @@ export const SocialCounselorDashboard: React.FC = () => {
               className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-2xl transition text-xs border border-white/20 shrink-0 self-start md:self-auto"
             >
               <ArrowRight className="w-4 h-4" />
-              <span>العودة للواجهة الرئيسية (الزرين)</span>
+              <span>العودة للواجهة الرئيسية</span>
             </button>
           )}
         </div>
@@ -249,12 +256,30 @@ export const SocialCounselorDashboard: React.FC = () => {
           
           <div className="text-center space-y-1 py-1">
             <h2 className="text-lg font-black text-slate-800 dark:text-white">
-              مرحباً بك أ. نجوى، يرجى اختيار الإجراء المطلوب:
+              مرحباً بك{currentTeacher ? ` ${currentTeacher.name}` : ''}، اختر الإجراء المطلوب:
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               واجهة مبسطة مصممة بوضوح لإنجاز استمارات المتابعة وإصدار التقارير بنقرة زر
             </p>
           </div>
+
+          {/* المتابعة اليومية: الغياب المتكرر + الاستدعاءات */}
+          <button
+            type="button"
+            onClick={() => { setCurrentView('followup'); sound.playTap(); }}
+            className="w-full text-right p-5 rounded-3xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white shadow-xl transition flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">📩</span>
+              <div>
+                <p className="text-lg font-black">المتابعة والاستدعاءات</p>
+                <p className="text-xs text-amber-50/90">الغياب المتكرر • الإنذارات الآلية • استدعاء ولي الأمر وتأكيد حضوره</p>
+              </div>
+            </div>
+            <span className="px-3 py-1.5 rounded-xl bg-white text-orange-700 text-xs font-black shrink-0">
+              {pendingAutoSummonsCount + parentSummons.filter(sm => sm.status === 'sent').length} بانتظار المتابعة
+            </span>
+          </button>
 
           {/* The 2 Primary Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
@@ -705,6 +730,24 @@ export const SocialCounselorDashboard: React.FC = () => {
 
         </div>
       )}
+
+      {currentView === 'followup' && (
+        <CounselorFollowUpPanel
+          onNewSummon={(studentId) => { setSummonStudentId(studentId); setShowNewSummonModal(true); }}
+          onOpenCase={(studentId) => { setSelectedStudentForCase(studentId); setShowNewCaseModal(true); }}
+          onOpenAutoCard={(card) => setSelectedCardForModal(card)}
+        />
+      )}
+
+      <NewSummonModal
+        isOpen={showNewSummonModal}
+        preselectedStudentId={summonStudentId}
+        onClose={() => { setShowNewSummonModal(false); setSummonStudentId(undefined); }}
+        onSendSummon={(summon) => {
+          setParentSummons(prev => [summon, ...prev]);
+          showToast('gold', 'تم إرسال الاستدعاء ✉️', `وصل الاستدعاء لولي أمر ${summon.studentName} في تطبيقه.`);
+        }}
+      />
 
       {/* Student Follow-Up & Evaluation Form Modal */}
       <StudentFollowUpFormModal

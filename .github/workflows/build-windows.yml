@@ -1,0 +1,60 @@
+name: Build Windows Installer (بناء برنامج ويندوز)
+
+# يبني برنامج المدرسة (تثبيت + نسخة محمولة) على خوادم GitHub ويضعه للتنزيل
+# في صفحة التشغيل (Artifacts). لا يحتاج المورّد أي برامج على جهازه.
+# عنوان خادم تطبيق أولياء الأمور يُضبط من: Settings ← Secrets and variables ← Actions ← Variables
+#   PARENT_RELAY_URL = https://....onrender.com
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+    paths-ignore:
+      - '**.md'
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    env:
+      VITE_PARENT_RELAY_URL: ${{ vars.PARENT_RELAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck + tests
+        run: |
+          npm run typecheck
+          npm run test:real
+
+      - name: Build app
+        run: npm run build
+
+      - name: Build installer + portable
+        run: npx electron-builder --win --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Delivery check (no vendor guide, key pair sanity)
+        run: node scripts/package-client.cjs
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: منظومة-المدرسة-الرقمية-ويندوز
+          path: |
+            dist-electron/*.exe
+            دليل_التشغيل_والترخيص_المدرسي.txt
+          retention-days: 30

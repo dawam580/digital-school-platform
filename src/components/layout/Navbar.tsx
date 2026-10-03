@@ -64,6 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
     setShowPdfImporterModal,
     setShowCustomCodeModal,
     students,
+    previouslyLinkedStudents,
     selectedStudent,
     setSelectedStudent,
     setIsCommandPaletteOpen,
@@ -100,6 +101,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   ];
 
   const isStaffMember = ['admin', 'exams_coordinator', 'teacher', 'counselor'].includes(currentRole);
+  // أدوات الإدارة (المدارس، الاشتراك، معاينة تطبيق ولي الأمر) لا تظهر للمعلم أو الأخصائي أو ولي الأمر
+  const isSchoolAdmin = authenticatedRole === 'admin' || (authenticatedRole === 'superadmin' && superUnlocked);
   const currentRoleInfo = allRoles.find(r => r.id === currentRole) || staffRoles[0];
 
   // إخفاء الواجهات عن بعضها: كل هوية ترى في القائمة ما يحق لها فتحه فقط
@@ -129,31 +132,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               />
               <div className="hidden md:block text-right">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight">
+                  <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight max-w-[320px] truncate" title={schoolProfile.name}>
                     {schoolProfile.name}
                   </h1>
                   {/* Libyan Badge */}
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap shrink-0 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>ليبيا {schoolProfile.academicYear}</span>
+                    <span>{schoolProfile.academicYear}</span>
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-medium">{schoolProfile.district} • النظام المعتمد</p>
+                <p className="text-xs text-slate-400 font-medium">{schoolProfile.district}</p>
               </div>
             </button>
           </div>
 
           {/* Center Search Spotlight Trigger (Desktop) */}
-          <div className="hidden lg:flex flex-1 max-w-md mx-4">
+          <div className="hidden 2xl:flex flex-1 max-w-sm mx-4">
             <button
               onClick={() => { setIsCommandPaletteOpen(true); sound.playTap(); }}
               className="w-full bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 rounded-2xl py-2.5 pr-10 pl-4 text-xs text-slate-400 text-right flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-2">
                 <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
-                <span>بحث فوري عن طالب، درجة، واجب، أو محادثة (Ctrl + K)...</span>
+                <span className="truncate">بحث عن طالب أو صفحة...</span>
               </div>
-              <span className="font-mono text-[10px] bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 font-bold">
+              <span className="font-mono text-[10px] whitespace-nowrap bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 font-bold">
                 Ctrl K
               </span>
             </button>
@@ -194,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                     <div className="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700">
                       الأبناء المسجلون بحسابك
                     </div>
-                    {students.slice(0, 3).map(student => (
+                    {previouslyLinkedStudents.map(student => (
                       <button
                         key={student.id}
                         onClick={() => { setSelectedStudent(student); setShowStudentMenu(false); sound.playTap(); }}
@@ -224,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 title={`أنت تعمل بصفتك: ${currentRoleInfo.label}`}
               >
                 {currentRoleInfo.icon}
-                <span className="hidden sm:inline">{currentRoleInfo.label}</span>
+                <span className="hidden sm:inline whitespace-nowrap">{currentRoleInfo.label}</span>
               </div>
             )}
 
@@ -313,7 +316,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                 title="أدوات ومميزات المنظومة السريعة"
               >
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span className="hidden sm:inline">أدوات المنظومة</span>
+                <span className="hidden sm:inline whitespace-nowrap">أدوات المنظومة</span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
 
@@ -323,6 +326,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                     أدوات ومميزات المدرسة ⚡
                   </div>
 
+                  {isSchoolAdmin && (<>
+                  <button
+                    onClick={() => { setShowSchoolManagerModal(true); setShowToolsMenu(false); sound.playTap(); }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-800 dark:text-blue-300 transition-colors"
+                  >
+                    <Building2 className="w-4 h-4 text-blue-600 shrink-0" />
+                    <div>
+                      <p className="font-bold">المدارس (إضافة / تبديل)</p>
+                      <p className="text-[10px] text-slate-400">بيانات كل مدرسة معزولة تماماً</p>
+                    </div>
+                  </button>
                   <button
                     onClick={() => { setActiveTab('landing'); setShowToolsMenu(false); sound.playTap(); }}
                     className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-300 transition-colors"
@@ -334,6 +348,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                     </div>
                   </button>
 
+                  </>)}
                   <button
                     onClick={() => { setShowComprehensiveGuide(true); setShowToolsMenu(false); sound.playTap(); }}
                     className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-300 transition-colors"
@@ -345,6 +360,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                     </div>
                   </button>
 
+                  {isSchoolAdmin && (<>
                   <button
                     onClick={() => { setActiveTab('parent-mobile'); setShowToolsMenu(false); sound.playTap(); }}
                     className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-right text-xs hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 transition-colors"
@@ -366,6 +382,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                       <p className="text-[10px] text-slate-400">تثبيت التطبيق على الجوال</p>
                     </div>
                   </button>
+
+                  </>)}
 
                   {(authenticatedRole === 'admin' || (authenticatedRole === 'superadmin' && superUnlocked)) && (
                     <button
@@ -406,7 +424,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-              title={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'}
+              title={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'} aria-label={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'}
             >
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -419,7 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                   ? 'bg-blue-50/60 dark:bg-blue-950/40 border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300'
                   : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400'
               }`}
-              title={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'}
+              title={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'} aria-label={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -428,10 +446,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             <button
               onClick={() => { logout(); sound.playTap(); }}
               className="flex items-center gap-1 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-black text-xs border border-rose-200 dark:border-rose-800/60 shadow-sm transition-all active:scale-95"
-              title="الرجوع إلى شاشة الدخول"
+              title="تسجيل الخروج"
+              aria-label="تسجيل الخروج"
             >
               <LogOut className="w-4 h-4 text-rose-600" />
-              <span className="hidden sm:inline">⬅️ رجوع</span>
+              <span className="hidden sm:inline">خروج</span>
             </button>
 
           </div>

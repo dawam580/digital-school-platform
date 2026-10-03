@@ -2,6 +2,7 @@ import React from 'react';
 import { Award, Printer, X, Sparkles, Star } from 'lucide-react';
 import { Student } from '../../types';
 import { sound } from '../../utils/soundEffects';
+import { currentAcademicYear } from '../../services/domain/libyanCalendar';
 import { StudentFullExamReport } from '../../services/exams/libyanExamEngine';
 
 interface GoldenCertificateModalProps {
@@ -75,7 +76,7 @@ export const GoldenCertificateModal: React.FC<GoldenCertificateModalProps> = ({
             <h1 className="text-2xl sm:text-3xl font-black text-amber-900 tracking-wide mt-2">
               شهادة تقدير وتفوق دراسي
             </h1>
-            <p className="text-xs text-amber-700 font-bold">للعام الدراسي 2025 - 2026 م</p>
+            <p className="text-xs text-amber-700 font-bold">للعام الدراسي {currentAcademicYear()}</p>
           </div>
 
           {/* Body Text */}

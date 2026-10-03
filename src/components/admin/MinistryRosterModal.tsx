@@ -88,13 +88,13 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-black text-white">الكشف الوزاري المعتمد (طبق الأصل 100%)</h3>
+                <h3 className="text-base font-black text-white">كشف بيانات الطلاب (نموذج المدرسة)</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500 text-white font-black">
-                  المركز الوطني للامتحانات
+                  A4
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
-                نفس تنسيق وتصميم كشف وزارة التربية والتعليم الليبية بدقة متناهية وجاهز للطباعة A4
+                بأعمدة الكشوف المتداولة في المدارس الليبية — يصدر باسم المدرسة ويُعتمد بختمها
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export const MinistryRosterModal: React.FC<MinistryRosterModalProps> = ({
             <div className="text-right leading-relaxed">
               <strong className="block text-sm font-black text-slate-950">دولة ليبيا</strong>
               <strong className="block font-black text-slate-900">وزارة التربية والتعليم</strong>
-              <span className="block font-bold text-slate-800">المركز الوطني للامتحانات</span>
+              <span className="block font-bold text-slate-800">{schoolProfile.district || 'مراقبة التربية والتعليم'}</span>
             </div>
 
             {/* Center: Title & School Name */}

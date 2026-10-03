@@ -8,7 +8,7 @@ const batchFile = path.join(projectDir, 'Run-School-Desktop.bat');
 const iconFile = path.join(projectDir, 'public', 'favicon.ico');
 
 const shortcutNames = [
-  'مدرسة الشهيد امحمد الباعور.lnk',
+  'منظومة المدرسة الرقمية.lnk',
   'School-Platform.lnk'
 ];
 

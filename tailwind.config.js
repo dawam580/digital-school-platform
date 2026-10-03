@@ -3,6 +3,7 @@ export default {
   darkMode: 'class',
   content: [
     "./index.html",
+    "./parent-app/index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
@@ -37,7 +38,7 @@ export default {
         }
       },
       fontFamily: {
-        cairo: ['Cairo', 'Be Vietnam Pro', 'sans-serif'],
+        cairo: ['Cairo Variable', 'Cairo', 'Tajawal', 'sans-serif'],
         tajawal: ['Tajawal', 'sans-serif']
       },
       boxShadow: {

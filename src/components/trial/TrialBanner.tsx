@@ -21,12 +21,14 @@ export const TrialBanner: React.FC = () => {
     trialFreeExtendsLeft,
     setShowUpgradeModal,
     extendTrialDays,
-    exportSchoolPackage
+    exportSchoolPackage,
+    authenticatedRole
   } = useSchool();
 
   const [isMinimized, setIsMinimized] = useState(false);
 
-  if (!isTrialActive) return null;
+  // شريط الاشتراك شأن إداري: لا يظهر للمعلم أو الأخصائي أو ولي الأمر
+  if (!isTrialActive || (authenticatedRole !== 'admin' && authenticatedRole !== 'superadmin')) return null;
 
   const handleOpenUpgrade = () => {
     sound.playTap();

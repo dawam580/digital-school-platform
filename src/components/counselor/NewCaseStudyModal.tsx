@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { X, Sparkles, AlertTriangle, ShieldCheck, HeartHandshake, User, Plus, Check } from 'lucide-react';
 import { SocialCaseStudy } from '../../types';
@@ -22,6 +22,9 @@ export const NewCaseStudyModal: React.FC<NewCaseStudyModalProps> = ({
 }) => {
   const { students } = useSchool();
   const [selectedStudentId, setSelectedStudentId] = useState(preselectedStudentId || students[0]?.id || '');
+  useEffect(() => {
+    if (isOpen && preselectedStudentId) setSelectedStudentId(preselectedStudentId);
+  }, [isOpen, preselectedStudentId]);
   const [selectedCategory, setSelectedCategory] = useState<SocialCaseStudy['category']>('absence_dropout');
   const [priority, setPriority] = useState<SocialCaseStudy['priority']>('medium');
   const [symptoms, setSymptoms] = useState('');

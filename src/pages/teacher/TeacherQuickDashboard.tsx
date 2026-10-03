@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
+import { conversationIdFor } from '../chat/ParentTeacherChat';
 import { AttendanceStatus } from '../../types';
 import {
   CheckCircle2,
@@ -67,7 +68,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     setCurrentRole,
     isReadOnlyPreview,
     authenticatedRole,
-    schoolProfile
+    schoolProfile,
+    sendChatMessage
   } = useSchool();
 
   // Custom Attendance State
@@ -128,18 +130,34 @@ export const TeacherQuickDashboard: React.FC = () => {
 
   const teacherSubject = currentTeacher?.subject || 'الرياضيات';
 
+  const findRecordedSubject = (studentId: string) => {
+    const std = students.find(s => s.id === studentId);
+    return std?.subjects?.find(sub => sub.name === teacherSubject || sub.code === currentTeacher?.subjectCode);
+  };
+
+  /** هل لهذا الطالب درجة مرصودة فعلاً (محفوظة أو أدخلها المعلم الآن)؟ */
+  const hasScore = (studentId: string) => {
+    if (classScores[studentId]) return true;
+    const existing = findRecordedSubject(studentId);
+    return existing?.courseworkScore !== undefined || existing?.examScore !== undefined;
+  };
+
+  // لا درجات افتراضية: غير المرصود = 0 ويُعرض "لم يُرصد" ولا يُحفظ
   const getStudentScore = (studentId: string) => {
     if (classScores[studentId]) return classScores[studentId];
-    const std = students.find(s => s.id === studentId);
-    const existing = std?.subjects?.find(sub => sub.name === teacherSubject || sub.code === currentTeacher?.subjectCode);
+    const existing = findRecordedSubject(studentId);
     return {
-      coursework: existing?.courseworkScore ?? 36,
-      exam: existing?.examScore ?? 54,
-      t1: 9,
-      t2: 9,
-      hw: 9,
-      mid: 9
+      coursework: existing?.courseworkScore ?? 0,
+      exam: existing?.examScore ?? 0,
+      t1: 0,
+      t2: 0,
+      hw: 0,
+      mid: 0
     };
+  };
+
+  const SCORE_LIMITS: Record<'coursework' | 'exam' | 't1' | 't2' | 'hw' | 'mid', number> = {
+    coursework: 40, exam: 60, t1: 10, t2: 10, hw: 10, mid: 10
   };
 
   const handleUpdateStudentScore = (
@@ -147,6 +165,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     field: 'coursework' | 'exam' | 't1' | 't2' | 'hw' | 'mid',
     value: number
   ) => {
+    // حدود اللائحة: أعمال السنة 40، الامتحان 60، كل بند تفصيلي 10 — لا قيم سالبة أو أكبر
+    value = Math.min(SCORE_LIMITS[field], Math.max(0, Math.round(Number.isFinite(value) ? value : 0)));
     setClassScores(prev => {
       const current = prev[studentId] || getStudentScore(studentId);
       const updated = { ...current, [field]: value };
@@ -180,11 +200,17 @@ export const TeacherQuickDashboard: React.FC = () => {
       showToast('warning', '👁 وضع المعاينة — قراءة فقط', 'رصد الدرجات متاح من واجهتك الأصلية فقط.');
       return;
     }
+    const gradedIds = new Set(classStudents.filter(st => hasScore(st.id)).map(st => st.id));
+    if (gradedIds.size === 0) {
+      sound.playAlert();
+      showToast('warning', 'لا درجات للحفظ', 'أدخل درجات الطلاب أولاً — الطلاب غير المرصودين لا تُحفظ لهم أي درجة.');
+      return;
+    }
     sound.playFanfare();
     triggerConfetti();
 
     const updatedStudents = students.map(st => {
-      if (!matchesClass(st.className, selectedClass)) return st;
+      if (!matchesClass(st.className, selectedClass) || !gradedIds.has(st.id)) return st;
 
       const score = classScores[st.id] || getStudentScore(st.id);
       const total = score.coursework + score.exam;
@@ -227,7 +253,7 @@ export const TeacherQuickDashboard: React.FC = () => {
     // Synchronize directly with ExamStorageService for Exam Coordinator & Control Sheet
     try {
       const subCode = currentTeacher?.subjectCode || 'ARB';
-      const examBatch: ExamGradeRecord[] = classStudents.map(st => {
+      const examBatch: ExamGradeRecord[] = classStudents.filter(st => gradedIds.has(st.id)).map(st => {
         const score = classScores[st.id] || getStudentScore(st.id);
         const total = score.coursework + score.exam;
         return {
@@ -358,12 +384,26 @@ export const TeacherQuickDashboard: React.FC = () => {
     sound.playSuccess();
     triggerConfetti();
 
-    addNotification(
-      `رسالة من ${currentTeacher?.name || 'معلم المادة'} (${currentTeacher?.subject || 'المادة'})`,
-      `بخصوص الطالب (${activeStudent.name}): ${messageText}`,
-      'academic',
-      activeStudent.name
-    );
+    // الرسالة تدخل محادثة ولي أمر هذا الطالب (يستطيع الرد عليها) + إشعاره
+    if (currentTeacher) {
+      sendChatMessage(conversationIdFor(currentTeacher.id, activeStudent.id), messageText, undefined, undefined, undefined, {
+        teacherId: currentTeacher.id,
+        teacherName: currentTeacher.name,
+        subject: currentTeacher.subject,
+        avatar: currentTeacher.avatar,
+        studentId: activeStudent.id,
+        studentName: activeStudent.name,
+        className: activeStudent.className
+      });
+    } else {
+      addNotification(
+        `رسالة من معلم المادة`,
+        `بخصوص الطالب (${activeStudent.name}): ${messageText}`,
+        'academic',
+        activeStudent.name,
+        activeStudent.id
+      );
+    }
 
     showToast('gold', 'تم إرسال الرسالة ✉️', `تم إشعار ولي أمر الطالب ${activeStudent.name.split(' ')[0]} فوراً.`);
   };
@@ -1152,10 +1192,11 @@ export const TeacherQuickDashboard: React.FC = () => {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-bold">
                   {classStudents.map((st, idx) => {
                     const score = getStudentScore(st.id);
+                    const recorded = hasScore(st.id);
                     const total = score.coursework + score.exam;
                     const pct = (total / 100) * 100;
-                    const app = LibyanExamEngine.getAppreciation(pct);
-                    const isPass = total >= 50;
+                    const app = recorded ? LibyanExamEngine.getAppreciation(pct) : 'لم يُرصد';
+                    const isPass = recorded && total >= 50;
 
                     return (
                       <tr key={st.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
@@ -1209,7 +1250,7 @@ export const TeacherQuickDashboard: React.FC = () => {
                                 type="number"
                                 min={0}
                                 max={10}
-                                value={score.t1 ?? 9}
+                                value={score.t1 ?? 0}
                                 onChange={e => handleUpdateStudentScore(st.id, 't1', Number(e.target.value))}
                                 className="w-12 py-1.5 text-center font-mono font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
                               />
@@ -1262,19 +1303,21 @@ export const TeacherQuickDashboard: React.FC = () => {
 
                         {/* Total Score */}
                         <td className="py-3 px-3 text-center font-mono font-black text-base bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white">
-                          {total}
+                          {recorded ? total : '—'}
                         </td>
 
                         {/* Appreciation Badge */}
                         <td className="py-3 px-3 text-center">
                           <span className={`px-2.5 py-1 rounded-full text-[11px] font-black inline-block ${
-                            isPass
+                            !recorded
+                              ? 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              : isPass
                               ? app === 'ممتاز'
                                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
                                 : 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
                               : 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300'
                           }`}>
-                            {app} {isPass ? '🟢' : '🔴'}
+                            {app} {!recorded ? '' : isPass ? '🟢' : '🔴'}
                           </span>
                         </td>
 

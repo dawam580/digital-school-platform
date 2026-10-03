@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
 import {
   ResponsiveContainer,
   PieChart,
@@ -24,7 +25,7 @@ import { SchoolEventCalendarWidget } from './SchoolEventCalendarWidget';
  * الرسوم للقراءة فقط (آمنة في وضع المعاينة).
  */
 
-const ATTENDANCE_COLORS = ['#059669', '#d97706', '#2563eb', '#e11d48'];
+const ATTENDANCE_COLORS = ['#059669', '#d97706', '#2563eb', '#e11d48', '#94a3b8'];
 const GRADE_COLORS = ['#7c3aed', '#2563eb', '#059669', '#d97706', '#e11d48', '#94a3b8'];
 
 function gradeBucket(avg: number | null | undefined): string {
@@ -55,15 +56,15 @@ export const AnalyticsCharts: React.FC = () => {
   const { students, isDarkMode } = useSchool();
 
   const attendance = useMemo(() => {
-    const present = students.filter(s => s.status === 'present').length;
-    const late = students.filter(s => s.status === 'late').length;
-    const excused = students.filter(s => s.status === 'excused').length;
-    const unexcused = students.filter(s => s.status === 'unexcused').length;
+    // حضور اليوم من السجل الفعلي؛ من لم يُرصد يظهر منفصلاً (لا يُحتسب حاضراً)
+    const today = students.map(s => todayAttendanceStatus(s));
+    const count = (st: string | null) => today.filter(t => t === st).length;
     return [
-      { name: 'حاضر', value: present },
-      { name: 'متأخر', value: late },
-      { name: 'إذن رسمي', value: excused },
-      { name: 'غائب', value: unexcused },
+      { name: 'حاضر', value: count('present') },
+      { name: 'متأخر', value: count('late') },
+      { name: 'إذن رسمي', value: count('excused') },
+      { name: 'غائب', value: count('unexcused') },
+      { name: 'لم يُرصد', value: count(null) },
     ];
   }, [students]);
 

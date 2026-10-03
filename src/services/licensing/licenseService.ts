@@ -102,44 +102,14 @@ export class LicenseService {
   static isDeveloperOrOwnerEnvironment(): boolean {
     if (typeof window === 'undefined') return false;
 
-    // 1. جهاز المورّد عبر Electron
+    // 1. جهاز المورّد عبر Electron (يحمل مفتاح توقيع التراخيص — لا يمكن تزويره من المتصفح)
     if (window.electronAPI?.isVendorMachine?.() === true) return true;
 
-    // 2. بيئة التطوير المحلية (Localhost / 127.0.0.1 / Dev Server)
-    try {
-      const hostname = window.location.hostname;
-      if (
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        hostname === '0.0.0.0' ||
-        hostname === '::1' ||
-        hostname.endsWith('.local') ||
-        hostname.includes('dawam580.github.io') ||
-        hostname.includes('github.io')
-      ) {
-        return true;
-      }
-    } catch {}
-
-    // 3. وضع التطوير Vite DEV
+    // 2. خادم التطوير Vite (import.meta.env.DEV يُطوى إلى false في بناء الإنتاج)
     if (import.meta.env.DEV) return true;
 
-    // 4. علم وضع المطور / المالك المخزن محلياً أو بالرابط
-    try {
-      const url = new URL(window.location.href);
-      if (url.searchParams.get('developer') === 'true' || url.searchParams.get('owner') === 'true') {
-        localStorage.setItem('madrasa_developer_mode', 'true');
-        return true;
-      }
-      if (localStorage.getItem('madrasa_developer_mode') === 'true') {
-        return true;
-      }
-      const activeKey = localStorage.getItem(STORAGE_KEYS.ACTIVE_LICENSE_KEY);
-      if (activeKey === 'DEVELOPER-LIFETIME-KEY' || activeKey === 'VENDOR-MACHINE') {
-        return true;
-      }
-    } catch {}
-
+    // لا تجاوز بالرابط (?developer=true) ولا بالنطاق (github.io) ولا بعلم محلي في localStorage:
+    // كلها قابلة للتزوير من أي زائر وكانت تمنح ترخيصاً دائماً مجاناً.
     return false;
   }
 
@@ -174,20 +144,19 @@ export class LicenseService {
    * جلب سجل المدارس المعتمدة لدى السوبر أدمن (مخزن محلياً ومتزامن)
    */
   static getAdminRegisteredSchools(): SchoolLicenseDoc[] {
+    // سجل المورّد الحقيقي فقط: لا مدرسة افتراضية وهمية (SCH-TRIPOLI-2026-TRIAL)
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.LOCAL_SCHOOLS_REGISTRY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const cleaned = parsed.filter(s => !s.school_name?.includes('الأندلس') && !s.school_name?.includes('Andalus'));
-          return cleaned.length > 0 ? cleaned : [DEFAULT_INITIAL_LICENSE];
+        if (Array.isArray(parsed)) {
+          return parsed.filter((s: SchoolLicenseDoc) =>
+            s && s.license_key !== DEFAULT_INITIAL_LICENSE.license_key &&
+            !s.school_name?.includes('الأندلس') && !s.school_name?.includes('Andalus'));
         }
       }
     } catch {}
-    // Seed with default school
-    const initial = [DEFAULT_INITIAL_LICENSE];
-    this.saveAdminRegisteredSchools(initial);
-    return initial;
+    return [];
   }
 
   static saveAdminRegisteredSchools(schools: SchoolLicenseDoc[]): void {
@@ -529,7 +498,7 @@ export class LicenseService {
         expiresAt,
         features: [
           'لوحة تحكم المدير العام والتعداد المدرسي الشامل',
-          'شيت الامتحانات والكنترول (1120 درجة) وحساب الترتيب الآلي',
+          'شيت الامتحانات والكنترول وحساب الترتيب الآلي',
           'بوابة المعلمين لرصد الأعمال والغياب اليومي',
           'بوابة استعلام أولياء الأمور وحماية الخصوصية',
           'التخزين المحلي الآمن دون الحاجة لإنترنت (Offline-First)'
@@ -644,7 +613,7 @@ export class LicenseService {
     if (!licenseKey || !schoolName || !adminPhone) {
       return { ok: false, error: 'بيانات الطلب ناقصة (المدرسة / الترخيص / الهاتف).' };
     }
-    if (!/^09[1234]\d{7}$/.test(adminPhone)) {
+    if (!/^09[1-6]\d{7}$/.test(adminPhone)) {
       return { ok: false, error: 'رقم هاتف المدير غير صالح (يجب أن يكون ليبياً بصيغة 09xxxxxxxx).' };
     }
     if (this.hasPendingRenewal(licenseKey)) {

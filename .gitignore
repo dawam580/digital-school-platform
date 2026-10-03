@@ -14,3 +14,9 @@ server_db.backup*.json
 # مفتاح توقيع التراخيص الخاص (يجب أن يبقى خارج المشروع أصلاً)
 *.pem
 .madrasa-license/
+
+# قوائم طلاب حقيقية وحزم استيراد مدارس — لا تُرفع للمستودع أبداً
+*.madrasa.json
+roster*.json
+dist-parent
+relay-data

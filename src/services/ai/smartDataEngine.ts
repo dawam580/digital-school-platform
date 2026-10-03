@@ -8,6 +8,8 @@
 
 import { Student, TeacherAccount } from '../../types';
 import { getCleanAvatar } from '../../utils/avatarHelper';
+import { studentFromRosterRow, cleanNationalNumber, gradeFromClassName } from '../importers/rosterSanitizer';
+
 
 export interface SmartValidationResult {
   isValid: boolean;
@@ -63,7 +65,7 @@ export class SmartDataEngine {
     }
 
     if (!sanitizedId || sanitizedId.length === 0) {
-      warnings.push('الرقم الوطني مفقود - تم توليد رقم مؤقت');
+      warnings.push('الرقم الوطني مفقود — يُستكمل يدوياً');
     } else if (sanitizedId.length !== 12) {
       warnings.push(`طول الرقم الوطني (${sanitizedId.length}) غير قياسي (يجب أن يكون 12 خانة)`);
     } else {
@@ -110,57 +112,26 @@ export class SmartDataEngine {
    * التوليد الذكي للبيانات المفقودة للطلاب (Smart Imputation)
    */
   static completeStudentData(raw: Partial<Student>, index: number): Student {
-    const rawName = String(raw.name || `طالب جديد ${index + 1}`).trim();
+    const rawName = String(raw.name || '').trim();
     const validation = this.validateAndInferLibyanId(raw.nationalNumber || raw.nationalId || '', rawName);
-
-    const nationalNumber = validation.sanitizedNationalId || (validation.inferredGender === 'male' ? `12010${String(1000000 + index).slice(-7)}` : `22010${String(1000000 + index).slice(-7)}`);
-    const cleanName = validation.sanitizedName || rawName;
-
-    // Detect or assign class
-    let className = raw.className || '7/أ';
-    let grade = raw.grade || validation.recommendedGrade || 'الصف السابع الأساسي';
-    if (className.startsWith('7')) grade = 'الصف السابع الأساسي';
-    else if (className.startsWith('8')) grade = 'الصف الثامن الأساسي';
-    else if (className.startsWith('6')) grade = 'الصف السادس الأساسي';
-    else if (className.startsWith('4')) grade = 'الصف الرابع الأساسي';
-    else if (className.startsWith('9')) grade = 'الصف التاسع الأساسي';
-    else if (className.startsWith('3')) grade = 'الصف الثالث الأساسي';
-
-    return {
-      id: raw.id || `std-smart-${Date.now()}-${index}`,
-      name: cleanName,
-      nationalNumber,
-      nationalId: nationalNumber,
-      studentNumber: raw.studentNumber || `2025-${String(1100 + index)}`,
-      linkCode: raw.linkCode || `SCH-2026-L${index + 1}`,
-      grade,
+    const className = String(raw.className || '').trim();
+    // الصف من رقم الفصل إن لم يُذكر (5/1 ← الصف الخامس الأساسي) — اشتقاق لا تخمين
+    const gradeFromClass = gradeFromClassName(className);
+    const student = studentFromRosterRow({
+      name: validation.sanitizedName || rawName,
+      nationalNumber: validation.sanitizedNationalId,
+      studentNumber: raw.studentNumber,
+      grade: raw.grade || gradeFromClass,
       className,
-      motherName: raw.motherName || 'فاطمة محمد',
-      birthDate: raw.birthDate || validation.birthDate || '2011-05-10',
-      parentName: raw.parentName || `ولي أمر ${cleanName}`,
-      parentPhone: this.normalizeNumbers(raw.parentPhone || '0912345678'),
-      parentEmail: raw.parentEmail || `parent.${nationalNumber}@school.edu.ly`,
-      gender: validation.inferredGender,
-      status: 'present',
-      attendanceRate: raw.attendanceRate || 96,
-      academicAverage: raw.academicAverage || 89,
-      courseworkScore: raw.courseworkScore || 36,
-      examScore: raw.examScore || 53,
-      totalScore: raw.totalScore || 89,
-      appreciation: 'ممتاز',
-      behaviorRating: 'ممتاز',
-      behaviorPointsTotal: 25,
-      avatar: getCleanAvatar(cleanName, validation.inferredGender),
-      competencies: [],
-      behaviorPoints: [],
-      subjects: [
-        { name: 'الرياضيات', score: 90, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'ممتاز' },
-        { name: 'اللغة العربية', score: 92, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'ممتاز' },
-        { name: 'العلوم الطبيعية', score: 88, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'ممتاز' },
-        { name: 'اللغة الإنجليزية', score: 85, maxScore: 100, teacher: 'أ. فاطمة الزوي', evaluation: 'ممتاز' },
-        { name: 'الحاسوب', score: 95, maxScore: 100, teacher: 'أ. أسامة المقريف', evaluation: 'ممتاز' }
-      ]
-    };
+      motherName: raw.motherName,
+      birthDate: raw.birthDate,
+      birthPlace: raw.birthPlace,
+      parentName: raw.parentName,
+      parentPhone: raw.parentPhone,
+      gender: raw.gender || (validation.sanitizedNationalId.length === 12 ? undefined : validation.inferredGender),
+    }, index, 'std-smart');
+    // اسم فارغ: نُبقي سجلاً يظهر في المعاينة ليصححه المستخدم بدل إسقاطه بصمت
+    return student || { ...studentFromRosterRow({ name: `صف ${index + 2} بلا اسم` }, index, 'std-smart')! };
   }
 
   /**
@@ -169,27 +140,27 @@ export class SmartDataEngine {
   static completeTeacherData(raw: Partial<TeacherAccount>, index: number): TeacherAccount {
     const rawName = String(raw.name || `معلم جديد ${index + 1}`).trim();
     const cleanName = this.sanitizeArabicName(rawName) || rawName;
-    const nationalNumber = this.normalizeNumbers(raw.nationalNumber || `11985${String(1000000 + index).slice(-7)}`);
+    const nationalNumber = cleanNationalNumber(raw.nationalNumber);
 
     return {
       id: raw.id || `tch-smart-${Date.now()}-${index}`,
       code: raw.code || `LIB-TCH-${String(100 + index)}`,
       name: cleanName,
-      phone: this.normalizeNumbers(raw.phone || '0912345678'),
+      phone: this.normalizeNumbers(raw.phone || ''),
       subject: raw.subject || 'الرياضيات',
       subjectCode: raw.subjectCode || 'MATH',
-      assignedClasses: raw.assignedClasses && raw.assignedClasses.length > 0 ? raw.assignedClasses : ['7/أ', '7/ب'],
+      assignedClasses: raw.assignedClasses || [],
       avatar: getCleanAvatar(cleanName, 'teacher'),
-      email: raw.email || `teacher.${index + 1}@school.edu.ly`,
+      email: raw.email || '',
       nationalNumber,
-      fileNumber: raw.fileNumber || `WSH-${8000 + index}`,
-      qualification: raw.qualification || 'بكالوريوس علوم تربوية',
+      fileNumber: raw.fileNumber || '',
+      qualification: raw.qualification || '',
       specialization: raw.specialization || raw.subject || 'التعليم الأساسي',
       teachingQuota: raw.teachingQuota || 20,
-      assignedPeriodsCount: raw.assignedPeriodsCount || 18,
-      appointmentDate: raw.appointmentDate || '2015-09-01',
+      assignedPeriodsCount: raw.assignedPeriodsCount || 0,
+      appointmentDate: raw.appointmentDate || '',
       status: 'active',
-      notes: 'تم التدقيق والتوليد الذكي'
+      notes: ''
     };
   }
 }

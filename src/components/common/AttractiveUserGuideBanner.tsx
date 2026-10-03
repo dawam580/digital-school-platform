@@ -42,7 +42,7 @@ export const AttractiveUserGuideBanner: React.FC<AttractiveUserGuideBannerProps>
       title: 'بوابة مدير المدرسة (لوحة القيادة والتعداد)',
       badge: 'المدير العام للمؤسسة 🏫',
       badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      desc: 'رؤية شاملة لتعداد المدرسة (873 طالباً موزعين على 33 فصلاً صباحياً ومسائياً)، متابعة الكادر الوظيفي والأنصبة، تصدير كشوفات الوزارة، والطباعة الرسمية.',
+      desc: 'رؤية شاملة لتعداد المدرسة وتوزيع الطلاب على الفصول (صباحي ومسائي)، متابعة الكادر الوظيفي والأنصبة، تصدير كشوفات الوزارة، والطباعة الرسمية.',
       actionLabel: 'استعراض تحليلات وتعداد المدرسة 📊',
       onAction: () => {
         setCurrentRole('admin');
@@ -56,7 +56,7 @@ export const AttractiveUserGuideBanner: React.FC<AttractiveUserGuideBannerProps>
       ]
     },
     exams: {
-      title: 'بوابة منسق الامتحانات والكنترول (1120 درجة)',
+      title: 'بوابة منسق الامتحانات والكنترول',
       badge: 'رئيس الكنترول وشيت الامتحانات 📑',
       badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
       desc: 'إدارة شيت الامتحانات الشامل وفق لائحة تنظيم شؤون التعليم والامتحانات الليبية، حساب المعدلات والترتيب العام تلقائياً، وتوليد بطاقات النتائج وإخطارات الفترات.',
@@ -207,7 +207,7 @@ export const AttractiveUserGuideBanner: React.FC<AttractiveUserGuideBannerProps>
               </div>
               <div>
                 <span className="font-bold text-xs block">2. للكنترول والامتحانات</span>
-                <span className="text-[10px] text-slate-400">شيت 1120 درجة والبطاقات</span>
+                <span className="text-[10px] text-slate-400">شيت الدرجات والبطاقات</span>
               </div>
             </button>
 

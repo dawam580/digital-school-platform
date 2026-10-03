@@ -212,7 +212,7 @@ export const MobileCompanionModal: React.FC<MobileCompanionModalProps> = ({ isOp
                 <div className="space-y-2 text-slate-300 text-xs leading-relaxed">
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>تطبيق الهاتف يستخدم نفس قاعدة البيانات المحلية IndexedDB المعتمدة لحفظ بيانات 873 طالباً.</span>
+                    <span>تطبيق الهاتف يقرأ بيانات المدرسة المحفوظة على نفس الجهاز.</span>
                   </p>
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />

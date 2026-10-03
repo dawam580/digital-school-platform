@@ -65,7 +65,7 @@ export const InteractiveSystemTour: React.FC = () => {
       title: 'كشوفات الطلاب والباركود الذكي (QR) 👨‍🎓',
       badge: 'الخطوة 2: شؤون الطلاب',
       badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200',
-      description: 'قم بهذا: تصفح سجلات 873 طالباً، وولد بطاقات التعريف الذكية مع باركود فوري يتيح لولي الأمر متابعة درجات وغياب ابنه بخصوصية تامة.',
+      description: 'قم بهذا: تصفح سجلات طلاب المدرسة، وولد بطاقات التعريف الذكية مع باركود فوري يتيح لولي الأمر متابعة درجات وغياب ابنه بخصوصية تامة.',
       actionText: 'استعراض كشف الطلاب والشعب 👥',
       icon: Users,
       action: () => {
@@ -76,7 +76,7 @@ export const InteractiveSystemTour: React.FC = () => {
     },
     {
       id: 'step-exams',
-      title: 'الكنترول والتصحيح الإلكتروني (1120 درجة) 📝',
+      title: 'الكنترول والتصحيح الإلكتروني (أعمال 40 + امتحان 60) 📝',
       badge: 'الخطوة 3: الامتحانات والتقويم',
       badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-200',
       description: 'قم بهذا: افتح بوابة الكنترول المركزي لرصد درجات الفترات والامتحانات النهائية، ودعم التصحيح الآلي لنماذج الإجابة البابل شيت (OMR).',
@@ -165,9 +165,11 @@ export const InteractiveSystemTour: React.FC = () => {
   // If tour is closed, show the floating mini launcher pill (21st.dev style)
   if (!isTourOpen) {
     return (
-      <div className="fixed bottom-6 start-6 z-40 font-cairo">
+      <div className="fixed bottom-24 lg:bottom-6 start-4 sm:start-6 z-40 font-cairo print:hidden">
         <button
           type="button"
+          aria-label="جولة استكشاف المنظومة"
+          title="جولة استكشاف المنظومة (خطوة بخطوة)"
           onClick={() => {
             setIsTourOpen(true);
             setIsMinimized(false);
@@ -183,11 +185,8 @@ export const InteractiveSystemTour: React.FC = () => {
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           </div>
 
-          <span className="font-black tracking-tight text-white">
-            جولة استكشاف المنظومة (خطوة بخطوة) 🧭
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-white/10 text-purple-200 text-[10px] font-mono">
-            60fps ✨
+          <span className="hidden sm:inline font-black tracking-tight text-white">
+            جولة تعريفية 🧭
           </span>
         </button>
       </div>

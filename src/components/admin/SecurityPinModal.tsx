@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Lock, AlertCircle, X, KeyRound, CheckCircle2 } from 'lucide-react';
+import { SecurityEngine } from '../../services/security/securityEngine';
 import { sound } from '../../utils/soundEffects';
 
 interface SecurityPinModalProps {
@@ -25,8 +26,8 @@ export const SecurityPinModal: React.FC<SecurityPinModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Default Admin password is 123456 or phone number
-    if (pin === '123456' || pin === '0922465676') {
+    // رمز المدير الحالي فقط (مع التجميد بعد 3 محاولات) — لا كلمات مرور عامة
+    if (SecurityEngine.verifyDirectorPin(pin.trim()).valid) {
       sound.playSuccess();
       setError(false);
       setPin('');

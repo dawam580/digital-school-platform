@@ -129,6 +129,11 @@ function createWindow() {
         },
         { type: 'separator' },
         {
+          // للمالك فقط: يثبّت ملف مفتاح التوقيع (private.pem) بنقرة — يُقبل فقط إن طابق المفتاح العام المضمَّن
+          label: 'استيراد مفتاح المورّد (للمالك فقط)…',
+          click: () => importVendorKey(),
+        },
+        {
           label: 'حول المنظومة المدرسية',
           click: () => {
             dialog.showMessageBox(mainWindow, {
@@ -364,7 +369,49 @@ ipcMain.handle('get-system-info', () => {
 // -------------------------------------------------------------
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
-const { loadPrivateKey, signLicense, readLedger } = require('./vendorKey.cjs');
+const { loadPrivateKey, signLicense, readLedger, publicKeyHex, VENDOR_DIR, PRIVATE_KEY_PATH } = require('./vendorKey.cjs');
+
+/** هل المفتاح العام لهذا المفتاح الخاص هو نفسه المضمَّن في البرنامج؟ (يُبحث عنه في ملفات الواجهة المبنية) */
+function bundleContainsPublicKey(hex) {
+  const assets = path.join(__dirname, '..', 'dist', 'assets');
+  try {
+    return fs.readdirSync(assets).filter(f => f.endsWith('.js')).some(f => fs.readFileSync(path.join(assets, f), 'utf8').includes(hex));
+  } catch {
+    return false;
+  }
+}
+
+async function importVendorKey() {
+  const pick = await dialog.showOpenDialog(mainWindow, {
+    title: 'اختر ملف مفتاح المورّد (private.pem)',
+    properties: ['openFile'],
+    filters: [{ name: 'مفتاح التوقيع', extensions: ['pem'] }],
+  });
+  if (pick.canceled || !pick.filePaths[0]) return;
+  try {
+    const pem = fs.readFileSync(pick.filePaths[0], 'utf8');
+    const key = require('crypto').createPrivateKey(pem);
+    if (key.asymmetricKeyType !== 'ed25519') throw new Error('ليس مفتاح Ed25519');
+    if (!bundleContainsPublicKey(publicKeyHex(key))) {
+      dialog.showMessageBox(mainWindow, { type: 'error', title: 'مفتاح غير مطابق', message: 'هذا المفتاح لا يطابق هذه النسخة من البرنامج — التراخيص التي يصدرها ستُرفض. لم يُثبَّت شيء.', buttons: ['حسناً'] });
+      return;
+    }
+    fs.mkdirSync(VENDOR_DIR, { recursive: true });
+    if (fs.existsSync(PRIVATE_KEY_PATH)) fs.copyFileSync(PRIVATE_KEY_PATH, `${PRIVATE_KEY_PATH}.bak-${Date.now()}`);
+    fs.writeFileSync(PRIVATE_KEY_PATH, pem, { mode: 0o600 });
+    await dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'تم تثبيت مفتاح المورّد',
+      message: 'أصبح هذا الجهاز جهاز المورّد: يمكنك إصدار التراخيص من بوابة المدير العام. سيُعاد تشغيل البرنامج الآن.',
+      detail: 'احتفظ بنسخة من الملف في فلاشة آمنة. لا تثبّته أبداً على أجهزة المدارس.',
+      buttons: ['إعادة التشغيل'],
+    });
+    app.relaunch();
+    app.exit(0);
+  } catch (e) {
+    dialog.showMessageBox(mainWindow, { type: 'error', title: 'تعذر قراءة المفتاح', message: `الملف ليس مفتاح توقيع صالحاً (${e.message}).`, buttons: ['حسناً'] });
+  }
+}
 
 let cachedMachineId = null;
 function getMachineId() {
@@ -478,6 +525,23 @@ function persistEntries(changes) {
 }
 
 ipcMain.on('store-load', (event) => { event.returnValue = loadStore(); });
+
+// خزنة المدارس: لقطة كاملة لكل مدرسة غير نشطة في ملف مستقل (لا تثقل ملف المدرسة النشطة)
+function vaultDir() { return path.join(app.getPath('userData'), 'data', 'schools-vault'); }
+function vaultFile(schoolId) {
+  const safe = String(schoolId || '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 80);
+  if (!safe) throw new Error('invalid school id');
+  return path.join(vaultDir(), `${safe}.json`);
+}
+ipcMain.handle('vault-save', (event, schoolId, json) => {
+  try { writeFileAtomic(vaultFile(schoolId), String(json)); return true; } catch { return false; }
+});
+ipcMain.on('vault-load', (event, schoolId) => {
+  try { event.returnValue = fs.readFileSync(vaultFile(schoolId), 'utf8'); } catch { event.returnValue = null; }
+});
+ipcMain.handle('vault-delete', (event, schoolId) => {
+  try { fs.unlinkSync(vaultFile(schoolId)); return true; } catch { return false; }
+});
 ipcMain.on('store-persist-sync', (event, changes) => {
   try { persistEntries(changes); event.returnValue = true; } catch { event.returnValue = false; }
 });

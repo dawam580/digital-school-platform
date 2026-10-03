@@ -64,10 +64,14 @@ export function canAccessTab(viewedRole: UserRole, tab: string, superViewing = f
   return allowed.includes(tab);
 }
 
+/** واجهات الكادر التي يشرف عليها مدير المدرسة (الكنترول، المعلمون، الأخصائي) */
+export const ADMIN_SUPERVISED_ROLES: UserRole[] = ['exams_coordinator', 'teacher', 'counselor'];
+
 /**
  * هل يحق لهذه الهوية معاينة واجهة دور آخر؟ (الفصل الصارم بين الواجهات)
  * - المدير العام (جلسة ماستر مفتوحة برمز الماستر): كل الواجهات.
- * - كافة الأدوار الأخرى (المدير، المعلم، الكنترول، ولي الأمر): واجهتهم فقط ولا يسمح بالتنقل.
+ * - مدير المدرسة: واجهته + واجهات كادره (الكنترول، المعلم، الأخصائي) للإشراف.
+ * - كافة الأدوار الأخرى (المعلم، الكنترول، الأخصائي، ولي الأمر): واجهتهم فقط ولا يسمح بالتنقل.
  */
 export function mayViewInterface(
   authenticatedRole: UserRole,
@@ -77,5 +81,7 @@ export function mayViewInterface(
   if (targetRole === authenticatedRole) return true;
   if (targetRole === 'superadmin') return authenticatedRole === 'superadmin' && superUnlocked;
   if (authenticatedRole === 'superadmin') return superUnlocked;
+  // مدير المدرسة يشرف على واجهات كادره (لا على ولي الأمر)
+  if (authenticatedRole === 'admin') return ADMIN_SUPERVISED_ROLES.includes(targetRole);
   return false;
 }

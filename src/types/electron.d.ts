@@ -47,6 +47,10 @@ export interface ElectronAPI {
   loadPersistedStore?: () => Record<string, string> | null;
   persistStore?: (changes: Record<string, string | null>) => Promise<boolean>;
   persistStoreSync?: (changes: Record<string, string | null>) => boolean;
+  /** خزنة المدارس على القرص (لقطة كاملة لكل مدرسة غير نشطة) */
+  vaultSave?: (schoolId: string, json: string) => Promise<boolean>;
+  vaultLoad?: (schoolId: string) => string | null;
+  vaultDelete?: (schoolId: string) => Promise<boolean>;
   listBackups?: () => Promise<Array<{ name: string; path: string; size: number; mtime: number }>>;
   openBackupsFolder?: () => Promise<{ success?: boolean; error?: string }>;
 }

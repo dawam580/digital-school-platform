@@ -1,4 +1,5 @@
 import React from 'react';
+import { VENDOR_PHONE, VENDOR_WHATSAPP } from '../../config/vendor';
 import { Check, Sparkles, Phone, MessageCircle, ArrowLeft } from 'lucide-react';
 import { TailgridsBadge } from './TailgridsKit';
 
@@ -169,7 +170,7 @@ export const TailgridsPricingSection: React.FC<TailgridsPricingSectionProps> = (
           </div>
           <div className="flex items-center gap-3 shrink-0">
             <a
-              href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A8%D8%A7%D9%82%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9"
+              href={`https://wa.me/${VENDOR_WHATSAPP}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A8%D8%A7%D9%82%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition active:scale-95"
@@ -178,11 +179,11 @@ export const TailgridsPricingSection: React.FC<TailgridsPricingSectionProps> = (
               <span>استفسار واتساب</span>
             </a>
             <a
-              href="tel:0922465676"
+              href={`tel:${VENDOR_PHONE}`}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-700 hover:bg-slate-50 text-slate-800 dark:text-white text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-sm transition active:scale-95"
             >
               <Phone className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span>0922465676</span>
+              <span>{VENDOR_PHONE}</span>
             </a>
           </div>
         </div>
