@@ -73,7 +73,7 @@ export class AuditLogger {
     try {
       const d = new Date(ts);
       if (isNaN(d.getTime())) return ts;
-      return d.toLocaleString('ar-SA', { dateStyle: 'medium', timeStyle: 'short' } as Intl.DateTimeFormatOptions);
+      return d.toLocaleString('ar-LY', { dateStyle: 'medium', timeStyle: 'short' } as Intl.DateTimeFormatOptions);
     } catch {
       return ts;
     }

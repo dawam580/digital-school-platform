@@ -614,7 +614,7 @@ export class LicenseService {
     if (!licenseKey || !schoolName || !adminPhone) {
       return { ok: false, error: 'بيانات الطلب ناقصة (المدرسة / الترخيص / الهاتف).' };
     }
-    if (!/^09[1234]\d{7}$/.test(adminPhone)) {
+    if (!/^09[1-6]\d{7}$/.test(adminPhone)) {
       return { ok: false, error: 'رقم هاتف المدير غير صالح (يجب أن يكون ليبياً بصيغة 09xxxxxxxx).' };
     }
     if (this.hasPendingRenewal(licenseKey)) {

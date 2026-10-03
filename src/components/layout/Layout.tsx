@@ -68,7 +68,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {showSidebar && <Sidebar />}
         
-        <main className={`flex-1 ${currentRole === 'parent' ? 'pb-12 p-3 sm:p-5 lg:p-7' : 'pb-28 md:pb-12 p-3 sm:p-5 lg:p-7'}`}>
+        <main className={`flex-1 min-w-0 ${currentRole === 'parent' ? 'pb-12 p-3 sm:p-5 lg:p-7' : 'pb-28 md:pb-12 p-3 sm:p-5 lg:p-7'}`}>
           <div className="max-w-7xl mx-auto space-y-5">
             {children}
           </div>

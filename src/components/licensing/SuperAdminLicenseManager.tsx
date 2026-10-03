@@ -26,6 +26,7 @@ import { SchoolLicenseDoc, SubscriptionStatus, RenewalRequest, RequestedLicenseT
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
+import { LIBYAN_PHONE_RE, normalizeLibyanPhone } from '../../services/security/authEngine';
 import { ClientDeliveryModal } from '../common/ClientDeliveryModal';
 import { ClientDeliveryOptions, toIntlWhatsAppPhone } from '../../utils/inviteMessageHelper';
 
@@ -284,7 +285,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
   const handleCreateSchool = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSchoolName.trim()) return;
-    if (!/^09[1234]\d{7}$/.test(newSchoolPhone.trim())) {
+    if (!LIBYAN_PHONE_RE.test(normalizeLibyanPhone(newSchoolPhone))) {
       sound.playAlert();
       return;
     }
@@ -295,7 +296,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
     try {
       const created = await LicenseService.registerSchool({
         schoolName: newSchoolName,
-        phone: newSchoolPhone.trim(),
+        phone: normalizeLibyanPhone(newSchoolPhone),
         trialDays: newSchoolDays,
         notes: newSchoolNotes
       });
@@ -843,7 +844,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
                 <input
                   type="tel"
                   required
-                  pattern="09[1234][0-9]{7}"
+                  inputMode="tel"
                   title="رقم ليبي بصيغة 09xxxxxxxx (إلزامي لهوية الترخيص)"
                   value={newSchoolPhone}
                   onChange={e => setNewSchoolPhone(e.target.value)}

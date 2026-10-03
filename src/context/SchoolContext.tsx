@@ -1197,7 +1197,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             message: `بلغ الطالب الحد التراكمي للإنذارات (${reason}). تم إصدار بطاقة استدعاء وتوجيهها لمكتب الخدمة الاجتماعية.`,
             category: 'academic',
             date: 'الآن',
-            time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            time: new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' }),
             read: false,
             studentName: student.name
           };
@@ -1707,7 +1707,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         typeLabel: 'مخالفة سلوكية',
         title: point.title || 'ملاحظة سلوكية تحتاج إلى تحسين',
         date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+        time: new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' }),
         reportedBy: point.teacher || currentTeacher?.name || 'معلم الحصة',
         severity: 'warning'
       });
