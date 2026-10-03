@@ -1,5 +1,5 @@
 import { Student } from '../types';
-import { getCleanAvatar } from './avatarHelper';
+import { studentFromRosterRow } from '../services/importers/rosterSanitizer';
 import { currentAcademicYear } from '../services/domain/libyanCalendar';
 
 /**
@@ -27,12 +27,12 @@ export function exportLibyanStudentsToExcel(
     `"${idx + 1}"`,
     `"${s.name || ''}"`,
     `"${s.nationalNumber || s.nationalId || ''}"`,
-    `"${s.motherName || 'غير مسجل'}"`,
+    `"${s.motherName || ''}"`,
     `"${s.gender === 'male' ? 'ذكر' : 'أنثى'}"`,
     `"${s.birthDate || ''}"`,
-    `"${s.birthPlace || 'طرابلس'}"`,
-    `"${s.grade || 'الصف التاسع الأساسي'}"`,
-    `"${s.sectionCode || s.className || 'أ'}"`,
+    `"${s.birthPlace || ''}"`,
+    `"${s.grade || ''}"`,
+    `"${s.className || s.sectionCode || ''}"`,
     `"${s.parentPhone || ''}"`,
     `"${s.academicYear || currentAcademicYear()}"`
   ]);
@@ -93,29 +93,31 @@ export function exportStudentsToExcel(students: Student[], filename = 'قائم�
   URL.revokeObjectURL(url);
 }
 
+/** أعمدة نموذج الاستيراد — نفس أعمدة كشف المنظومة الرسمي حتى يعمل التصدير ثم الاستيراد */
+const TEMPLATE_HEADERS = [
+  'اسم الطالب رباعي',
+  'الرقم الوطني (12 خانة)',
+  'رقم القيد',
+  'الصف الدراسي',
+  'الفصل / الشعبة',
+  'اسم الأم',
+  'تاريخ الميلاد',
+  'مكان الميلاد',
+  'اسم ولي الأمر',
+  'هاتف ولي الأمر',
+  'الجنس'
+];
+
 /**
- * Generates an empty sample Excel/CSV template for importing students from other systems (e.g. Noor System)
+ * نموذج CSV فارغ لاستيراد الطلاب (صيغة ليبية: رقم وطني 12 خانة، هواتف 09x، فصول 5/1)
  */
 export function downloadSampleExcelTemplate() {
-  const headers = [
-    'اسم الطالب',
-    'الهوية الوطنية',
-    'الرقم الأكاديمي',
-    'الصف',
-    'الشعبة',
-    'اسم ولي الأمر',
-    'هاتف ولي الأمر',
-    'الجنس'
-  ];
-
   const sampleRows = [
-    ['محمد بن عبدالله الدوسري', '1102938475', '2026-0201', 'الصف الخامس الابتدائي', 'أ', 'عبدالله بن محمد الدوسري', '0551122334', 'male'],
-    ['نورة بنت فهد الشمري', '1109847261', '2026-0202', 'الصف الخامس الابتدائي', 'ب', 'فهد بن ناصر الشمري', '0559988776', 'female'],
-    ['عبدالرحمن بن خالد الزهراني', '1108273645', '2026-0203', 'الصف السادس الابتدائي', 'أ', 'خالد بن سعد الزهراني', '0501234567', 'male']
+    ['اسم الطالب الرباعي', '120150000000', '1001', 'الصف الخامس الأساسي', '5/1 صباح', 'اسم الأم الثلاثي', '2015-09-20', 'طرابلس', 'اسم ولي الأمر', '0910000000', 'ذكر'],
   ];
 
   const csvContent = '\uFEFF' + [
-    headers.join(','),
+    TEMPLATE_HEADERS.join(','),
     ...sampleRows.map(r => r.map(c => `"${c}"`).join(','))
   ].join('\n');
 
@@ -123,78 +125,77 @@ export function downloadSampleExcelTemplate() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'نموذج_استيراد_الطلاب_نظام_المدرسة.csv';
+  a.download = 'نموذج_استيراد_الطلاب.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
 
+/** تقسيم سطر CSV مع احترام النصوص بين علامات تنصيص */
+function splitCsvLine(line: string): string[] {
+  const out: string[] = [];
+  let cur = '';
+  let quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (quoted) {
+      if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else cur += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ',' || ch === ';' || ch === '\t') { out.push(cur.trim()); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur.trim());
+  return out;
+}
+
 /**
- * Parses uploaded CSV / Excel text file and converts into Student objects
+ * قراءة ملف CSV للطلاب (نموذج الاستيراد أو كشف المنظومة الرسمي) بحسب أسماء الأعمدة.
+ * لا يُختلق أي حقل ناقص — الرقم الوطني والهاتف والدرجات تبقى فارغة حتى تُستكمل.
  */
 export function parseStudentsCsv(csvText: string): Partial<Student>[] {
-  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
+  const lines = csvText.replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim().length > 0);
   if (lines.length <= 1) return [];
 
-  // Remove BOM if present
-  const cleanFirstLine = lines[0].replace(/^\uFEFF/, '');
-  const headers = cleanFirstLine.split(',').map(h => h.replace(/^["']|["']$/g, '').trim());
+  const headers = splitCsvLine(lines[0]).map(h => h.replace(/^["']|["']$/g, '').trim());
+  const col = (...names: string[]) => names.map(n => headers.indexOf(n)).find(i => i >= 0) ?? -1;
+  const idx = {
+    name: col('اسم الطالب رباعي', 'اسم الطالب', 'الاسم', 'الاسم الرباعي'),
+    nn: col('الرقم الوطني (12 خانة)', 'الرقم الوطني', 'الهوية الوطنية', 'الهوية الوطنية للطالب'),
+    sn: col('رقم القيد', 'الرقم الأكاديمي'),
+    grade: col('الصف الدراسي', 'الصف'),
+    cls: col('الفصل / الشعبة', 'الفصل', 'الشعبة'),
+    mother: col('اسم الأم'),
+    birthDate: col('تاريخ الميلاد'),
+    birthPlace: col('مكان الميلاد'),
+    parentName: col('اسم ولي الأمر'),
+    parentPhone: col('هاتف ولي الأمر'),
+    gender: col('الجنس'),
+  };
+  if (idx.name < 0) return [];
 
   const parsedStudents: Partial<Student>[] = [];
-
   for (let i = 1; i < lines.length; i++) {
-    const rawLine = lines[i];
-    // Regex for CSV with quoted strings
-    const match = rawLine.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-    const cols = (match || rawLine.split(',')).map(c => c.replace(/^["']|["']$/g, '').trim());
-
-    if (cols.length >= 3 && cols[0]) {
-      const name = cols[0];
-      const nationalId = cols[1] || `10${Math.floor(10000000 + Math.random() * 90000000)}`;
-      const studentNumber = cols[2] || `2026-${1000 + i}`;
-      const grade = cols[3] || 'الصف الخامس الابتدائي';
-      const section = cols[4] || 'أ';
-      const parentName = cols[5] || `ولي أمر الطالب ${name.split(' ')[0]}`;
-      const parentPhone = cols[6] || '0550000000';
-      const gender = (cols[7] === 'female' || cols[7] === 'أنثى') ? 'female' : 'male';
-
-      parsedStudents.push({
-        id: `std-imp-${Date.now()}-${i}`,
-        name,
-        nationalId,
-        studentNumber,
-        linkCode: `SCH-2026-${name.charAt(0).toUpperCase()}${i}`,
-        avatar: getCleanAvatar(name, gender),
-        grade,
-        className: `${grade.includes('السادس') ? 'سادس' : grade.includes('الرابع') ? 'رابع' : 'خامس'} / ${section}`,
-        gender,
-        parentName,
-        parentPhone,
-        parentEmail: `parent.${nationalId}@school.edu`,
-        status: 'present',
-        attendanceRate: 100,
-        academicAverage: 95.0,
-        behaviorRating: 'ممتاز',
-        behaviorPointsTotal: 20,
-        lastSeenTime: '07:15 صباحاً (البوابة)',
-        competencies: [
-          { name: 'حل المشكلات', score: 90, maxScore: 100 },
-          { name: 'التفكير الإبداعي', score: 92, maxScore: 100 },
-          { name: 'العمل الجماعي', score: 95, maxScore: 100 },
-          { name: 'الانضباط والمسؤولية', score: 95, maxScore: 100 },
-          { name: 'التعبير اللغوي', score: 90, maxScore: 100 },
-          { name: 'اللياقة والنشاط', score: 95, maxScore: 100 },
-        ],
-        behaviorPoints: [],
-        badges: [],
-        subjects: [
-          { name: 'الرياضيات', score: 95, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'مستوى ممتاز' },
-          { name: 'اللغة العربية', score: 94, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'قراءة ومشاركة جيدة' },
-          { name: 'العلوم الطبيعية', score: 96, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'تفاعل ممتاز' },
-        ],
-        recentAttendance: [{ date: '2026-09-01', status: 'present' }],
-        notes: []
-      });
-    }
+    const cols = splitCsvLine(lines[i]);
+    const get = (j: number) => (j >= 0 ? cols[j] || '' : '');
+    let className = get(idx.cls);
+    const grade = get(idx.grade);
+    // نموذج قديم: عمود "الشعبة" حرف فقط (أ) ← "5/أ" من رقم الصف غير متاح، فنُبقيه كما هو
+    if (className && /^[أ-ي]$/.test(className) && grade) className = `${grade.replace(/^الصف\s*/, '')} / ${className}`;
+    const st = studentFromRosterRow({
+      name: get(idx.name),
+      nationalNumber: get(idx.nn),
+      studentNumber: get(idx.sn),
+      grade,
+      className,
+      motherName: get(idx.mother),
+      birthDate: get(idx.birthDate),
+      birthPlace: get(idx.birthPlace),
+      parentName: get(idx.parentName),
+      parentPhone: get(idx.parentPhone),
+      gender: get(idx.gender),
+    }, i, 'std-csv');
+    if (st) parsedStudents.push(st);
   }
 
   return parsedStudents;

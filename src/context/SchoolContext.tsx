@@ -50,6 +50,7 @@ import {
   DEFAULT_SCHOOL_PROFILE,
   STORAGE_KEY_SCHOOL_PROFILE,
   STORAGE_KEY_SAVED_SCHOOLS,
+  STORAGE_FAILURE_EVENT,
   withParentAccessCodes
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
@@ -58,6 +59,10 @@ import { getCleanAvatar } from '../utils/avatarHelper';
 import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
 import { auditLogger } from '../services/audit/auditLogger';
+import { sanitizePackageStudents } from '../services/importers/rosterSanitizer';
+
+/** أيام الحضور المحفوظة لكل طالب: عام دراسي كامل (~180 يوم دوام) مع هامش */
+const ATTENDANCE_HISTORY_DAYS = 200;
 import { SecurityEngine } from '../services/security/securityEngine';
 import { autoBackupService } from '../services/storage/autoBackup';
 import { ROLE_HOME, mayViewInterface } from '../services/security/roleAccess';
@@ -1149,6 +1154,18 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, duration);
   }, []);
 
+  // امتلاء مساحة التخزين المحلي: تنبيه واضح (مرة كل دقيقة على الأكثر) بدل الفقد الصامت
+  useEffect(() => {
+    let last = 0;
+    const onFail = () => {
+      if (Date.now() - last < 60_000) return;
+      last = Date.now();
+      showToast('error', 'مساحة التخزين ممتلئة ⚠️', 'صدّر نسخة احتياطية الآن من «إدارة المدارس». البيانات تُحفظ في قاعدة الجهاز الاحتياطية.', 9000);
+    };
+    window.addEventListener(STORAGE_FAILURE_EVENT, onFail);
+    return () => window.removeEventListener(STORAGE_FAILURE_EVENT, onFail);
+  }, [showToast]);
+
   const dismissToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
@@ -1511,7 +1528,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const history = [
           { date: todayISO, status, ...(cleanNote ? { note: cleanNote } : {}) },
           ...((s.recentAttendance || []).filter(r => r.date !== todayISO))
-        ].slice(0, 120);
+        ].slice(0, ATTENDANCE_HISTORY_DAYS);
         return {
           ...s,
           status,
@@ -1585,7 +1602,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const history = [
           { date: todayISO, status: 'present' as AttendanceStatus },
           ...((s.recentAttendance || []).filter(r => r.date !== todayISO))
-        ].slice(0, 120);
+        ].slice(0, ATTENDANCE_HISTORY_DAYS);
         const attended = history.filter(r => r.status === 'present' || r.status === 'late').length;
         return {
           ...s,
@@ -2111,50 +2128,67 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `حزمة_${schoolProfile.name.replace(/\s+/g, '_')}_2026.madrasa.json`;
+    a.download = `حزمة_${schoolProfile.name.replace(/\s+/g, '_')}_${localISODate()}.madrasa.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('gold', 'تم تصدير نسخة المدرسة 📦', 'تم تنزيل ملف المنظومة بنجاح. يمكنك إرساله لصديقك لتجربته!');
+    showToast('gold', 'تم تصدير نسخة المدرسة 📦', 'الملف يحوي بيانات الطلاب ورموز أولياء الأمور — احفظه في مكان آمن ولا تشاركه.');
   };
 
   const importSchoolPackage = (jsonContent: string): boolean => {
     if (!requireSchoolManager('استيراد حزمة مدرسة')) return false;
     try {
       const pkg = JSON.parse(jsonContent);
-      if (!pkg.schoolProfile || !pkg.schoolProfile.name) {
+      if (!pkg || typeof pkg !== 'object' || (!Array.isArray(pkg.students) && !pkg.schoolProfile?.name)) {
         throw new Error('ملف الحزمة غير صالح أو لا يحتوي على بيانات مدرسة.');
       }
       // شبكة أمان: حفظ الحالة الحالية قبل الاستيراد (رجوع بنقرة من النسخ والترميم)
       autoBackupService.stashSafety({ schoolProfile, students, teachers, classes, notifications, conversations, schedule });
-      setSchoolProfileState(pkg.schoolProfile);
-      saveSchoolProfile(pkg.schoolProfile);
+      // الحزمة تُستورد داخل المدرسة الحالية: هويتها (المعرّف، هاتف المدير، الترخيص/التجربة)
+      // لا تُستبدل — وإلا انفصلت المدرسة عن خزنتها وترخيصها، أو صار هاتف مدير مدرسة أخرى هو هاتف الدخول.
+      const p = (pkg.schoolProfile || {}) as Partial<SchoolProfile>;
+      const merged: SchoolProfile = {
+        ...schoolProfile,
+        name: p.name || schoolProfile.name,
+        code: p.code || schoolProfile.code,
+        district: p.district || schoolProfile.district,
+        directorName: p.directorName || schoolProfile.directorName,
+        city: p.city || schoolProfile.city,
+        address: p.address || schoolProfile.address,
+        schoolAddress: p.schoolAddress || schoolProfile.schoolAddress,
+        workingHours: p.workingHours || schoolProfile.workingHours,
+        logo: p.logo || schoolProfile.logo,
+      };
+      setSchoolProfileState(merged);
+      saveSchoolProfile(merged);
+      setSavedSchoolsState(prev => {
+        const list = prev.some(s => s.id === merged.id) ? prev.map(s => (s.id === merged.id ? merged : s)) : [...prev, merged];
+        try {
+          localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+        } catch {}
+        return list;
+      });
       if (Array.isArray(pkg.students)) {
-        setStudents(pkg.students);
-        db.saveStudents(pkg.students);
+        const clean = withParentAccessCodes(sanitizePackageStudents(pkg.students));
+        setStudents(clean);
+        db.saveStudents(clean, true);
       }
       if (Array.isArray(pkg.teachers)) {
         setTeachers(pkg.teachers);
         db.saveTeachers(pkg.teachers);
       }
-      setSavedSchoolsState(prev => {
-        if (!prev.some(s => s.id === pkg.schoolProfile.id)) {
-          const list = [...prev, pkg.schoolProfile];
-          try {
-            localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
-          } catch {}
-          return list;
-        }
-        return prev;
-      });
+      if (Array.isArray(pkg.classes) && pkg.classes.length > 0) {
+        setClasses(pkg.classes);
+        db.saveClasses(pkg.classes);
+      }
       sound.playFanfare();
       triggerConfetti();
-      showToast('gold', 'تم استيراد المدرسة بنجاح 🌟', `تم تحميل بيانات ${pkg.schoolProfile.name} بالكامل.`);
+      showToast('gold', 'تم استيراد الحزمة بنجاح 🌟', `${Array.isArray(pkg.students) ? pkg.students.length : 0} طالب • ${Array.isArray(pkg.classes) ? pkg.classes.length : 0} فصل — داخل المدرسة الحالية.`);
       auditLogger.log({
         actorName: currentUserPhone,
         actorRole: authenticatedRole,
         action: 'SCHOOL_PACKAGE_IMPORT',
         entity: 'Backup',
-        details: `استيراد حزمة (${pkg.schoolProfile.name}) — الحالة السابقة محفوظة في لقطة الأمان`,
+        details: `استيراد حزمة (${p.name || schoolProfile.name}) — الحالة السابقة محفوظة في لقطة الأمان`,
         severity: 'WARN'
       });
       return true;

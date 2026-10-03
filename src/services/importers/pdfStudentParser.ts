@@ -659,41 +659,19 @@ export class LibyanPdfStudentParser {
       birthPlace: row.birthPlace,
       sectionCode: row.sectionCode,
       academicYear: row.academicYear,
-      parentName: `ولي أمر الطالب ${row.name}`,
+      parentName: '',
       parentPhone: row.parentPhone,
-      parentEmail: `parent.${row.nationalNumber.slice(-4)}@madrasa.ly`,
+      parentEmail: '',
       status: 'present',
-      attendanceRate: 98,
-      academicAverage: 90,
-      behaviorRating: 'ممتاز',
-      behaviorPointsTotal: 25,
-      points: 25,
-      behaviorPoints: [
-        {
-          id: `bp-${Date.now()}-1`,
-          category: 'positive',
-          title: 'استيراد السجل الرسمي المعتمد من المنظومة',
-          points: 5,
-          icon: '⭐',
-          date: 'الآن',
-          teacher: 'إدارة المنظومة'
-        }
-      ],
-      competencies: [
-        { name: 'الاستيعاب والفهم', score: 90, maxScore: 100 },
-        { name: 'الانضباط والحضور', score: 95, maxScore: 100 },
-        { name: 'المشاركة والأنشطة', score: 88, maxScore: 100 },
-        { name: 'حل الواجبات', score: 92, maxScore: 100 }
-      ],
-      subjects: [
-        { name: 'الرياضيات', score: 95, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'ممتاز' },
-        { name: 'اللغة العربية', score: 92, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'ممتاز' },
-        { name: 'العلوم', score: 90, maxScore: 100, teacher: 'أ. فاطمة المجبري', evaluation: 'ممتاز' },
-        { name: 'الحاسوب', score: 96, maxScore: 100, teacher: 'أ. محمد الزوي', evaluation: 'ممتاز' },
-        { name: 'اللغة الإنجليزية', score: 88, maxScore: 100, teacher: 'أ. خديجة الترهوني', evaluation: 'جيد جداً' },
-        { name: 'التربية الإسلامية', score: 98, maxScore: 100, teacher: 'أ. عثمان السويحلي', evaluation: 'ممتاز' },
-        { name: 'الدراسات الاجتماعية', score: 91, maxScore: 100, teacher: 'أ. مريم المنفي', evaluation: 'ممتاز' }
-      ]
+      attendanceRate: 100,
+      academicAverage: 0,
+      behaviorRating: 'جيد',
+      behaviorPointsTotal: 0,
+      behaviorPoints: [],
+      competencies: [],
+      // لا درجات مختلقة: تُرصد من سجل الدرجات وتظهر لولي الأمر بعد اعتماد الكنترول
+      subjects: [],
+      recentAttendance: [],
     };
   }
 }

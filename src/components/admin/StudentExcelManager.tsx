@@ -21,6 +21,7 @@ import {
   parseStudentsCsv
 } from '../../utils/excelHelper';
 import { db } from '../../services/db';
+import { studentDedupKey } from '../../services/importers/rosterSanitizer';
 import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 
@@ -74,36 +75,24 @@ export const StudentExcelManager: React.FC<StudentExcelManagerProps> = ({ isOpen
   const handleConfirmImport = () => {
     if (!previewStudents || previewStudents.length === 0) return;
 
-    // Load and merge with current students
-    const merged: Student[] = [
-      ...students,
-      ...(previewStudents as Student[])
-    ];
-
-    // Remove duplicates by national ID
-    const uniqueStudents = Array.from(new Map(merged.map(s => [s.nationalId, s])).values());
+    // منع التكرار: الرقم الوطني ← رقم القيد (الطالب الموجود مسبقاً يبقى كما هو)
+    const keys = new Set(students.map(studentDedupKey));
+    const fresh = (previewStudents as Student[]).filter(s => {
+      const k = studentDedupKey(s);
+      if (keys.has(k)) return false;
+      keys.add(k);
+      return true;
+    });
+    const uniqueStudents: Student[] = [...students, ...fresh];
+    const added = fresh.length;
 
     // Update global store through the versioned DB layer (v3 + encryption).
     // BUGFIX: كان يكتب لمفتاح قديم مهجور (madrasa_db_students_v2) فيضيع الاستيراد بعد التحديث.
     db.saveStudents(uniqueStudents, true);
-    
-    // Broadcast update via API if running with local node server
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      fetch('/api/action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'IMPORT_STUDENTS',
-          fullState: {
-            students: uniqueStudents,
-          }
-        })
-      }).catch(() => {});
-    }
 
     sound.playFanfare();
     triggerConfetti();
-    setSuccessMessage(`تم استيراد وإدراج ${previewStudents.length} طالب بنجاح ومزامنتهم مع كافة الحسابات!`);
+    setSuccessMessage(`أُضيف ${added} طالباً${previewStudents.length - added > 0 ? ` • تُجوهل ${previewStudents.length - added} مكرر` : ''}.`);
     setPreviewStudents(null);
     setImportFileName('');
 

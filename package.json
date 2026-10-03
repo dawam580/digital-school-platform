@@ -24,7 +24,8 @@
     "license:keygen": "node tools/license/keygen.cjs",
     "license:issue": "node tools/license/issue-license.cjs",
     "owner": "electron electron/main.cjs --owner",
-    "test:e2e": "node tests/e2e/roles-journey.mjs"
+    "test:e2e": "node tests/e2e/roles-journey.mjs",
+    "roster:package": "node tools/roster/build-roster-package.cjs"
   },
   "dependencies": {
     "@fontsource-variable/cairo": "^5.3.0",

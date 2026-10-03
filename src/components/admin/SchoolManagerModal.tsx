@@ -137,7 +137,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
                 </span>
               </div>
               <p className="text-xs text-blue-200/80 mt-0.5">
-                تخصيص بيانات مدرستك، تصدير نسخة مستقلة لصديقك، أو إنشاء مدرسة جديدة ببيانات معزولة
+                تخصيص بيانات مدرستك، النسخ الاحتياطي والاسترجاع، أو إضافة مدرسة أخرى ببيانات معزولة
               </p>
             </div>
           </div>
@@ -328,7 +328,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
                     <span>💡 ما هو ملف المنظومة (.json) ولماذا هو موجود؟</span>
                   </div>
                   <p>
-                    هذا الملف ليس جدولاً عادياً، بل هو <strong>ملف أمان مشفر (مثل نسخة واتساب الاحتياطية)</strong> يحتوي على كامل قاعدة بيانات مدرستك (الطلاب، الدرجات، الحضور، الإعدادات). المنظومة تعمل محلياً داخل جهازك بدون الحاجة لسيرفر خارجي، وهذا الملف يسمح لك بأخذ نسختك في فلاش ميموري وتشغيلها في أي مكان أو استرجاعها إن تعطل المتصفح.
+                    هذا الملف <strong>نسخة احتياطية كاملة غير مشفرة</strong> لبيانات مدرستك (الطلاب، الدرجات، الحضور، رموز أولياء الأمور). احفظه في فلاشة أو مكان آمن ولا ترسله لأي جهة. عند الاسترجاع تُحمَّل البيانات داخل المدرسة الحالية مع بقاء ترخيصها وحساب مديرها.
                   </p>
                   <p className="text-amber-800 dark:text-amber-300 font-bold pt-0.5">
                     👉 إذا أردت كشوفات قابلة للقراءة والطباعة: استخدم زر <strong>(تصدير Excel 📊)</strong> أو <strong>(الكشف الوزاري الرسمي A4 🏛️)</strong> في الصفحة الرئيسية.
@@ -372,22 +372,22 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
             </div>
           )}
 
-          {/* TAB 2: Create a Fresh Isolated School for Friend */}
+          {/* TAB 2: Create a Fresh Isolated School */}
           {activeTab === 'new' && (
             <form onSubmit={handleCreateSchool} className="space-y-4">
               <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800">
                 <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-xs mb-1">
                   <Sparkles className="w-4 h-4" />
-                  <span>تهيئة مدرسة جديدة مستقلة لصديقك</span>
+                  <span>إضافة مدرسة جديدة مستقلة على هذا الجهاز</span>
                 </div>
                 <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
-                  سيتم حفظ بيانات مدرستك الحالية بأمان تام في الذاكرة، وتهيئة بيئة جديدة تماماً لمدرسة صديقك لتبدأ فارغة ونظيفة لتجربة إدخال الطلاب والمعلمين.
+                  تُحفظ بيانات مدرستك الحالية كاملة في خزنة المدارس، وتبدأ المدرسة الجديدة فارغة ومعزولة تماماً (تحتاج ترخيصها الخاص).
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">اسم مدرسة الصديق الجديدة:</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">اسم المدرسة الجديدة:</label>
                   <input
                     type="text"
                     value={newSchoolName}

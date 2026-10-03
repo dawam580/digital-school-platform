@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSchool } from '../../context/SchoolContext';
-import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
+import { todayAttendanceStatus, libyanAppreciation } from '../../services/domain/libyanCalendar';
 import { useRequireRole } from '../../hooks/useRequireRole';
 import { ExamStorageService } from '../../services/exams/examStorageService';
 import { Student, DaySchedule } from '../../types';
@@ -283,6 +283,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const directorWhatsAppUrl = `https://wa.me/${schoolWhatsAppNumber}?text=${encodeURIComponent(
     `السلام عليكم ورحمة الله، أنا ولي أمر الطالب (${activeChild?.name || ''}) بالصف (${activeChild?.className || ''}) بمدرسة (${schoolProfile?.name || 'المدرسة'})، أود الاستفسار بخصوص متابعة ابني.`
   )}`;
+
+  // المتوسط يظهر فقط بعد رصد درجات فعلية وعدم حجبها من الكنترول
+  const showAverage = gradesReleased === true && (activeChild?.academicAverage ?? 0) > 0;
 
   // Attendance stats
   const attHistory = activeChild?.recentAttendance || [];
@@ -612,7 +615,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                     />
                     <path
                       className="text-emerald-400"
-                      strokeDasharray={`${attRate}, 100`}
+                      strokeDasharray={`${attHistory.length === 0 ? 0 : attRate}, 100`}
                       strokeWidth="3.5"
                       strokeLinecap="round"
                       stroke="currentColor"
@@ -620,7 +623,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     />
                   </svg>
-                  <span className="absolute text-[10px] font-black font-mono text-white">{attRate}%</span>
+                  <span className="absolute text-[10px] font-black font-mono text-white">{attHistory.length === 0 ? '—' : `${attRate}%`}</span>
                 </div>
               </div>
 
@@ -628,12 +631,12 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               <div className="p-3.5 rounded-2xl bg-[#14213d]/80 border border-white/10 flex items-center justify-between shadow-sm">
                 <div>
                   <span className="text-[10px] text-slate-400 block">المتوسط الدراسي</span>
-                  <span className="text-xs font-black text-blue-300 block mt-0.5">
-                    {activeChild.academicAverage ? (activeChild.academicAverage >= 85 ? 'ممتاز' : 'جيد جداً') : 'معتمد'}
+                  <span className={`text-xs font-black block mt-0.5 ${showAverage ? 'text-blue-300' : 'text-slate-400'}`}>
+                    {showAverage ? libyanAppreciation(activeChild.academicAverage) : gradesReleased === false ? 'بانتظار اعتماد الكنترول' : 'لم تُرصد درجات بعد'}
                   </span>
                 </div>
                 <div className="text-left font-mono">
-                  <span className="text-base font-black text-white">{activeChild.academicAverage != null ? activeChild.academicAverage : '—'}</span>
+                  <span className="text-base font-black text-white">{showAverage ? activeChild.academicAverage : '—'}</span>
                   <span className="text-[10px] text-slate-400 block">/ 100</span>
                 </div>
               </div>
@@ -807,10 +810,10 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                     <span>النتيجة الرسمية المعتمدة 🇱🇾</span>
                   </span>
                   <div className="text-4xl font-black font-mono text-white tracking-tight">
-                    {activeChild.academicAverage != null ? `${activeChild.academicAverage}%` : '87.3%'}
+                    {showAverage ? `${activeChild.academicAverage}%` : '—'}
                   </div>
                   <p className="text-xs text-blue-200">
-                    التقدير العام: <strong className="text-amber-300 font-black">{activeChild.appreciation || 'جيد جداً مرتفع'}</strong>
+                    التقدير العام: <strong className="text-amber-300 font-black">{showAverage ? libyanAppreciation(activeChild.academicAverage) : 'لم تُرصد درجات بعد'}</strong>
                   </p>
 
                   <div className="pt-2">

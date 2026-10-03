@@ -652,28 +652,35 @@ export const SEED_SCHEDULE: DaySchedule[] = [
 export const SEED_STUDENTS: Student[] = DEMO_STUDENTS;
 
 // Fallback safe student object used when database is clean and has 0 students
+/** حدث يُطلق عند فشل الحفظ في localStorage (امتلاء المساحة) — تعرضه الواجهة كتنبيه */
+export const STORAGE_FAILURE_EVENT = 'madrasa-storage-failure';
+export function reportStorageFailure(err: unknown): void {
+  console.error('[storage] تعذر الحفظ في التخزين المحلي', err);
+  try { window.dispatchEvent(new CustomEvent(STORAGE_FAILURE_EVENT)); } catch {}
+}
+
 export const DEFAULT_FALLBACK_STUDENT: Student = {
   id: 'std-empty-fallback',
   name: 'طالب جديد',
-  nationalId: '120260000000',
-  nationalNumber: '120260000000',
+  nationalId: '',
+  nationalNumber: '',
   studentNumber: '2026-0000',
   linkCode: 'SCH-2026-EMPTY',
   avatar: getCleanAvatar('طالب جديد', 'male'),
   grade: 'الصف الأول الأساسي',
   className: '1/1',
   gender: 'male',
-  parentName: 'ولي الأمر',
-  parentPhone: '0912345678',
-  parentEmail: 'parent@school.edu.ly',
+  parentName: '',
+  parentPhone: '',
+  parentEmail: '',
   status: 'present',
   attendanceRate: 100,
-  academicAverage: 100,
-  courseworkScore: 40,
-  examScore: 60,
-  totalScore: 100,
-  appreciation: 'ممتاز',
-  behaviorRating: 'ممتاز',
+  academicAverage: 0,
+  courseworkScore: 0,
+  examScore: 0,
+  totalScore: 0,
+  appreciation: '',
+  behaviorRating: 'جيد',
   behaviorPointsTotal: 0,
   behaviorPoints: [],
   competencies: [],
@@ -1289,7 +1296,12 @@ export const db = {
     try {
       students = withParentAccessCodes(students);
       const encrypted = CryptoVaultService.encryptStudentsBatch(students);
-      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(encrypted));
+      try {
+        localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(encrypted));
+      } catch (err) {
+        // المساحة ممتلئة: IndexedDB (أدناه) يبقى يحفظ، ونُنبّه المدير بدل الفقد الصامت
+        reportStorageFailure(err);
+      }
       if (force) {
         localStorage.setItem('madrasa_last_sync_timestamp', Date.now().toString());
       }

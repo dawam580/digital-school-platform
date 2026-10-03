@@ -197,34 +197,29 @@ export const QrPdfReaderModal: React.FC<QrPdfReaderModalProps> = ({
     const newStudent: Student = {
       id: `std-qr-${Date.now()}`,
       name: data.name || 'طالب جديد عبر QR',
-      nationalNumber: data.nationalNumber || `12008${Date.now().toString().slice(-7)}`,
-      nationalId: data.nationalNumber || `12008${Date.now().toString().slice(-7)}`,
+      nationalNumber: data.nationalNumber || '',
+      nationalId: data.nationalNumber || '',
       studentNumber: data.studentNumber || `2025-${Math.floor(1000 + Math.random() * 9000)}`,
       linkCode: data.linkCode || `SCH-2026-Q${Math.floor(10 + Math.random() * 90)}`,
-      grade: data.grade || 'الصف السابع الأساسي',
-      className: data.className || '7/أ',
+      grade: data.grade || '',
+      className: data.className || '',
       gender: 'male',
-      parentName: `ولي أمر ${data.name || 'الطالب'}`,
+      parentName: '',
       // أمان الخصوصية: لا تُخترع أرقام هواتف أبداً (رسائل الواتساب قد تذهب لشخص خطأ)
       parentPhone: data.parentPhone || '',
       parentEmail: data.parentEmail || '',
       status: 'present',
-      attendanceRate: 98,
-      academicAverage: 92,
-      courseworkScore: 38,
-      examScore: 56,
-      totalScore: 94,
-      appreciation: 'ممتاز',
-      behaviorRating: 'ممتاز',
-      behaviorPointsTotal: 30,
       avatar: getCleanAvatar(data.name || 'طالب', data.gender || 'male'),
-      competencies: [],
+      attendanceRate: 100,
+      academicAverage: 0,
+      behaviorRating: 'جيد',
+      behaviorPointsTotal: 0,
       behaviorPoints: [],
-      subjects: [
-        { name: 'الرياضيات', score: 94, maxScore: 100, teacher: 'أ. طارق الفيتوري', evaluation: 'ممتاز' },
-        { name: 'اللغة العربية', score: 92, maxScore: 100, teacher: 'أ. عبدالسلام الورفلي', evaluation: 'ممتاز' },
-        { name: 'العلوم الطبيعية', score: 90, maxScore: 100, teacher: 'أ. مريم الترهوني', evaluation: 'ممتاز' }
-      ]
+      competencies: [],
+      // لا درجات مختلقة: تُرصد من سجل الدرجات وتظهر لولي الأمر بعد اعتماد الكنترول
+      subjects: [],
+      recentAttendance: [],
+
     };
 
     const updated = [newStudent, ...students];

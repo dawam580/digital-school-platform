@@ -31,7 +31,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { PrintableStudentGradeCard } from '../../components/exams/PrintableStudentGradeCard';
 import { ParentStudentGate } from '../../components/parent/ParentStudentGate';
-import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
+import { todayAttendanceStatus, libyanAppreciation } from '../../services/domain/libyanCalendar';
 import { Student } from '../../types';
 
 export const ParentDashboard: React.FC = () => {
@@ -99,6 +99,7 @@ export const ParentDashboard: React.FC = () => {
   }, [activeChild?.className]);
 
   // إحصائيات حضور حقيقية من السجل (بدل الأرقام الثابتة)
+  const showAverage = gradesReleased === true && (activeChild?.academicAverage ?? 0) > 0;
   const attHistory = activeChild?.recentAttendance || [];
   const childToday = todayAttendanceStatus(activeChild);
   const attPresent = attHistory.filter(r => r.status === 'present').length;
@@ -333,14 +334,14 @@ export const ParentDashboard: React.FC = () => {
         {/* Card 2: Academic Average & Rank */}
         <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm text-center flex flex-col items-center justify-center space-y-2">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-50 dark:bg-blue-950/50 border-4 border-blue-500 flex items-center justify-center text-blue-700 dark:text-blue-300 font-black text-lg sm:text-xl shadow-inner">
-            {activeChild.academicAverage != null ? `${activeChild.academicAverage}%` : '—'}
+            {showAverage ? `${activeChild.academicAverage}%` : '—'}
           </div>
           <div>
             <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 block">
-              المعدل العام ({activeChild.appreciation || 'لم يُحتسب بعد'})
+              المعدل العام ({showAverage ? libyanAppreciation(activeChild.academicAverage) : 'لم يُحتسب بعد'})
             </span>
             <span className="text-[11px] text-blue-600 dark:text-blue-400 font-bold block">
-              {activeChild.academicAverage != null ? 'وفق آخر رصد معتمد' : 'بانتظار رصد الدرجات'}
+              {showAverage ? 'وفق آخر رصد معتمد' : gradesReleased === false ? 'بانتظار اعتماد الكنترول' : 'بانتظار رصد الدرجات'}
             </span>
           </div>
         </div>
