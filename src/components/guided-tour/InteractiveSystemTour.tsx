@@ -65,7 +65,7 @@ export const InteractiveSystemTour: React.FC = () => {
       title: 'كشوفات الطلاب والباركود الذكي (QR) 👨‍🎓',
       badge: 'الخطوة 2: شؤون الطلاب',
       badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200',
-      description: 'قم بهذا: تصفح سجلات 873 طالباً، وولد بطاقات التعريف الذكية مع باركود فوري يتيح لولي الأمر متابعة درجات وغياب ابنه بخصوصية تامة.',
+      description: 'قم بهذا: تصفح سجلات طلاب المدرسة، وولد بطاقات التعريف الذكية مع باركود فوري يتيح لولي الأمر متابعة درجات وغياب ابنه بخصوصية تامة.',
       actionText: 'استعراض كشف الطلاب والشعب 👥',
       icon: Users,
       action: () => {

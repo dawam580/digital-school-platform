@@ -71,7 +71,7 @@ import { SubscriptionExpiredOverlay } from '../components/licensing/Subscription
 import { FirebaseAuthService, AuthSessionUser } from '../services/auth/firebaseAuthService';
 import { AuthEngine, isCounselorAccount, normalizeLibyanPhone, LIBYAN_PHONE_RE } from '../services/security/authEngine';
 import { swapActiveSchool, setSwitchNotice, takeSwitchNotice } from '../services/storage/schoolVault';
-import { currentAcademicYear, academicYearStart } from '../services/domain/libyanCalendar';
+import { currentAcademicYear, academicYearStart, localISODate } from '../services/domain/libyanCalendar';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -1487,7 +1487,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!requireLiveMode('تسجيل الحضور')) return;
     // سجل الحضور التراكمي: قيد اليوم يُستبدل عند إعادة الرصد (لا تكرار)، ويُحفظ بحد 120 قيداً.
     // النسبة تُحسب من السجل الفعلي (حاضر+متأخر = أيام مداومة) بدل الأرقام الثابتة المختلقة سابقاً.
-    const todayISO = new Date().toISOString().split('T')[0];
+    const todayISO = localISODate();
     const cleanNote = note ? SecurityEngine.sanitizeString(note) : undefined;
     const calcRate = (history: { status: AttendanceStatus }[], fallback: number): number => {
       if (history.length === 0) return fallback;

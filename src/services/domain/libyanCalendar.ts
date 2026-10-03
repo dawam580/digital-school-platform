@@ -46,3 +46,8 @@ export function libyanAppreciation(percentage: number): LibyanAppreciation {
   if (percentage >= 50) return 'مقبول';
   return 'ضعيف';
 }
+
+/** تاريخ اليوم المحلي بصيغة YYYY-MM-DD (لا UTC — ليبيا UTC+2، فمنتصف الليل لا يُزيح اليوم) */
+export function localISODate(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}

@@ -11,40 +11,42 @@ import {
   Legend,
 } from 'recharts';
 import { CalendarDays, CheckCircle2, XCircle } from 'lucide-react';
+import { LIBYAN_DAY_NAMES, localISODate } from '../../services/domain/libyanCalendar';
 
 export const WeeklyAttendanceBarChart: React.FC = () => {
   const { students, isDarkMode } = useSchool();
 
+  // أسبوع الدراسة الليبي الحالي (الأحد ← الخميس) من سجلات الحضور الفعلية فقط
   const { weeklyData, avgAttendanceRate } = useMemo(() => {
-    const total = students.length || 1;
-    const presentToday = students.filter(s => s.status === 'present').length || Math.round(total * 0.94);
-    const absentToday = total - presentToday;
+    const now = new Date();
+    const sunday = new Date(now);
+    sunday.setHours(0, 0, 0, 0);
+    // الجمعة/السبت: نعرض الأسبوع الدراسي المنتهي للتو
+    sunday.setDate(now.getDate() - now.getDay());
 
-    // Days of the Libyan academic week: Sunday through Thursday
-    const days = [
-      { name: 'الأحد', factor: 0.93 },
-      { name: 'الإثنين', factor: 0.96 },
-      { name: 'الثلاثاء', factor: 0.95 },
-      { name: 'الأربعاء', factor: 0.94 },
-      { name: 'الخميس', factor: 0.91 },
-    ];
-
-    const data = days.map((d, index) => {
-      // Use live today's data for current day, and balanced realistic rates for other days
-      const presentCount = Math.round(total * d.factor);
-      const absentCount = total - presentCount;
-      return {
-        day: d.name,
-        حاضر: presentCount,
-        غائب: absentCount,
-      };
+    let presentTotal = 0;
+    let recordedTotal = 0;
+    const data = LIBYAN_DAY_NAMES.slice(0, 5).map((dayName, i) => {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      const key = localISODate(d);
+      let present = 0;
+      let absent = 0;
+      for (const s of students) {
+        const rec = (s.recentAttendance || []).find(r => r.date === key);
+        if (!rec) continue;
+        if (rec.status === 'unexcused') absent++;
+        else present++;
+      }
+      presentTotal += present;
+      recordedTotal += present + absent;
+      return { day: dayName, حاضر: present, غائب: absent };
     });
 
-    const avgRate = Math.round(
-      (data.reduce((acc, curr) => acc + curr['حاضر'], 0) / (total * data.length)) * 100
-    );
-
-    return { weeklyData: data, avgAttendanceRate: avgRate };
+    return {
+      weeklyData: data,
+      avgAttendanceRate: recordedTotal > 0 ? Math.round((presentTotal / recordedTotal) * 100) : null
+    };
   }, [students]);
 
   const tickFill = isDarkMode ? '#94a3b8' : '#64748b';
@@ -69,7 +71,7 @@ export const WeeklyAttendanceBarChart: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-black text-xs border border-emerald-200/60 dark:border-emerald-800/60">
-          <span>المعدل الأسبوعي: {avgAttendanceRate}%</span>
+          <span>{avgAttendanceRate === null ? 'لا سجلات حضور هذا الأسبوع' : `المعدل الأسبوعي: ${avgAttendanceRate}%`}</span>
         </div>
       </div>
 

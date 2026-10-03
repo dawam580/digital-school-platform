@@ -148,6 +148,9 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDirectLoadBaour = () => {
+    // لا يُستبدل كشف حقيقي أبداً بطلاب تجريبيين — متاح للمدرسة الفارغة فقط وبتأكيد
+    if (students.length > 0) return;
+    if (!window.confirm(`تحميل (${DEMO_STUDENTS.length}) طالباً تجريبياً بأسماء وهمية للمعاينة؟ احذفهم قبل استيراد كشفكم الحقيقي.`)) return;
     sound.playTap();
     setStudents(DEMO_STUDENTS);
     db.saveStudents(DEMO_STUDENTS, true);
@@ -193,7 +196,7 @@ export const AdminDashboard: React.FC = () => {
   const excusedCount = students.filter(s => s.status === 'excused').length;
   const attendancePercentage = totalStudentsCount > 0
     ? Math.round((presentCount / totalStudentsCount) * 100 * 10) / 10
-    : 95.6;
+    : 0;
 
   // Exam Calculations for Selected Class (Tab 4)
   const examStudents = useMemo(() => {
@@ -517,7 +520,7 @@ export const AdminDashboard: React.FC = () => {
           title="التحكم في المعلمين"
           value={teachers.length}
           suffix="معلم"
-          badge="33 فصلاً"
+          badge={`${new Set(students.map(st => st.className).filter(Boolean)).size} فصلاً`}
           hint="إدارة الرموز والفصول ←"
           icon={BookOpen}
           tone="amber"
@@ -738,7 +741,8 @@ export const AdminDashboard: React.FC = () => {
                 <span>+ إضافة طالب يدوياً</span>
               </button>
 
-              {/* Direct Al-Baour School 873 Students Load */}
+              {/* طلاب تجريبيون للمعاينة — المدرسة الفارغة فقط */}
+              {students.length === 0 && (
               <button
                 type="button"
                 onClick={handleDirectLoadBaour}
@@ -746,8 +750,9 @@ export const AdminDashboard: React.FC = () => {
                 title="تحميل كشف مدرسي تجريبي للاختبار والمحاكاة قبل إدخال بيانات مدرستكم"
               >
                 <span>🏛️</span>
-                <span>كشف تجريبي للمعاينة (873 طالباً) ⚡</span>
+                <span>طلاب تجريبيون للمعاينة ⚡</span>
               </button>
+              )}
 
               {/* Official Ministry Roster Modal (100% Exact 7-column replica A4) */}
               <button
@@ -939,7 +944,7 @@ export const AdminDashboard: React.FC = () => {
                               className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 active:scale-95 border border-amber-500"
                               title="تحميل كشف تجريبي للاختبار والمحاكاة قبل إدخال بيانات مدرستكم"
                             >
-                              <span>⚡ تحميل كشف تجريبي للاختبار (873 طالباً)</span>
+                              <span>⚡ تحميل طلاب تجريبيين للمعاينة</span>
                             </button>
                           </div>
                         </div>

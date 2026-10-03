@@ -142,7 +142,7 @@ export class SmartDataEngine {
       parentEmail: raw.parentEmail || `parent.${nationalNumber}@school.edu.ly`,
       gender: validation.inferredGender,
       status: 'present',
-      attendanceRate: raw.attendanceRate || 96,
+      attendanceRate: raw.attendanceRate ?? 0,
       academicAverage: raw.academicAverage || 89,
       courseworkScore: raw.courseworkScore || 36,
       examScore: raw.examScore || 53,

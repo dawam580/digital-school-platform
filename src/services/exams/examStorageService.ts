@@ -82,8 +82,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. عثمان السويحلي'
+    examMax: 60
   },
   {
     code: 'ARB',
@@ -92,8 +91,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. عبدالسلام الورفلي'
+    examMax: 60
   },
   {
     code: 'MATH',
@@ -102,8 +100,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. طارق الفيتوري'
+    examMax: 60
   },
   {
     code: 'SCI',
@@ -112,8 +109,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. فاطمة المجبري'
+    examMax: 60
   },
   {
     code: 'ENG',
@@ -122,8 +118,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. خديجة الترهوني'
+    examMax: 60
   },
   {
     code: 'HIST',
@@ -132,8 +127,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. سالم المقريف'
+    examMax: 60
   },
   {
     code: 'GEOG',
@@ -142,8 +136,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. مريم المنفي'
+    examMax: 60
   },
   {
     code: 'COMP',
@@ -152,8 +145,7 @@ export const DEFAULT_LIBYAN_EXAM_SUBJECTS: ExamSubject[] = [
     maxScore: 100,
     minScore: 50,
     courseworkMax: 40,
-    examMax: 60,
-    teacherName: 'أ. محمد الزوي'
+    examMax: 60
   }
 ];
 

@@ -133,7 +133,7 @@ export const ComprehensiveSystemGuideModal: React.FC<ComprehensiveSystemGuideMod
                     <span>كشف الطلاب والحضور اليومي:</span>
                   </h4>
                   <p className="text-xs text-slate-600 dark:text-slate-300">
-                    تستطيع من خلال الشاشة الرئيسية استعراض كشف الطلاب الـ 873 طالباً، والبحث بالاسم أو رقم القيد. وتسجيل الحضور والغياب بنقرة زر واحدة.
+                    تستطيع من خلال الشاشة الرئيسية استعراض كشف طلاب المدرسة، والبحث بالاسم أو رقم القيد. وتسجيل الحضور والغياب بنقرة زر واحدة.
                   </p>
                 </div>
 
