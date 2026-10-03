@@ -12,3 +12,10 @@ export const vendorWhatsAppLink = (text: string) => `https://wa.me/${VENDOR_WHAT
 /** سعر الاشتراك السنوي للمدرسة (دينار ليبي) — يظهر في الأسعار وشاشة التجديد */
 export const ANNUAL_PRICE_LYD = 2000;
 export const ANNUAL_PRICE_LABEL = ANNUAL_PRICE_LYD.toLocaleString('en-US');
+
+/**
+ * عنوان خادم تطبيق ولي الأمر الذي يشغّله المورّد (مثال: https://parents.example.ly).
+ * يُضبط وقت البناء: VITE_PARENT_RELAY_URL=https://... npm run build
+ * ويمكن للمدرسة تعديله من «تطبيق أولياء الأمور» في لوحة المدير.
+ */
+export const PARENT_RELAY_URL: string = (import.meta.env?.VITE_PARENT_RELAY_URL as string | undefined) || '';

@@ -3,6 +3,7 @@ export default {
   darkMode: 'class',
   content: [
     "./index.html",
+    "./parent-app/index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {

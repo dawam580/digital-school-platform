@@ -60,6 +60,7 @@ import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
 import { auditLogger } from '../services/audit/auditLogger';
 import { sanitizePackageStudents } from '../services/importers/rosterSanitizer';
+import { useParentAppSync, ParentSyncStatus } from '../services/parentSync/useParentAppSync';
 
 /** أيام الحضور المحفوظة لكل طالب: عام دراسي كامل (~180 يوم دوام) مع هامش */
 const ATTENDANCE_HISTORY_DAYS = 200;
@@ -79,6 +80,9 @@ import { swapActiveSchool, setSwitchNotice, takeSwitchNotice } from '../services
 import { currentAcademicYear, academicYearStart, localISODate } from '../services/domain/libyanCalendar';
 
 interface SchoolContextType {
+  // تطبيق ولي الأمر (المزامنة المشفّرة مع خادم المورّد)
+  parentSyncStatus: ParentSyncStatus;
+  syncParentAppNow: () => Promise<void>;
   // Auth & Roles
   currentRole: UserRole;
   setCurrentRole: (role: UserRole) => void;
@@ -2812,9 +2816,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('success', 'تم تحديث مستندات الطالب 📁', 'تم حفظ حالة ملف الطالب والمستندات المسلمة');
   };
 
+  // تطبيق ولي الأمر على الجوال: رفع ملخصات مشفّرة وسحب رسائل أولياء الأمور (عند تفعيله بترخيص)
+  const { parentSyncStatus, syncParentAppNow } = useParentAppSync({
+    students, teachers, notifications, conversations, parentSummons, schoolProfile,
+    setConversations, saveConversations: c => db.saveConversations(c), setParentSummons, addNotification,
+  });
+
   return (
     <SchoolContext.Provider
       value={{
+        parentSyncStatus,
+        syncParentAppNow,
         currentRole,
         setCurrentRole,
         authenticatedRole,

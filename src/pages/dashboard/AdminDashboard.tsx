@@ -61,6 +61,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { CollapsibleSection } from '../../components/ui/CollapsibleSection';
 import { AppErrorBoundary } from '../../components/common/AppErrorBoundary';
 import { ParentAccessCardsModal } from '../../components/admin/ParentAccessCardsModal';
+import { ParentAppSyncModal } from '../../components/admin/ParentAppSyncModal';
 import { todayAttendanceStatus } from '../../services/domain/libyanCalendar';
 
 // لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
@@ -109,6 +110,7 @@ export const AdminDashboard: React.FC = () => {
   // Teachers Tab State
   const [showTeacherModal, setShowTeacherModal] = useState(false);
   const [showParentCards, setShowParentCards] = useState(false);
+  const [showParentApp, setShowParentApp] = useState(false);
   const [teacherToEdit, setTeacherToEdit] = useState<TeacherAccount | null>(null);
 
   // Exams Tab State
@@ -365,6 +367,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-7xl mx-auto pb-16 font-cairo">
       <ParentAccessCardsModal isOpen={showParentCards} onClose={() => setShowParentCards(false)} />
+      <ParentAppSyncModal isOpen={showParentApp} onClose={() => setShowParentApp(false)} />
 
       {/* Top Header & Fast Actions */}
       <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-5">
@@ -391,6 +394,15 @@ export const AdminDashboard: React.FC = () => {
           >
             <KeyRound className="w-4 h-4 text-slate-950 shrink-0" />
             <span>🔐 إعدادات المدير وتغيير الرمز</span>
+          </button>
+
+          {/* Parent mobile app (encrypted sync) */}
+          <button
+            onClick={() => { setShowParentApp(true); sound.playTap(); }}
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="تفعيل تطبيق أولياء الأمور على الجوال ومتابعة المزامنة"
+          >
+            <span>📱 تطبيق أولياء الأمور</span>
           </button>
 
           {/* Parent Access Cards (codes + QR) */}

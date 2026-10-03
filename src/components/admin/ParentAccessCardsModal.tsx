@@ -7,6 +7,8 @@ import { db, generateParentAccessCode } from '../../services/db';
 import { getBaseUrl } from '../../utils/inviteMessageHelper';
 import { normalizeLibyanPhone, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
 import { Student } from '../../types';
+import { parentLoginId } from '../../parent-sync/protocol';
+import { parentAppCardLink, getParentSyncConfig } from '../../services/parentSync/schoolSync';
 import { sound } from '../../utils/soundEffects';
 
 interface ParentAccessCardsModalProps {
@@ -14,11 +16,13 @@ interface ParentAccessCardsModalProps {
   onClose: () => void;
 }
 
-/** معرّف الطالب الذي يكتبه ولي الأمر: الرقم الوطني أولاً ثم رقم القيد */
-export const parentLoginId = (s: Student) => s.nationalNumber || s.studentNumber || s.nationalId || s.linkCode;
+export { parentLoginId };
 
 /** رابط الدخول المباشر لولي الأمر (الباركود): يفتح تطبيقه ويُدخله فوراً */
 export const parentLoginLink = (s: Student) => {
+  // تطبيق الجوال (خادم المورّد) إن فُعِّل — وإلا رابط المنظومة المحلي
+  const appLink = s.parentAccessCode ? parentAppCardLink(parentLoginId(s), s.parentAccessCode) : null;
+  if (appLink && getParentSyncConfig().enabled) return appLink;
   const base = getBaseUrl().replace(/\/+$/, '');
   return `${base}?portal=parent&code=${encodeURIComponent(parentLoginId(s))}&pin=${encodeURIComponent(s.parentAccessCode || '')}`;
 };
