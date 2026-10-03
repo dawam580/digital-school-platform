@@ -8,11 +8,11 @@ $BatchFile = Join-Path $ProjectDir "Run-School-Desktop.bat"
 $IconFile = Join-Path $ProjectDir "public\favicon.ico"
 
 # 1. Primary Arabic Shortcut
-$ShortcutPath = Join-Path $DesktopPath "مدرسة الشهيد امحمد الباعور.lnk"
+$ShortcutPath = Join-Path $DesktopPath "منظومة المدرسة الرقمية.lnk"
 $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
 $Shortcut.TargetPath = $BatchFile
 $Shortcut.WorkingDirectory = $ProjectDir
-$Shortcut.Description = "منظومة مدرسة الشهيد امحمد الباعور للتعليم الأساسي - نظام إدارة التعليم والامتحانات الشامل"
+$Shortcut.Description = "منظومة المدرسة الرقمية - نظام إدارة التعليم والامتحانات الشامل"
 if (Test-Path $IconFile) {
     $Shortcut.IconLocation = "$IconFile,0"
 }

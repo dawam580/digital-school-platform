@@ -68,7 +68,7 @@ export const LandingPage: React.FC = () => {
       setActiveTab('counselor-dashboard');
     } else if (role === 'parent') {
       const firstStudent = students[0];
-      const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '120195864392';
+      const idToUse = firstStudent ? (firstStudent.nationalNumber || firstStudent.nationalId || firstStudent.studentNumber) : '';
       login(idToUse, 'parent', '123456');
     }
   };
