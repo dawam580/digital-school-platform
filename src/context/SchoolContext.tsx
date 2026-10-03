@@ -64,7 +64,7 @@ import { ROLE_HOME, mayViewInterface } from '../services/security/roleAccess';
 import { SuperAdminLockModal } from '../components/common/SuperAdminLockModal';
 import { PinRotationModal } from '../components/common/PinRotationModal';
 import { studentRepository } from '../services/repositories';
-import { LicenseService } from '../services/licensing/licenseService';
+import { LicenseService, DEFAULT_INITIAL_LICENSE } from '../services/licensing/licenseService';
 import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensing/licenseTypes';
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
 import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
@@ -509,14 +509,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // الخروج من بوابة السوبر (تُعرض بعد إعادة التحميل عندما تكون الهوية سوبر والجلسة مقفلة)
   const exitSuperAdminGate = () => {
+    // الخروج من جلسة ماستر مقفلة = تسجيل خروج كامل (لا دخول كمدير مدرسة بلا كلمة مرور)
     setSuperUnlocked(false);
     try {
       localStorage.removeItem('madrasa_superadmin_unlocked');
     } catch {}
-    setAuthenticatedRole('admin');
-    setIsAuthenticated(true);
-    markSession();
-    applyRole('admin');
+    logout();
   };
   const SESSION_KEY = 'madrasa_session_active';
 
@@ -554,9 +552,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
   const [currentUserPhone, setCurrentUserPhoneState] = useState(() => {
     try {
-      return localStorage.getItem('madrasa_admin_phone') || '0922465676';
+      return localStorage.getItem('madrasa_admin_phone') || '';
     } catch {
-      return '0922465676';
+      return '';
     }
   });
   const [currentTeacher, setCurrentTeacher] = useState<TeacherAccount | null>(() => {
@@ -615,9 +613,12 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     try {
+      // شاشة التفعيل تبقى تظهر عند كل إقلاع حتى يُدخَل مفتاح موقّع أو تبدأ تجربة مجانية
+      // (المدرسة قد تغلق البرنامج بعد إرسال بصمتها وتعود حين يصلها المفتاح)
       const rawKey = localStorage.getItem('madrasa_active_license_key');
       const isVendor = window.electronAPI?.isVendorMachine?.() === true;
-      if (!rawKey && !isVendor) {
+      const unlicensed = !rawKey || rawKey === DEFAULT_INITIAL_LICENSE.license_key;
+      if (unlicensed && !isVendor && !getSchoolProfile().isTrial) {
         setShowActivationModal(true);
       }
     } catch {}
@@ -1351,14 +1352,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cleanId = (phoneOrId || '').trim();
     const cleanSecret = (password || '').trim();
 
-    // فك أي تجميد سابق تلقائياً عند استخدام بيانات المدير الافتراضية المعتمدة وتفعيل وضع المطور
-    if (role === 'admin' && (cleanId === '0912345678' || cleanId === '0922465676') && (cleanSecret === '2026' || cleanSecret === '123456')) {
-      AuthEngine.clearAttempts(cleanId);
-      SecurityEngine.resetDirectorPinLockout();
-      try {
-        localStorage.setItem('madrasa_developer_mode', 'true');
-      } catch {}
-    }
 
     // 2. التحقق الصارم والمحكم من أوراق الاعتماد عبر وحدة المصادقة العميقة AuthEngine
     const authResult = AuthEngine.verifyCredentials({
@@ -2028,7 +2021,19 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /** هل المدرسة النشطة هي القالب الافتراضي الفارغ (لا تستحق لقطة في الخزنة)؟ */
-  const isPristineDefaultSchool = () => schoolProfile.id === DEFAULT_SCHOOL_PROFILE.id && students.length === 0;
+  const isPristineDefaultSchool = () =>
+    schoolProfile.id === DEFAULT_SCHOOL_PROFILE.id &&
+    schoolProfile.name === DEFAULT_SCHOOL_PROFILE.name &&
+    students.length === 0 &&
+    // لا ترخيص خاص بها (المفتاح الافتراضي لا يُحتسب)
+    (() => {
+      try {
+        const k = localStorage.getItem('madrasa_active_license_key');
+        return !k || k === DEFAULT_INITIAL_LICENSE.license_key;
+      } catch {
+        return true;
+      }
+    })();
 
   /** حفظ قائمة المدارس (بلا القالب الافتراضي الفارغ) */
   const persistSavedSchools = (list: SchoolProfile[]) => {

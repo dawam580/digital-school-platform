@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { checkLicenseKeyPair, findWindowsExecutables } = require('./release-checks.cjs');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
@@ -17,6 +18,11 @@ const OUTPUT_ZIP = path.join(ROOT_DIR, 'منظومة_المدرسة_الرقمي
 console.log('================================================================');
 console.log('🚀 بدء تحزيم النسخة التجارية النظيفة (Commercial Clean Delivery)...');
 console.log('================================================================\n');
+
+// 0. لا نحزم نسخة لا تقبل مفاتيح المورّد
+const keyCheck = checkLicenseKeyPair();
+console.log(`${keyCheck.ok ? '✓' : '✗'} ${keyCheck.message}`);
+if (!keyCheck.ok) process.exit(1);
 
 // 1. Ensure production build exists
 if (!fs.existsSync(path.join(DIST_DIR, 'index.html'))) {
@@ -73,17 +79,14 @@ for (const g of guides) {
   }
 }
 
-// Check portable electron exe if exists
-const distElectronDir = path.join(ROOT_DIR, 'dist-electron');
-if (fs.existsSync(distElectronDir)) {
-  const exeFiles = fs.readdirSync(distElectronDir).filter(f => f.endsWith('.exe'));
-  if (exeFiles.length > 0) {
-    const destElectron = path.join(STAGING_DIR, 'dist-electron');
-    fs.mkdirSync(destElectron, { recursive: true });
-    for (const exe of exeFiles) {
-      fs.copyFileSync(path.join(distElectronDir, exe), path.join(destElectron, exe));
-      console.log(`  -> ✓ تم تضمين التطبيق المستقل (${exe})`);
-    }
+// Windows executables (any product name / version)
+const exeFiles = findWindowsExecutables();
+if (exeFiles.length > 0) {
+  const destElectron = path.join(STAGING_DIR, 'dist-electron');
+  fs.mkdirSync(destElectron, { recursive: true });
+  for (const exe of exeFiles) {
+    fs.copyFileSync(exe, path.join(destElectron, path.basename(exe)));
+    console.log(`  -> ✓ تم تضمين التطبيق المستقل (${path.basename(exe)})`);
   }
 }
 

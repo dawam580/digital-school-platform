@@ -252,7 +252,7 @@ export class LibyanPdfStudentParser {
 
           const targetClass = pageClassName || `${pageGrade.includes('التاسع') ? '9' : pageGrade.includes('السابع') ? '7' : '1'}/${pageSectionCode}`;
 
-          if (!parsedStudents.some(s => s.nationalNumber === nationalNumber || s.name === studentName)) {
+          if (!parsedStudents.some(s => (nationalNumber && s.nationalNumber === nationalNumber) || s.name === studentName)) {
             parsedStudents.push({
               name: studentName,
               nationalNumber,
@@ -592,9 +592,11 @@ export class LibyanPdfStudentParser {
       const words = cleanName.split(/\s+/).filter(w => w.length > 1);
 
       if (words.length >= 2) {
-        const nationalNumber = natMatch ? natMatch[1] : `12008${String(i + 1000000).slice(-7)}`;
-        const gender: 'male' | 'female' = nationalNumber.startsWith('1') ? 'male' : 'female';
-        const birthYear = nationalNumber.substring(1, 5);
+        // الرقم الوطني الليبي: الخانة الأولى الجنس (1 ذكر، 2 أنثى) والأربع التالية سنة الميلاد.
+        // لا يُختلق رقم عند غيابه — يُترك فارغاً ليكمله المدير.
+        const nationalNumber = natMatch ? natMatch[1] : '';
+        const gender: 'male' | 'female' = nationalNumber.startsWith('2') ? 'female' : 'male';
+        const birthYear = nationalNumber ? nationalNumber.substring(1, 5) : '';
 
         const studentName = words.join(' ');
         const motherName = '—';
@@ -613,14 +615,14 @@ export class LibyanPdfStudentParser {
             nationalNumber,
             motherName,
             gender,
-            birthDate: `${birthYear}-01-15`,
-            birthPlace: 'طرابلس',
+            birthDate: birthYear ? `${birthYear}-01-01` : '',
+            birthPlace: '',
             grade,
             className,
             sectionCode,
             academicYear: currentAcademicYear(),
-            parentPhone: '0922465676',
-            confidenceScore: 92
+            parentPhone: '',
+            confidenceScore: natMatch ? 80 : 50
           });
         }
       }

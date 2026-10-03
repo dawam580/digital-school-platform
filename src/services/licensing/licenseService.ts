@@ -144,20 +144,19 @@ export class LicenseService {
    * جلب سجل المدارس المعتمدة لدى السوبر أدمن (مخزن محلياً ومتزامن)
    */
   static getAdminRegisteredSchools(): SchoolLicenseDoc[] {
+    // سجل المورّد الحقيقي فقط: لا مدرسة افتراضية وهمية (SCH-TRIPOLI-2026-TRIAL)
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.LOCAL_SCHOOLS_REGISTRY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const cleaned = parsed.filter(s => !s.school_name?.includes('الأندلس') && !s.school_name?.includes('Andalus'));
-          return cleaned.length > 0 ? cleaned : [DEFAULT_INITIAL_LICENSE];
+        if (Array.isArray(parsed)) {
+          return parsed.filter((s: SchoolLicenseDoc) =>
+            s && s.license_key !== DEFAULT_INITIAL_LICENSE.license_key &&
+            !s.school_name?.includes('الأندلس') && !s.school_name?.includes('Andalus'));
         }
       }
     } catch {}
-    // Seed with default school
-    const initial = [DEFAULT_INITIAL_LICENSE];
-    this.saveAdminRegisteredSchools(initial);
-    return initial;
+    return [];
   }
 
   static saveAdminRegisteredSchools(schools: SchoolLicenseDoc[]): void {

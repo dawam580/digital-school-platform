@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { VENDOR_PHONE, VENDOR_WHATSAPP, ANNUAL_PRICE_LABEL } from '../../config/vendor';
 import { useSchool } from '../../context/SchoolContext';
 import { UserRole } from '../../types';
 import {
@@ -100,7 +101,7 @@ export const LandingPage: React.FC = () => {
       id: 'annual',
       name: 'الباقة السنوية المعتمدة 🏆',
       tagline: 'الأكثر طلباً للمدارس الليبية',
-      price: '2,000',
+      price: ANNUAL_PRICE_LABEL,
       period: 'دينار ليبي / للعام الدراسي الكامل',
       description: 'الترخيص الرسمي الدائم للمدرسة شاملاً جميع البوابات الست، التحديثات، والدعم الفني المباشر.',
       features: [
@@ -120,7 +121,7 @@ export const LandingPage: React.FC = () => {
         const msg = encodeURIComponent(
           `السلام عليكم ورحمة الله، أود الاشتراك في "الباقة السنوية المعتمدة" لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}\nالمدينة: ${schoolProfile.city || 'طرابلس'}`
         );
-        window.open(`https://wa.me/218922465676?text=${msg}`, '_blank');
+        window.open(`https://wa.me/${VENDOR_WHATSAPP}?text=${msg}`, '_blank');
       }
     },
     {
@@ -146,7 +147,7 @@ export const LandingPage: React.FC = () => {
         const msg = encodeURIComponent(
           `السلام عليكم ورحمة الله، أود الاستفسار عن باقة الفصل الدراسي لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}`
         );
-        window.open(`https://wa.me/218922465676?text=${msg}`, '_blank');
+        window.open(`https://wa.me/${VENDOR_WHATSAPP}?text=${msg}`, '_blank');
       }
     }
   ];
@@ -257,7 +258,7 @@ export const LandingPage: React.FC = () => {
     },
     {
       q: 'كيف أحصل على مفتاح ترخيص رسمي لتفعيل المنظومة لمدرستي؟',
-      a: 'يمكنك التواصل معنا مباشرة عبر الهاتف أو الواتساب على الرقم 0922465676، وسيقوم فريق الدعم الفني بتزويدك بمفتاح ترخيص مخصص لمدرستك وتفعيل اشتراكك الفوري وتقديم التدريب الكامل لمدير المدرسة ورئيس الكنترول.'
+      a: `يمكنك التواصل معنا مباشرة عبر الهاتف أو الواتساب على الرقم ${VENDOR_PHONE}، وسيقوم فريق الدعم الفني بتزويدك بمفتاح ترخيص مخصص لمدرستك وتفعيل اشتراكك الفوري وتقديم التدريب الكامل لمدير المدرسة ورئيس الكنترول.`
     },
     {
       q: 'هل يمكن تشغيل المنظومة على الهواتف والأجهزة اللوحية (التابلت) للمعلمين وأولياء الأمور؟',
@@ -394,7 +395,7 @@ export const LandingPage: React.FC = () => {
               </button>
 
               <a
-                href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9"
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-3.5 sm:py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm sm:text-base font-bold shadow-md transition active:scale-95 flex items-center gap-2"
@@ -663,13 +664,13 @@ export const LandingPage: React.FC = () => {
 
             <div className="flex items-center gap-3">
               <a
-                href="https://wa.me/218922465676?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9"
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D8%B1%D8%B3%D8%A9`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md transition flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>واتساب: 0922465676</span>
+                <span>واتساب: {VENDOR_PHONE}</span>
               </a>
 
               <button

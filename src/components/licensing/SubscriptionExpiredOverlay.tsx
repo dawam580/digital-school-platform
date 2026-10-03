@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { VENDOR_PHONE, VENDOR_WHATSAPP, ANNUAL_PRICE_LABEL } from '../../config/vendor';
 import { createPortal } from 'react-dom';
 import { 
   AlertTriangle, 
@@ -158,9 +159,9 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
 
   // Prefilled WhatsApp message for 2,000 LYD annual renewal
   const whatsappText = encodeURIComponent(
-    `السلام عليكم، أرغب في تفعيل/تجديد الاشتراك السنوي الرسمي (2,000 دينار ليبي) لمنظومة مدرسة: ${result.schoolName || 'مدرستنا'}\nكود بصمة جهازي (HWID): ${clientHwid}`
+    `السلام عليكم، أرغب في تفعيل/تجديد الاشتراك السنوي الرسمي (${ANNUAL_PRICE_LABEL} دينار ليبي) لمنظومة مدرسة: ${result.schoolName || 'مدرستنا'}\nكود بصمة جهازي (HWID): ${clientHwid}`
   );
-  const whatsappUrl = `https://wa.me/218922465676?text=${whatsappText}`;
+  const whatsappUrl = `https://wa.me/${VENDOR_WHATSAPP}?text=${whatsappText}`;
 
   const modal = (
     <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl font-cairo text-right overflow-y-auto animate-in fade-in duration-300">
@@ -187,7 +188,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
             {isSuspended ? 'ترخيص معلق' : isGrace ? 'مطلوب الاتصال بالإنترنت' : 'انتهت الفترة التجريبية (القفل الآمن)'}
           </span>
           <h2 className="text-xl font-black mt-2 mb-1">{result.schoolName}</h2>
-          <p className="text-xs text-white/80 font-mono" dir="ltr">{result.licenseKey}</p>
+          <p className="text-xs text-white/80 font-mono truncate max-w-full" dir="ltr" title={result.licenseKey}>{result.licenseKey.length > 32 ? `${result.licenseKey.slice(0, 28)}…` : result.licenseKey}</p>
         </div>
 
         {/* Body */}
@@ -210,7 +211,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
                 رسوم الترخيص والاشتراك السنوي المعتمد:
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-white font-mono">2,000 د.ل</span>
+                <span className="text-2xl font-black text-white font-mono">{ANNUAL_PRICE_LABEL} د.ل</span>
                 <span className="text-xs text-blue-200">/ سنوياً للمدرسة</span>
               </div>
             </div>

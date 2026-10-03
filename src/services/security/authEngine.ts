@@ -39,6 +39,9 @@ export function isCounselorAccount(t: Pick<TeacherAccount, 'code' | 'subjectCode
 /** مفتاح كلمة مرور ولي الأمر المخصصة (يعيّنها ولي الأمر بنفسه من حسابه) */
 export const parentPasswordKey = (studentId: string) => `madrasa_parent_pwd_${studentId}`;
 
+/** أقصى عدد أبناء يُربطون تلقائياً بهاتف ولي أمر واحد */
+export const MAX_SIBLINGS = 8;
+
 export interface AuthCredentials {
   role: UserRole;
   identifier: string;
@@ -626,9 +629,11 @@ export class AuthEngine {
       // الإخوة: كل طالب يحمل نفس هاتف ولي الأمر يُضاف تلقائياً لحسابه
       const primary = matched[0];
       const phone = primary.parentPhone ? normalizeLibyanPhone(primary.parentPhone) : '';
-      const siblings = phone && LIBYAN_PHONE_RE.test(phone)
+      // حد أقصى معقول للإخوة: إن تكرر الهاتف على عدد كبير فهو رقم افتراضي/خاطئ في الكشف لا هاتف أسرة
+      const samePhone = phone && LIBYAN_PHONE_RE.test(phone)
         ? studentList.filter(s => s.parentPhone && normalizeLibyanPhone(s.parentPhone) === phone)
         : [];
+      const siblings = samePhone.length <= MAX_SIBLINGS ? samePhone : [];
       const studentIds = Array.from(new Set([...matched, ...siblings].map(s => s.id)));
 
       this.clearAttempts(cleanId);

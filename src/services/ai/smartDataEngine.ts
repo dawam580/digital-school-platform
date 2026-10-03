@@ -138,7 +138,7 @@ export class SmartDataEngine {
       motherName: raw.motherName || 'فاطمة محمد',
       birthDate: raw.birthDate || validation.birthDate || '2011-05-10',
       parentName: raw.parentName || `ولي أمر ${cleanName}`,
-      parentPhone: this.normalizeNumbers(raw.parentPhone || '0912345678'),
+      parentPhone: this.normalizeNumbers(raw.parentPhone || ''),
       parentEmail: raw.parentEmail || `parent.${nationalNumber}@school.edu.ly`,
       gender: validation.inferredGender,
       status: 'present',

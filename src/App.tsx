@@ -148,7 +148,7 @@ const MainContent: React.FC = () => {
         </div>
         <h2 className="text-xl font-black text-white">جلسة المدير العام مقفلة 🔒</h2>
         <p className="text-xs text-slate-400 mt-2 max-w-sm leading-relaxed">
-          أُعيد تحميل المنظومة وجلسة الماستر انتهت حفاظاً على الأمان. أدخل رمز السوبر للمتابعة، أو ادخل كمدير مدرسة.
+          أُعيد تحميل المنظومة وجلسة الماستر انتهت حفاظاً على الأمان. أدخل رمز السوبر للمتابعة، أو سجّل الخروج.
         </p>
         <div className="flex items-center gap-3 mt-5">
           <button
@@ -162,7 +162,7 @@ const MainContent: React.FC = () => {
             className="px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition active:scale-95 flex items-center gap-1.5"
           >
             <RotateCcw className="w-4 h-4" />
-            دخول كمدير مدرسة
+            تسجيل الخروج
           </button>
         </div>
         <SuperAdminLockModal

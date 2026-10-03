@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { LicenseService } from '../../services/licensing/licenseService';
 import { useRequireRole } from '../../hooks/useRequireRole';
 import {
   Building2,
@@ -62,8 +63,23 @@ export const SuperAdminDashboard: React.FC = () => {
   const [newSchoolCode, setNewSchoolCode] = useState('');
   const [newDistrict, setNewDistrict] = useState('');
   const [newDirector, setNewDirector] = useState('');
-  const [newPhone, setNewPhone] = useState('0912345678');
+  const [newPhone, setNewPhone] = useState('');
   const [startFresh, setStartFresh] = useState(true);
+
+  const licenseStats = React.useMemo(() => {
+    const list = LicenseService.getAdminRegisteredSchools();
+    const now = Date.now();
+    const DAY = 864e5;
+    let active = 0, expiringSoon = 0, expired = 0;
+    for (const sc of list) {
+      const end = new Date(sc.subscription_ends_at || sc.trial_ends_at).getTime();
+      if (sc.revoked || sc.subscription_status === 'suspended' || !(end > now)) { expired++; continue; }
+      active++;
+      if (end - now < 30 * DAY) expiringSoon++;
+    }
+    return { total: list.length, active, expiringSoon, expired };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSubTab]);
 
   const filteredSchools = savedSchools.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -126,9 +142,6 @@ export const SuperAdminDashboard: React.FC = () => {
   };
 
   // Mock aggregates
-  const totalSchools = Math.max(savedSchools.length, 1);
-  const totalStudents = students.length;
-  const totalTeachers = teachers.length;
 
   if (!allowed) return null;
 
@@ -149,13 +162,13 @@ export const SuperAdminDashboard: React.FC = () => {
                 <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">
                   صلاحيات السوبر أدمن الكاملة (Super Admin)
                 </span>
-                <span className="text-xs text-blue-200">ديوان مراقبة التربية والتعليم</span>
+                <span className="text-xs text-blue-200">جهاز المورّد</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
-                لوحة تحكم المدير العام والسوبر أدمن لكافة المدارس
+                لوحة المورّد — التراخيص والمدارس العميلة
               </h2>
               <p className="text-xs text-blue-100/80 mt-1 max-w-2xl">
-                إدارة مركزية شاملة لجميع المدارس الأساسية والثانوية في البلدية، إضافة مدارس جديدة، تعيين المدراء، وتوزيع الروابط المستقلة.
+                إصدار مفاتيح التفعيل المقيدة ببصمة جهاز كل مدرسة، متابعة تواريخ الانتهاء والتجديد، وتجهيز حزم التسليم.
               </p>
             </div>
           </div>
@@ -163,11 +176,16 @@ export const SuperAdminDashboard: React.FC = () => {
           <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap">
             <button
               type="button"
-              onClick={() => { setShowAddSchoolModal(true); sound.playTap(); }}
+              onClick={() => {
+                // مدرسة عميلة جديدة = مفتاح موقّع مقيد ببصمة جهازها (نمط بنيان)
+                setActiveSubTab('licensing');
+                sound.playTap();
+                setTimeout(() => document.querySelector<HTMLInputElement>('input[placeholder="مثال: مدرسة المستقبل الخاصة"]')?.focus(), 100);
+              }}
               className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-lg transition active:scale-95 flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              <span>إضافة مدرسة جديدة ➕</span>
+              <span>إصدار مفتاح لمدرسة جديدة 🔑</span>
             </button>
 
             <button
@@ -181,55 +199,19 @@ export const SuperAdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Aggregate Metrics Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-400 block">إجمالي المدارس المسجلة</span>
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono mt-1 block">
-              {totalSchools} مدارس
-            </span>
+      {/* مؤشرات المورّد — من سجل التراخيص المُصدرة (لا أرقام هذا الجهاز) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: 'مدارس مرخّصة', value: licenseStats.total, cls: 'text-slate-900 dark:text-white' },
+          { label: 'اشتراكات سارية', value: licenseStats.active, cls: 'text-emerald-600 dark:text-emerald-400' },
+          { label: 'تنتهي خلال 30 يوماً', value: licenseStats.expiringSoon, cls: 'text-amber-600 dark:text-amber-400' },
+          { label: 'منتهية أو موقوفة', value: licenseStats.expired, cls: 'text-rose-600 dark:text-rose-400' },
+        ].map(m => (
+          <div key={m.label} className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span className="text-xs font-bold text-slate-400 block">{m.label}</span>
+            <span className={`text-2xl sm:text-3xl font-black font-mono mt-1 block ${m.cls}`}>{m.value}</span>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center text-xl">
-            🏛️
-          </div>
-        </div>
-
-        <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-400 block">إجمالي الطلاب في المنظومة</span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-1 block">
-              {totalStudents} طالباً
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center text-xl">
-            👥
-          </div>
-        </div>
-
-        <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-400 block">إجمالي المعلمين المعتمدين</span>
-            <span className="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 font-mono mt-1 block">
-              {totalTeachers} معلماً
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 flex items-center justify-center text-xl">
-            👨‍🏫
-          </div>
-        </div>
-
-        <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-400 block">اعتماد الامتحانات والكنترول</span>
-            <span className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 font-mono mt-1 block">
-              100% معتمد
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl">
-            📜
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Sub-Tab Navigation */}

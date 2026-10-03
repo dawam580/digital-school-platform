@@ -129,7 +129,7 @@ export class WarningTriggerEngine {
       grade: student.grade,
       className: student.className,
       parentName: student.parentName || `ولي أمر الطالب ${student.name}`,
-      parentPhone: student.parentPhone || '0922465676',
+      parentPhone: student.parentPhone || '',
       periodType,
       periodLabel,
       periodKey,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ANNUAL_PRICE_LABEL } from '../../config/vendor';
 import {
   Building2,
   KeyRound,
@@ -27,6 +28,8 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { auditLogger } from '../../services/audit/auditLogger';
 import { LIBYAN_PHONE_RE, normalizeLibyanPhone } from '../../services/security/authEngine';
+
+const HWID_RE = /^HWID-LY-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
 import { ClientDeliveryModal } from '../common/ClientDeliveryModal';
 import { ClientDeliveryOptions, toIntlWhatsAppPhone } from '../../utils/inviteMessageHelper';
 
@@ -59,17 +62,53 @@ export const SuperAdminLicenseManager: React.FC = () => {
     typeLabel: string;
   } | null>(null);
 
+  /** إصدار مفتاح موقّع لمدرسة مسجلة: بصمتها معروفة ← مفتاح فوري، وإلا تعبئة المولد بالأعلى */
+  const handleIssueForSchool = async (school: SchoolLicenseDoc, licenseType: 'annual' | 'lifetime' | 'trial_extended') => {
+    const hwid = (school.bound_hwid || '').toUpperCase();
+    setGenSchoolName(school.school_name);
+    setGenPhone(school.admin_phone || '');
+    setGenType(licenseType);
+    if (!HWID_RE.test(hwid)) {
+      setGenHwid('');
+      sound.playTap();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      alert('بصمة جهاز هذه المدرسة غير معروفة بعد — اطلبها من المدير (تظهر في شاشة التفعيل) ثم أكمل التوليد بالأعلى.');
+      return;
+    }
+    setGenHwid(hwid);
+    try {
+      const res = await LicenseService.generateOfflineLicense({
+        schoolName: school.school_name,
+        hwid,
+        licenseType,
+        adminPhone: school.admin_phone || ''
+      });
+      sound.playSuccess();
+      setGeneratedResult({ token: res.token, schoolName: school.school_name, hwid, typeLabel: res.formattedCard.licenseTypeLabel });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      loadSchools();
+    } catch (err: any) {
+      alert(err?.message || 'تعذر توليد الترخيص.');
+    }
+  };
+
   const handleGenerateOfflineKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!genSchoolName.trim()) {
       alert('يرجى كتابة اسم المدرسة.');
       return;
     }
+    // نمط بنيان: كل مفتاح مقيد ببصمة جهاز الزبون — لا مفاتيح عامة تعمل على أي جهاز (قابلة للتسريب)
+    const hwid = genHwid.trim().toUpperCase();
+    if (!HWID_RE.test(hwid)) {
+      alert('أدخل بصمة جهاز الزبون بالصيغة HWID-LY-XXXX-XXXX-XXXX (تظهر له في شاشة التفعيل وشاشة القفل).');
+      return;
+    }
     let res: Awaited<ReturnType<typeof LicenseService.generateOfflineLicense>>;
     try {
       res = await LicenseService.generateOfflineLicense({
         schoolName: genSchoolName.trim(),
-        hwid: genHwid.trim() || '*',
+        hwid,
         licenseType: genType,
         adminPhone: genPhone.trim()
       });
@@ -82,7 +121,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
     setGeneratedResult({
       token: res.token,
       schoolName: genSchoolName.trim(),
-      hwid: genHwid.trim() || '*',
+      hwid,
       typeLabel: res.formattedCard.licenseTypeLabel
     });
     auditLogger.log({
@@ -258,30 +297,6 @@ export const SuperAdminLicenseManager: React.FC = () => {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const handleExtend = async (licenseKey: string, days: number) => {
-    sound.playTap();
-    const updated = await LicenseService.extendTrial(licenseKey, days);
-    if (updated) {
-      sound.playSuccess();
-      loadSchools();
-    }
-  };
-
-  const handleToggleStatus = async (school: SchoolLicenseDoc) => {
-    sound.playTap();
-    const nextStatus: SubscriptionStatus = school.subscription_status === 'active' ? 'suspended' : 'active';
-    if (nextStatus === 'suspended') {
-      const isSelf = (LicenseService.getActiveLicenseKey() || '').toUpperCase() === school.license_key.toUpperCase();
-      const warn = isSelf ? '⚠️ هذا هو ترخيص هذا الجهاز نفسه — تعليقه سيقفل هذه الشاشة فوراً!\n\n' : '';
-      if (!window.confirm(`${warn}تعليق ترخيص (${school.school_name}) مؤقتاً؟`)) return;
-    }
-    const updated = await LicenseService.updateStatus(school.license_key, nextStatus);
-    if (updated) {
-      sound.playSuccess();
-      loadSchools();
-    }
-  };
-
   const handleCreateSchool = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSchoolName.trim()) return;
@@ -374,7 +389,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
               <span>مولد التراخيص المشفرة المقيدة ببصمة الجهاز (Offline Hardware License Generator)</span>
             </h2>
             <p className="text-xs text-indigo-200/80 mt-0.5">
-              توليد مفتاح ترخيص مشفر وموقع رقمياً (SHA-256) يربط المنظومة بجهاز كمبيوتر الزبون حصراً ويعمل بدون إنترنت 100%.
+              مفتاح موقّع رقمياً (Ed25519) يعمل على جهاز الزبون وحده وبدون إنترنت. الزبون يرسل لك بصمة جهازه من شاشة التفعيل، وأنت ترسل له المفتاح.
             </p>
           </div>
           <span className="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-[11px] font-bold text-indigo-300 shrink-0">
@@ -397,13 +412,14 @@ export const SuperAdminLicenseManager: React.FC = () => {
 
           <div>
             <label className="block text-[11px] font-bold text-indigo-200 mb-1">
-              كود بصمة جهاز العميل (HWID)
+              بصمة جهاز الزبون (HWID) *
             </label>
             <input
               type="text"
               value={genHwid}
               onChange={e => setGenHwid(e.target.value)}
-              placeholder="HWID-LY-XXXX-XXXX أو اترك فارغاً لترخيص عام (*)"
+              placeholder="HWID-LY-XXXX-XXXX-XXXX"
+              required
               dir="ltr"
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs font-mono text-emerald-400 placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             />
@@ -416,7 +432,7 @@ export const SuperAdminLicenseManager: React.FC = () => {
               onChange={e => setGenType(e.target.value as any)}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-indigo-800 text-xs text-white focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             >
-              <option value="annual">اشتراك سنوي معتمد (2,000 د.ل - سنة كاملة)</option>
+              <option value="annual">اشتراك سنوي معتمد ({ANNUAL_PRICE_LABEL} د.ل - سنة كاملة)</option>
               <option value="trial_extended">أسبوع تجريبي للاختبار (7 أيام)</option>
               <option value="lifetime">مدى الحياة دائم (Lifetime Unlimited)</option>
             </select>
@@ -749,19 +765,19 @@ export const SuperAdminLicenseManager: React.FC = () => {
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-wrap self-end md:self-center">
                   <button
-                    onClick={() => handleExtend(school.license_key, 14)}
+                    onClick={() => handleIssueForSchool(school, 'trial_extended')}
                     className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold text-xs border border-blue-200 dark:border-blue-800 transition"
-                    title="تمديد التجربة أسبوعين"
+                    title="مفتاح موقّع لتمديد 7 أيام مقيد ببصمة جهاز المدرسة"
                   >
-                    +14 يوم ⏳
+                    مفتاح تمديد 7 أيام ⏳
                   </button>
 
                   <button
-                    onClick={() => handleExtend(school.license_key, 30)}
-                    className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-indigo-200 dark:border-indigo-800 transition"
-                    title="تمديد شهر كامل"
+                    onClick={() => handleIssueForSchool(school, 'annual')}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200 dark:border-emerald-800 transition"
+                    title="مفتاح اشتراك سنوي موقّع مقيد ببصمة جهاز المدرسة"
                   >
-                    +30 يوم 📅
+                    مفتاح سنوي 📅
                   </button>
 
                   <button
@@ -781,24 +797,13 @@ export const SuperAdminLicenseManager: React.FC = () => {
                     <span>حزمة الزبون 📦</span>
                   </button>
 
-                  <button
-                    onClick={() => handleToggleStatus(school)}
-                    className={`px-3 py-1.5 rounded-xl font-bold text-xs border transition ${
-                      school.subscription_status === 'active'
-                        ? 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                        : 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                    }`}
-                  >
-                    {school.subscription_status === 'active' ? 'تعليق ⏸️' : 'تفعيل دائم ⚡'}
-                  </button>
-
                   {!school.revoked ? (
                     <button
                       onClick={() => handleRevoke(school)}
                       className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition active:scale-95"
-                      title="إلغاء نهائي: يُقفل على جهاز الزبون عند التحقق التالي (متصل أو غير متصل)"
+                      title="وسم المفتاح كملغى في سجلك وعلى هذا الجهاز. المفاتيح دون اتصال لا يمكن سحبها من جهاز الزبون — لذلك يُفضَّل الاشتراك السنوي بدل الدائم."
                     >
-                      إلغاء ⛔
+                      وسم كملغى ⛔
                     </button>
                   ) : (
                     <button

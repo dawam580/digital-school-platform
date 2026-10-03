@@ -1,26 +1,25 @@
 @echo off
 chcp 65001 > nul
-title منظومة مدرسة الشهيد امحمد الباعور للتعليم الأساسي - التشغيل الفوري
+title منظومة المدرسة الرقمية - التشغيل الفوري
 echo ==============================================================================
-echo        منظومة مدرسة الشهيد امحمد الباعور للتعليم الأساسي (Windows Edition)
-echo               الإصدار المؤسسي المعتمد للعام الدراسي 2025/2026
+echo                  منظومة المدرسة الرقمية (Windows Edition)
 echo ==============================================================================
 echo.
 echo [1/2] جاري فحص ملفات التشغيل المكتبي...
 
 cd /d "%~dp0"
 
-:: 1. Check if Portable Executable exists in dist-electron
-if exist "dist-electron\منظومة مدرسة الباعور الرقمية-Portable-2.0.0.exe" (
+:: 1. النسخة المحمولة (أي اسم/إصدار)
+for %%F in ("dist-electron\*Portable*.exe") do (
     echo [2/2] تشغيل النسخة المحمولة المستقلة مباشرة...
-    start "" "dist-electron\منظومة مدرسة الباعور الرقمية-Portable-2.0.0.exe"
+    start "" "%%~fF"
     goto :done
 )
 
-:: 2. Check if Setup exists
-if exist "dist-electron\win-unpacked\منظومة مدرسة الباعور الرقمية.exe" (
+:: 2. المجلد المجهز من electron-builder
+for %%F in ("dist-electron\win-unpacked\*.exe") do (
     echo [2/2] تشغيل المنظومة من المجلد المجهز...
-    start "" "dist-electron\win-unpacked\منظومة مدرسة الباعور الرقمية.exe"
+    start "" "%%~fF"
     goto :done
 )
 

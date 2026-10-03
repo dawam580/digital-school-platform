@@ -1,4 +1,5 @@
 import React from 'react';
+import { VENDOR_PHONE, VENDOR_WHATSAPP, ANNUAL_PRICE_LABEL } from '../../config/vendor';
 import { useSchool } from '../../context/SchoolContext';
 import {
   X,
@@ -53,7 +54,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
     `السلام عليكم، أود تفعيل النسخة الرسمية لمنظومة المدرسة الرقمية.\nاسم المدرسة: ${schoolProfile.name}\nالمدينة: ${schoolProfile.city || schoolProfile.district}\nرقم الهاتف: ${schoolProfile.directorPhone}`
   );
 
-  const whatsappActivationUrl = `https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%B7%D9%84%D8%A8%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%B1%D8%B3%D9%85%D9%8A`;
+  const whatsappActivationUrl = `https://wa.me/${VENDOR_WHATSAPP}?text=${whatsappMessage}%0A%D8%B7%D9%84%D8%A8%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%B1%D8%B3%D9%85%D9%8A`;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto font-cairo">
@@ -128,7 +129,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
               </div>
 
               <a
-                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D8%B5%D9%84%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D8%B5%D9%84%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs text-center transition block"
@@ -152,7 +153,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                   الباقة السنوية المعتمدة 🌟
                 </h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-purple-700 dark:text-purple-300 font-mono">2,000</span>
+                  <span className="text-3xl font-black text-purple-700 dark:text-purple-300 font-mono">{ANNUAL_PRICE_LABEL}</span>
                   <span className="text-xs font-bold text-slate-500">دينار ليبي / للسنة الكاملة</span>
                 </div>
                 <p className="text-xs text-slate-400 mt-1">ترخيص سنوي معتمد بكود فريد لمدرستك</p>
@@ -182,7 +183,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
               </div>
 
               <a
-                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%B9%D8%A7%D9%85%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=${whatsappMessage}%0A%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D8%B9%D8%A7%D9%85%20%D8%AF%D8%B1%D8%A7%D8%B3%D9%8A`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs text-center shadow-lg transition block active:scale-95"
@@ -227,7 +228,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
               </div>
 
               <a
-                href={`https://wa.me/218922465676?text=${whatsappMessage}%0A%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D9%85%D8%AC%D9%85%D8%B9%D8%A7%D8%AA%20%D8%A7%D9%84%D8%AF%D9%88%D9%84%D9%8A%D8%A9`}
+                href={`https://wa.me/${VENDOR_WHATSAPP}?text=${whatsappMessage}%0A%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D9%85%D8%AC%D9%85%D8%B9%D8%A7%D8%AA%20%D8%A7%D9%84%D8%AF%D9%88%D9%84%D9%8A%D8%A9`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs text-center transition block"
@@ -276,7 +277,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
           <div className="pt-2 text-center text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-6 flex-wrap">
             <div className="flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5 text-purple-600" />
-              <span>هاتف قسم المبيعات والاعتماد: <strong className="font-mono text-slate-800 dark:text-white">0922465676</strong></span>
+              <span>هاتف قسم المبيعات والاعتماد: <strong className="font-mono text-slate-800 dark:text-white">{VENDOR_PHONE}</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
