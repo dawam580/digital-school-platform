@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
+import { conversationIdFor } from '../chat/ParentTeacherChat';
 import { AttendanceStatus } from '../../types';
 import {
   CheckCircle2,
@@ -67,7 +68,8 @@ export const TeacherQuickDashboard: React.FC = () => {
     setCurrentRole,
     isReadOnlyPreview,
     authenticatedRole,
-    schoolProfile
+    schoolProfile,
+    sendChatMessage
   } = useSchool();
 
   // Custom Attendance State
@@ -358,12 +360,26 @@ export const TeacherQuickDashboard: React.FC = () => {
     sound.playSuccess();
     triggerConfetti();
 
-    addNotification(
-      `رسالة من ${currentTeacher?.name || 'معلم المادة'} (${currentTeacher?.subject || 'المادة'})`,
-      `بخصوص الطالب (${activeStudent.name}): ${messageText}`,
-      'academic',
-      activeStudent.name
-    );
+    // الرسالة تدخل محادثة ولي أمر هذا الطالب (يستطيع الرد عليها) + إشعاره
+    if (currentTeacher) {
+      sendChatMessage(conversationIdFor(currentTeacher.id, activeStudent.id), messageText, undefined, undefined, undefined, {
+        teacherId: currentTeacher.id,
+        teacherName: currentTeacher.name,
+        subject: currentTeacher.subject,
+        avatar: currentTeacher.avatar,
+        studentId: activeStudent.id,
+        studentName: activeStudent.name,
+        className: activeStudent.className
+      });
+    } else {
+      addNotification(
+        `رسالة من معلم المادة`,
+        `بخصوص الطالب (${activeStudent.name}): ${messageText}`,
+        'academic',
+        activeStudent.name,
+        activeStudent.id
+      );
+    }
 
     showToast('gold', 'تم إرسال الرسالة ✉️', `تم إشعار ولي أمر الطالب ${activeStudent.name.split(' ')[0]} فوراً.`);
   };

@@ -80,7 +80,10 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
     notifications,
     markNotificationAsRead,
     isAuthenticated,
-    authenticatedRole
+    authenticatedRole,
+    setActiveTab,
+    parentSummons,
+    confirmParentSummon
   } = useSchool();
   // الزائر غير المسجل لا يرى أي ملف — نموذج الربط/الدخول فقط
   const isParentSession = isAuthenticated && authenticatedRole === 'parent';
@@ -650,14 +653,45 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                   <span className="text-xs font-black text-rose-300 block mt-0.5">تنبيهات هامة</span>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 flex items-center justify-center font-mono font-bold text-xs">
-                  {notifications.filter(n => !n.read).length || 3}
+                  {notifications.filter(n => !n.read).length}
                 </div>
               </div>
 
             </div>
 
+            {/* استدعاءات الأخصائي الاجتماعي لهذا الابن */}
+            {parentSummons.filter(sm => sm.studentId === activeChild.id && sm.status === 'sent').map(sm => (
+              <div key={sm.id} className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/40 space-y-2">
+                <p className="text-xs font-black text-amber-300">📩 استدعاء من مكتب الخدمة الاجتماعية</p>
+                <p className="text-[12px] text-slate-200 leading-relaxed">
+                  الموعد: <strong>{sm.requestedDate}</strong> الساعة <strong>{sm.requestedTime}</strong>
+                </p>
+                <p className="text-[11px] text-slate-300 leading-relaxed">السبب: {sm.reason}</p>
+                {sm.parentConfirmedAt ? (
+                  <p className="text-[11px] font-bold text-emerald-300">✅ أكدتم الموعد — بانتظاركم</p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => confirmParentSummon(sm.id)}
+                    className="w-full py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black"
+                  >
+                    تأكيد الحضور في الموعد
+                  </button>
+                )}
+              </div>
+            ))}
+
             {/* Quick Actions Row */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={() => { sound.playTap(); setActiveTab('chat'); }}
+                className="p-3 rounded-2xl bg-gradient-to-b from-teal-900/50 to-slate-900 border border-teal-500/30 flex flex-col items-center justify-center gap-1 transition active:scale-95 text-center shadow"
+              >
+                <MessageCircle className="w-4 h-4 text-teal-300" />
+                <span className="text-[11px] font-black text-white">مراسلة المعلمين</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => { sound.playTap(); setShowExcuseModal(true); }}
@@ -683,7 +717,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
                 className="p-3 rounded-2xl bg-gradient-to-b from-emerald-950/50 to-slate-900 border border-emerald-500/30 flex flex-col items-center justify-center gap-1 transition active:scale-95 text-center shadow"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
-                <span className="text-[11px] font-black text-white">محادثة الإدارة</span>
+                <span className="text-[11px] font-black text-white">واتساب الإدارة</span>
               </a>
             </div>
 
@@ -978,16 +1012,15 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
           <div className="space-y-3.5 animate-in fade-in">
             <div className="flex items-center justify-between px-1">
               <h4 className="text-xs font-black text-slate-300">مركز الإشعارات والتنبيهات المدرسية</h4>
-              <span className="text-[10px] text-amber-300 font-bold">محدث لحظياً ⚡</span>
+
             </div>
 
             {/* Notifications Feed */}
             <div className="space-y-2">
-              {(notifications && notifications.length > 0 ? notifications : [
-                { id: '1', title: 'رسالة من معلم الرياضيات', message: 'أظهر الطالب تميزاً كبيراً في حل تمارين الضرب. شكراً لمتابعتكم المستمرة.', date: 'اليوم', time: '10:15 ص', read: false },
-                { id: '2', title: 'رصد درجات اختبار مادة العلوم', message: 'تم نشر تقييم الشهر الأول لمادة العلوم، حصل الطالب على 78/100.', date: 'اليوم', time: '09:00 ص', read: false },
-                { id: '3', title: 'تعميم إداري: اجتماع أولياء الأمور', message: `تتشرف إدارة (${schoolProfile?.name || 'المدرسة'}) بدعوتكم لحضور الاجتماع الفصلي يوم الخميس القادم.`, date: 'أمس', time: '04:30 م', read: true }
-              ]).map((notif) => (
+              {notifications.length === 0 && (
+                <p className="text-xs text-slate-400 text-center py-6">لا توجد إشعارات بخصوص أبنائك حالياً.</p>
+              )}
+              {notifications.map((notif) => (
                 <div
                   key={notif.id}
                   onClick={() => markNotificationAsRead(notif.id)}

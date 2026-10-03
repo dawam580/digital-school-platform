@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSchool } from '../../context/SchoolContext';
 import { X, Mail, Phone, Calendar, Clock, User, Check, Send, ShieldCheck } from 'lucide-react';
 import { ParentSummon } from '../../types';
@@ -8,15 +8,21 @@ interface NewSummonModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSendSummon: (summon: ParentSummon) => void;
+  preselectedStudentId?: string;
 }
 
 export const NewSummonModal: React.FC<NewSummonModalProps> = ({
   isOpen,
   onClose,
-  onSendSummon
+  onSendSummon,
+  preselectedStudentId
 }) => {
   const { students } = useSchool();
-  const [selectedStudentId, setSelectedStudentId] = useState(students[0]?.id || '');
+  const [selectedStudentId, setSelectedStudentId] = useState(preselectedStudentId || students[0]?.id || '');
+  useEffect(() => {
+    if (isOpen) setSelectedStudentId(preselectedStudentId || students[0]?.id || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, preselectedStudentId]);
   const [reason, setReason] = useState('مناقشة المستوى التربوي والدراسي للطالب وتنسيق خطة المتابعة المشتركة');
   const [requestedDate, setRequestedDate] = useState(
     new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -61,7 +67,7 @@ export const NewSummonModal: React.FC<NewSummonModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-extrabold">إصدار استدعاء رسمي لولي الأمر</h3>
-              <p className="text-xs text-amber-200">مكتب الخدمة الاجتماعية • وزارة التربية والتعليم - ليبيا</p>
+              <p className="text-xs text-amber-200">مكتب الخدمة الاجتماعية بالمدرسة</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 rounded-xl text-amber-200 hover:text-white hover:bg-white/10">

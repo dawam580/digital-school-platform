@@ -136,6 +136,10 @@ export interface TeacherConversation {
   id: string;
   teacherId: string;
   teacherName: string;
+  /** محادثة خاصة لكل (معلم، طالب): ولي أمر هذا الطالب فقط يراها */
+  studentId?: string;
+  studentName?: string;
+  className?: string;
   subject: string;
   avatar: string;
   lastMessage: string;
@@ -262,6 +266,8 @@ export interface NotificationItem {
   read: boolean;
   targetRole?: UserRole | 'all';
   studentName?: string;
+  /** الطالب المعني — ولي الأمر لا يرى إلا إشعارات أبنائه */
+  studentId?: string;
 }
 
 export interface DailyReportData {
@@ -394,6 +400,8 @@ export interface ParentSummon {
   status: 'sent' | 'attended' | 'rescheduled' | 'no_show';
   outcomeNotes?: string;
   cardId?: string;
+  /** تأكيد ولي الأمر استلام الاستدعاء وموعده من تطبيقه */
+  parentConfirmedAt?: string;
 }
 
 export type AcademicLevel = 'ممتاز' | 'جيد جداً' | 'مقبول' | 'مقبول أحياناً' | 'ضعيف';

@@ -54,6 +54,7 @@ import {
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
 import { sound } from '../utils/soundEffects';
+import { getCleanAvatar } from '../utils/avatarHelper';
 import { triggerConfetti } from '../utils/confetti';
 import { ToastContainer, ToastMessage, ToastType } from '../components/ui/Toast';
 import { auditLogger } from '../services/audit/auditLogger';
@@ -130,6 +131,7 @@ interface SchoolContextType {
   setCounselingSessions: React.Dispatch<React.SetStateAction<CounselingSession[]>>;
   parentSummons: ParentSummon[];
   setParentSummons: React.Dispatch<React.SetStateAction<ParentSummon[]>>;
+  confirmParentSummon: (summonId: string) => void;
 
   // Student Follow-Up Forms & Evaluation
   followUpForms: StudentFollowUpForm[];
@@ -185,8 +187,22 @@ interface SchoolContextType {
   updateStudentAvatar: (studentId: string, avatarUrl: string) => void;
   updateStudentGrade: (studentId: string, gradeId: string, updatedFields: Partial<SubjectGrade>) => void;
   submitAssignment: (studentId: string, assignmentId: string, score: number, feedback?: string) => void;
-  sendChatMessage: (conversationId: string, text?: string, isVoice?: boolean, voiceDuration?: string, imageUrl?: string) => void;
-  addNotification: (title: string, message: string, category: NotificationItem['category'], studentName?: string) => void;
+  sendChatMessage: (
+    conversationId: string,
+    text?: string,
+    isVoice?: boolean,
+    voiceDuration?: string,
+    imageUrl?: string,
+    meta?: Omit<TeacherConversation, 'id' | 'lastMessage' | 'lastMessageTime' | 'unreadCount' | 'messages'>
+  ) => void;
+  addNotification: (
+    title: string,
+    message: string,
+    category: NotificationItem['category'],
+    studentName?: string,
+    studentId?: string,
+    targetRole?: NotificationItem['targetRole']
+  ) => void;
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
   resetDatabase: () => void;
@@ -1026,6 +1042,39 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   };
 
+  // كل استدعاء جديد يصل لولي أمر الطالب كإشعار (لا "إرسال" وهمي)
+  const notifiedSummonIds = React.useRef<Set<string> | null>(null);
+  useEffect(() => {
+    if (!notifiedSummonIds.current) {
+      notifiedSummonIds.current = new Set(parentSummons.map(sm => sm.id));
+      return;
+    }
+    for (const sm of parentSummons) {
+      if (notifiedSummonIds.current.has(sm.id)) continue;
+      notifiedSummonIds.current.add(sm.id);
+      if (sm.status !== 'sent') continue;
+      addNotification(
+        '📩 استدعاء من مكتب الخدمة الاجتماعية',
+        `يرجى حضوركم يوم ${sm.requestedDate} الساعة ${sm.requestedTime} بخصوص ${sm.studentName}. السبب: ${sm.reason}`,
+        'urgent',
+        sm.studentName,
+        sm.studentId,
+        'parent'
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentSummons]);
+
+  /** ولي الأمر يؤكد استلام الاستدعاء — يظهر للأخصائي في سجل الاستدعاء */
+  const confirmParentSummon = (summonId: string) => {
+    const target = parentSummons.find(sm => sm.id === summonId);
+    if (!target || authenticatedRole !== 'parent' || !parentLinkedIds.includes(target.studentId)) return;
+    setParentSummons(prev => prev.map(sm => sm.id === summonId ? { ...sm, parentConfirmedAt: new Date().toISOString() } : sm));
+    addNotification('✅ ولي الأمر أكد موعد الاستدعاء', `${target.parentName} أكد الحضور يوم ${target.requestedDate} (${target.studentName}).`, 'admin', target.studentName, target.studentId, 'counselor');
+    sound.playSuccess();
+    showToast('success', 'تم التأكيد', 'أُبلغ الأخصائي الاجتماعي بتأكيدكم للموعد.');
+  };
+
   const setFollowUpForms: React.Dispatch<React.SetStateAction<StudentFollowUpForm[]>> = (formsOrUpdater) => {
     setFollowUpFormsState(prev => {
       const next = typeof formsOrUpdater === 'function' ? formsOrUpdater(prev) : formsOrUpdater;
@@ -1206,7 +1255,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     studentRepository.getAll().then(dbStudents => {
       if (dbStudents && dbStudents.length > 0) {
-        setStudents(dbStudents);
+        // نسخة IndexedDB لا تمر بتنظيف الصور الرمزية — توحيدها مع مسار localStorage
+        setStudents(dbStudents.map(st => (st.avatar && !st.avatar.includes('unsplash.com')) ? st : { ...st, avatar: getCleanAvatar(st.name, st.gender) }));
       }
     });
   }, []);
@@ -1234,7 +1284,34 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     sound.enabled = enabled;
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // ── نطاق الرؤية حسب الدور: ولي الأمر يرى ما يخص أبناءه فقط، والمعلم محادثاته فقط ──
+  const isParentSessionActive = isAuthenticated && authenticatedRole === 'parent';
+  const visibleNotifications = React.useMemo(() => {
+    if (isParentSessionActive) {
+      const ids = new Set(parentLinkedIds);
+      const names = new Set(students.filter(st => ids.has(st.id)).map(st => st.name));
+      return notifications.filter(n => {
+        if (n.targetRole && n.targetRole !== 'all' && n.targetRole !== 'parent') return false;
+        if (n.studentId) return ids.has(n.studentId);
+        if (n.studentName) return names.has(n.studentName);
+        return n.targetRole === 'all' || n.targetRole === 'parent';
+      });
+    }
+    return notifications.filter(n => n.targetRole !== 'parent');
+  }, [notifications, isParentSessionActive, parentLinkedIds, students]);
+
+  const visibleConversations = React.useMemo(() => {
+    if (isParentSessionActive) {
+      const ids = new Set(parentLinkedIds);
+      return conversations.filter(c => c.studentId && ids.has(c.studentId));
+    }
+    if ((authenticatedRole === 'teacher' || authenticatedRole === 'counselor') && currentTeacher) {
+      return conversations.filter(c => c.teacherId === currentTeacher.id);
+    }
+    return conversations;
+  }, [conversations, isParentSessionActive, parentLinkedIds, authenticatedRole, currentTeacher]);
+
+  const unreadCount = visibleNotifications.filter(n => !n.read).length;
 
   const login = (phoneOrId: string, role: UserRole, password?: string): { success: boolean; error?: string } => {
     // 1. بوابة السوبر لا تُفتح إلا برمز الماستر عبر unlockSuperAdmin/enterSuperAdmin
@@ -1756,78 +1833,65 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     text?: string,
     isVoice?: boolean,
     voiceDuration?: string,
-    imageUrl?: string
+    imageUrl?: string,
+    meta?: Omit<TeacherConversation, 'id' | 'lastMessage' | 'lastMessageTime' | 'unreadCount' | 'messages'>
   ) => {
     // منع انتحال الهوية: لا إرسال باسم دور آخر أثناء المعاينة
     if (!requireLiveMode('إرسال الرسائل')) return;
     const cleanText = text ? SecurityEngine.cleanText(text) : undefined;
+    if (!cleanText && !imageUrl) return;
+    const existing = conversations.find(c => c.id === conversationId);
+    // ولي الأمر يراسل فقط عن أبنائه الموثقين
+    const convStudentId = existing?.studentId || meta?.studentId;
+    if (authenticatedRole === 'parent' && (!convStudentId || !parentLinkedIds.includes(convStudentId))) {
+      sound.playAlert();
+      showToast('error', 'غير مسموح', 'يمكنك مراسلة معلمي أبنائك فقط.');
+      return;
+    }
+    const childName = convStudentId ? students.find(st => st.id === convStudentId)?.name : undefined;
     const newMsg = {
       id: `msg-${Date.now()}`,
       senderRole: currentRole,
-      senderName: currentTeacher ? currentTeacher.name : currentRole === 'parent' ? `ولي أمر الطالب (${selectedStudent.name.split(' ')[0]})` : 'المعلم',
+      senderName: currentRole === 'parent'
+        ? `ولي أمر ${childName || 'الطالب'}`
+        : currentTeacher ? currentTeacher.name : currentRole === 'admin' ? 'إدارة المدرسة' : 'المعلم',
       text: cleanText,
       isVoice,
       voiceDuration,
       imageUrl,
-      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-      read: true
+      timestamp: new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' }),
+      read: false
     };
+    const preview = cleanText || '📷 صورة مرفقة';
 
-    const updatedConv = conversations.map(c => {
-      if (c.id === conversationId) {
-        return {
-          ...c,
-          lastMessage: cleanText || (isVoice ? '🎤 رسالة صوتية' : '📷 صورة مرفقة'),
-          lastMessageTime: 'الآن',
-          messages: [...c.messages, newMsg]
-        };
-      }
-      return c;
-    });
+    let updatedConv: TeacherConversation[];
+    if (existing) {
+      updatedConv = conversations.map(c => c.id === conversationId
+        ? { ...c, lastMessage: preview, lastMessageTime: newMsg.timestamp, unreadCount: c.unreadCount + 1, messages: [...c.messages, newMsg] }
+        : c);
+    } else if (meta) {
+      updatedConv = [{
+        ...meta,
+        id: conversationId,
+        lastMessage: preview,
+        lastMessageTime: newMsg.timestamp,
+        unreadCount: 1,
+        messages: [newMsg]
+      }, ...conversations];
+    } else {
+      return;
+    }
 
     setConversations(updatedConv);
     db.saveConversations(updatedConv);
     sound.playTap();
 
+    // إشعار الطرف الآخر فقط (لا ردود آلية باسم المعلم)
+    const conv = updatedConv.find(c => c.id === conversationId)!;
     if (currentRole === 'parent') {
-      setTimeout(() => {
-        const teacherReplies = [
-          'أهلاً بك يا ولي الأمر، وصلت ملاحظتك وسيتم متابعة الطالب باهتمام مستمر 🌟',
-          'شكراً لحرصك ومتابعتك الدائمة، معتز نموذج يحتذى به في الفصل 👏',
-          'تم الاطلاع وسأوافيك بتقرير مفصل بعد الحصة القادمة بإذن الله.'
-        ];
-        const randomReply = teacherReplies[Math.floor(Math.random() * teacherReplies.length)];
-
-        const teacherMsg = {
-          id: `msg-rep-${Date.now()}`,
-          senderRole: 'teacher' as const,
-          senderName: 'المعلم',
-          text: randomReply,
-          timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-          read: false
-        };
-
-        setConversations(prev => {
-          const autoUpdated = prev.map(c => {
-            if (c.id === conversationId) {
-              return {
-                ...c,
-                lastMessage: randomReply,
-                lastMessageTime: 'الآن',
-                unreadCount: c.unreadCount + 1,
-                messages: [...c.messages, teacherMsg]
-              };
-            }
-            return c;
-          });
-          db.saveConversations(autoUpdated);
-          return autoUpdated;
-        });
-
-        sound.playSuccess();
-        addNotification('رسالة جديدة من المعلم 💬', randomReply, 'admin', selectedStudent.name);
-        showToast('info', 'رسالة جديدة من المعلم', randomReply);
-      }, 2000);
+      addNotification(`💬 رسالة من ولي أمر ${conv.studentName || ''}`, preview, 'academic', conv.studentName, conv.studentId, 'teacher');
+    } else {
+      addNotification(`💬 رسالة من ${newMsg.senderName}`, preview, 'academic', conv.studentName, conv.studentId, 'parent');
     }
   };
 
@@ -1835,22 +1899,34 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     title: string,
     message: string,
     category: NotificationItem['category'],
-    studentName?: string
+    studentName?: string,
+    studentId?: string,
+    targetRole?: NotificationItem['targetRole']
   ) => {
+    // ربط الإشعار بالطالب (بالمعرّف لا بالاسم — الأسماء تتكرر) ليصل لولي أمره وحده
+    let resolvedId = studentId;
+    if (!resolvedId && studentName) {
+      const matches = students.filter(st => st.name === studentName);
+      if (matches.length === 1) resolvedId = matches[0].id;
+    }
     const newNotif: NotificationItem = {
-      id: `notif-${Date.now()}`,
+      id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title: SecurityEngine.sanitizeString(title),
       message: SecurityEngine.sanitizeString(message),
       category,
-      date: 'الآن',
-      time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      date: new Date().toISOString().slice(0, 10),
+      time: new Date().toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' }),
       read: false,
-      studentName
+      studentName,
+      studentId: resolvedId,
+      targetRole
     };
 
-    const updated = [newNotif, ...notifications];
-    setNotifications(updated);
-    db.saveNotifications(updated);
+    setNotifications(prev => {
+      const updated = [newNotif, ...prev];
+      db.saveNotifications(updated);
+      return updated;
+    });
   };
 
   const markNotificationAsRead = (id: string) => {
@@ -1860,7 +1936,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const markAllNotificationsAsRead = () => {
-    const updated = notifications.map(n => ({ ...n, read: true }));
+    const visibleIds = new Set(visibleNotifications.map(n => n.id));
+    const updated = notifications.map(n => (visibleIds.has(n.id) ? { ...n, read: true } : n));
     setNotifications(updated);
     db.saveNotifications(updated);
     sound.playTap();
@@ -2729,8 +2806,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCaseStudies,
         counselingSessions,
         setCounselingSessions,
-        parentSummons,
+        parentSummons: isParentSessionActive ? parentSummons.filter(sm => parentLinkedIds.includes(sm.studentId)) : parentSummons,
         setParentSummons,
+        confirmParentSummon,
         followUpForms,
         setFollowUpForms,
         saveFollowUpForm,
@@ -2766,10 +2844,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         selectedStudent,
         setSelectedStudent,
         classes,
-        notifications,
+        notifications: visibleNotifications,
         unreadCount,
         dailyReport,
-        conversations,
+        conversations: visibleConversations,
         schedule,
         setSchedule,
         isOnlineSynced,

@@ -76,6 +76,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Official Libyan School Platform Footer (يمنع أي انقطاع أو فراغ مشوه أسفل الشاشة) */}
+      {currentRole !== 'parent' && (
       <footer className="mt-auto border-t border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md py-6 px-4 font-cairo text-right">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
@@ -102,6 +103,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
+      )}
 
       {/* Mobile Bottom Navigation Bar (Hidden for parent who has a self-contained WhatsApp-like UI) */}
       {currentRole !== 'parent' && (
@@ -138,8 +140,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
       )}
 
-      {/* 60fps & 21st.dev Interactive Guided Tour Overlay */}
-      <InteractiveSystemTour />
+      {/* الجولة التعريفية للكادر فقط — تطبيق ولي الأمر بسيط بذاته */}
+      {currentRole !== 'parent' && <InteractiveSystemTour />}
     </div>
   );
 };

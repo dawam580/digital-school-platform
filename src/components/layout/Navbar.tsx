@@ -424,7 +424,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-              title={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'}
+              title={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'} aria-label={isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'}
             >
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -437,7 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
                   ? 'bg-blue-50/60 dark:bg-blue-950/40 border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300'
                   : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400'
               }`}
-              title={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'}
+              title={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'} aria-label={soundEnabled ? 'كتم الصوت' : 'تفعيل الصوت'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -446,10 +446,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             <button
               onClick={() => { logout(); sound.playTap(); }}
               className="flex items-center gap-1 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-black text-xs border border-rose-200 dark:border-rose-800/60 shadow-sm transition-all active:scale-95"
-              title="الرجوع إلى شاشة الدخول"
+              title="تسجيل الخروج"
+              aria-label="تسجيل الخروج"
             >
               <LogOut className="w-4 h-4 text-rose-600" />
-              <span className="hidden sm:inline">⬅️ رجوع</span>
+              <span className="hidden sm:inline">خروج</span>
             </button>
 
           </div>
