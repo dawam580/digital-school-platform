@@ -1,5 +1,6 @@
 import { Student } from '../types';
 import { getCleanAvatar } from './avatarHelper';
+import { currentAcademicYear } from '../services/domain/libyanCalendar';
 
 /**
  * Generates and downloads an Arabic-encoded Libyan Official School Excel file (.csv with UTF-8 BOM)
@@ -33,7 +34,7 @@ export function exportLibyanStudentsToExcel(
     `"${s.grade || 'الصف التاسع الأساسي'}"`,
     `"${s.sectionCode || s.className || 'أ'}"`,
     `"${s.parentPhone || ''}"`,
-    `"${s.academicYear || '2025 - 2026 م'}"`
+    `"${s.academicYear || currentAcademicYear()}"`
   ]);
 
   // \uFEFF is the UTF-8 BOM for Microsoft Excel Arabic compatibility

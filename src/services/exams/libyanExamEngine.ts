@@ -8,6 +8,7 @@
 
 import { Student } from '../../types';
 import { ExamSubject, DEFAULT_LIBYAN_EXAM_SUBJECTS, ExamGradeRecord } from './examStorageService';
+import { currentAcademicYear } from '../domain/libyanCalendar';
 
 export interface LibyanSubjectDefinition {
   code: string;
@@ -63,7 +64,8 @@ export interface StudentFullExamReport {
   rank: number;
   generalAppreciation: 'ممتاز' | 'جيد جداً' | 'جيد' | 'مقبول' | 'ضعيف';
   appreciation?: string;
-  status: 'passed_honors' | 'passed' | 'passed_makeup' | 'makeup_exam' | 'failed';
+  /** pending = مادة واحدة على الأقل لم تُرصد درجتها بعد — لا نتيجة رسمية قبل اكتمال الرصد */
+  status: 'passed_honors' | 'passed' | 'passed_makeup' | 'makeup_exam' | 'failed' | 'pending';
   statusLabel: string;
   failedSubjects: string[];
   /** عدد المواد التقديرية في الكشف (0 = كشف مرصود بالكامل) */
@@ -104,8 +106,9 @@ export class LibyanExamEngine {
 
       totalMax += maxScore;
 
-      let coursework = 35; // Default realistic seed
-      let exam = 52;
+      // لا درجات مختلقة: المادة غير المرصودة = 0 وتوسم "تقديرية" فتبقى النتيجة "بانتظار الرصد"
+      let coursework = 0;
+      let exam = 0;
       let makeupScore: number | undefined = undefined;
       // أمانة البيانات: القيمة الافتراضية تُوسم "تقديرية" ما لم يوجد رصد فعلي
       let isEstimated = true;
@@ -122,8 +125,8 @@ export class LibyanExamEngine {
           s => s.code === sub.code || s.name === sub.name
         );
         if (existing) {
-          coursework = existing.courseworkScore ?? Math.round((existing.score ?? 85) * 0.4);
-          exam = existing.examScore ?? Math.round((existing.score ?? 85) * 0.6);
+          coursework = existing.courseworkScore ?? Math.round((existing.score ?? 0) * 0.4);
+          exam = existing.examScore ?? Math.round((existing.score ?? 0) * 0.6);
           // رصد جزئي من ملف الطالب (درجة كلية مُشتقة) — يبقى تقديرياً حتى الرصد الرسمي
           isEstimated = existing.courseworkScore === undefined && existing.examScore === undefined;
         }
@@ -180,10 +183,14 @@ export class LibyanExamEngine {
     // - 0 failures: passed or passed_honors
     // - 1 to 3 failures: makeup_exam (له دور ثانٍ)
     // - 4+ failures: failed (راسب وباقٍ للإعادة)
-    let status: 'passed_honors' | 'passed' | 'passed_makeup' | 'makeup_exam' | 'failed' = 'passed';
+    let status: StudentFullExamReport['status'] = 'passed';
     let statusLabel = 'ناجح ومنقول إلى الصف التالي 🟢';
+    const pendingCount = results.filter(r => r.isEstimated).length;
 
-    if (failedSubjects.length === 0) {
+    if (pendingCount > 0) {
+      status = 'pending';
+      statusLabel = `بانتظار اكتمال الرصد (${pendingCount} من ${results.length} مواد) ⏳`;
+    } else if (failedSubjects.length === 0) {
       if (hasSecondRoundPassed) {
         status = 'passed_makeup';
         statusLabel = 'ناجح بالدور الثاني 🟡';
@@ -281,7 +288,7 @@ export class LibyanExamEngine {
     students: Student[],
     seatingMap: Map<string, string>,
     halls: Array<{ id?: string; name: string; roomNumber: string; capacity: number; supervisorName: string; proctorNames: string[] }>,
-    academicYear: string = '2025 - 2026 م'
+    academicYear: string = currentAcademicYear()
   ) {
     const committees: Array<{
       id: string;

@@ -37,6 +37,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadPersistedStore: () => ipcRenderer.sendSync('store-load'),
   persistStore: (changes) => ipcRenderer.invoke('store-persist', changes || {}),
   persistStoreSync: (changes) => ipcRenderer.sendSync('store-persist-sync', changes || {}),
+  vaultSave: (schoolId, json) => ipcRenderer.invoke('vault-save', schoolId, json),
+  vaultLoad: (schoolId) => ipcRenderer.sendSync('vault-load', schoolId),
+  vaultDelete: (schoolId) => ipcRenderer.invoke('vault-delete', schoolId),
   listBackups: () => ipcRenderer.invoke('backups-list'),
   openBackupsFolder: () => ipcRenderer.invoke('backups-open-folder'),
 });

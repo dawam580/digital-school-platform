@@ -49,7 +49,8 @@ import {
   saveSchoolProfile,
   DEFAULT_SCHOOL_PROFILE,
   STORAGE_KEY_SCHOOL_PROFILE,
-  STORAGE_KEY_SAVED_SCHOOLS
+  STORAGE_KEY_SAVED_SCHOOLS,
+  withParentAccessCodes
 } from '../services/db';
 import { WarningTriggerEngine, SEED_INFRACTIONS, SEED_AUTO_SUMMON_CARDS } from '../services/counselor/warningTriggerEngine';
 import { sound } from '../utils/soundEffects';
@@ -67,7 +68,9 @@ import { LicenseVerificationResult, SchoolLicenseDoc } from '../services/licensi
 import { LicenseActivationModal } from '../components/licensing/LicenseActivationModal';
 import { SubscriptionExpiredOverlay } from '../components/licensing/SubscriptionExpiredOverlay';
 import { FirebaseAuthService, AuthSessionUser } from '../services/auth/firebaseAuthService';
-import { AuthEngine } from '../services/security/authEngine';
+import { AuthEngine, isCounselorAccount, normalizeLibyanPhone, LIBYAN_PHONE_RE } from '../services/security/authEngine';
+import { swapActiveSchool, setSwitchNotice, takeSwitchNotice } from '../services/storage/schoolVault';
+import { currentAcademicYear, academicYearStart } from '../services/domain/libyanCalendar';
 
 interface SchoolContextType {
   // Auth & Roles
@@ -177,7 +180,7 @@ interface SchoolContextType {
   // Database Actions
   updateAttendance: (studentId: string, status: AttendanceStatus, note?: string) => void;
   markAllPresent: (classId?: string) => void;
-  linkStudent: (studentCodeOrId: string) => boolean;
+  linkStudent: (studentCodeOrId: string, accessCode?: string) => boolean;
   addBehaviorPoint: (studentId: string, point: BehaviorPoint) => void;
   updateStudentAvatar: (studentId: string, avatarUrl: string) => void;
   updateStudentGrade: (studentId: string, gradeId: string, updatedFields: Partial<SubjectGrade>) => void;
@@ -229,6 +232,7 @@ interface SchoolContextType {
     phone: string;
     address: string;
     username: string;
+    password?: string;
     seedRichData: boolean;
   }) => boolean;
   extendTrialDays: (extraDays: number) => boolean;
@@ -276,10 +280,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (qPortal === 'parent' || qPortal === 'student' || qPortal === 'mobile') {
           return 'parent';
         }
-        const qRole = params.get('role');
-        if (qRole && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(qRole)) {
-          return qRole as UserRole;
-        }
       }
       const saved = localStorage.getItem('madrasa_active_role');
       if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
@@ -293,11 +293,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [authenticatedRole, setAuthenticatedRoleState] = useState<UserRole>(() => {
     try {
       if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const qRole = params.get('role');
-        const qPortal = params.get('portal');
-        if (qRole === 'admin' || qPortal === 'admin') return 'admin';
-        if (qRole === 'superadmin' || qPortal === 'superadmin') return 'superadmin';
       }
       const saved = localStorage.getItem('madrasa_auth_role');
       if (saved && ['admin', 'exams_coordinator', 'teacher', 'parent', 'counselor', 'superadmin'].includes(saved)) {
@@ -315,22 +310,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   // جلسة الماستر: تُفتح برمز السوبر أو مباشرة للمالك برابط السوبر
-  const [superUnlocked, setSuperUnlocked] = useState<boolean>(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const qRole = params.get('role');
-        const qPortal = params.get('portal');
-        if (qRole === 'superadmin' || qPortal === 'superadmin') {
-          return true;
-        }
-      }
-      if (localStorage.getItem('madrasa_auth_role') === 'superadmin' || localStorage.getItem('madrasa_superadmin_unlocked') === 'true') {
-        return true;
-      }
-    } catch {}
-    return false;
-  });
+  // جلسة الماستر لا تُستعاد من الرابط ولا من التخزين: تُفتح برمز السوبر في كل إقلاع
+  const [superUnlocked, setSuperUnlocked] = useState<boolean>(false);
 
   const denyRoleSwitch = (target: UserRole) => {
     sound.playAlert();
@@ -545,31 +526,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   };
 
+  // الجلسة تُستعاد فقط من دخول سابق صريح على هذا الجهاز. معاملات الرابط (?role= / ?portal=)
+  // تختار بوابة الدخول ولا تمنح أي هوية أبداً (كانت ?role=admin تفتح لوحة المدير بلا كلمة مرور).
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const qRole = params.get('role');
-        const qPortal = params.get('portal');
-        if (qRole === 'admin' || qPortal === 'admin') {
-          try {
-            localStorage.setItem(SESSION_KEY, '1');
-            localStorage.setItem('madrasa_auth_role', 'admin');
-            localStorage.setItem('madrasa_active_role', 'admin');
-          } catch {}
-          return true;
-        }
-        if (qRole === 'superadmin' || qPortal === 'superadmin') {
-          try {
-            localStorage.setItem(SESSION_KEY, '1');
-            localStorage.setItem('madrasa_auth_role', 'superadmin');
-            localStorage.setItem('madrasa_active_role', 'superadmin');
-            localStorage.setItem('madrasa_superadmin_unlocked', 'true');
-          } catch {}
-          return true;
-        }
-      }
-    } catch {}
     return hasPriorSetup();
   });
   const [authSession, setAuthSession] = useState<AuthSessionUser | null>(() => FirebaseAuthService.getCurrentSession());
@@ -691,6 +650,18 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // رسالة ما بعد التبديل/الإنشاء (تُكتب قبل إعادة التحميل)
+  useEffect(() => {
+    const notice = takeSwitchNotice();
+    if (notice) {
+      setTimeout(() => {
+        sound.playFanfare();
+        showToast('gold', notice.title, notice.message);
+      }, 300);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // تدوير الرموز الافتراضية (إلزامي): يظهر بعد دخول المدير/المالك فقط، لا قبل تسجيل الدخول
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -746,7 +717,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const [schoolProfile, setSchoolProfileState] = useState<SchoolProfile>(() => {
-    return getSchoolProfile();
+    const profile = getSchoolProfile();
+    // ترحيل تلقائي لعنوان العام الدراسي مع بداية عام جديد (أغسطس) — عنوان فقط، لا تُمس البيانات
+    const current = currentAcademicYear();
+    const savedStart = academicYearStart(profile.academicYear);
+    const currentStart = academicYearStart(current);
+    if (savedStart !== null && currentStart !== null && savedStart < currentStart) {
+      const rolled = { ...profile, academicYear: current };
+      saveSchoolProfile(rolled);
+      return rolled;
+    }
+    return profile;
   });
 
   const [savedSchools, setSavedSchoolsState] = useState<SchoolProfile[]>(() => {
@@ -836,7 +817,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [teachers, setTeachers] = useState<TeacherAccount[]>(() => {
     try {
       const data = db.getTeachers();
-      return (data && data.length > 0) ? data : SEED_TEACHERS;
+      return Array.isArray(data) ? data : SEED_TEACHERS;
     } catch {
       return SEED_TEACHERS;
     }
@@ -852,6 +833,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return [];
     }
   });
+
+  // كل طالب يحمل رمز دخول ولي أمر عشوائياً (يشمل من أُضيف عبر الاستيراد أو التعديل اليدوي)
+  useEffect(() => {
+    const withCodes = withParentAccessCodes(students);
+    if (withCodes !== students) {
+      setStudents(withCodes);
+      db.saveStudents(withCodes);
+    }
+  }, [students]);
 
   const [selectedStudent, setSelectedStudent] = useState<Student>(() => {
     try {
@@ -914,7 +904,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [classes, setClasses] = useState<SchoolClass[]>(() => {
     try {
       const data = db.getClasses();
-      return (data && data.length > 0) ? data : SEED_CLASSES;
+      return Array.isArray(data) ? data : SEED_CLASSES;
     } catch {
       return SEED_CLASSES;
     }
@@ -923,7 +913,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     try {
       const data = db.getNotifications();
-      return (data && data.length > 0) ? data : SEED_NOTIFICATIONS;
+      return Array.isArray(data) ? data : SEED_NOTIFICATIONS;
     } catch {
       return SEED_NOTIFICATIONS;
     }
@@ -941,7 +931,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [conversations, setConversations] = useState<TeacherConversation[]>(() => {
     try {
       const data = db.getConversations();
-      return (data && data.length > 0) ? data : SEED_CONVERSATIONS;
+      return Array.isArray(data) ? data : SEED_CONVERSATIONS;
     } catch {
       return SEED_CONVERSATIONS;
     }
@@ -950,7 +940,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [schedule, setSchedule] = useState<DaySchedule[]>(() => {
     try {
       const data = db.getSchedule();
-      return (data && data.length > 0) ? data : SEED_SCHEDULE;
+      return Array.isArray(data) ? data : SEED_SCHEDULE;
     } catch {
       return SEED_SCHEDULE;
     }
@@ -960,7 +950,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [caseStudies, setCaseStudiesState] = useState<SocialCaseStudy[]>(() => {
     try {
       const data = db.getCaseStudies();
-      return (data && data.length > 0) ? data : SEED_CASE_STUDIES;
+      return Array.isArray(data) ? data : SEED_CASE_STUDIES;
     } catch {
       return SEED_CASE_STUDIES;
     }
@@ -969,7 +959,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [counselingSessions, setCounselingSessionsState] = useState<CounselingSession[]>(() => {
     try {
       const data = db.getCounselingSessions();
-      return (data && data.length > 0) ? data : SEED_COUNSELING_SESSIONS;
+      return Array.isArray(data) ? data : SEED_COUNSELING_SESSIONS;
     } catch {
       return SEED_COUNSELING_SESSIONS;
     }
@@ -978,7 +968,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [parentSummons, setParentSummonsState] = useState<ParentSummon[]>(() => {
     try {
       const data = db.getParentSummons();
-      return (data && data.length > 0) ? data : SEED_PARENT_SUMMONS;
+      return Array.isArray(data) ? data : SEED_PARENT_SUMMONS;
     } catch {
       return SEED_PARENT_SUMMONS;
     }
@@ -988,7 +978,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [infractions, setInfractionsState] = useState<StudentInfraction[]>(() => {
     try {
       const data = db.getInfractions();
-      return (data && data.length > 0) ? data : SEED_INFRACTIONS;
+      return Array.isArray(data) ? data : SEED_INFRACTIONS;
     } catch {
       return SEED_INFRACTIONS;
     }
@@ -997,7 +987,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [autoSummonCards, setAutoSummonCardsState] = useState<AutoSummonCard[]>(() => {
     try {
       const data = db.getAutoSummonCards();
-      return (data && data.length > 0) ? data : SEED_AUTO_SUMMON_CARDS;
+      return Array.isArray(data) ? data : SEED_AUTO_SUMMON_CARDS;
     } catch {
       return SEED_AUTO_SUMMON_CARDS;
     }
@@ -1006,7 +996,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [followUpForms, setFollowUpFormsState] = useState<StudentFollowUpForm[]>(() => {
     try {
       const data = db.getFollowUpForms();
-      return (data && data.length > 0) ? data : SEED_FOLLOWUP_FORMS;
+      return Array.isArray(data) ? data : SEED_FOLLOWUP_FORMS;
     } catch {
       return SEED_FOLLOWUP_FORMS;
     }
@@ -1286,9 +1276,11 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       showToast('error', '⛔ بيانات الدخول غير صحيحة', authResult.error || 'فشلت المصادقة.');
       return { success: false, error: authResult.error };
     }
+    // الدور الممنوح فعلاً من المحرك (مثلاً حساب كادر بمادة COUNSEL ← أخصائي اجتماعي)
+    if (authResult.role) role = authResult.role;
 
     setCurrentUserPhoneState(cleanId);
-    FirebaseAuthService.loginWithIdentifier(cleanId, cleanSecret || '123456').then(res => {
+    FirebaseAuthService.loginWithIdentifier(cleanId, cleanSecret).then(res => {
       if (res.success && res.user) {
         setAuthSession(res.user);
       }
@@ -1302,13 +1294,24 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     markSession();
     if (role === 'parent') {
       setCurrentTeacher(null);
+      // الأبناء الموثقون فقط (استبدال لا دمج): لا يرث ولي أمر أبناء من دخل قبله على نفس الجهاز
+      const verifiedIds = authResult.studentIds || [];
+      setParentLinkedIds(verifiedIds);
+      setParentLinkedStudentId(verifiedIds[0] || null);
+      try {
+        localStorage.setItem('madrasa_parent_linked_ids', JSON.stringify(verifiedIds));
+        if (verifiedIds[0]) localStorage.setItem('madrasa_parent_child_id', verifiedIds[0]);
+        else localStorage.removeItem('madrasa_parent_child_id');
+      } catch {}
+      const first = students.find(st => st.id === verifiedIds[0]);
+      if (first) setSelectedStudent(first);
       setActiveTabState('parent-dashboard');
     } else if (role === 'teacher') {
-      const t = teachers.find(tch => tch.phone === cleanId || tch.code.toUpperCase() === cleanId.toUpperCase()) || teachers[0];
+      const t = teachers.find(tch => tch.id === authResult.actorId) || teachers.find(tch => tch.phone === cleanId || tch.code.toUpperCase() === cleanId.toUpperCase()) || null;
       setCurrentTeacher(t);
       setActiveTabState('teacher-quick');
     } else if (role === 'counselor') {
-      const t = teachers.find(tch => tch.code === 'LIB-SOC-01') || teachers[0];
+      const t = teachers.find(tch => tch.id === authResult.actorId) || teachers.find(tch => tch.code === 'LIB-SOC-01') || null;
       setCurrentTeacher(t);
       setActiveTabState('counselor-dashboard');
     } else if (role === 'superadmin') {
@@ -1328,7 +1331,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const loginWithTeacherCode = (code: string, password?: string): boolean => {
     const cleanCode = (code || '').trim().toUpperCase();
-    const cleanSecret = (password || '123456').trim();
+    const cleanSecret = (password || '').trim();
 
     const authResult = AuthEngine.verifyCredentials({
       role: 'teacher',
@@ -1351,7 +1354,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           setAuthSession(res.user);
         }
       }).catch(() => {});
-      if (foundTeacher.code === 'LIB-SOC-01' || foundTeacher.subjectCode === 'COUNSEL') {
+      if (isCounselorAccount(foundTeacher)) {
         setAuthenticatedRole('counselor');
         setSuperUnlocked(false);
         applyRole('counselor');
@@ -1385,6 +1388,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.removeItem('madrasa_superadmin_unlocked');
       localStorage.removeItem('madrasa_active_teacher_id');
       localStorage.removeItem('madrasa_active_tab');
+      localStorage.removeItem('madrasa_parent_linked_ids');
+      localStorage.removeItem('madrasa_parent_child_id');
       if (typeof window !== 'undefined') {
         const url = new URL(window.location.href);
         url.searchParams.delete('role');
@@ -1393,6 +1398,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     } catch {}
     setCurrentTeacher(null);
+    setParentLinkedIds([]);
+    setParentLinkedStudentId(null);
     setActiveTabState('landing');
     sound.playTap();
     showToast('info', 'تسجيل الخروج', 'تم تسجيل الخروج بنجاح والعودة إلى البوابة الرئيسية.');
@@ -1526,39 +1533,67 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('gold', 'تحضير مكتمل', 'تم تسجيل حضور جميع الطلاب بنجاح 🌟');
   };
 
-  const linkStudent = (studentCodeOrId: string): boolean => {
+  /**
+   * ربط طالب بحساب ولي الأمر: يتطلب معرّف الطالب + رمز دخول ولي الأمر (6 أرقام).
+   * - زائر غير مسجل ← يُفتح له حساب ولي أمر بنفس قواعد بوابة الدخول.
+   * - ولي أمر مسجل ← يُضاف الابن (وإخوته بنفس الهاتف) لحسابه.
+   * - كادر المدرسة ← فتح ملف الطالب فقط (يملكون الاطلاع أصلاً).
+   */
+  const linkStudent = (studentCodeOrId: string, accessCode: string = ''): boolean => {
     if (!requireLiveMode('ربط الطلاب')) return false;
     const cleanCode = SecurityEngine.cleanText(studentCodeOrId);
-    const found = students.find(
-      s => s.linkCode.toLowerCase() === cleanCode.toLowerCase() || s.nationalId === cleanCode
-    );
+    const cleanSecret = (accessCode || '').trim();
 
-    if (found) {
-      setSelectedStudent(found);
-      addNotification(
-        'تم ربط الطالب بنجاح',
-        `تم ربط ملف الطالب ${found.name} بحساب ولي الأمر بنجاح.`,
-        'admin',
-        found.name
+    const isStaff = isAuthenticated && authenticatedRole !== 'parent';
+    if (isStaff) {
+      const found = students.find(
+        s => s.linkCode.toLowerCase() === cleanCode.toLowerCase() || s.nationalId === cleanCode ||
+             s.nationalNumber === cleanCode || s.studentNumber === cleanCode
       );
-
-      auditLogger.log({
-        actorName: currentUserPhone,
-        actorRole: currentRole,
-        action: 'LINK_STUDENT',
-        entity: 'Student',
-        details: `ربط ملف الطالب ${found.name} (${found.linkCode})`,
-        severity: 'INFO'
-      });
-
-      sound.playSuccess();
-      triggerConfetti();
-      showToast('gold', 'تم ربط الطالب!', `أهلاً بك، تم فتح ملف ${found.name} بنجاح.`);
+      if (!found) {
+        sound.playAlert();
+        showToast('error', 'رمز غير صحيح', 'لم يتم العثور على طالب بهذا الرمز أو الرقم.');
+        return false;
+      }
+      setSelectedStudent(found);
       return true;
     }
-    sound.playAlert();
-    showToast('error', 'رمز غير صحيح', 'لم يتم العثور على طالب بهذا الرمز أو الهوية.');
-    return false;
+
+    const verify = AuthEngine.verifyParentAccess(cleanCode, cleanSecret);
+    if (!verify.success || !verify.studentIds?.length) {
+      sound.playAlert();
+      showToast('error', 'تعذّر الربط', verify.error || 'تأكد من رقم الطالب ورمز دخول ولي الأمر.');
+      return false;
+    }
+
+    if (!isAuthenticated) {
+      const res = login(cleanCode, 'parent', cleanSecret);
+      return res.success;
+    }
+
+    const newIds = verify.studentIds;
+    setParentLinkedIds(prev => {
+      const next = Array.from(new Set([...newIds, ...prev]));
+      try { localStorage.setItem('madrasa_parent_linked_ids', JSON.stringify(next)); } catch {}
+      return next;
+    });
+    const found = students.find(st => st.id === newIds[0]);
+    if (found) {
+      setParentLinkedStudentId(found.id);
+      setSelectedStudent(found);
+      try { localStorage.setItem('madrasa_parent_child_id', found.id); } catch {}
+    }
+    auditLogger.log({
+      actorName: currentUserPhone,
+      actorRole: authenticatedRole,
+      action: 'LINK_STUDENT',
+      entity: 'Student',
+      details: `ربط ${newIds.length} طالب بحساب ولي الأمر بعد التحقق من رمز الدخول`,
+      severity: 'INFO'
+    });
+    sound.playSuccess();
+    showToast('gold', 'تم ربط الطالب!', found ? `أهلاً بك، تم فتح ملف ${found.name} بنجاح.` : 'تم الربط بنجاح.');
+    return true;
   };
 
   const addBehaviorPoint = (studentId: string, point: BehaviorPoint) => {
@@ -1896,17 +1931,18 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     showToast('gold', 'تم تحديث بيانات المدرسة 🏫', 'تم حفظ وتحديث بيانات المدرسة بنجاح في المنظومة.');
   };
 
+  /** هل المدرسة النشطة هي القالب الافتراضي الفارغ (لا تستحق لقطة في الخزنة)؟ */
+  const isPristineDefaultSchool = () => schoolProfile.id === DEFAULT_SCHOOL_PROFILE.id && students.length === 0;
+
+  /** حفظ قائمة المدارس (بلا القالب الافتراضي الفارغ) */
+  const persistSavedSchools = (list: SchoolProfile[]) => {
+    try {
+      localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+    } catch {}
+  };
+
   const createNewSchool = (name: string, district: string, directorName: string, directorPhone: string, startFresh: boolean) => {
     if (!requireSchoolManager('إنشاء مدرسة جديدة')) return;
-    // 1. Snapshot current school data
-    try {
-      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
-        students,
-        classes,
-        teachers
-      }));
-    } catch {}
-
     const newId = `school-${Date.now()}`;
     const newSchool: SchoolProfile = {
       id: newId,
@@ -1914,62 +1950,50 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       code: `SCH-LIB-${Math.floor(100 + Math.random() * 900)}`,
       district: district || 'مراقبة التربية والتعليم',
       directorName: directorName || 'مدير المدرسة',
-      directorPhone: directorPhone || '',
-      academicYear: '2025 - 2026 م',
+      directorPhone: normalizeLibyanPhone(directorPhone || ''),
+      academicYear: currentAcademicYear(),
       isCustom: true
     };
+    const keepPin = SecurityEngine.getDirectorPin();
+    const currentId = schoolProfile.id;
+    const pristine = isPristineDefaultSchool();
 
-    setSchoolProfileState(newSchool);
-    saveSchoolProfile(newSchool);
-
-    setSavedSchoolsState(prev => {
-      const list = [...prev, newSchool];
+    swapActiveSchool(currentId, null, { saveCurrent: !pristine }).then(ok => {
+      if (!ok) {
+        sound.playAlert();
+        showToast('error', 'تعذّر حفظ المدرسة الحالية', 'لم يُنشأ شيء — تحقق من مساحة التخزين ثم أعد المحاولة.');
+        return;
+      }
+      db.initializeSchoolWorkspace(startFresh ? 'clean' : 'demo');
+      saveSchoolProfile(newSchool);
+      // نفس المدير ينشئ المدرسة: يبقى رمزه ورقمه صالحين للمدرسة الجديدة حتى يغيّرهما
+      SecurityEngine.setDirectorPin(keepPin);
       try {
-        localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
+        if (newSchool.directorPhone) localStorage.setItem('madrasa_admin_phone', newSchool.directorPhone);
       } catch {}
-      return list;
+      const list = [...savedSchools.filter(sc => !(pristine && sc.id === currentId)), newSchool];
+      persistSavedSchools(list);
+      setSwitchNotice('تم إنشاء المدرسة الجديدة 🌟', `أنت الآن في: ${name}. بيانات كل مدرسة محفوظة ومعزولة.`);
+      window.location.reload();
     });
-
-    if (startFresh) {
-      setStudents([]);
-      db.saveStudents([]);
-    }
-
-    sound.playFanfare();
-    triggerConfetti();
-    showToast('gold', 'تم تهيئة المدرسة الجديدة بنجاح 🌟', `تم ضبط المنظومة لمدرسة: ${name}. جاهزة لإدخال البيانات!`);
   };
 
   const switchSchool = (schoolId: string) => {
     if (!requireSchoolManager('التبديل بين المدارس')) return;
     const target = savedSchools.find(s => s.id === schoolId);
-    if (!target) return;
+    if (!target || target.id === schoolProfile.id) return;
 
-    // Snapshot current
-    try {
-      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
-        students,
-        classes,
-        teachers
-      }));
-    } catch {}
-
-    // Restore target
-    try {
-      const savedData = localStorage.getItem(`madrasa_school_data_${target.id}`);
-      if (savedData) {
-        const parsed = JSON.parse(savedData);
-        if (parsed.students) {
-          setStudents(parsed.students);
-          db.saveStudents(parsed.students);
-        }
+    swapActiveSchool(schoolProfile.id, target.id, { saveCurrent: !isPristineDefaultSchool() }).then(ok => {
+      if (!ok) {
+        sound.playAlert();
+        showToast('error', 'تعذّر حفظ المدرسة الحالية', 'لم يتم التبديل — بيانات المدرسة الحالية لم تُمس.');
+        return;
       }
-    } catch {}
-
-    setSchoolProfileState(target);
-    saveSchoolProfile(target);
-    sound.playSuccess();
-    showToast('info', 'تم التبديل للمدرسة 🏫', `أنت الآن في: ${target.name}`);
+      // لقطة المدرسة الهدف تحمل ملفها التعريفي؛ للمدارس القديمة بلا لقطة نكتبه من القائمة
+      if (!localStorage.getItem(STORAGE_KEY_SCHOOL_PROFILE)) saveSchoolProfile(target);
+      setSwitchNotice('تم التبديل للمدرسة 🏫', `أنت الآن في: ${target.name}`);
+      window.location.reload();
+    });
   };
 
   const exportSchoolPackage = () => {
@@ -2320,6 +2344,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     phone: string;
     address: string;
     username: string;
+    password?: string;
     seedRichData: boolean;
   }): boolean => {
     if (!requireLiveMode('إنشاء بيئة تجريبية')) return false;
@@ -2358,17 +2383,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
       }
     }
-    // لقطة أمان للحالة الحالية قبل التجهيز
-    try {
-      localStorage.setItem(`madrasa_school_data_${schoolProfile.id}`, JSON.stringify({
-        students,
-        classes,
-        teachers,
-        financialTransactions,
-        tuitionFees
-      }));
-    } catch {}
-
     const newId = `school-trial-${Date.now()}`;
     const newTrialSchool: SchoolProfile = {
       id: newId,
@@ -2377,7 +2391,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       district: `مراقبة التربية والتعليم - ${trialData.city}`,
       directorName: trialData.username || 'مدير المدرسة',
       directorPhone: cleanPhone,
-      academicYear: '2025 - 2026 م',
+      academicYear: currentAcademicYear(),
       isCustom: true,
       isTrial: true,
       // توريث البداية الأصلية عند الاستعادة بنفس الهوية — لا أيام جديدة أبداً
@@ -2393,11 +2407,10 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       adminUsername: trialData.username
     };
 
-    setSchoolProfileState(newTrialSchool);
-    saveSchoolProfile(newTrialSchool);
     // ترخيص تجريبي 7 أيام مرتبط بالمدرسة: يمنع ظهور بوابة التفعيل كل إقلاع،
     // وتنتهي صلاحيته تلقائياً ليدخل مسار التجديد الرسمي (حلقة مغلقة).
     // نفس الهوية = نفس الترخيص الأصلي (لا مفتاح جديد ولا أيام جديدة).
+    let trialDoc: SchoolLicenseDoc | null = null;
     try {
       const registry = LicenseService.getAdminRegisteredSchools();
       const prior = registry.find(s =>
@@ -2405,7 +2418,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         (s.admin_phone || '').replace(/\D/g, '') === cleanPhone &&
         cleanPhone.length >= 9
       );
-      const trialDoc: SchoolLicenseDoc = prior
+      trialDoc = prior
         ? { ...prior, last_verified_at: new Date().toISOString() }
         : {
           license_key: LicenseService.generateLicenseKey(),
@@ -2418,9 +2431,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           offline_grace_allowed_days: 7,
           last_verified_at: new Date().toISOString()
         };
-      LicenseService.setActiveLicenseKey(trialDoc.license_key);
-      LicenseService.setCachedLicense(trialDoc);
-      const reg = registry.filter(s => s.license_key !== trialDoc.license_key);
+      const reg = registry.filter(s => s.license_key !== trialDoc!.license_key);
       reg.unshift(trialDoc);
       LicenseService.saveAdminRegisteredSchools(reg);
       LicenseService.pushToFirestore(trialDoc).catch(() => {});
@@ -2438,51 +2449,6 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       } as DeviceTrialSeal));
     } catch {}
 
-    setSavedSchoolsState(prev => {
-      const list = [...prev, newTrialSchool];
-      try {
-        localStorage.setItem(STORAGE_KEY_SAVED_SCHOOLS, JSON.stringify(list));
-      } catch {}
-      return list;
-    });
-
-    if (trialData.seedRichData) {
-      setStudents(SEED_STUDENTS);
-      db.saveStudents(SEED_STUDENTS, true);
-      setFinancialTransactions(INITIAL_FINANCIAL_TRANSACTIONS);
-      setTuitionFees(INITIAL_TUITION_RECORDS);
-      try {
-        localStorage.setItem('madrasa_finance_tx', JSON.stringify(INITIAL_FINANCIAL_TRANSACTIONS));
-        localStorage.setItem('madrasa_tuition_fees', JSON.stringify(INITIAL_TUITION_RECORDS));
-      } catch {}
-    } else {
-      setStudents([]);
-      db.saveStudents([]);
-      setFinancialTransactions([]);
-      setTuitionFees([]);
-      try {
-        localStorage.setItem('madrasa_finance_tx', JSON.stringify([]));
-        localStorage.setItem('madrasa_tuition_fees', JSON.stringify([]));
-      } catch {}
-    }
-
-    // Set phone for admin login
-    setCurrentUserPhoneState(cleanPhone || currentUserPhone);
-    try {
-      if (cleanPhone) localStorage.setItem('madrasa_admin_phone', cleanPhone);
-    } catch {}
-
-    // تهيئة بيئة تجريبية جديدة = هوية مدير جديدة (تجاوز الحارس عمداً)
-    applyRole('admin');
-    setAuthenticatedRole('admin');
-    setSuperUnlocked(false);
-    setIsAuthenticated(true);
-    markSession();
-    setActiveTabState('dashboard');
-
-    sound.playFanfare();
-    triggerConfetti();
-    showToast('gold', 'تم تجهيز بيئتك التجريبية بنجاح 🌟', `مرحباً بك في مدرسة ${cleanName}! لديك 7 أيام تجربة مجانية كاملة.`);
     auditLogger.log({
       actorName: cleanPhone,
       actorRole: 'admin',
@@ -2492,6 +2458,45 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         ? `إعادة إنشاء بنفس الهوية — موروثة من (${inheritedStart}) بلا أيام جديدة`
         : `تفعيل تجربة أولى باسم (${cleanName}) وختم الجهاز`,
       severity: 'WARN'
+    });
+
+    // عزل كامل: المدرسة الحالية تُحفظ في خزنة المدارس ثم تبدأ المدرسة الجديدة بمساحة نظيفة
+    const currentId = schoolProfile.id;
+    const pristine = isPristineDefaultSchool();
+    swapActiveSchool(currentId, null, { saveCurrent: !pristine }).then(ok => {
+      if (!ok) {
+        sound.playAlert();
+        showToast('error', 'تعذّر حفظ المدرسة الحالية', 'لم تُنشأ التجربة — تحقق من مساحة التخزين ثم أعد المحاولة.');
+        return;
+      }
+      db.initializeSchoolWorkspace(trialData.seedRichData ? 'demo' : 'clean');
+      saveSchoolProfile(newTrialSchool);
+      if (trialDoc) {
+        LicenseService.setActiveLicenseKey(trialDoc.license_key);
+        LicenseService.setCachedLicense(trialDoc);
+      }
+      try {
+        if (trialData.seedRichData) {
+          localStorage.setItem('madrasa_finance_tx', JSON.stringify(INITIAL_FINANCIAL_TRANSACTIONS));
+          localStorage.setItem('madrasa_tuition_fees', JSON.stringify(INITIAL_TUITION_RECORDS));
+        }
+        if (cleanPhone) localStorage.setItem('madrasa_admin_phone', cleanPhone);
+      } catch {}
+      // كلمة المرور التي اختارها المدير في المعالج تصبح رمز دخوله فعلاً (لا رمز افتراضي)
+      if (trialData.password) SecurityEngine.setDirectorPin(trialData.password);
+
+      const list = [...savedSchools.filter(sc => !(pristine && sc.id === currentId)), newTrialSchool];
+      persistSavedSchools(list);
+
+      // تهيئة بيئة تجريبية جديدة = هوية مدير جديدة
+      try {
+        localStorage.setItem('madrasa_auth_role', 'admin');
+        localStorage.setItem('madrasa_active_role', 'admin');
+        localStorage.setItem('madrasa_active_tab', 'dashboard');
+      } catch {}
+      markSession();
+      setSwitchNotice('تم تجهيز بيئتك التجريبية بنجاح 🌟', `مرحباً بك في مدرسة ${cleanName}! لديك 7 أيام تجربة مجانية كاملة.`);
+      window.location.reload();
     });
     return true;
   };
@@ -2829,9 +2834,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isOpen={showActivationModal}
         onSuccess={(doc) => {
           setShowActivationModal(false);
-          if (doc.school_name && doc.school_name.trim()) {
-            updateSchoolProfile({ name: doc.school_name.trim() });
+          const licensedPhone = normalizeLibyanPhone(doc.admin_phone || '');
+          const profileUpdate: Partial<SchoolProfile> = {};
+          if (doc.school_name && doc.school_name.trim()) profileUpdate.name = doc.school_name.trim();
+          // هاتف المدير المسجل في الترخيص يصبح هاتف الدخول (إن لم يُسجَّل هاتف بعد)
+          if (LIBYAN_PHONE_RE.test(licensedPhone) && !schoolProfile.directorPhone) {
+            profileUpdate.directorPhone = licensedPhone;
+            try { localStorage.setItem('madrasa_admin_phone', licensedPhone); } catch {}
           }
+          if (Object.keys(profileUpdate).length) updateSchoolProfile(profileUpdate);
           setLicenseInfo({
             isValid: true,
             status: doc.subscription_status,

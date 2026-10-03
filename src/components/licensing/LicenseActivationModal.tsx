@@ -15,7 +15,8 @@ interface LicenseActivationModalProps {
 }
 
 export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ isOpen, onSuccess }) => {
-  const { setShowActivationModal, setShowFreeTrialModal } = useSchool();
+  const { setShowActivationModal, setShowFreeTrialModal, savedSchools, schoolProfile, switchSchool, isAuthenticated, authenticatedRole } = useSchool();
+  const otherSchools = (isAuthenticated && authenticatedRole === 'admin') ? savedSchools.filter(s => s.id !== schoolProfile.id) : [];
   const [licenseKey, setLicenseKey] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -155,6 +156,24 @@ export const LicenseActivationModal: React.FC<LicenseActivationModalProps> = ({ 
               <Sparkles className="w-3.5 h-3.5" />
               <span>ليس لديك مفتاح؟ ابدأ تجربة مجانية (7 أيام)</span>
             </button>
+
+            {/* مدارس أخرى على نفس الجهاز: لا يعلق المدير على مدرسة جديدة غير مفعلة */}
+            {otherSchools.length > 0 && (
+              <div className="pt-1 space-y-1.5">
+                <p className="text-[11px] font-bold text-slate-500">أو انتقل لمدرسة أخرى على هذا الجهاز:</p>
+                {otherSchools.map(sch => (
+                  <button
+                    key={sch.id}
+                    type="button"
+                    onClick={() => { sound.playTap(); switchSchool(sch.id); }}
+                    className="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-between gap-2"
+                  >
+                    <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-blue-600" />{sch.name}</span>
+                    <span className="text-[10px] text-blue-600">التبديل ←</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex items-center justify-between text-[11px] text-slate-400">

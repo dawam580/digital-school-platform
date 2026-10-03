@@ -478,6 +478,23 @@ function persistEntries(changes) {
 }
 
 ipcMain.on('store-load', (event) => { event.returnValue = loadStore(); });
+
+// خزنة المدارس: لقطة كاملة لكل مدرسة غير نشطة في ملف مستقل (لا تثقل ملف المدرسة النشطة)
+function vaultDir() { return path.join(app.getPath('userData'), 'data', 'schools-vault'); }
+function vaultFile(schoolId) {
+  const safe = String(schoolId || '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 80);
+  if (!safe) throw new Error('invalid school id');
+  return path.join(vaultDir(), `${safe}.json`);
+}
+ipcMain.handle('vault-save', (event, schoolId, json) => {
+  try { writeFileAtomic(vaultFile(schoolId), String(json)); return true; } catch { return false; }
+});
+ipcMain.on('vault-load', (event, schoolId) => {
+  try { event.returnValue = fs.readFileSync(vaultFile(schoolId), 'utf8'); } catch { event.returnValue = null; }
+});
+ipcMain.handle('vault-delete', (event, schoolId) => {
+  try { fs.unlinkSync(vaultFile(schoolId)); return true; } catch { return false; }
+});
 ipcMain.on('store-persist-sync', (event, changes) => {
   try { persistEntries(changes); event.returnValue = true; } catch { event.returnValue = false; }
 });

@@ -37,6 +37,7 @@ import { sound } from '../../utils/soundEffects';
 import { triggerConfetti } from '../../utils/confetti';
 import { exportLibyanStudentsToExcel } from '../../utils/excelHelper';
 import { DEMO_STUDENTS, DEMO_SCHOOL_INFO } from '../../data/demoSchoolDataset';
+import { currentAcademicYear } from '../../services/domain/libyanCalendar';
 
 interface PdfStudentImporterModalProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
         setParsedRows(adjustedStudents);
         setParseStats({
           totalPages: result.totalPages,
-          year: result.detectedAcademicYear || '2025 - 2026 م',
+          year: result.detectedAcademicYear || currentAcademicYear(),
           grade: finalGrade
         });
         setSelectedGrade(finalGrade);
@@ -155,7 +156,7 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
               setParsedRows(adjustedStudents);
               setParseStats({
                 totalPages: spatialPages.length,
-                year: '2025 - 2026 م',
+                year: currentAcademicYear(),
                 grade: selectedGrade
               });
               setSelectedIndices(new Set(adjustedStudents.map((_, i) => i)));
@@ -257,7 +258,7 @@ export const PdfStudentImporterModal: React.FC<PdfStudentImporterModalProps> = (
         setParsedRows(adjustedStudents);
         setParseStats({
           totalPages: 1,
-          year: result.detectedAcademicYear || '2025 - 2026 م',
+          year: result.detectedAcademicYear || currentAcademicYear(),
           grade: selectedGrade
         });
         setSelectedIndices(new Set(adjustedStudents.map((_, i) => i)));

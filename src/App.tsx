@@ -6,7 +6,6 @@ import { AppErrorBoundary } from './components/common/AppErrorBoundary';
 import { Eye, ShieldAlert, RotateCcw } from 'lucide-react';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/auth/Login';
-import { ParentSignUp } from './pages/auth/ParentSignUp';
 import { LinkStudent } from './pages/auth/LinkStudent';
 import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { AttendanceTracker } from './pages/attendance/AttendanceTracker';
@@ -211,8 +210,9 @@ const MainContent: React.FC = () => {
     );
   }
 
+  // التسجيل الذاتي برمز OTP وهمي أُلغي: حساب ولي الأمر يُفتح ببطاقة المدرسة (الرقم + رمز الدخول)
   if (activeTab === 'parent-signup') {
-    return <ParentSignUp />;
+    return <ParentMobileApp />;
   }
 
   const renderActivePage = () => {

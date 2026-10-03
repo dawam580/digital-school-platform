@@ -61,12 +61,7 @@ interface HomeworkItem {
   completed: boolean;
 }
 
-const DEFAULT_HOMEWORK: HomeworkItem[] = [
-  { id: 'hw-1', subject: 'الرياضيات', title: 'حل تمارين ص 42 (مسائل الجمع والضرب)', dueDate: 'غداً', completed: false },
-  { id: 'hw-2', subject: 'اللغة العربية', title: 'حفظ أبيات قصيدة الوطن وكتابة المفردات', dueDate: 'غداً', completed: true },
-  { id: 'hw-3', subject: 'العلوم', title: 'رسم دورة حياة النبات في دفتر النشاط', dueDate: 'الخميس', completed: false },
-  { id: 'hw-4', subject: 'التربية الإسلامية', title: 'مراجعة سورة النبأ من الآية 1 إلى 15', dueDate: 'الأحد', completed: false }
-];
+
 
 export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFrame = false }) => {
   const {
@@ -83,8 +78,12 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
     schoolProfile,
     schedule,
     notifications,
-    markNotificationAsRead
+    markNotificationAsRead,
+    isAuthenticated,
+    authenticatedRole
   } = useSchool();
+  // الزائر غير المسجل لا يرى أي ملف — نموذج الربط/الدخول فقط
+  const isParentSession = isAuthenticated && authenticatedRole === 'parent';
 
   // Mode: ولي الأمر (Parent) vs الطالب (Student)
   const [portalMode, setPortalMode] = useState<'parent' | 'student'>(() => {
@@ -103,6 +102,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showScannerModal, setShowScannerModal] = useState(false);
   const [linkCodeInput, setLinkCodeInput] = useState('');
+  const [accessCodeInput, setAccessCodeInput] = useState('');
   const [showExcuseModal, setShowExcuseModal] = useState(false);
   const [excuseDate, setExcuseDate] = useState(new Date().toISOString().split('T')[0]);
   const [excuseReason, setExcuseReason] = useState('ظرف صحي طارئ (مرفق التقرير الطبي)');
@@ -111,13 +111,13 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const [showInstallPrompt, setShowInstallPrompt] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Homework Checklist State (Stored in localStorage)
-  const [homeworkList, setHomeworkList] = useState<HomeworkItem[]>(() => {
+  // إنجاز الواجبات (علامة ولي الأمر/الطالب محلياً) — الواجبات نفسها من المعلمين فقط
+  const [homeworkDone, setHomeworkDone] = useState<Record<string, boolean>>(() => {
     try {
-      const saved = localStorage.getItem('madrasa_student_homework_v1');
+      const saved = localStorage.getItem('madrasa_student_homework_done_v2');
       if (saved) return JSON.parse(saved);
     } catch {}
-    return DEFAULT_HOMEWORK;
+    return {};
   });
 
   // Frame toggle for desktop users
@@ -126,14 +126,33 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   // Identify all children linked to this parent
   const parentChildren: Student[] = useMemo(() => {
     const list: Student[] = [];
+    if (!isParentSession) return list;
     if (parentLinkedStudent) list.push(parentLinkedStudent);
     previouslyLinkedStudents.forEach(s => {
       if (!list.some(x => x.id === s.id)) list.push(s);
     });
     return list;
-  }, [parentLinkedStudent, previouslyLinkedStudents]);
+  }, [parentLinkedStudent, previouslyLinkedStudents, isParentSession]);
 
-  const activeChild = parentLinkedStudent || parentChildren[0] || null;
+  const activeChild = isParentSession ? (parentLinkedStudent || parentChildren[0] || null) : null;
+
+  const homeworkList: HomeworkItem[] = useMemo(
+    () => (activeChild?.assignments || [])
+      .filter(a => a.status !== 'graded')
+      .map(a => ({
+        id: `${activeChild?.id}-${a.id}`,
+        subject: a.subject,
+        title: a.title,
+        dueDate: a.dueDate,
+        completed: Boolean(homeworkDone[`${activeChild?.id}-${a.id}`]) || a.status === 'submitted'
+      })),
+    [activeChild, homeworkDone]
+  );
+
+  // جدول اليوم الفعلي من جدول المدرسة — أسبوع الدراسة الليبي من الأحد إلى الخميس
+  const todayIndex = new Date().getDay();
+  const isWeekend = todayIndex === 5 || todayIndex === 6;
+  const todayPeriods = (schedule || []).find(d => d.dayIndex === todayIndex)?.periods || [];
 
   // Control Gate for Exam Release
   const [gradesReleased, setGradesReleased] = useState<boolean | null>(null);
@@ -155,18 +174,27 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
+      // رابط/باركود المدرسة: code = رقم الطالب، pin = رمز دخول ولي الأمر (بطاقة ولي الأمر)
       const urlCode = params.get('code');
+      const urlPin = params.get('pin');
       if (urlCode && !activeChild) {
-        linkStudent(urlCode.trim());
+        setLinkCodeInput(urlCode.trim());
+        if (urlPin) {
+          if (linkStudent(urlCode.trim(), urlPin.trim())) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('pin');
+            window.history.replaceState({}, '', url.toString());
+          }
+        }
       }
     } catch {}
   }, []);
 
   const handleToggleHomework = (id: string) => {
-    setHomeworkList(prev => {
-      const updated = prev.map(hw => hw.id === id ? { ...hw, completed: !hw.completed } : hw);
+    setHomeworkDone(prev => {
+      const updated = { ...prev, [id]: !prev[id] };
       try {
-        localStorage.setItem('madrasa_student_homework_v1', JSON.stringify(updated));
+        localStorage.setItem('madrasa_student_homework_done_v2', JSON.stringify(updated));
       } catch {}
       return updated;
     });
@@ -183,9 +211,23 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
 
   const handleLinkChild = (e?: React.FormEvent, customCode?: string) => {
     if (e) e.preventDefault();
-    const targetCode = (customCode || linkCodeInput).trim();
+    let targetCode = (customCode || linkCodeInput).trim();
+    let targetPin = accessCodeInput.trim();
+    // باركود ولي الأمر يحمل الرابط كاملاً (code + pin)
+    if (customCode) {
+      try {
+        const parsed = new URL(customCode);
+        targetCode = parsed.searchParams.get('code') || targetCode;
+        targetPin = parsed.searchParams.get('pin') || targetPin;
+      } catch {}
+    }
     if (!targetCode) return;
-    const success = linkStudent(targetCode);
+    if (!targetPin) {
+      setLinkCodeInput(targetCode);
+      showToast('info', 'أدخل رمز الدخول', 'اكتب رمز دخول ولي الأمر (6 أرقام) المطبوع على البطاقة المسلّمة من المدرسة.');
+      return;
+    }
+    const success = linkStudent(targetCode, targetPin);
     if (success) {
       sound.playSuccess();
       triggerConfetti();
@@ -193,9 +235,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
       setShowLinkModal(false);
       setShowScannerModal(false);
       setLinkCodeInput('');
-    } else {
-      sound.playAlert();
-      showToast('error', 'رمز غير صحيح', 'تأكد من رمز الطالب أو رقمه الوطني أو كود الربط.');
+      setAccessCodeInput('');
     }
   };
 
@@ -209,7 +249,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
     setTimeout(() => {
       setIsRefreshing(false);
       sound.playSuccess();
-      showToast('success', 'تمت المزامنة ⚡', 'تم تحديث أحدث بيانات الحضور والدرجات من كمبيوتر المدرسة.');
+      showToast('success', 'تم التحديث', 'تم عرض آخر البيانات المسجلة في المنظومة.');
     }, 600);
   };
 
@@ -252,7 +292,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
   const todayStatus = activeChild?.status || 'present';
 
   // Role Gate
-  const allowed = useRequireRole('parent');
+  const allowed = useRequireRole('parent', { allowGuest: true });
   if (!allowed) return null;
 
   // Unlinked Visitor Screen with Direct QR Scan
@@ -285,7 +325,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
 
           <div className="flex items-center gap-3 text-slate-500 text-xs my-2">
             <span className="flex-1 h-px bg-white/10" />
-            <span>أو أدخل كود الربط يدوياً</span>
+            <span>أو أدخل البيانات يدوياً</span>
             <span className="flex-1 h-px bg-white/10" />
           </div>
 
@@ -294,8 +334,21 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               type="text"
               value={linkCodeInput}
               onChange={e => setLinkCodeInput(e.target.value)}
-              placeholder="كود الربط أو الرقم الوطني (مثال: 1001)"
+              placeholder="الرقم الوطني للطالب أو رقم القيد أو هاتفك"
+              aria-label="رقم الطالب"
               className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white text-sm font-mono text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
+              required
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              value={accessCodeInput}
+              onChange={e => setAccessCodeInput(e.target.value.replace(/[^0-9٠-٩]/g, '').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))))}
+              placeholder="رمز دخول ولي الأمر (6 أرقام)"
+              aria-label="رمز دخول ولي الأمر"
+              className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white text-sm font-mono text-center tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-amber-500"
               required
             />
             <button
@@ -307,7 +360,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
           </form>
 
           <p className="text-[10px] text-slate-400 leading-normal">
-            💡 يمكن لإدارة المدرسة على الكمبيوتر توليد الباركود فوراً عبر زر <strong>(📱 باركود الهاتف)</strong>.
+            💡 رقم الطالب ورمز الدخول مطبوعان على <strong>بطاقة ولي الأمر</strong> التي تسلّمها المدرسة — أو امسح الباركود الموجود عليها.
           </p>
         </div>
 
@@ -457,7 +510,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               type="button"
               onClick={handleManualRefresh}
               className={`p-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 border border-white/10 transition active:scale-95 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`}
-              title="مزامنة فورية مع كمبيوتر المدرسة"
+              title="تحديث العرض"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -468,8 +521,8 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
         {/* Live Sync Status Pill */}
         <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400 px-1">
           <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-400 font-bold">متزامن مع كمبيوتر المدرسة</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-emerald-400 font-bold">{activeChild.className}</span>
           </span>
           <span>{schoolProfile.name}</span>
         </div>
@@ -534,7 +587,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               <div className="p-3.5 rounded-2xl bg-[#14213d]/80 border border-white/10 flex items-center justify-between shadow-sm">
                 <div>
                   <span className="text-[10px] text-slate-400 block">نسبة الحضور</span>
-                  <span className="text-xs font-black text-emerald-400 block mt-0.5">ممتاز 🌟</span>
+                  <span className={`text-xs font-black block mt-0.5 ${attHistory.length === 0 ? 'text-slate-400' : attRate >= 90 ? 'text-emerald-400' : attRate >= 75 ? 'text-amber-300' : 'text-rose-400'}`}>
+                    {attHistory.length === 0 ? 'لا سجل بعد' : attRate >= 90 ? 'ممتاز 🌟' : attRate >= 75 ? 'جيد' : 'يحتاج متابعة ⚠️'}
+                  </span>
                 </div>
                 <div className="relative w-11 h-11 flex items-center justify-center">
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -632,38 +687,39 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               </a>
             </div>
 
-            {/* Today's Schedule Carousel */}
+            {/* Today's Schedule (from the school timetable) */}
             <div className="p-4 rounded-2xl bg-[#14213d]/80 border border-white/10 space-y-2.5">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-black text-white flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-                  <span>جدول حصص اليوم (اليوم الدراسي الحالي)</span>
+                  <span>جدول حصص اليوم</span>
                 </h4>
-                <span className="text-[10px] text-slate-400">6 حصص</span>
+                {!isWeekend && todayPeriods.length > 0 && (
+                  <span className="text-[10px] text-slate-400">{todayPeriods.length} حصص</span>
+                )}
               </div>
 
-              <div className="flex gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
-                {[
-                  { period: 'الحصة 1', subject: 'اللغة العربية', teacher: 'أ. سالم التاورغي', time: '08:00 - 08:45', color: 'border-blue-500' },
-                  { period: 'الحصة 2', subject: 'الرياضيات', teacher: 'أ. طارق الفيتوري', time: '08:45 - 09:30', color: 'border-emerald-500' },
-                  { period: 'الحصة 3', subject: 'العلوم', teacher: 'أ. فاطمة المجبري', time: '09:30 - 10:15', color: 'border-purple-500' },
-                  { period: 'الحصة 4', subject: 'التربية الإسلامية', teacher: 'أ. عثمان السويحلي', time: '10:45 - 11:30', color: 'border-amber-500' },
-                  { period: 'الحصة 5', subject: 'الحاسوب', teacher: 'أ. أدم المنصوري', time: '11:30 - 12:15', color: 'border-cyan-500' },
-                  { period: 'الحصة 6', subject: 'اللغة الإنجليزية', teacher: 'أ. مفتاح الورفلي', time: '12:15 - 01:00', color: 'border-rose-500' }
-                ].map((p, idx) => (
-                  <div
-                    key={idx}
-                    className={`min-w-[130px] p-2.5 rounded-xl bg-slate-900/90 border-r-2 ${p.color} border border-white/5 space-y-1 shrink-0 text-right`}
-                  >
-                    <div className="flex items-center justify-between text-[10px] text-slate-400">
-                      <span>{p.period}</span>
-                      <span className="font-mono text-[9px] text-slate-300">{p.time.split(' - ')[0]}</span>
+              {isWeekend ? (
+                <p className="text-xs text-slate-300 py-2">عطلة نهاية الأسبوع (الجمعة والسبت) — يستأنف الدوام يوم الأحد بإذن الله.</p>
+              ) : todayPeriods.length === 0 ? (
+                <p className="text-xs text-slate-400 py-2">لم تنشر المدرسة جدول الحصص بعد.</p>
+              ) : (
+                <div className="flex gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+                  {todayPeriods.map(p => (
+                    <div
+                      key={p.periodNumber}
+                      className="min-w-[130px] p-2.5 rounded-xl bg-slate-900/90 border-r-2 border-amber-500 border border-white/5 space-y-1 shrink-0 text-right"
+                    >
+                      <div className="flex items-center justify-between text-[10px] text-slate-400">
+                        <span>الحصة {p.periodNumber}</span>
+                        <span className="font-mono text-[9px] text-slate-300">{(p.time || '').split(' - ')[0]}</span>
+                      </div>
+                      <p className="text-xs font-black text-white truncate">{p.subject}</p>
+                      <p className="text-[9px] text-slate-400 truncate">{p.teacher}</p>
                     </div>
-                    <p className="text-xs font-black text-white truncate">{p.subject}</p>
-                    <p className="text-[9px] text-slate-400 truncate">{p.teacher}</p>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* School Emergency Phone */}
@@ -1007,7 +1063,7 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-300">
                 <div className="flex items-center gap-1.5">
                   <QrCode className="w-4 h-4 text-amber-400" />
-                  <span>كود الطالب: {activeChild.linkCode || 'SCH-2026-R1'}</span>
+                  <span>رقم القيد: {activeChild.studentNumber || '—'}</span>
                 </div>
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">طالب نظامي معتمد</span>
               </div>
@@ -1026,6 +1082,9 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
               </div>
 
               <div className="space-y-2">
+                {homeworkList.length === 0 && (
+                  <p className="text-xs text-slate-400 py-2">لا توجد واجبات منشورة من المعلمين حالياً.</p>
+                )}
                 {homeworkList.map((hw) => (
                   <div
                     key={hw.id}
@@ -1238,16 +1297,29 @@ export const ParentMobileApp: React.FC<ParentMobileAppProps> = ({ embeddedInFram
 
             <form onSubmit={handleLinkChild} className="space-y-3">
               <p className="text-xs text-slate-300 leading-relaxed">
-                أدخل كود الطالب المكون من 4 أرقام (مثل 1001) أو رقمه الوطني:
+                أدخل رقم الابن (الرقم الوطني أو رقم القيد) ورمز دخول ولي الأمر الخاص به من بطاقة المدرسة:
               </p>
 
-              <div>
+              <div className="space-y-2">
                 <input
                   type="text"
-                  placeholder="مثال: 1001 أو SCH-2026-R1"
+                  placeholder="الرقم الوطني أو رقم القيد"
+                  aria-label="رقم الطالب"
                   value={linkCodeInput}
                   onChange={e => setLinkCodeInput(e.target.value)}
                   className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white text-sm font-mono text-center tracking-wider"
+                  required
+                />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={accessCodeInput}
+                  onChange={e => setAccessCodeInput(e.target.value.replace(/[^0-9٠-٩]/g, '').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))))}
+                  placeholder="رمز دخول ولي الأمر (6 أرقام)"
+                  aria-label="رمز دخول ولي الأمر"
+                  className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white text-sm font-mono text-center tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
               </div>

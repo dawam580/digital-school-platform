@@ -30,6 +30,7 @@ import {
   counselingRepository
 } from './repositories';
 import { computeLiveClassStats } from './domain/classAnalytics';
+import { currentAcademicYear } from './domain/libyanCalendar';
 
 export const STORAGE_KEY_SCHOOL_PROFILE = 'madrasa_school_profile_v1';
 export const STORAGE_KEY_SAVED_SCHOOLS = 'madrasa_saved_schools_v1';
@@ -40,8 +41,9 @@ export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
   code: 'SCH-2026',
   district: 'مراقبة التربية والتعليم',
   directorName: 'مدير المدرسة المعتمد',
-  directorPhone: '0912345678',
-  academicYear: '2025 - 2026 م',
+  // لا هاتف افتراضي: أول دخول على جهاز جديد يسجّل هاتف المدير (انظر AuthEngine.isAdminUnclaimed)
+  directorPhone: '',
+  academicYear: currentAcademicYear(),
   isCustom: false
 };
 
@@ -101,6 +103,22 @@ export const saveSchoolProfile = (profile: SchoolProfile) => {
 };
 
 const STORAGE_KEY_STUDENTS = 'madrasa_db_students_v3';
+
+/** رمز دخول ولي أمر عشوائي من 6 أرقام (لا يُشتق من رقم القيد أو الرقم الوطني) */
+export function generateParentAccessCode(): string {
+  const buf = new Uint32Array(1);
+  for (;;) {
+    crypto.getRandomValues(buf);
+    const code = String(100000 + (buf[0] % 900000));
+    if (!/^(\d)\1+$/.test(code) && !'0123456789'.includes(code) && !'9876543210'.includes(code)) return code;
+  }
+}
+
+/** يضمن أن لكل طالب رمز دخول ولي أمر؛ يُرجع نفس المصفوفة إن لم يتغير شيء */
+export function withParentAccessCodes(list: Student[]): Student[] {
+  if (!list.some(s => !s.parentAccessCode)) return list;
+  return list.map(s => (s.parentAccessCode ? s : { ...s, parentAccessCode: generateParentAccessCode() }));
+}
 const STORAGE_KEY_TEACHERS = 'madrasa_db_teachers_v4';
 const STORAGE_KEY_CLASSES = 'madrasa_db_classes_v3';
 const STORAGE_KEY_NOTIFICATIONS = 'madrasa_db_notifications_v3';
@@ -950,7 +968,7 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
     studentNationalNumber: '120081234567',
     grade: 'الصف الثالث الأساسي',
     className: '3/أ',
-    academicYear: '2025 - 2026 م',
+    academicYear: currentAcademicYear(),
     semester: 'الفصل الدراسي الأول',
     counselorName: 'أ. نجوى القماطي',
     parentName: 'سالم الورفلي',
@@ -978,7 +996,7 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
     studentNationalNumber: '120083456789',
     grade: 'الصف الثاني الأساسي',
     className: '2/أ',
-    academicYear: '2025 - 2026 م',
+    academicYear: currentAcademicYear(),
     semester: 'الفصل الدراسي الأول',
     counselorName: 'أ. نجوى القماطي',
     parentName: 'طارق المقريف',
@@ -1048,6 +1066,36 @@ export const SEED_FOLLOWUP_FORMS: StudentFollowUpForm[] = [
 ];
 
 export const db = {
+  /**
+   * تهيئة مساحة عمل مدرسة جديدة بعد تفريغها (خزنة المدارس):
+   * - clean: مدرسة حقيقية — قوائم فارغة صريحة (لا معلمين ولا حالات ولا محادثات وهمية)
+   * - demo:  بيئة عرض — البيانات النموذجية كاملة
+   */
+  initializeSchoolWorkspace(mode: 'clean' | 'demo'): void {
+    const put = (key: string, value: unknown) => {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    };
+    const demo = mode === 'demo';
+    put(STORAGE_KEY_TEACHERS, demo ? SEED_TEACHERS : []);
+    put(STORAGE_KEY_CLASSES, demo ? SEED_CLASSES : []);
+    put(STORAGE_KEY_NOTIFICATIONS, demo ? SEED_NOTIFICATIONS : []);
+    put(STORAGE_KEY_CONVERSATIONS, demo ? SEED_CONVERSATIONS : []);
+    put(STORAGE_KEY_SCHEDULE, demo ? SEED_SCHEDULE : []);
+    put(STORAGE_KEY_CASE_STUDIES, demo ? SEED_CASE_STUDIES : []);
+    put(STORAGE_KEY_SESSIONS, demo ? SEED_COUNSELING_SESSIONS : []);
+    put(STORAGE_KEY_SUMMONS, demo ? SEED_PARENT_SUMMONS : []);
+    put(STORAGE_KEY_INFRACTIONS, demo ? SEED_INFRACTIONS : []);
+    put(STORAGE_KEY_AUTO_SUMMON_CARDS, demo ? SEED_AUTO_SUMMON_CARDS : []);
+    put(STORAGE_KEY_FOLLOWUP_FORMS, demo ? SEED_FOLLOWUP_FORMS : []);
+    if (!demo) {
+      put('madrasa_finance_tx', []);
+      put('madrasa_tuition_fees', []);
+      put('madrasa_staff_members', []);
+      put('madrasa_school_announcements_v1', []);
+    }
+    this.saveStudents(demo ? SEED_STUDENTS : [], true);
+  },
+
   onSync(callback: any) {
     return () => {};
   },
@@ -1072,15 +1120,9 @@ export const db = {
 
   getTeachers(): TeacherAccount[] {    try {
       const data = localStorage.getItem(STORAGE_KEY_TEACHERS);
+      // المفتاح غائب (تثبيت قديم لم يعدّل الكادر) ← الكادر الافتراضي؛ قائمة فارغة صريحة تُحترم (مدرسة جديدة)
       let list: TeacherAccount[] = data ? JSON.parse(data) : SEED_TEACHERS;
-      if (!Array.isArray(list) || list.length === 0) list = SEED_TEACHERS;
-
-      // Auto-heal: Ensure Teacher Adam (LIB-COMP-09) is always present
-      const hasAdam = list.some(t => t.code === 'LIB-COMP-09' || t.name.includes('أدم'));
-      if (!hasAdam) {
-        const adam = SEED_TEACHERS.find(t => t.code === 'LIB-COMP-09');
-        if (adam) list = [adam, ...list];
-      }
+      if (!Array.isArray(list)) list = SEED_TEACHERS;
 
       // Guarantee clean vector avatars (never unsplash)
       return list.map(t => ({
@@ -1177,6 +1219,11 @@ export const db = {
         // Initial setup for new school: clean slate (0 students)
         list = [];
       }
+      const withCodes = withParentAccessCodes(list);
+      if (withCodes !== list) {
+        list = withCodes;
+        this.saveStudents(list);
+      }
       // Guarantee clean vector avatars (never unsplash)
       const cleaned = list.map(s => ({
         ...s,
@@ -1208,6 +1255,11 @@ export const db = {
         // Initial setup for new school: clean slate (0 students)
         list = [];
       }
+      const withCodes = withParentAccessCodes(list);
+      if (withCodes !== list) {
+        list = withCodes;
+        this.saveStudents(list);
+      }
       return list.map(s => ({
         ...s,
         avatar: (!s.avatar || s.avatar.includes('unsplash.com'))
@@ -1235,6 +1287,7 @@ export const db = {
 
   saveStudents(students: Student[], force: boolean = false): void {
     try {
+      students = withParentAccessCodes(students);
       const encrypted = CryptoVaultService.encryptStudentsBatch(students);
       localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(encrypted));
       if (force) {
@@ -1270,11 +1323,11 @@ export const db = {
       const data = localStorage.getItem(STORAGE_KEY_CLASSES);
       if (data) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length >= 20) {
+        // أي عدد فصول مقبول (مدرسة صغيرة بـ6 فصول مثلاً) — الفصول تُشتق أيضاً من كشف الطلاب
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
-      this.saveClasses(SEED_CLASSES);
       return SEED_CLASSES;
     } catch {
       return SEED_CLASSES;

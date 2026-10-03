@@ -12,7 +12,32 @@ import { auditLogger } from '../audit/auditLogger';
 import { getSchoolProfile, SEED_TEACHERS, db } from '../db';
 import { DEV_MODE } from '../../config/devMode';
 
-export const LIBYAN_PHONE_RE = /^09[1234]\d{7}$/;
+/** أرقام الهواتف المحمولة الليبية: المدار (091/093) • ليبيانا (092/094) • ليبيا فون/LTT (095/096) */
+export const LIBYAN_PHONE_RE = /^09[1-6]\d{7}$/;
+
+/**
+ * توحيد صيغة الهاتف الليبي: يقبل +218 / 00218 / 218 / المسافات والشرطات والأرقام
+ * العربية الهندية (٠٩١...) ويُرجع الصيغة المحلية 09xxxxxxxx، أو النص كما هو إن لم يكن هاتفاً.
+ */
+export function normalizeLibyanPhone(input: string): string {
+  const raw = (input || '').trim();
+  const western = raw.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+  const digits = western.replace(/[\s\-().]/g, '');
+  if (!/^\+?\d+$/.test(digits)) return raw;
+  let d = digits.replace(/^\+/, '');
+  if (d.startsWith('00218')) d = d.slice(5);
+  else if (d.startsWith('218')) d = d.slice(3);
+  if (/^9[1-6]\d{7}$/.test(d)) d = '0' + d;
+  return LIBYAN_PHONE_RE.test(d) ? d : raw;
+}
+
+/** هل هذا رمز دخول أخصائي اجتماعي؟ (الرمز التاريخي LIB-SOC-01 أو أي حساب بمادة COUNSEL) */
+export function isCounselorAccount(t: Pick<TeacherAccount, 'code' | 'subjectCode'>): boolean {
+  return t.code?.toUpperCase() === 'LIB-SOC-01' || t.subjectCode === 'COUNSEL';
+}
+
+/** مفتاح كلمة مرور ولي الأمر المخصصة (يعيّنها ولي الأمر بنفسه من حسابه) */
+export const parentPasswordKey = (studentId: string) => `madrasa_parent_pwd_${studentId}`;
 
 export interface AuthCredentials {
   role: UserRole;
@@ -27,6 +52,10 @@ export interface AuthResult {
   role?: UserRole;
   actorName?: string;
   actorId?: string;
+  /** رمز المعلم/الأخصائي الرسمي (للدخول عبر loginWithTeacherCode) */
+  actorCode?: string;
+  /** أبناء ولي الأمر الذين يحق له الاطلاع عليهم بعد التحقق (الإخوة بنفس الهاتف) */
+  studentIds?: string[];
   isLockedOut?: boolean;
   remainingSeconds?: number;
 }
@@ -143,11 +172,25 @@ export class AuthEngine {
       if (localPhone) phones.add(localPhone.trim());
     } catch {}
 
-    // 3. الأرقام الرسمية الافتراضية المعتمدة للإدارة (مدير المدرسة والكنترول الرئيسي)
-    phones.add('0922465676');
-    phones.add('0912345678');
+    // 3. أرقام العرض التجريبي — بيئة التطوير فقط. في الإنتاج لا يدخل إلا هاتف مدير هذه المدرسة.
+    if (DEV_MODE) {
+      phones.add('0922465676');
+      phones.add('0912345678');
+    }
 
     return Array.from(phones).filter(p => LIBYAN_PHONE_RE.test(p));
+  }
+
+  /**
+   * مدرسة لم يُسجَّل لها هاتف مدير بعد (تثبيت جديد بمفتاح ترخيص دون معالج التجربة).
+   * أول دخول برقم ليبي صحيح + رمز المدير الحالي يسجّل ذلك الهاتف مديراً، ثم يُفرض تغيير الرمز.
+   */
+  public static isAdminUnclaimed(): boolean {
+    try {
+      if ((getSchoolProfile().directorPhone || '').trim()) return false;
+      if ((localStorage.getItem('madrasa_admin_phone') || '').trim()) return false;
+    } catch {}
+    return this.getAuthorizedAdminPhones().length === 0;
   }
 
   /**
@@ -159,9 +202,42 @@ export class AuthEngine {
       const savedExamsPhone = localStorage.getItem('madrasa_exams_phone');
       if (savedExamsPhone) phones.add(savedExamsPhone.trim());
     } catch {}
-    phones.add('0912345678');
-    phones.add('0922465676');
+    if (DEV_MODE) {
+      phones.add('0912345678');
+      phones.add('0922465676');
+    }
     return Array.from(phones).filter(p => LIBYAN_PHONE_RE.test(p));
+  }
+
+  /** قائمة الكادر الحالية (المحفوظة أو البذرة) */
+  public static loadTeachers(): TeacherAccount[] {
+    try {
+      const stored = localStorage.getItem('madrasa_db_teachers_v4');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return SEED_TEACHERS;
+  }
+
+  /** الأسرار المقبولة لولي أمر طالب: رمز الدخول الصادر من المدرسة + كلمة مروره المخصصة */
+  private static parentSecretsFor(s: Student): string[] {
+    const secrets: string[] = [];
+    if (s.parentAccessCode) secrets.push(s.parentAccessCode.trim());
+    try {
+      const custom = localStorage.getItem(parentPasswordKey(s.id));
+      if (custom && custom.trim()) secrets.push(custom.trim());
+    } catch {}
+    secrets.push(...this.devSecrets());
+    return secrets;
+  }
+
+  /**
+   * تحقق ولي الأمر من ملكية طالب (لربط ابن إضافي من داخل حسابه) — نفس قواعد الدخول.
+   */
+  public static verifyParentAccess(identifier: string, secret: string): AuthResult {
+    return this.verifyCredentials({ role: 'parent', identifier, password: secret });
   }
 
   /**
@@ -170,7 +246,7 @@ export class AuthEngine {
    */
   public static verifyCredentials(creds: AuthCredentials): AuthResult {
     const { role, identifier, password, pin } = creds;
-    const cleanId = (identifier || '').trim();
+    const cleanId = normalizeLibyanPhone(identifier || '');
     const cleanSecret = (password || pin || '').trim();
 
     if (!cleanId) {
@@ -197,7 +273,8 @@ export class AuthEngine {
       }
 
       const authorizedPhones = this.getAuthorizedAdminPhones();
-      const isAuthorizedPhone = authorizedPhones.includes(cleanId);
+      const claiming = this.isAdminUnclaimed();
+      const isAuthorizedPhone = claiming || authorizedPhones.includes(cleanId);
 
       if (!isAuthorizedPhone) {
         const fail = this.recordFailedAttempt(cleanId);
@@ -250,6 +327,17 @@ export class AuthEngine {
 
       // نجاح الدخول
       this.clearAttempts(cleanId);
+      if (claiming) {
+        try { localStorage.setItem('madrasa_admin_phone', cleanId); } catch {}
+        auditLogger.log({
+          actorName: cleanId,
+          actorRole: 'admin',
+          action: 'ADMIN_PHONE_CLAIMED',
+          entity: 'Security',
+          details: `تسجيل هاتف المدير لأول مرة على هذا الجهاز (${cleanId})`,
+          severity: 'WARN'
+        });
+      }
       auditLogger.log({
         actorName: cleanId,
         actorRole: 'admin',
@@ -333,14 +421,7 @@ export class AuthEngine {
 
     // ── ج. بوابة المعلم (Teacher) ──
     if (role === 'teacher') {
-      let teacherList: TeacherAccount[] = SEED_TEACHERS;
-      try {
-        const stored = localStorage.getItem('madrasa_db_teachers_v4');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) teacherList = parsed;
-        }
-      } catch {}
+      const teacherList: TeacherAccount[] = this.loadTeachers();
 
       const cleanCode = cleanId.toUpperCase();
       const foundTeacher = teacherList.find(
@@ -392,8 +473,7 @@ export class AuthEngine {
       }
 
       this.clearAttempts(cleanId);
-      const isCounselor = foundTeacher.code === 'LIB-SOC-01' || foundTeacher.subjectCode === 'COUNSEL';
-      const finalRole: UserRole = isCounselor ? 'counselor' : 'teacher';
+      const finalRole: UserRole = isCounselorAccount(foundTeacher) ? 'counselor' : 'teacher';
 
       auditLogger.log({
         actorName: foundTeacher.name,
@@ -408,40 +488,27 @@ export class AuthEngine {
         success: true,
         role: finalRole,
         actorName: foundTeacher.name,
-        actorId: foundTeacher.id
+        actorId: foundTeacher.id,
+        actorCode: foundTeacher.code
       };
     }
 
-    // ── د. بوابة الأخصائي الاجتماعي ومنظم النشاط (Counselor) ──
+    // ── د. بوابة الأخصائي الاجتماعي (Counselor) ──
+    // حساب الأخصائي حساب كادر عادي بمادة COUNSEL — نفس مسار المعلم بكلمة مروره الخاصة.
     if (role === 'counselor') {
-      const cleanCode = cleanId.toUpperCase();
-      if (cleanCode !== 'LIB-SOC-01') {
-        return { success: false, error: 'رمز الأخصائي غير صحيح. الرمز المعتمد: LIB-SOC-01.' };
-      }
-
-      // كلمة مرور الأخصائي المخصصة + رمز المدير (تجاوز المالك) — لا أسرار كونية.
-      const validSecrets = new Set<string>([
-        ...this.storedSecrets(['madrasa_teacher_pwd_LIB-SOC-01', `madrasa_pwd_${cleanId}`]),
-        SecurityEngine.getDirectorPin(),
-        ...this.devSecrets(),
-      ]);
-      if (!cleanSecret || !validSecrets.has(cleanSecret)) {
+      const counselor = this.loadTeachers().find(
+        t => isCounselorAccount(t) && (t.code.trim().toUpperCase() === cleanId.toUpperCase() || (t.phone && t.phone.trim() === cleanId))
+      );
+      if (!counselor) {
         const fail = this.recordFailedAttempt(cleanId);
         return {
           success: false,
           error: fail.isLocked
             ? `تم تجميد الدخول ${fail.remainingSeconds} ثانية.`
-            : `كلمة المرور غير صحيحة. المحاولات المتبقية: (${fail.attemptsLeft}).`
+            : 'رمز الأخصائي الاجتماعي غير مسجل. يرجى مراجعة إدارة المدرسة.'
         };
       }
-
-      this.clearAttempts(cleanId);
-      return {
-        success: true,
-        role: 'counselor',
-        actorName: 'الأخصائي الاجتماعي',
-        actorId: 't-counselor-01'
-      };
+      return this.verifyCredentials({ role: 'teacher', identifier: counselor.code, password: cleanSecret });
     }
 
     // ── هـ. بوابة السوبر أدمن (Super Admin) ──
@@ -494,67 +561,84 @@ export class AuthEngine {
     }
 
     // ── و. بوابة ولي الأمر (Parent) ──
+    // المعرّف: الرقم الوطني أو رقم القيد أو هاتف ولي الأمر أو رمز الربط.
+    // السر إلزامي: رمز دخول ولي الأمر (6 أرقام عشوائية تصدرها المدرسة) أو كلمة مروره المخصصة.
+    // لا دخول بدون سر، ولا دخول برقم هاتف غير مسجل لأي طالب.
     if (role === 'parent') {
       let studentList: Student[] = [];
       try {
         studentList = db.getAllStudents();
       } catch {}
 
-      const foundStudent = studentList.find(
+      const idLower = cleanId.toLowerCase();
+      const candidates = studentList.filter(
         s => (s.nationalNumber && s.nationalNumber === cleanId) ||
-             s.nationalId === cleanId ||
-             s.studentNumber === cleanId ||
-             (s.parentPhone && s.parentPhone.trim() === cleanId) ||
-             (s.linkCode && s.linkCode.toLowerCase() === cleanId.toLowerCase()) ||
-             // أكواد الباب الخلفي 1001/1002 — DEV_MODE فقط، ميتة في الإنتاج
+             (s.nationalId && s.nationalId === cleanId) ||
+             (s.studentNumber && s.studentNumber === cleanId) ||
+             (s.parentPhone && normalizeLibyanPhone(s.parentPhone) === cleanId) ||
+             (s.linkCode && s.linkCode.toLowerCase() === idLower) ||
+             // أكواد العرض 1001/1002 — DEV_MODE فقط، ميتة في الإنتاج
              (DEV_MODE && ((cleanId === '1001' && (s.id === 'std-1' || s.studentNumber === '2025-0101' || s.studentNumber === '5864392')) ||
              (cleanId === '1002' && (s.id === 'std-2' || s.studentNumber === '2025-0102'))))
       );
 
-      const isRegisteredParentPhone = LIBYAN_PHONE_RE.test(cleanId);
-
-      if (!foundStudent && !isRegisteredParentPhone && !(DEV_MODE && (cleanId === '1001' || cleanId === '1002'))) {
+      if (candidates.length === 0) {
         const fail = this.recordFailedAttempt(cleanId);
         auditLogger.log({
           actorName: cleanId,
           actorRole: 'parent',
           action: 'PARENT_LOGIN_FAILED_UNKNOWN_STUDENT',
           entity: 'Security',
-          details: `محاولة دخول برقم وطني/كود غير مسجل (${cleanId})`,
+          details: `محاولة دخول ولي أمر بمعرّف غير مسجل (${cleanId})`,
           severity: 'WARN'
         });
         return {
           success: false,
           error: fail.isLocked
             ? `تم تجميد الدخول ${fail.remainingSeconds} ثانية.`
-            : 'الرقم الوطني أو رمز الربط غير مسجل في كشف طلاب المدرسة. يرجى مراجعة إدارة المدرسة.'
+            : 'لم نجد طالباً بهذا الرقم. أدخل الرقم الوطني للطالب أو رقم القيد أو هاتف ولي الأمر المسجل لدى المدرسة.'
         };
       }
 
-      // كلمة المرور: رقم قيد الطالب نفسه مقبول (سر موثق على مستنداته) — لا أسرار كونية.
-      const validSecrets = [foundStudent?.studentNumber, ...this.devSecrets()].filter(Boolean) as string[];
+      if (!cleanSecret) {
+        return { success: false, error: 'يرجى إدخال رمز دخول ولي الأمر (6 أرقام) المسلّم من إدارة المدرسة.' };
+      }
 
-      if (cleanSecret && !validSecrets.includes(cleanSecret)) {
+      const matched = candidates.filter(s => this.parentSecretsFor(s).includes(cleanSecret));
+      if (matched.length === 0) {
         const fail = this.recordFailedAttempt(cleanId);
+        auditLogger.log({
+          actorName: cleanId,
+          actorRole: 'parent',
+          action: 'PARENT_LOGIN_FAILED_WRONG_CODE',
+          entity: 'Security',
+          details: `رمز دخول ولي أمر خاطئ للمعرّف (${cleanId})`,
+          severity: 'WARN'
+        });
         return {
           success: false,
           error: fail.isLocked
             ? `تم تجميد الدخول ${fail.remainingSeconds} ثانية.`
-            : `كلمة المرور غير صحيحة. المحاولات المتبقية: (${fail.attemptsLeft}).`
+            : `رمز الدخول غير صحيح. المحاولات المتبقية: (${fail.attemptsLeft}). الرمز مطبوع على بطاقة ولي الأمر من المدرسة.`
         };
       }
 
-      this.clearAttempts(cleanId);
-      const parentName = foundStudent ? (foundStudent.parentName || `ولي أمر ${foundStudent.name}`) : `ولي أمر (${cleanId})`;
-      const studentName = foundStudent ? foundStudent.name : cleanId;
-      const studentId = foundStudent ? foundStudent.id : `parent-${cleanId}`;
+      // الإخوة: كل طالب يحمل نفس هاتف ولي الأمر يُضاف تلقائياً لحسابه
+      const primary = matched[0];
+      const phone = primary.parentPhone ? normalizeLibyanPhone(primary.parentPhone) : '';
+      const siblings = phone && LIBYAN_PHONE_RE.test(phone)
+        ? studentList.filter(s => s.parentPhone && normalizeLibyanPhone(s.parentPhone) === phone)
+        : [];
+      const studentIds = Array.from(new Set([...matched, ...siblings].map(s => s.id)));
 
+      this.clearAttempts(cleanId);
+      const parentName = primary.parentName || `ولي أمر ${primary.name}`;
       auditLogger.log({
         actorName: parentName,
         actorRole: 'parent',
         action: 'PARENT_LOGIN_SUCCESS',
         entity: 'Security',
-        details: `دخول ناجح لولي الأمر (${studentName})`,
+        details: `دخول ناجح لولي الأمر (${primary.name}) — عدد الأبناء: ${studentIds.length}`,
         severity: 'INFO'
       });
 
@@ -562,7 +646,8 @@ export class AuthEngine {
         success: true,
         role: 'parent',
         actorName: parentName,
-        actorId: studentId
+        actorId: primary.id,
+        studentIds
       };
     }
 
@@ -574,7 +659,7 @@ export class AuthEngine {
    * يفحص الهوية الممررة ويطابقها مع الحسابات المعتمدة دون الحاجة لاختيار الدور مسبقاً
    */
   public static detectAndVerify(identifier: string, secret: string): AuthResult {
-    const cleanId = (identifier || '').trim();
+    const cleanId = normalizeLibyanPhone(identifier || '');
     const cleanSecret = (secret || '').trim();
 
     if (!cleanId) {
@@ -594,6 +679,9 @@ export class AuthEngine {
         if (res.success || !this.getAuthorizedExamsPhones().includes(cleanId)) {
           return res;
         }
+      } else if (this.isAdminUnclaimed() && cleanSecret === SecurityEngine.getDirectorPin()) {
+        // تثبيت جديد: لا يُسجَّل الهاتف مديراً إلا برمز المدير الصحيح (وإلا يُفحص كمعلم/ولي أمر)
+        return this.verifyCredentials({ role: 'admin', identifier: cleanId, password: cleanSecret });
       }
 
       const examsPhones = this.getAuthorizedExamsPhones();
@@ -602,14 +690,7 @@ export class AuthEngine {
       }
 
       // فحص إذا كان هاتف معلم
-      let teacherList: TeacherAccount[] = SEED_TEACHERS;
-      try {
-        const stored = localStorage.getItem('madrasa_db_teachers_v4');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) teacherList = parsed;
-        }
-      } catch {}
+      const teacherList: TeacherAccount[] = this.loadTeachers();
 
       const foundTeacherByPhone = teacherList.find(t => t.phone && t.phone.trim() === cleanId);
       if (foundTeacherByPhone) {
@@ -620,12 +701,17 @@ export class AuthEngine {
       return this.verifyCredentials({ role: 'parent', identifier: cleanId, password: cleanSecret });
     }
 
-    // 3. إذا كان كود معلم أو أخصائي (مثل LIB-COMP-09 أو كود أبجدي)
-    if (cleanId.toUpperCase().startsWith('LIB-') || (cleanId.length <= 11 && isNaN(Number(cleanId)))) {
+    // 3. كود معلم أو أخصائي مسجل فعلاً في كادر المدرسة
+    const upper = cleanId.toUpperCase();
+    if (this.loadTeachers().some(t => t.code.trim().toUpperCase() === upper)) {
       return this.verifyCredentials({ role: 'teacher', identifier: cleanId, password: cleanSecret });
     }
 
-    // 4. إذا كان رقماً وطنياً (12 رقماً) أو رقم قيد طالب
+    // 4. رقم وطني (12 رقماً) أو رقم قيد أو رمز ربط طالب ← ولي الأمر.
+    // كود يشبه رموز الكادر ولم يُعثر عليه: رسالة معلم واضحة بدل رسالة ولي الأمر.
+    if (upper.startsWith('LIB-')) {
+      return this.verifyCredentials({ role: 'teacher', identifier: cleanId, password: cleanSecret });
+    }
     return this.verifyCredentials({ role: 'parent', identifier: cleanId, password: cleanSecret });
   }
 }

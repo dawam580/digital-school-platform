@@ -22,6 +22,7 @@ import {
   ExamCommittee
 } from '../../services/exams/examStorageService';
 import { LibyanExamEngine } from '../../services/exams/libyanExamEngine';
+import { currentAcademicYear } from '../../services/domain/libyanCalendar';
 
 interface SeatingAndCommitteesManagerProps {
   students: Student[];
@@ -68,7 +69,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
                 seatStart: 26001,
                 seatEnd: 26035,
                 assignedStudentIds: [],
-                academicYear: '2025 - 2026 م'
+                academicYear: currentAcademicYear()
               },
               {
                 id: 'comm-2',
@@ -80,7 +81,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
                 seatStart: 26036,
                 seatEnd: 26070,
                 assignedStudentIds: [],
-                academicYear: '2025 - 2026 م'
+                academicYear: currentAcademicYear()
               },
               {
                 id: 'comm-3',
@@ -92,7 +93,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
                 seatStart: 26071,
                 seatEnd: 26100,
                 assignedStudentIds: [],
-                academicYear: '2025 - 2026 م'
+                academicYear: currentAcademicYear()
               }
             ];
             setCommittees(seedHalls);
@@ -177,7 +178,7 @@ export const SeatingAndCommitteesManager: React.FC<SeatingAndCommitteesManagerPr
       seatStart: 0,
       seatEnd: 0,
       assignedStudentIds: [],
-      academicYear: '2025 - 2026 م'
+      academicYear: currentAcademicYear()
     };
 
     const updated = [...committees, newComm];

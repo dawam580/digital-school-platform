@@ -17,3 +17,6 @@ declare module '*.svg' {
 
 declare module 'jsqr';
 
+
+/** إصدار المنظومة من package.json (يُحقن وقت البناء) */
+declare const __APP_VERSION__: string;

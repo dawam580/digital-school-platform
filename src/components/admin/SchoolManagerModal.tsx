@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useSchool } from '../../context/SchoolContext';
+import { normalizeLibyanPhone, LIBYAN_PHONE_RE } from '../../services/security/authEngine';
 import {
   X,
   Building2,
@@ -96,27 +97,13 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
       showToast('error', 'تنبيه', 'يرجى كتابة اسم المدرسة أولاً.');
       return;
     }
-    if (newPhone.trim() && !/^09[1234]\d{7}$/.test(newPhone.trim())) {
+    const phone = normalizeLibyanPhone(newPhone);
+    if (newPhone.trim() && !LIBYAN_PHONE_RE.test(phone)) {
       showToast('error', 'رقم الهاتف', 'أدخل رقماً ليبياً صحيحاً (09xxxxxxxx) أو اتركه فارغاً.');
       return;
     }
-    // لا هواتف مختلقة: رقم حقيقي أو يُترك فارغاً (يُستكمل لاحقاً من الإعدادات)
-    const createdSchool = createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), newPhone.trim(), startFresh);
-    
-    // لا يُولَّد ترخيص هنا: التفعيل الكامل يتم فقط بمفتاح موقّع من المورّد
-    // (من بصمة جهاز المدرسة). المدرسة الجديدة تعمل بالفترة التجريبية حتى ذلك.
-    const generatedKey = '';
-
-    // فتح حزمة اعتماد وتسليم المنظومة للزبون فوراً
-    setDeliveryModalInfo({
-      schoolName: newSchoolName.trim(),
-      directorName: newDirector.trim() || 'مدير المدرسة',
-      phone: newPhone.trim() || '—',
-      district: newDistrict.trim(),
-      schoolCode: (createdSchool as any)?.code || 'SCH-2026',
-      licenseKey: generatedKey
-    });
-    setShowDeliveryModal(true);
+    // تُحفظ المدرسة الحالية كاملة في خزنة المدارس ثم يُعاد تحميل المنظومة على المدرسة الجديدة
+    createNewSchool(newSchoolName.trim(), newDistrict.trim(), newDirector.trim(), phone, startFresh);
   };
 
   const handleImportFile = (file: File) => {
@@ -195,7 +182,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
             }`}
           >
             <Plus className="w-4 h-4" />
-            <span>إنشاء مدرسة جديدة لصديقك</span>
+            <span>إنشاء مدرسة جديدة</span>
           </button>
 
           <button
@@ -480,7 +467,7 @@ export const SchoolManagerModal: React.FC<SchoolManagerModalProps> = ({ isOpen, 
           {activeTab === 'list' && (
             <div className="space-y-3">
               <label className="font-bold text-slate-700 dark:text-slate-300 block">
-                المدارس المحفوظة على هذا المتصفح (يمكنك التنقل بينها بنقرة واحدة):
+                المدارس المحفوظة على هذا الجهاز — بيانات كل مدرسة معزولة تماماً (طلاب، معلمون، حضور، درجات، ملفات اجتماعية):
               </label>
 
               <div className="space-y-2">

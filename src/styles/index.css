@@ -161,3 +161,14 @@ body {
   transform: translateY(-2px);
 }
 
+
+/* طباعة نافذة منبثقة وحدها (بطاقات أولياء الأمور...): إخفاء بقية التطبيق أثناء الطباعة */
+@media print {
+  body.printing-portal > *:not(.print-portal-root) {
+    display: none !important;
+  }
+  body.printing-portal .print-portal-root {
+    position: static !important;
+    overflow: visible !important;
+  }
+}

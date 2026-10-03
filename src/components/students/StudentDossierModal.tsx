@@ -15,6 +15,7 @@ import {
   Building2,
   ShieldCheck
 } from 'lucide-react';
+import { currentAcademicYear } from '../../services/domain/libyanCalendar';
 
 interface StudentDossierModalProps {
   isOpen: boolean;
@@ -103,7 +104,7 @@ export const StudentDossierModal: React.FC<StudentDossierModalProps> = ({
                 </div>
                 <h2 className="text-lg font-black tracking-wide">تقرير ملف الطالب الشامل</h2>
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 print:text-black">
-                  للعام الدراسي {schoolProfile.academicYear || '2025 - 2026 م'}
+                  للعام الدراسي {schoolProfile.academicYear || currentAcademicYear()}
                 </span>
               </div>
 

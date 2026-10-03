@@ -11,7 +11,6 @@ import {
   Award,
   BookOpen,
   MessageSquare,
-  Clock,
   FileText,
   Bell
 } from 'lucide-react';
@@ -25,21 +24,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const getMobileNav = () => {
     switch (currentRole) {
+      // تبويبات مسموحة فعلاً لكل دور (roleAccess) — لا أزرار ترتد للرئيسية
       case 'teacher':
         return [
-          { id: 'teacher-quick', label: 'الرئيسية السريعة', icon: LayoutDashboard },
-          { id: 'grades', label: 'الدرجات', icon: Award },
-          { id: 'chat', label: 'المحادثة', icon: MessageSquare },
-          { id: 'schedule', label: 'الجدول', icon: Clock },
-          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
+          { id: 'teacher-quick', label: 'الحضور والدرجات', icon: LayoutDashboard },
+          { id: 'chat', label: 'رسائل أولياء الأمور', icon: MessageSquare },
         ];
       case 'counselor':
         return [
-          { id: 'counselor-dashboard', label: 'الرئيسية', icon: LayoutDashboard },
-          { id: 'student-profile', label: 'الطلاب', icon: UserCheck },
-          { id: 'attendance', label: 'المتابعة', icon: CalendarCheck },
+          { id: 'counselor-dashboard', label: 'المكتب الاجتماعي', icon: LayoutDashboard },
           { id: 'chat', label: 'المحادثة', icon: MessageSquare },
-          { id: 'notifications', label: 'تنبيهات', icon: Bell, badge: unreadCount },
         ];
       case 'parent':
         return [
@@ -100,10 +94,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           <div className="flex items-center gap-2 flex-wrap justify-center text-[11px] text-slate-500 dark:text-slate-400 font-bold">
             <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-              نظام تشغيل محلي معتمد (IndexedDB) 🛡️
+              يعمل بدون إنترنت • نسخ احتياطي تلقائي 🛡️
             </span>
             <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-              الإصدار v4.8 التجاري
+              الإصدار {__APP_VERSION__}
             </span>
           </div>
         </div>

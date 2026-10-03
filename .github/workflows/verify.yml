@@ -38,6 +38,9 @@ jobs:
       - name: Automated Test Suite (224 اختباراً)
         run: node tests/run-all.js
 
+      - name: Real-Code Tests (الدخول، عزل المدارس، قواعد التعليم الليبي)
+        run: npm run test:real
+
       - name: Production Build
         run: npm run build
 

@@ -165,9 +165,11 @@ export const InteractiveSystemTour: React.FC = () => {
   // If tour is closed, show the floating mini launcher pill (21st.dev style)
   if (!isTourOpen) {
     return (
-      <div className="fixed bottom-6 start-6 z-40 font-cairo">
+      <div className="fixed bottom-24 lg:bottom-6 start-4 sm:start-6 z-40 font-cairo print:hidden">
         <button
           type="button"
+          aria-label="جولة استكشاف المنظومة"
+          title="جولة استكشاف المنظومة (خطوة بخطوة)"
           onClick={() => {
             setIsTourOpen(true);
             setIsMinimized(false);
@@ -183,11 +185,8 @@ export const InteractiveSystemTour: React.FC = () => {
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           </div>
 
-          <span className="font-black tracking-tight text-white">
-            جولة استكشاف المنظومة (خطوة بخطوة) 🧭
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-white/10 text-purple-200 text-[10px] font-mono">
-            60fps ✨
+          <span className="hidden sm:inline font-black tracking-tight text-white">
+            جولة تعريفية 🧭
           </span>
         </button>
       </div>

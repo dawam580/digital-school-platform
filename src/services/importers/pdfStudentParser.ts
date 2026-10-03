@@ -1,6 +1,7 @@
 import { Student } from '../../types';
 import { getCleanAvatar } from '../../utils/avatarHelper';
 import * as pdfjsLib from 'pdfjs-dist';
+import { currentAcademicYear } from '../domain/libyanCalendar';
 
 // Configure pdfjs worker to load from CDN or bundled worker
 if (typeof window !== 'undefined' && 'Worker' in window) {
@@ -146,7 +147,7 @@ export class LibyanPdfStudentParser {
    */
   static parseSpatialPages(pagesLines: TextLine[][]): PdfParseResult {
     const parsedStudents: ParsedStudentRow[] = [];
-    let detectedAcademicYear = '2025 - 2026 م';
+    let detectedAcademicYear = currentAcademicYear();
     let detectedGrade = 'الصف التاسع الأساسي';
     let detectedSchoolName = 'مدرسة التعليم الأساسي';
 
@@ -396,7 +397,7 @@ export class LibyanPdfStudentParser {
         'قائمة', 'بالطلبة', 'المسجلين', 'السجلين', 'حسب', 'المستوى', 'الستوى', 'الدراسي', 'الدراسيي', 'والفصل'
       ]);
 
-      let detectedAcademicYear = '2025 - 2026 م';
+      let detectedAcademicYear = currentAcademicYear();
       let detectedSchoolName = '';
       let detectedGrade = 'التعليم الأساسي (الصفوف 1 - 9)';
 
@@ -617,7 +618,7 @@ export class LibyanPdfStudentParser {
             grade,
             className,
             sectionCode,
-            academicYear: '2025 - 2026 م',
+            academicYear: currentAcademicYear(),
             parentPhone: '0922465676',
             confidenceScore: 92
           });
@@ -630,7 +631,7 @@ export class LibyanPdfStudentParser {
       totalPages: 1,
       totalStudentsFound: parsedStudents.length,
       students: parsedStudents,
-      detectedAcademicYear: '2025 - 2026 م',
+      detectedAcademicYear: currentAcademicYear(),
       detectedGrade: fullText.includes('التاسع') ? 'الصف التاسع الأساسي' : 'الصف الثالث الأساسي',
       rawTextSample: fullText.substring(0, 500)
     };

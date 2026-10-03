@@ -102,44 +102,14 @@ export class LicenseService {
   static isDeveloperOrOwnerEnvironment(): boolean {
     if (typeof window === 'undefined') return false;
 
-    // 1. جهاز المورّد عبر Electron
+    // 1. جهاز المورّد عبر Electron (يحمل مفتاح توقيع التراخيص — لا يمكن تزويره من المتصفح)
     if (window.electronAPI?.isVendorMachine?.() === true) return true;
 
-    // 2. بيئة التطوير المحلية (Localhost / 127.0.0.1 / Dev Server)
-    try {
-      const hostname = window.location.hostname;
-      if (
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        hostname === '0.0.0.0' ||
-        hostname === '::1' ||
-        hostname.endsWith('.local') ||
-        hostname.includes('dawam580.github.io') ||
-        hostname.includes('github.io')
-      ) {
-        return true;
-      }
-    } catch {}
-
-    // 3. وضع التطوير Vite DEV
+    // 2. خادم التطوير Vite (import.meta.env.DEV يُطوى إلى false في بناء الإنتاج)
     if (import.meta.env.DEV) return true;
 
-    // 4. علم وضع المطور / المالك المخزن محلياً أو بالرابط
-    try {
-      const url = new URL(window.location.href);
-      if (url.searchParams.get('developer') === 'true' || url.searchParams.get('owner') === 'true') {
-        localStorage.setItem('madrasa_developer_mode', 'true');
-        return true;
-      }
-      if (localStorage.getItem('madrasa_developer_mode') === 'true') {
-        return true;
-      }
-      const activeKey = localStorage.getItem(STORAGE_KEYS.ACTIVE_LICENSE_KEY);
-      if (activeKey === 'DEVELOPER-LIFETIME-KEY' || activeKey === 'VENDOR-MACHINE') {
-        return true;
-      }
-    } catch {}
-
+    // لا تجاوز بالرابط (?developer=true) ولا بالنطاق (github.io) ولا بعلم محلي في localStorage:
+    // كلها قابلة للتزوير من أي زائر وكانت تمنح ترخيصاً دائماً مجاناً.
     return false;
   }
 

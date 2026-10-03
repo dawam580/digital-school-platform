@@ -266,14 +266,17 @@ export class SecurityEngine {
   private static superFailedAttempts = 0;
   private static superLockoutUntil = 0;
 
+  /**
+   * رمز الماستر المحفوظ. في الإنتاج لا يوجد رمز افتراضي إطلاقاً: إن لم يُعيَّن
+   * يُرجع '' فتبقى البوابة مغلقة إلا على جهاز المورّد (أول تعيين). الافتراضي
+   * '9988' موجود في بيئة التطوير (vite dev) فقط.
+   */
   public static getSuperAdminPin(): string {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY_SUPER_PIN);
       if (saved) return saved;
-      return '9988';
-    } catch {
-      return '9988';
-    }
+    } catch {}
+    return DEV_MODE ? '9988' : '';
   }
 
   public static setSuperAdminPin(newPin: string): boolean {
@@ -316,7 +319,7 @@ export class SecurityEngine {
       }
       return { valid: true, message: 'تم تعيين رمز الماستر لأول مرة على جهاز المورّد.' };
     }
-    if (inputPin.trim() === expected.trim() || inputPin.trim() === '9988') {
+    if (inputPin.trim() === expected.trim()) {
       this.superFailedAttempts = 0;
       this.superLockoutUntil = 0;
       return { valid: true, message: 'تم التحقق من هوية المدير العام السوبر بنجاح' };

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSchool } from '../context/SchoolContext';
-import { mayViewInterface, ROLE_AR_LABEL } from '../services/security/roleAccess';
+import { mayViewInterface, ROLE_AR_LABEL, ADMIN_SUPERVISED_ROLES } from '../services/security/roleAccess';
 import { auditLogger } from '../services/audit/auditLogger';
 import { UserRole } from '../types';
 
@@ -11,11 +11,16 @@ import { UserRole } from '../types';
  * يعمل كطبقة ثانية فوق حارس App: حتى لو عُبث بالحالة من الكونسول بعد الإقلاع،
  * الشاشة نفسها ترفض العرض. وضع معاينة المدير/السوبر مسموح عبر mayViewInterface.
  */
-export function useRequireRole(screenRole: UserRole): boolean {
-  const { currentRole, authenticatedRole, superUnlocked, currentUserPhone, logout } = useSchool();
+export function useRequireRole(screenRole: UserRole, options: { allowGuest?: boolean } = {}): boolean {
+  const { currentRole, authenticatedRole, superUnlocked, currentUserPhone, logout, isAuthenticated } = useSchool();
 
+  // allowGuest: شاشة بوابة عامة (تطبيق ولي الأمر) — من ليس بجلسة ولي أمر يرى نموذج الدخول فقط،
+  // والشاشة نفسها تحجب أي بيانات خارج جلسة ولي الأمر.
   const [allowed] = useState<boolean>(
-    () => currentRole === screenRole && mayViewInterface(authenticatedRole, superUnlocked, screenRole)
+    () => (options.allowGuest && (!isAuthenticated || authenticatedRole !== 'parent')) ||
+      (currentRole === screenRole && mayViewInterface(authenticatedRole, superUnlocked, screenRole)) ||
+      // مدير المدرسة يفتح لوحات كادره من تبويباته (الأخصائي، المعلم السريع) دون تبديل الواجهة
+      (currentRole === 'admin' && authenticatedRole === 'admin' && ADMIN_SUPERVISED_ROLES.includes(screenRole))
   );
 
   // يُطلق الرفض مرة واحدة فقط لكل mount — منع أي حلقة setState/تجميد للتبويب

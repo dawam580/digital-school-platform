@@ -59,6 +59,7 @@ export const ParentDashboard: React.FC = () => {
   // Link Another Child Modal
   const [showLinkModal, setShowLinkModal] = useState<boolean>(false);
   const [childCodeInput, setChildCodeInput] = useState<string>('');
+  const [childAccessCode, setChildAccessCode] = useState<string>('');
 
   // Submit Absence Excuse Modal / Form
   const [showExcuseModal, setShowExcuseModal] = useState<boolean>(false);
@@ -73,16 +74,9 @@ export const ParentDashboard: React.FC = () => {
     previouslyLinkedStudents.forEach(s => {
       if (!list.some(x => x.id === s.id)) list.push(s);
     });
-    // If parent phone matches any other students, include them too
-    if (currentUserPhone) {
-      students.forEach(s => {
-        if (s.parentPhone === currentUserPhone && !list.some(x => x.id === s.id)) {
-          list.push(s);
-        }
-      });
-    }
+    // الإخوة بنفس الهاتف يُضافون عند التحقق في بوابة الدخول (لا مطابقة غير موثقة هنا)
     return list;
-  }, [parentLinkedStudent, previouslyLinkedStudents, currentUserPhone, students]);
+  }, [parentLinkedStudent, previouslyLinkedStudents]);
 
   const activeChild = parentLinkedStudent || parentChildren[0];
 
@@ -116,13 +110,12 @@ export const ParentDashboard: React.FC = () => {
   if (!activeChild) {
     return (
       <ParentStudentGate
-        students={students}
+        onLink={(identifier, code) => linkStudent(identifier, code)}
         onSelectStudent={child => {
           setParentLinkedStudent(child);
           setSelectedStudent(child);
         }}
         previouslyLinkedStudents={previouslyLinkedStudents}
-        onUnlinkStudent={unlinkParentStudent}
       />
     );
   }
@@ -140,16 +133,12 @@ export const ParentDashboard: React.FC = () => {
     e.preventDefault();
     if (!childCodeInput.trim()) return;
 
-    const success = linkStudent(childCodeInput.trim());
+    const success = linkStudent(childCodeInput.trim(), childAccessCode.trim());
     if (success) {
-      sound.playSuccess();
       triggerConfetti();
-      showToast('gold', 'تم ربط الطالب بنجاح 🎉', 'تمت إضافة ابنك إلى حسابك والمتابعة الفورية.');
       setShowLinkModal(false);
       setChildCodeInput('');
-    } else {
-      sound.playAlert();
-      showToast('error', 'رمز غير صحيح', 'تأكد من رمز الطالب أو رقمه الوطني المكون من 4 أرقام أو 12 رقماً.');
+      setChildAccessCode('');
     }
   };
 
@@ -783,33 +772,41 @@ export const ParentDashboard: React.FC = () => {
 
             <form onSubmit={handleLinkNewChild} className="space-y-4 text-xs">
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                أدخل رمز الطالب (المكون من 4 أرقام أو كود الربط أو الرقم الوطني الصادر من المدرسة):
+                أدخل الرقم الوطني للابن (أو رقم القيد) ورمز دخول ولي الأمر الخاص به من بطاقة المدرسة:
               </p>
 
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  رمز الربط أو الرقم الوطني:
-                </label>
-                <input
-                  type="text"
-                  placeholder="مثال: SCH-2026-L2 أو 220082345678"
-                  value={childCodeInput}
-                  onChange={e => setChildCodeInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              {/* Demo Hint */}
-              <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[11px] text-blue-900 dark:text-blue-200">
-                <span>💡 للتجربة السريعة: اضغط لربط الابنة آية الترهوني: </span>
-                <button
-                  type="button"
-                  onClick={() => setChildCodeInput('SCH-2026-L2')}
-                  className="font-black text-blue-700 dark:text-blue-300 underline"
-                >
-                  SCH-2026-L2
-                </button>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="pd-child-id" className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    الرقم الوطني أو رقم القيد:
+                  </label>
+                  <input
+                    id="pd-child-id"
+                    type="text"
+                    inputMode="numeric"
+                    value={childCodeInput}
+                    onChange={e => setChildCodeInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
+                    dir="ltr"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="pd-child-code" className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    رمز دخول ولي الأمر (6 أرقام):
+                  </label>
+                  <input
+                    id="pd-child-code"
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={childAccessCode}
+                    onChange={e => setChildAccessCode(e.target.value.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/\D/g, ''))}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-sm tracking-[0.4em] text-center border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500"
+                    dir="ltr"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-2">

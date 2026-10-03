@@ -97,8 +97,13 @@ function realtimeSyncPlugin(): Plugin {
   };
 }
 
+const pkgVersion: string = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')).version;
+
 export default defineConfig({
   base: './',
+  define: {
+    __APP_VERSION__: JSON.stringify(pkgVersion),
+  },
   plugins: [react(), realtimeSyncPlugin()],
   build: {
     chunkSizeWarningLimit: 1000,

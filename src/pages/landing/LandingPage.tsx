@@ -348,7 +348,7 @@ export const LandingPage: React.FC = () => {
             {/* Libyan Ministry Badge */}
             <div className="inline-flex items-center justify-center">
               <TailgridsBadge variant="success" size="md" icon={<Sparkles className="w-4 h-4" />}>
-                🇱🇾 معتمدة وفق لوائح وزارة التربية والتعليم والمركز الوطني للامتحانات
+                🇱🇾 مصممة وفق لائحة التقويم الليبية ونماذج المركز الوطني للامتحانات
               </TailgridsBadge>
             </div>
 
@@ -380,7 +380,7 @@ export const LandingPage: React.FC = () => {
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-sm sm:text-base font-black border border-slate-200 dark:border-slate-700 shadow-md transition active:scale-95 flex items-center gap-2"
               >
                 <Shield className="w-5 h-5 text-purple-600" />
-                <span>دخول لوحة المدير (كشف 873 طالباً)</span>
+                <span>دخول لوحة المدير (عرض تجريبي)</span>
               </button>
               )}
 
@@ -410,17 +410,17 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-6">
             <TailgridsStatCard
               icon={<Users className="w-6 h-6" />}
-              value={students.length > 5 ? `${students.length}` : '+1,000'}
-              label="طالباً مسجلاً بالكشوف الرسمية"
-              trend="سعة استيعاب مرنة"
+              value="1 – 9"
+              label="صفوف مرحلة التعليم الأساسي"
+              trend="بنين وبنات • صباحي ومسائي"
               trendUp={true}
               colorClass="from-blue-600 to-indigo-600"
             />
             <TailgridsStatCard
               icon={<Layers className="w-6 h-6" />}
-              value="33"
-              label="فصلاً دراسياً معتمداً"
-              trend="من 1/1 حتى 9/4 صباحي ومسائي"
+              value="20+"
+              label="مدرسة على جهاز المالك الواحد"
+              trend="بيانات كل مدرسة معزولة تماماً"
               trendUp={true}
               colorClass="from-purple-600 to-pink-600"
             />
@@ -428,15 +428,15 @@ export const LandingPage: React.FC = () => {
               icon={<Lock className="w-6 h-6" />}
               value="6"
               label="بوابات وصلاحيات أمان معزولة"
-              trend="مدير • كنترول • معلم • ولي أمر"
+              trend="مدير • كنترول • معلم • أخصائي • ولي أمر"
               trendUp={true}
               colorClass="from-amber-500 to-orange-600"
             />
             <TailgridsStatCard
               icon={<Database className="w-6 h-6" />}
-              value="100%"
-              label="عمل أوفلاين بدون نت"
-              trend="حفظ فوري في IndexedDB"
+              value="أوفلاين"
+              label="يعمل بدون إنترنت"
+              trend="حفظ فوري ونسخ احتياطي تلقائي"
               trendUp={true}
               colorClass="from-emerald-500 to-teal-600"
             />

@@ -166,6 +166,8 @@ export interface Student {
   nationalId: string;
   studentNumber: string;
   linkCode: string;
+  /** رمز دخول ولي الأمر (6 أرقام عشوائية) — يُطبع على بطاقة ولي الأمر ولا يُشتق من بيانات الطالب */
+  parentAccessCode?: string;
   avatar: string;
   grade: string;
   className: string;

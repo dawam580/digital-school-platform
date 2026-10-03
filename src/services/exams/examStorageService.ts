@@ -6,6 +6,7 @@
  */
 
 import { indexedDBManager } from '../storage/indexedDb';
+import { currentAcademicYear } from '../domain/libyanCalendar';
 
 export interface ExamSubject {
   code: string;
@@ -352,7 +353,7 @@ export class ExamStorageService {
     const defaultLock: ExamLock = {
       id,
       className,
-      academicYear: '2025 - 2026 م',
+      academicYear: currentAcademicYear(),
       term,
       isLocked: false,
       isReleasedToParents: false

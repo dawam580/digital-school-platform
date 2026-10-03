@@ -138,6 +138,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
   };
 
   const handleDeveloperUnlock = async () => {
+    if (!LicenseService.isDeveloperOrOwnerEnvironment()) return;
     sound.playSuccess();
     try {
       localStorage.setItem('madrasa_developer_mode', 'true');
@@ -377,7 +378,8 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
             </p>
           </div>
 
-          {/* Developer / Owner Emergency Restore Box */}
+          {/* Developer / Owner Emergency Restore Box — جهاز المورّد/التطوير فقط */}
+          {LicenseService.isDeveloperOrOwnerEnvironment() && (
           <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/90 via-slate-900 to-indigo-950/90 border-2 border-purple-500/60 shadow-xl space-y-2 text-right">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black text-amber-300 flex items-center gap-1.5">
@@ -400,6 +402,7 @@ export const SubscriptionExpiredOverlay: React.FC<SubscriptionExpiredOverlayProp
               <span>🛠️ أنا صانع ومطور المنظومة (إلغاء القفل واستعادة منظومتي فوراً)</span>
             </button>
           </div>
+          )}
 
           {/* Action Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">

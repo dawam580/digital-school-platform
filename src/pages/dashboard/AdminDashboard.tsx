@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { ExamStorageService, ExamGradeRecord, ExamSubject } from '../../services/exams/examStorageService';
 import { useSchool } from '../../context/SchoolContext';
 import { useRequireRole } from '../../hooks/useRequireRole';
 import {
@@ -59,6 +60,7 @@ import { db } from '../../services/db';
 import { StatCard } from '../../components/ui/StatCard';
 import { CollapsibleSection } from '../../components/ui/CollapsibleSection';
 import { AppErrorBoundary } from '../../components/common/AppErrorBoundary';
+import { ParentAccessCardsModal } from '../../components/admin/ParentAccessCardsModal';
 
 // لوحة التحليلات البيانية (Recharts) — تحميل كسول: chunk منفصل لا يمس زمن الإقلاع
 const AnalyticsCharts = React.lazy(() =>
@@ -105,6 +107,7 @@ export const AdminDashboard: React.FC = () => {
 
   // Teachers Tab State
   const [showTeacherModal, setShowTeacherModal] = useState(false);
+  const [showParentCards, setShowParentCards] = useState(false);
   const [teacherToEdit, setTeacherToEdit] = useState<TeacherAccount | null>(null);
 
   // Exams Tab State
@@ -198,13 +201,30 @@ export const AdminDashboard: React.FC = () => {
     return clsList.length > 0 ? clsList : students.slice(0, 25);
   }, [students, selectedExamClass]);
 
-  const examReports: StudentFullExamReport[] = useMemo(() => {
-    return LibyanExamEngine.calculateClassRankings(examStudents);
-  }, [examStudents]);
+  // الدرجات المرصودة فعلاً في الكنترول (لا تقديرات)
+  const [examSubjects, setExamSubjects] = useState<ExamSubject[] | null>(null);
+  const [gradeRecordMap, setGradeRecordMap] = useState<Map<string, ExamGradeRecord>>(new Map());
+  useEffect(() => {
+    let alive = true;
+    Promise.all([ExamStorageService.getSubjects(), ExamStorageService.getAllGradeRecords()])
+      .then(([subs, records]) => {
+        if (!alive) return;
+        setExamSubjects(subs);
+        setGradeRecordMap(new Map(records.map(r => [r.id, r])));
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
-  const passedCount = examReports.filter(r => r.status === 'passed' || r.status === 'passed_honors').length;
-  const makeupCount = examReports.filter(r => r.status === 'makeup_exam').length;
-  const passRate = examReports.length > 0 ? Math.round((passedCount / examReports.length) * 100) : 100;
+  const examReports: StudentFullExamReport[] = useMemo(() => {
+    return LibyanExamEngine.calculateClassRankings(examStudents, examSubjects || undefined, gradeRecordMap);
+  }, [examStudents, examSubjects, gradeRecordMap]);
+
+  const decidedReports = examReports.filter(r => r.status !== 'pending');
+  const passedCount = decidedReports.filter(r => r.status === 'passed' || r.status === 'passed_honors' || r.status === 'passed_makeup').length;
+  const makeupCount = decidedReports.filter(r => r.status === 'makeup_exam').length;
+  // نسبة نجاح من النتائج المكتملة الرصد فقط؛ لا نسبة قبل الرصد
+  const passRate: number | null = decidedReports.length > 0 ? Math.round((passedCount / decidedReports.length) * 100) : null;
 
   // Delete Student Handler
   const handleDeleteStudent = (id: string, name: string) => {
@@ -337,7 +357,8 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 text-right animate-in fade-in max-w-7xl mx-auto pb-16 font-cairo">
-      
+      <ParentAccessCardsModal isOpen={showParentCards} onClose={() => setShowParentCards(false)} />
+
       {/* Top Header & Fast Actions */}
       <div className="p-5 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-5">
         <div className="space-y-1.5 max-w-2xl">
@@ -363,6 +384,16 @@ export const AdminDashboard: React.FC = () => {
           >
             <KeyRound className="w-4 h-4 text-slate-950 shrink-0" />
             <span>🔐 إعدادات المدير وتغيير الرمز</span>
+          </button>
+
+          {/* Parent Access Cards (codes + QR) */}
+          <button
+            onClick={() => { setShowParentCards(true); sound.playTap(); }}
+            className="whitespace-nowrap px-4 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            title="طباعة بطاقات دخول أولياء الأمور (الرقم + رمز الدخول + باركود) أو إرسالها عبر واتساب"
+          >
+            <KeyRound className="w-4 h-4 text-white shrink-0" />
+            <span>🪪 بطاقات دخول أولياء الأمور</span>
           </button>
 
           {/* OpenAI PDF Importer Button */}
@@ -473,9 +504,9 @@ export const AdminDashboard: React.FC = () => {
         />
         <StatCard
           title="شيت الامتحانات والنتائج"
-          value={`${passRate}%`}
-          suffix="نجاح"
-          badge="معتمد 🛡️"
+          value={passRate === null ? '—' : `${passRate}%`}
+          suffix={passRate === null ? 'بانتظار الرصد' : 'نجاح'}
+          badge="من الكنترول"
           hint="كشف الرصد المعتمد ←"
           icon={Award}
           tone="purple"
@@ -1105,7 +1136,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
               <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">نسبة النجاح العامة</span>
               <span className="text-2xl font-black text-emerald-700 dark:text-emerald-200 font-mono mt-1 block">
-                {passRate}%
+                {passRate === null ? '—' : `${passRate}%`}
               </span>
             </div>
 
@@ -1237,7 +1268,7 @@ export const AdminDashboard: React.FC = () => {
                               ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
                           }`}>
-                            {r.generalAppreciation} • {r.status === 'makeup_exam' ? 'دور ثانٍ 🟡' : 'ناجح 🟢'}
+                            {r.status === 'pending' ? r.statusLabel : `${r.generalAppreciation} • ${r.status === 'makeup_exam' ? 'دور ثانٍ 🟡' : r.status === 'failed' ? 'راسب 🔴' : 'ناجح 🟢'}`}
                           </span>
                         </td>
                         <td className="py-2.5 px-2 text-center whitespace-nowrap">
